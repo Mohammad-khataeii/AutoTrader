@@ -69,3 +69,13 @@ def test_full_candle_quality_cannot_remove_an_entry_before_the_range_is_known() 
     assert any(fill["side"] == "BUY" and fill["timestamp"] == start.isoformat() for fill in result["fills"])
     assert result["net_profit"] < 0
     assert sim.features[start+timedelta(days=1)]["BTC-EUR"].data_quality is DataQuality.INVALID
+
+
+def test_legacy_comparison_obeys_the_same_known_data_quality_gate() -> None:
+    bars = fixture_bars()
+    bars[210] = replace(bars[210], high="200", low="50", quality_flags=("SUSPICIOUS_RANGE",))
+    sim = ResearchSimulation(bars)
+    start = datetime.fromisoformat(bars[211].start)
+    result = sim.run(start=start, end=start+timedelta(days=1), strategy_ids=set(), legacy=True)
+    assert result["fills"] == []
+    assert result["rejections"]["data_quality_or_history"] == 1

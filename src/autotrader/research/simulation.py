@@ -16,6 +16,7 @@ from typing import Any
 from autotrader.allocation import allocation_advice
 from autotrader.clock import at
 from autotrader.domain import (
+    DataQuality,
     OrderBook,
     OrderBookLevel,
     Position,
@@ -210,6 +211,9 @@ class ResearchSimulation:
                 candidates = []
                 for symbol, f in context.items():
                     if symbol not in frame:
+                        continue
+                    if f.data_quality is not DataQuality.GOOD or not f.metadata.get("history_contiguous", True):
+                        rejections["data_quality_or_history"] += 1
                         continue
                     signals = (legacy_engine.generate(f, context.get("BTC-EUR"), context.get("ETH-EUR")) if legacy else
                                strategy_engine.generate(f, context.get("BTC-EUR"), context.get("ETH-EUR")))

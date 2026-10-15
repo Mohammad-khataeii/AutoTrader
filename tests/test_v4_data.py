@@ -82,7 +82,7 @@ async def test_public_provider_page_filtering_and_cached_resumption(tmp_path: Pa
         assert repeated == result and len(requests) == 3
         with pytest.raises(ValueError, match="unsupported_genuine_eur"):
             await provider.fetch("BTC-USD", "1h", START, START + timedelta(hours=1))
-        raw = next((tmp_path / "raw").glob("*.json"))
+        raw = tmp_path / "raw" / (digest(canonical({"path":"/products", "params":{}})) + ".json")
         stored = json.loads(raw.read_text(encoding="utf-8"))
         stored["body"] = "{}"
         raw.write_text(json.dumps(stored), encoding="utf-8")
