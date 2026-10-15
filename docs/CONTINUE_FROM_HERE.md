@@ -1,6 +1,6 @@
 # V3.4 verified checkpoint and exact continuation
 
-Branch:codex/v3.4-reconstruction. Earlier P0 commit:5b900db. The final implementation commit is recorded below after committing this checkpoint; Git HEAD identifies any subsequent documentation-only update. Original tracked autotrader.db and existing user volumes were not reset or migrated during isolated acceptance.
+Branch:codex/v3.4-reconstruction. Earlier P0 commit:5b900db. Verified implementation commit:fd62e86. Git HEAD identifies the subsequent documentation/evidence-only update. Original tracked autotrader.db and existing user volumes were not reset or migrated during isolated acceptance.
 
 Status:PARTIALLY_COMPLETE_WITH_BLOCKERS. No failing backend/frontend tests remain. The full-stack image security gate fails; functional success is not security clearance.
 

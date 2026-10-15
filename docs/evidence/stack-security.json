@@ -1,11 +1,11 @@
 {
-  "checked_at": "2026-10-15T14:41:24.258071+00:00",
+  "checked_at": "2026-10-15T14:48:40.250648+00:00",
   "status": "FAILED",
   "meaning": "Unresolved scanner findings; exploitability/applicability is not inferred or suppressed.",
   "services": {
     "backend": {
       "image": "autotrader-v34-acceptance-backend",
-      "image_id": "sha256:3af7bbe6f9d9a92d1cb1bf70bb698482bf6d6827f3b2e14140a356e309c99674",
+      "image_id": "sha256:9e58bbf73254d827ec7f9aaacf3e5ce1484594c3e2cc45ea6a8f1061a3a19e84",
       "report": "container-release-cves.sarif",
       "scope": "all severities",
       "status": "PASSED",
@@ -15,7 +15,7 @@
     },
     "frontend": {
       "image": "autotrader-v34-acceptance-frontend",
-      "image_id": "sha256:5250748338aaf83fd6eae766163199b9bf0ee13ad7550a632b6f6971a58efaf5",
+      "image_id": "sha256:be47baec3378fa9921e7c63ff2f5e5d8ce3b2acc8aa64f732870f2ae283abb67",
       "report": "frontend-container-cves.sarif",
       "scope": "all severities",
       "status": "PASSED",
@@ -25,7 +25,7 @@
     },
     "postgres": {
       "image": "autotrader-v34-postgres:16-alpine",
-      "image_id": "sha256:d7738da8df28702f32253d29af1176573084f630f631b1d9e668ea872af59057",
+      "image_id": "sha256:0c0632810ff23ed17f88fc4607324930249262e5b727693143368b01119703ce",
       "report": "postgres-container-cves.sarif",
       "scope": "high and critical",
       "status": "FAILED",
@@ -46,7 +46,7 @@
     },
     "redis": {
       "image": "autotrader-v34-redis:7-alpine",
-      "image_id": "sha256:0a31d46f8fd65ad93d24f3d9fcabcc3dde00fe1193fad08465e860698c1b26f8",
+      "image_id": "sha256:a18bbf57f74e8f32afdb0f2af095fe21aba94dfab06f5ec16ca7d6320b941949",
       "report": "redis-container-cves.sarif",
       "scope": "high and critical",
       "status": "PASSED",

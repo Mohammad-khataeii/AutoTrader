@@ -1,6 +1,6 @@
 # V3.4 permanent execution tracker
 
-Baseline commit: `27812aa`. First verified implementation milestone: `5b900db`. This tracker supersedes interim claims.
+Baseline commit: `27812aa`. First P0 implementation milestone: `5b900db`; final verified functional checkpoint: `fd62e86`. This tracker supersedes interim claims.
 
 **Evidence correction:** earlier Windows restart results killed only the venv launcher and are INVALID as worker-restart proof. Only the corrected actual-interpreter PID harness and later Docker/process reports count. Current corrected full regression:80passed/no skips in `docs/evidence/complete-regression.xml`. The Linux password-authenticated regression is recorded separately in `docs/evidence/linux-regression.xml`.
 
@@ -28,11 +28,11 @@ Severity: P1
 - Previous defect: See V3_4_BASELINE_AUDIT.md for verified baseline defects.
 - Relevant implementation files: docs/V3_4_EXECUTION_TRACKER.md; docs/CONTINUE_FROM_HERE.md
 - Required change: DEVELOPMENT EXECUTION CONTRACT
-- Implementation status: IN_PROGRESS
+- Implementation status: INTEGRATION_TESTED
 - Exact runtime call path: Audit -> P0 repair -> regression -> tracker -> Git milestone
 - Test file: docs/V3_4_TEST_EVIDENCE.md
 - Test name: Milestone audit and real executed gates
-- Actual execution result: Baseline and first milestone committed; final verified milestone being prepared.
+- Actual execution result: Baseline and both verified milestones committed; final implementation checkpoint fd62e86. Remaining security work is explicitly tracked.
 - Database evidence: No original user database or volumes reset.
 - Remaining blocker: Unresolved stack image security findings; exact versions and next implementation actions are in stack-security.json and CONTINUE_FROM_HERE.md.
 
@@ -433,11 +433,11 @@ Severity: P1
 - Previous defect: See V3_4_BASELINE_AUDIT.md for verified baseline defects.
 - Relevant implementation files: Final engineering report; docs/CONTINUE_FROM_HERE.md
 - Required change: FINAL RESPONSE FORMAT
-- Implementation status: IN_PROGRESS
+- Implementation status: INTEGRATION_TESTED
 - Exact runtime call path: Executed evidence -> exact status -> continuation actions
 - Test file: docs/V3_4_TEST_EVIDENCE.md
 - Test name: A-K factual report
-- Actual execution result: Final report must use PARTIALLY_COMPLETE_WITH_BLOCKERS while detailed mandatory work remains.
+- Actual execution result: A-K report prepared from executed evidence with status PARTIALLY_COMPLETE_WITH_BLOCKERS; security blockers and precise continuation are recorded.
 - Database evidence: No unsupported completion or profitability claims.
 - Remaining blocker: Unresolved stack image security findings; exact versions and next implementation actions are in stack-security.json and CONTINUE_FROM_HERE.md.
 

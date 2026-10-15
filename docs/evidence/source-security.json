@@ -1,6 +1,6 @@
 {
   "status": "PASSED",
-  "tracked_text_files_scanned": 167,
+  "tracked_text_files_scanned": 169,
   "secret_findings": [],
   "exchange_http_methods": [
     "aclose",
