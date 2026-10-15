@@ -48,6 +48,9 @@ async def test_authenticated_api_throttles_guesses_and_validates_research_reques
         assert [r.status_code for r in wrong] == [401]*5+[429]
         assert 1 <= int(wrong[-1].headers["Retry-After"]) <= 60
         auth = ("admin", "test-secret-only")
+        # A locked client cannot continue guessing and use200 as a success oracle.
+        assert (await client.get("/api/settings", auth=auth)).status_code == 429
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app, client=("another-client",123)), base_url="http://test") as client:
         assert (await client.get("/api/settings", auth=auth)).status_code == 200
         invalid = await client.post("/api/research/jobs", auth=auth, json={"assets":["BTC-USD"]})
         assert invalid.status_code == 400

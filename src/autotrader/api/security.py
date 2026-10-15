@@ -13,6 +13,16 @@ class AuthenticationThrottle:
         self.clients: OrderedDict[str, deque[float]] = OrderedDict()
         self.lock = threading.Lock()
 
+    def retry_after(self, client: str) -> int | None:
+        now = time.monotonic()
+        with self.lock:
+            events = self.clients.get(client)
+            if events is None:
+                return None
+            while events and events[0] <= now - self.window:
+                events.popleft()
+            return max(1, math.ceil(events[0] + self.window - now)) if len(events) >= self.attempts else None
+
     def failure(self, client: str) -> int | None:
         now = time.monotonic()
         with self.lock:

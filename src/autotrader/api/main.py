@@ -102,10 +102,14 @@ def _settings() -> Settings:
 
 
 def require_user(request: Request, credentials: HTTPBasicCredentials | None = Depends(security), settings: Settings = Depends(_settings)) -> str:
+    client = request.client.host if request.client else "unknown"
+    retry = request.app.state.auth_throttle.retry_after(client)
+    if retry is not None:
+        raise HTTPException(status_code=429, detail="Authentication cooldown active", headers={"Retry-After":str(retry)})
     password = settings.dashboard_password.get_secret_value()
     ok = credentials is not None and secrets.compare_digest(credentials.username.encode(), settings.dashboard_username.encode()) and secrets.compare_digest(credentials.password.encode(), password.encode())
     if not ok:
-        retry = request.app.state.auth_throttle.failure(request.client.host if request.client else "unknown")
+        retry = request.app.state.auth_throttle.failure(client)
         if retry is not None:
             raise HTTPException(status_code=429, detail="Too many failed authentication attempts", headers={"Retry-After":str(retry)})
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, headers={"WWW-Authenticate": "Basic"})
