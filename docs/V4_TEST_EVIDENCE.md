@@ -31,3 +31,12 @@ and zero-spread accounting fixtures rejected by an unnecessarily stricter pure
 validator. Zero-spread repository compatibility was restored; crossed books remain
 rejected. Lifecycle fixture inputs now provide executable, cost-feasible quotes
 without weakening ledger/restart assertions. A fresh full rerun is in progress.
+
+## Financial regression after execution fixes
+
+**98 passed in455.16 seconds**, zero failures/skips. Artifact:
+`evidence/v4-financial-regression.xml`. Includes original80 accounting/risk/recovery/
+migration/concurrency/API checks, nine execution cases and nine data cases.
+Actual process evidence: A2856 ->30708, B6368 ->29800, C9244 ->12304;
+C authenticated API25160 observed four fills and exact target attribution.
+This result precedes the subsequent V4 strategy and research runtime integration.
