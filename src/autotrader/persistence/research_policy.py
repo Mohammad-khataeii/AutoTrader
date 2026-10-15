@@ -14,6 +14,7 @@ from autotrader.persistence.models import (
     SystemStateModel,
 )
 from autotrader.research.artifacts import load_latest, source_fingerprint
+from autotrader.research.strategies import StrategyParameters
 
 
 class ResearchPolicyMixin:
@@ -31,11 +32,17 @@ class ResearchPolicyMixin:
         passed = set(summary.get("passed_strategies", [])) if summary else set()
         current_source, _ = source_fingerprint()
         source_matches = bool(summary and summary.get("source_fingerprint") == current_source)
-        allowed = sorted(approved & passed) if source_matches else []
+        live = summary.get("timeframes", {}).get("5m", {}).get("strategies", {}) if summary else {}
+        live_parameters = StrategyParameters().payload()
+        allowed = sorted(strategy for strategy in approved & passed if source_matches and
+            live.get(strategy, {}).get("gates", {}).get("passed") and
+            live.get(strategy, {}).get("out_of_sample", {}).get("parameters") == live_parameters)
         payload = {"require_validation": not test_environment, "allowed_strategy_ids": allowed,
             "mode": "TEST_FINANCIAL_ACCEPTANCE" if test_environment else "VALIDATED_ONLY",
             "research_verdict": summary.get("verdict") if summary else "NO_VERIFIED_RESEARCH_REPORT",
             "research_run_id": summary.get("run_id") if summary else None, "source_matches": source_matches,
+            "live_timeframe":"5m", "required_parameters":live_parameters,
+            "promotion_requirement":"Matching live timeframe, exact frozen parameters, source fingerprint, validation gates and explicit approval",
             "failure": failure, "policy_version": "4.0.0"}
         encoded = json.dumps(payload, sort_keys=True)
         async with self.session_factory() as session, session.begin():

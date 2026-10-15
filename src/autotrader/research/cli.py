@@ -12,6 +12,7 @@ import httpx
 from autotrader.domain import utc_now
 from autotrader.research.data import (
     ASSETS,
+    TIMEFRAMES,
     CoinbaseHistory,
     aggregate_complete,
     atomic_write,
@@ -67,6 +68,7 @@ def main() -> None:
     research.add_argument("--assets", nargs="+", choices=ASSETS, default=list(ASSETS))
     research.add_argument("--hourly-days", type=int, default=180)
     research.add_argument("--intraday-days", type=int, default=2)
+    research.add_argument("--timeframes", nargs="+", choices=TIMEFRAMES, default=["1d", "4h"])
     args = parser.parse_args()
     start = datetime.fromisoformat(args.start).replace(tzinfo=UTC)
     end = datetime.fromisoformat(args.end).replace(tzinfo=UTC)
@@ -76,7 +78,7 @@ def main() -> None:
         hourly_days=args.hourly_days, intraday_days=args.intraday_days))
     if args.action == "full":
         from autotrader.research.workflow import run_full
-        report = run_full(args.root, catalog)
+        report = run_full(args.root, catalog, timeframes=tuple(args.timeframes))
         print(json.dumps({"run_id": report["run_id"], "verdict": report["verdict"],
                           "passed_strategies": report["passed_strategies"]}), flush=True)
     if catalog["failures"]:

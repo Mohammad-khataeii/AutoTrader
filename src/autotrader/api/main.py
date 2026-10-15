@@ -35,7 +35,7 @@ from autotrader.persistence.database import (
 from autotrader.persistence.models import BacktestRunModel, MarketCandle
 from autotrader.persistence.repository import PersistentTradingRepository, _json
 from autotrader.research.artifacts import load_latest
-from autotrader.research.data import ASSETS
+from autotrader.research.data import ASSETS, TIMEFRAMES
 from autotrader.research.strategies import REGISTRY
 from autotrader.research.workflow import GRID, STRATEGIES
 from autotrader.risk import RiskEngine, RiskLimits
@@ -68,7 +68,7 @@ class ResearchParametersRequest(BaseModel):
 class ResearchRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     strategies: list[str] = Field(default_factory=lambda:list(STRATEGIES), min_length=1, max_length=6)
-    timeframes: list[str] = Field(default_factory=lambda:["1d", "4h"], min_length=1, max_length=2)
+    timeframes: list[str] = Field(default_factory=lambda:["1d", "4h"], min_length=1, max_length=6)
     assets: list[str] = Field(default_factory=lambda:list(ASSETS), min_length=1, max_length=8)
     grid: list[ResearchParametersRequest] = Field(default_factory=lambda:[ResearchParametersRequest.model_validate(p.payload()) for p in GRID], min_length=1, max_length=9)
 
@@ -302,7 +302,7 @@ def create_app() -> FastAPI:
 
     @app.post("/api/research/jobs", dependencies=[Depends(require_user)], status_code=202)
     async def queue_research(request: ResearchRequest) -> dict[str, str]:
-        if any(s not in STRATEGIES for s in request.strategies) or any(a not in ASSETS for a in request.assets) or any(tf not in {"1d", "4h"} for tf in request.timeframes):
+        if any(s not in STRATEGIES for s in request.strategies) or any(a not in ASSETS for a in request.assets) or any(tf not in TIMEFRAMES for tf in request.timeframes):
             raise HTTPException(status_code=400, detail="Unknown strategy or EUR asset")
         try:
             job_id = await repository.queue_research(request.model_dump(mode="json"))
@@ -313,7 +313,7 @@ def create_app() -> FastAPI:
     @app.get("/api/research/runs/{run_id}/{artifact}", dependencies=[Depends(require_user)])
     async def research_artifact(run_id: str, artifact: str) -> dict[str, Any]:
         import re
-        if not re.fullmatch(r"research-\d{8}T\d{6}", run_id) or (artifact != "summary.json" and not re.fullmatch(r"(?:1d|4h)-[A-Z0-9_]+-(?:test|validation)\.json", artifact)):
+        if not re.fullmatch(r"research-\d{8}T\d{6}", run_id) or (artifact != "summary.json" and not re.fullmatch(r"(?:1m|5m|15m|1h|4h|1d)-[A-Z0-9_]+-(?:test|validation)\.json", artifact)):
             raise HTTPException(status_code=400, detail="Unsupported research artifact identity")
         root = Path(settings.research_root).resolve()
         path = (root / "runs" / run_id / artifact).resolve()
