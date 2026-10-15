@@ -30,7 +30,8 @@ async def test_authenticated_reviewed_projection_repair_is_atomic_and_idempotent
     assert (await buy(repo)).accepted
     position=(await repo.list_positions())[0]
     target=(await repo.list_targets())[0]
-    assert (await gateway(repo).execute_exit(PAIR,D(3),book('11'),'target','take_profit_target',
+    # This proof needs an executable bid above the target, not a midpoint touch.
+    assert (await gateway(repo).execute_exit(PAIR,D(3),book('11.01'),'target','take_profit_target',
         position_id=position.position_id,exit_target_id=target['target_id'])).accepted
     fills=await repo.list_fills()
     good=await repo.snapshot()

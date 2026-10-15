@@ -81,7 +81,7 @@ class HistoricalBoundary:
 
     def observe(self,candle:Candle,price:Decimal)->None:
         half=price*self.spread_bps/20000
-        qty=max(candle.volume*self.liquidity_fraction,Decimal("0.00000001"))
+        qty=max(candle.volume*self.liquidity_fraction,ZERO)
         self.books[candle.symbol]=OrderBook(candle.symbol,utc_now(),
             (OrderBookLevel(price-half,qty),),(OrderBookLevel(price+half,qty),),"historical-assumed-book")
 
@@ -161,10 +161,11 @@ class Backtester:
                         for candle in frame:
                             position=open_positions_by_symbol.get(candle.symbol)
                             price=candle.close
-                            if position and position.protective_stop and candle.low<=position.protective_stop:
-                                price=min(candle.open,position.protective_stop)
-                            elif position and position.take_profit_targets and candle.high>=position.take_profit_targets[0]:
-                                price=position.take_profit_targets[0]+Decimal("0.00000001")
+                            bid_factor = 1 - self.spread_bps / 20000
+                            if position and position.protective_stop and candle.low*bid_factor<=position.protective_stop:
+                                price=min(candle.open,position.protective_stop/bid_factor)
+                            # A candle high alone does not prove an executable target
+                            # fill. Target IOC orders require the completed close quote.
                             boundary.observe(candle,price)
                         await manager.monitor_once(pairs)
                         for candle in frame:
@@ -206,7 +207,9 @@ class Backtester:
              'order_status_counts':order_counts,'confirmed_fills':len(fills),
              'spread_bps':str(self.spread_bps),'fee_bps':str(self.fee_bps),'slippage_bps':str(self.slippage_bps),
              'liquidity_fraction':str(self.liquidity_fraction),'latency':'next observed bar open after signal close',
-             'collision_policy':'stop first; adverse open for stop gaps','open_positions_at_end':sum(p.closed_at is None for p in positions)})
+             'collision_policy':'bid stop first; adverse open for stop gaps; target requires close quote',
+             'historical_liquidity':'OHLCV participation assumption, not reconstructed L2; zero volume supplies zero depth',
+             'open_positions_at_end':sum(p.closed_at is None for p in positions)})
 
     async def walk_forward(self,candles:list[Candle],train_bars:int=100,test_bars:int=50)->list[dict[str,Any]]:
         if train_bars<50 or test_bars<1:

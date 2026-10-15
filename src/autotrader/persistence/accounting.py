@@ -28,6 +28,8 @@ from autotrader.domain import (
     quantize_down,
     utc_now,
 )
+from autotrader.execution.pricing import quote_execution, target_gross_floor
+from autotrader.execution.quality import ExecutionQualityEngine
 from autotrader.failure_injection import failpoint
 from autotrader.persistence.models import (
     AccountModel,
@@ -294,6 +296,12 @@ class AccountingRepositoryMixin:
                     worst_ask=max(level.price for level in order_book.asks)*(1+slippage_bps/10000)
                     spread_cost=(order_book.spread or ZERO)/(order_book.mid or Decimal(1))*10000
                     error = await self._entry_risk(session, pair, quote_amount, worst_ask, stop_loss,2*fee_bps+2*slippage_bps+spread_cost)
+                admission_quality = None
+                if side is Side.BUY and not error:
+                    admission_quality = ExecutionQualityEngine().evaluate(pair, order_book, quantity,
+                        quote_amount, fee_bps, slippage_bps, targets or [])
+                    if admission_quality.rejection_reasons:
+                        error = "execution_quality:" + ",".join(admission_quality.rejection_reasons)
                 position = None
                 target = None
                 if side is Side.SELL and not error:
@@ -320,6 +328,12 @@ class AccountingRepositoryMixin:
                                 error = "invalid_target_identity"
                             elif quantity > target.remaining_quantity - target.reserved_quantity:
                                 error = "insufficient_unreserved_target_quantity"
+                            else:
+                                # A target is a minimum NET unit realization, never a
+                                # midpoint signal followed by an unrestricted market sell.
+                                floor = target_gross_floor(target.target_price, fee_bps)
+                                limit_price = max(limit_price or ZERO, floor)
+                                order_type = OrderType.LIMIT
                         elif exit_reason == "TAKE_PROFIT":
                             error = "target_identity_required"
                 order_id = new_id("ord")
@@ -331,6 +345,8 @@ class AccountingRepositoryMixin:
                         "bids": [[str(l.price), str(l.quantity)] for l in order_book.bids],
                         "asks": [[str(l.price), str(l.quantity)] for l in order_book.asks]}}
                 primary_strategy="ensemble-v3.4"
+                if admission_quality is not None:
+                    payload["admission_quality"] = admission_quality.payload()
                 if decision_id:
                     from autotrader.persistence.models import (
                         StrategySignalModel,
@@ -393,7 +409,7 @@ class AccountingRepositoryMixin:
             return "unsupported_market"
         if quantity <= 0 or quantity < pair.min_order_base or (pair.max_order_base is not None and quantity > pair.max_order_base):
             return "invalid_quantity"
-        if fee < 0 or slippage < 0 or slippage >= 10000:
+        if fee < 0 or fee >= 10000 or slippage < 0 or slippage >= 10000:
             return "invalid_execution_costs"
         if book.symbol != pair.symbol or not book.bids or not book.asks:
             return "invalid_order_book"
@@ -404,6 +420,11 @@ class AccountingRepositoryMixin:
             return "stale_or_future_order_book"
         if book.best_bid is not None and book.best_ask is not None and book.best_bid > book.best_ask:
             return "crossed_order_book"
+        try:
+            quote_execution(book, Side.SELL, quantity, quantity_step=pair.quantity_step,
+                            fee_bps=fee, slippage_bps=slippage)
+        except ValueError as exc:
+            return str(exc)
         return None
 
     def _stored_book(self, row: OrderModel, payload: dict[str, Any]) -> OrderBook:
@@ -459,30 +480,32 @@ class AccountingRepositoryMixin:
             row.status = "ACCEPTED"
             self._transition(session, row.order_id, OrderStatus.PENDING, OrderStatus.ACCEPTED, "paper_dispatch")
             failpoint("after_order_dispatch")
-            filled, notional = ZERO, ZERO
-            levels = book.asks if row.side == "BUY" else book.bids
+            # Account lock serializes consumption across intents and process restarts.
+            # Only an actually different observation can supply new paper liquidity.
+            observation = json.dumps({"symbol": book.symbol, **payload["book"]}, sort_keys=True)
+            liquidity_key = "depth:" + sha256(observation.encode()).hexdigest()[:58]
+            liquidity = await session.get(SystemStateModel, liquidity_key)
+            usage = json.loads(liquidity.payload_json) if liquidity else {"BUY": {}, "SELL": {}}
+            consumed = {int(i): Decimal(q) for i, q in usage[row.side].items()}
             limit = Decimal(payload["limit_price"]) if payload["limit_price"] else None
             step = pair.quantity_step
-            for level in levels:
-                price = exact(level.price * (1 + slippage if row.side == "BUY" else 1 - slippage))
-                if limit is not None and ((row.side == "BUY" and price > limit) or (row.side == "SELL" and price < limit)):
-                    continue
-                qty = min(row.quantity - filled, level.quantity)
-                if row.side == "BUY":
-                    qty = min(qty, max((row.quote_amount / (1 + fee_rate) - notional) / price, ZERO))
-                qty = quantize_down(qty, step)
-                if qty <= 0:
-                    continue
-                filled += qty
-                notional += qty * price
-                if filled >= row.quantity:
-                    break
+            quote = quote_execution(book, Side(row.side), row.quantity, quantity_step=step,
+                fee_bps=fee_rate * 10000, slippage_bps=slippage * 10000, limit_price=limit,
+                quote_budget=row.quote_amount if row.side == "BUY" else None, consumed=consumed)
+            payload["execution_quality"] = quote.payload()
+            row.execution_json = json.dumps(payload)
+            filled, notional = quote.fillable_quantity, quote.gross_notional
             if filled <= 0:
                 await self._cancel(session, row, "ioc_no_fill")
                 return self._domain_order(row)
-            price = exact(notional / filled)
-            notional = exact(price * filled)
-            fee = exact(notional * fee_rate)
+            for index, qty in quote.allocations:
+                usage[row.side][str(index)] = str(consumed.get(index, ZERO) + qty)
+            if liquidity is None:
+                session.add(SystemStateModel(key=liquidity_key, state="CONSUMED",
+                    reason="finite_observation_depth", payload_json=json.dumps(usage)))
+            else:
+                liquidity.payload_json = json.dumps(usage)
+            price, fee = quote.vwap, quote.fee
             position = await session.get(PositionModel, row.position_id, with_for_update=True)
             balance = await session.get(BalanceModel, self.quote_asset, with_for_update=True)
             fill_id = "fill_" + row.order_id.removeprefix("ord_")
@@ -686,6 +709,31 @@ class AccountingRepositoryMixin:
         # Compatibility: only confirmed target-linked fills may advance progress.
         await self.sync_exit_plan_from_fills(symbol)
 
+    async def protection_watch(self, position_id: str, reason: str | None) -> None:
+        """Persist inability to monitor protection; never invent an executable quote."""
+        async with self.session_factory() as session, session.begin():
+            await self._lock_account(session)
+            p = await session.get(PositionModel, position_id)
+            if p is None or p.state != "OPEN":
+                return
+            key = "protect:" + position_id
+            row = await session.get(SystemStateModel, key)
+            state = "WAITING_FOR_DATA" if reason else "MONITORING"
+            if row and row.state == state and row.reason == (reason or "fresh_executable_book"):
+                return
+            payload = json.dumps({"position_id": position_id, "symbol": p.symbol,
+                "quantity": str(p.quantity), "protective_stop": str(p.protective_stop),
+                "observed_at": utc_now().isoformat()})
+            if row is None:
+                row = SystemStateModel(key=key, state=state, reason=reason or "fresh_executable_book", payload_json=payload)
+                session.add(row)
+            else:
+                row.state, row.reason, row.payload_json = state, reason or "fresh_executable_book", payload
+            if reason:
+                session.add(SystemIncidentModel(incident_id=new_id("inc"), severity="CRITICAL",
+                    status="WAITING_FOR_DATA", message="protection_data_unavailable:" + reason, payload_json=payload))
+                await self._health(session, RuntimeHealth.DATA_DEGRADED, "protection_data_unavailable:" + p.symbol)
+
     async def update_position_monitor(self, position_id: str, price: Decimal) -> None:
         async with self.session_factory() as session, session.begin():
             await self._lock_account(session)
@@ -696,9 +744,16 @@ class AccountingRepositoryMixin:
             p.last_monitored_at = utc_now()
             target1 = await session.scalar(select(ExitTargetModel).where(ExitTargetModel.position_id == position_id, ExitTargetModel.target_number == 1))
             if target1 and target1.status == "COMPLETED":
+                previous_stop = p.protective_stop
                 break_even = exact(p.cost_basis / p.quantity) if p.quantity > 0 else p.average_entry_price
                 p.trailing_distance = p.trailing_distance or p.average_entry_price * Decimal("0.03")
                 p.protective_stop = max(p.protective_stop or ZERO, break_even, p.highest_price - p.trailing_distance)
+                if previous_stop != p.protective_stop:
+                    session.add(SystemIncidentModel(incident_id=new_id("inc"), severity="INFO",
+                        status="STOP_UPDATED", message="monotonic_bid_trailing_stop",
+                        payload_json=json.dumps({"position_id": position_id, "old_stop": str(previous_stop),
+                            "new_stop": str(p.protective_stop), "executable_bid": str(price),
+                            "policy": "v4-bid-trailing-1"})))
 
     async def realized_pnl_since(self, since: datetime) -> Decimal:
         async with self.session_factory() as session:

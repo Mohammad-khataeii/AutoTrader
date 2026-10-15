@@ -61,8 +61,10 @@ def candles(symbol: str = "BTC-EUR", close: Decimal = Decimal("100")) -> list[Ca
             symbol=symbol,
             timestamp=start + timedelta(minutes=index),
             open=close - Decimal("0.1"),
-            high=close + Decimal("0.2"),
-            low=close - Decimal("0.2"),
+            # Financial lifecycle fixture must offer reward above V4 round-trip
+            # costs; the old 0.4 ATR target is consumed by fees and slippage.
+            high=close + Decimal("0.5"),
+            low=close - Decimal("0.5"),
             close=close,
             volume=Decimal("100") + Decimal(index),
             source="fixture",

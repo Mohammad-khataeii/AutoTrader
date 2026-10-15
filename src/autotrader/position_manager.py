@@ -4,7 +4,8 @@ from dataclasses import dataclass
 from decimal import Decimal
 from hashlib import sha256
 
-from autotrader.domain import Order, Position, TradingPair, utc_now
+from autotrader.domain import Order, Position, Side, TradingPair, utc_now
+from autotrader.execution.pricing import quote_execution, target_gross_floor
 from autotrader.execution_gateway import PaperExecutionGateway
 from autotrader.market_data.revolut import MarketDataError
 from autotrader.market_data.service import MarketDataService
@@ -44,6 +45,7 @@ class PositionManager:
             if pair is None:
                 pair = await self.market_data.resolve_pair(position.symbol)
                 if pair is None:
+                    await self.repository.protection_watch(position.position_id, "market_metadata_unavailable")
                     actions.append(PositionAction(position.symbol, "market_metadata_unavailable", None))
                     continue
             try:
@@ -52,15 +54,22 @@ class PositionManager:
                 else:
                     order_book = (await self.market_data.get_validated_market(pair)).order_book
             except MarketDataError as exc:
+                await self.repository.protection_watch(position.position_id, str(exc))
                 actions.append(PositionAction(position.symbol, f"market_data_unavailable:{exc}", None))
                 continue
-            mid = order_book.mid
-            if mid is None:
+            try:
+                quote_execution(order_book, Side.SELL, position.quantity)
+            except ValueError as exc:
+                await self.repository.protection_watch(position.position_id, str(exc))
+                actions.append(PositionAction(position.symbol, f"market_data_unavailable:{exc}", None))
                 continue
+            bid = order_book.best_bid
+            assert bid is not None
+            await self.repository.protection_watch(position.position_id, None)
             await self.repository.record_mark(order_book)
-            await self.repository.update_position_monitor(position.position_id, mid)
+            await self.repository.update_position_monitor(position.position_id, bid)
             position = next(p for p in await self.repository.list_positions() if p.position_id == position.position_id)
-            if position.protective_stop is not None and mid <= position.protective_stop:
+            if position.protective_stop is not None and bid <= position.protective_stop:
                 result = await self.execution_gateway.execute_exit(
                     pair,
                     position.quantity,
@@ -83,7 +92,12 @@ class PositionManager:
                 actions.append(PositionAction(position.symbol, result.reason, result.order))
                 continue
             target = position.take_profit_targets[0] if position.take_profit_targets else None
-            if target is not None and mid >= target:
+            fee_bps = getattr(self.execution_gateway, "fee_bps", Decimal(0))
+            slippage_bps = getattr(self.execution_gateway, "slippage_bps", Decimal(0))
+            target_quote = quote_execution(order_book, Side.SELL, self._target_quantity(position),
+                quantity_step=pair.quantity_step, fee_bps=fee_bps, slippage_bps=slippage_bps,
+                limit_price=target_gross_floor(target, fee_bps)) if target is not None else None
+            if target_quote is not None and target_quote.fillable_quantity > 0:
                 quantity = self._target_quantity(position)
                 result = await self.execution_gateway.execute_exit(
                     pair,
