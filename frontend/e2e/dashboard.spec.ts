@@ -22,10 +22,27 @@ test("authenticated runtime data, all pages, and persistent paper controls", asy
   const overview = await api.json();
   const expected = `EUR ${Number(overview.portfolio.available_cash).toFixed(2)}`;
   await expect(page.locator(".metric").filter({ hasText: "Available cash" }).locator("strong")).toHaveText(expected);
-  for (const tab of ["Market Scanner", "Opportunities", "Autonomous Decisions", "Portfolio", "Position Management", "Order History", "Backtesting Lab", "AI Intelligence", "Risk Center", "System Health", "Settings"]) {
+  for (const tab of ["Market Scanner", "Opportunities", "Autonomous Decisions", "Portfolio", "Position Management", "Order History", "Backtesting Lab", "Execution Quality", "Strategy Lab", "Opportunity Intelligence", "AI Intelligence", "Risk Center", "System Health", "Settings"]) {
     await page.getByRole("button", { name: tab, exact: true }).click();
     await expect(page.getByRole("heading", { name: tab, exact: true })).toBeVisible();
   }
+  await page.getByRole("button", { name: "Strategy Lab", exact: true }).click();
+  await page.getByLabel("Dataset asset").selectOption("BTC-EUR");
+  await page.getByLabel("Research timeframe").selectOption("4h");
+  await page.getByLabel("Research strategy").selectOption("B_COMPRESSION_BREAKOUT");
+  await page.getByRole("button", { name: "Load trade and equity evidence", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Out-of-sample marked equity", exact: true })).toBeVisible();
+  const queuedResponse = page.waitForResponse(response => response.url().endsWith("/api/research/jobs") && response.request().method() === "POST");
+  await page.getByRole("button", { name: "Run selected research", exact: true }).click();
+  const queued = await queuedResponse;
+  expect(queued.status()).toBe(202);
+  const job = await queued.json();
+  await expect.poll(async () => {
+    const body = await (await request.get("/api/research", { headers })).json();
+    return body.jobs.find((row: any) => row.job_id === job.job_id)?.status;
+  }, { timeout: 120000, intervals: [2000] }).toBe("COMPLETED");
+  await expect(page.getByText("COMPLETED", { exact: true }).first()).toBeVisible({ timeout: 15000 });
+  await page.screenshot({ path: "../docs/evidence/strategy-lab-v4.png", fullPage: true });
   await page.getByRole("button", { name: "Backtesting Lab", exact: true }).click();
   await page.getByLabel("Replay entry policy").selectOption("LIMIT");
   const replayResponse = page.waitForResponse(response => response.url().endsWith("/api/backtests") && response.request().method() === "POST", { timeout: 150000 });
@@ -55,7 +72,7 @@ test("authenticated runtime data, all pages, and persistent paper controls", asy
     await expect(page.locator(".recharts-area-area")).toBeVisible();
     await expect(page.locator(".recharts-area-curve")).toHaveAttribute("d", /[ML]/);
   }
-  await page.screenshot({ path: "../docs/evidence/dashboard-v34.png", fullPage: true });
+  await page.screenshot({ path: "../docs/evidence/dashboard-v4.png", fullPage: true });
   expect(errors).toEqual([]);
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
