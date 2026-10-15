@@ -1,0 +1,289 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "fullName": "Docker Scout",
+          "informationUri": "https://docker.com/products/docker-scout",
+          "name": "docker scout",
+          "rules": [
+            {
+              "id": "CVE-2026-57585",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-57585"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-57585?s=pypa&n=msgpack&t=pypi&vr=%3C1.2.1",
+              "help": {
+                "text": "MessagePack is the serializer implementation for Python msgpack.org. Prior to 1.2.1, there is an Out-of-bounds read/crash on Unpacker reuse after a caught error, potentially leading to a DoS attack.  If the Unpacker is used repeatedly after an error occurs, the process may crash with a SEGV. This issue has been fixed in version 1.2.1.\n",
+                "markdown": "> MessagePack is the serializer implementation for Python msgpack.org. Prior to 1.2.1, there is an Out-of-bounds read/crash on Unpacker reuse after a caught error, potentially leading to a DoS attack.  If the Unpacker is used repeatedly after an error occurs, the process may crash with a SEGV. This issue has been fixed in version 1.2.1.\n\n|                                                                                                       |\n|Package                                                                        pkg:pypi/msgpack@1.1.2  |\n|Affected range                                                                 <1.2.1                  |\n|Fixed version                                                                  1.2.1                   |\n|[[CVSS Score 7.5] [CVSS Vector CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H]]                          |\n"
+              },
+              "properties": {
+                "affected_version": "<1.2.1",
+                "cvssV3": 7.5,
+                "cvssV3_severity": "HIGH",
+                "cvssV3_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "fixed_version": "1.2.1",
+                "purls": [
+                  "pkg:pypi/msgpack@1.1.2"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "GHSA-6v7p-g79w-8964",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "GHSA-6v7p-g79w-8964: Use After Free"
+              },
+              "helpUri": "https://scout.docker.com/v/GHSA-6v7p-g79w-8964?s=github&n=msgpack&t=pypi&vr=%3C%3D1.2.0",
+              "help": {
+                "text": "### Impact\n\nIf the Unpacker is used repeatedly after an error occurs, the process may crash with a SEGV.\n\nIf the Unpacker is used repeatedly to unpack untrusted input from external sources, it may be vulnerable to a DoS attack.\n\n### Patches\n\nv1.2.1\n\n### Workarounds\n\nUsers should create a new Unpacker instead of reusing the same Unpacker after an error occurs.\n\nApplying the above patch can prevent SEGV, but reusing the Streaming Unpacker after it has encountered an error will not yield correct data. If an error occurs during Streaming Unpacking, the Stream and Streaming Unpacker should be discarded.\n\nTherefore, this is not just a workaround but the correct solution. The above patch only prevents crashes from incorrect usage.\n",
+                "markdown": "> ### Impact\n\nIf the Unpacker is used repeatedly after an error occurs, the process may crash with a SEGV.\n\nIf the Unpacker is used repeatedly to unpack untrusted input from external sources, it may be vulnerable to a DoS attack.\n\n### Patches\n\nv1.2.1\n\n### Workarounds\n\nUsers should create a new Unpacker instead of reusing the same Unpacker after an error occurs.\n\nApplying the above patch can prevent SEGV, but reusing the Streaming Unpacker after it has encountered an error will not yield correct data. If an error occurs during Streaming Unpacking, the Stream and Streaming Unpacker should be discarded.\n\nTherefore, this is not just a workaround but the correct solution. The above patch only prevents crashes from incorrect usage.\n\n|                                                                                                       |\n|Package                                                                        pkg:pypi/msgpack@1.1.2  |\n|Affected range                                                                 <=1.2.0                 |\n|Fixed version                                                                  1.2.1                   |\n|[[CVSS Score 7.5] [CVSS Vector CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H]]                          |\n"
+              },
+              "properties": {
+                "affected_version": "<=1.2.0",
+                "cvssV3": 7.5,
+                "cvssV3_severity": "HIGH",
+                "cvssV3_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "fixed_version": "1.2.1",
+                "purls": [
+                  "pkg:pypi/msgpack@1.1.2"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-97687",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-97687: Improper Certificate Validation"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-97687?s=github&n=urllib3&t=pypi&vr=%3E%3D1.26.0%2C%3C2.8.0",
+              "help": {
+                "text": "## Impact\n\nurllib3 supports configuring TLS independently for an HTTPS proxy and the target server.\n\n`proxy_ssl_context`, `proxy_assert_hostname`, and `proxy_assert_fingerprint` configure the TLS connection to the proxy. `ssl_context` and the other target-specific TLS parameters configure the connection to the target server.\n\nIn urllib3 versions 1.26.0 through 2.7.0, these configurations were not consistently separated. Depending on the proxy mode, urllib3 could:\n\n1. Ignore `proxy_ssl_context` and use the target server's SSL context for the TLS connection to an HTTPS forwarding proxy.\n2. Override the HTTPS proxy's certificate-verification policy with the target server's certificate-verification policy.\n3. Apply target-specific SNI, hostname assertions, certificate fingerprint assertions, or TLS client credentials to the TLS connection to an HTTPS forwarding proxy.\n\nIn particular, configuring `cert_reqs=\"CERT_NONE\"` for a target server could overwrite the `verify_mode` of the SSL context configured for the HTTPS proxy. This modification occurred in place and persisted on the context object, potentially disabling proxy certificate verification for later connections that reused the same context.\n\nAn attacker able to intercept the connection to an HTTPS proxy may be able to impersonate the proxy when the effective proxy TLS configuration disables certificate verification or otherwise accepts the attacker's certificate. This may occur, for example, when the target server's trust or identity policy is incorrectly applied to the proxy connection.\n\nWhen HTTPS forwarding is enabled, an impersonated proxy can observe or modify forwarded requests and responses, potentially exposing credentials, authentication tokens, request bodies, response data, and other sensitive information.\n\nA TLS client certificate intended for the target server may also be presented to the proxy or to an attacker impersonating it. This can disclose the client's identity and provide proof of possession of the corresponding private key. The private key itself is not transmitted during the TLS handshake.\n\nIn CONNECT tunneling mode, impersonating the HTTPS proxy does not by itself defeat the separate end-to-end TLS connection between the client and the target server.\n\n## Affected Usages\n\nCode using urllib3 versions 1.26.0 through 2.7.0 may be affected in any of the following cases.\n\n### 1. The target SSL context is used for an HTTPS forwarding proxy\n\nHTTPS requests are forwarded through an HTTPS proxy with `use_forwarding_for_https=True`, and `proxy_ssl_context` is configured for the proxy.\n\nurllib3 may ignore `proxy_ssl_context` and use the target server's `ssl_context` for the proxy TLS handshake. The proxy may therefore be verified using the target server's trust and certificate policy instead of the policy explicitly configured for the proxy.\n\n### 2. The target verification policy overrides the proxy policy\n\nAn HTTPS proxy is configured with `proxy_ssl_context`, while the target server uses a different certificate-verification policy.\n\nurllib3 may apply the target server's `cert_reqs` value to the proxy SSL context. For example, setting `cert_reqs=\"CERT_NONE\"` for the target server may also disable certificate verification for the HTTPS proxy, even when `proxy_ssl_context` was configured to require verification.\n\nThis issue can affect the TLS connection to an HTTPS proxy in both forwarding and CONNECT tunneling configurations.\n\n### 3. A mutated proxy SSL context is reused\n\nThe same SSL context is reused as `proxy_ssl_context` across multiple connections, and certificate verification is disabled for one target server.\n\nurllib3 may modify the proxy SSL context's `verify_mode` in place. Later connections that reuse the same context may therefore connect to the HTTPS proxy without certificate verification.\n\n### 4. Target-specific TLS identity or credentials are applied to the proxy\n\nHTTPS requests are forwarded through an HTTPS proxy with `use_forwarding_for_https=True`, and target-specific SNI, hostname assertions, certificate fingerprint assertions, or TLS client credentials are configured.\n\nurllib3 may apply these target-specific settings to the proxy TLS handshake. This may cause urllib3 to:\n\n- send SNI intended for the target server to the proxy;\n- verify the proxy using a hostname or certificate fingerprint intended for the target server; or\n- present a TLS client certificate intended for the target server to the proxy.\n\nCode connecting through a plain HTTP proxy does not establish a TLS connection to the proxy and is not affected by this issue.\n\n## Remediation\n\nUpgrade to urllib3 2.8.0 or later.\n\nurllib3 2.8.0 independently applies the explicitly configured `proxy_ssl_context` and proxy-specific certificate assertions to the HTTPS proxy connection. Target-specific SNI, certificate assertions, and TLS client certificate parameters are no longer applied to the HTTPS proxy handshake.\n\nFor backward compatibility, when an HTTPS proxy is used with `use_forwarding_for_https=True` and `proxy_ssl_context` is not provided, urllib3 2.8.0 continues to use `ssl_context` for the TLS connection to the proxy. This configuration emits a `FutureWarning`. In urllib3 3.0, passing `ssl_context` with `use_forwarding_for_https=True` for an HTTPS proxy will raise an error. Applications should use `proxy_ssl_context` to configure TLS for an HTTPS forwarding proxy.\n\nThe fixes were implemented in commits b6447295fff7b38fdffc67e0df9712d60cef3cc3 and 07408cec79d1856d81bb42c74a904a24fdb9e465.\n",
+                "markdown": "> ## Impact\n\nurllib3 supports configuring TLS independently for an HTTPS proxy and the target server.\n\n`proxy_ssl_context`, `proxy_assert_hostname`, and `proxy_assert_fingerprint` configure the TLS connection to the proxy. `ssl_context` and the other target-specific TLS parameters configure the connection to the target server.\n\nIn urllib3 versions 1.26.0 through 2.7.0, these configurations were not consistently separated. Depending on the proxy mode, urllib3 could:\n\n1. Ignore `proxy_ssl_context` and use the target server's SSL context for the TLS connection to an HTTPS forwarding proxy.\n2. Override the HTTPS proxy's certificate-verification policy with the target server's certificate-verification policy.\n3. Apply target-specific SNI, hostname assertions, certificate fingerprint assertions, or TLS client credentials to the TLS connection to an HTTPS forwarding proxy.\n\nIn particular, configuring `cert_reqs=\"CERT_NONE\"` for a target server could overwrite the `verify_mode` of the SSL context configured for the HTTPS proxy. This modification occurred in place and persisted on the context object, potentially disabling proxy certificate verification for later connections that reused the same context.\n\nAn attacker able to intercept the connection to an HTTPS proxy may be able to impersonate the proxy when the effective proxy TLS configuration disables certificate verification or otherwise accepts the attacker's certificate. This may occur, for example, when the target server's trust or identity policy is incorrectly applied to the proxy connection.\n\nWhen HTTPS forwarding is enabled, an impersonated proxy can observe or modify forwarded requests and responses, potentially exposing credentials, authentication tokens, request bodies, response data, and other sensitive information.\n\nA TLS client certificate intended for the target server may also be presented to the proxy or to an attacker impersonating it. This can disclose the client's identity and provide proof of possession of the corresponding private key. The private key itself is not transmitted during the TLS handshake.\n\nIn CONNECT tunneling mode, impersonating the HTTPS proxy does not by itself defeat the separate end-to-end TLS connection between the client and the target server.\n\n## Affected Usages\n\nCode using urllib3 versions 1.26.0 through 2.7.0 may be affected in any of the following cases.\n\n### 1. The target SSL context is used for an HTTPS forwarding proxy\n\nHTTPS requests are forwarded through an HTTPS proxy with `use_forwarding_for_https=True`, and `proxy_ssl_context` is configured for the proxy.\n\nurllib3 may ignore `proxy_ssl_context` and use the target server's `ssl_context` for the proxy TLS handshake. The proxy may therefore be verified using the target server's trust and certificate policy instead of the policy explicitly configured for the proxy.\n\n### 2. The target verification policy overrides the proxy policy\n\nAn HTTPS proxy is configured with `proxy_ssl_context`, while the target server uses a different certificate-verification policy.\n\nurllib3 may apply the target server's `cert_reqs` value to the proxy SSL context. For example, setting `cert_reqs=\"CERT_NONE\"` for the target server may also disable certificate verification for the HTTPS proxy, even when `proxy_ssl_context` was configured to require verification.\n\nThis issue can affect the TLS connection to an HTTPS proxy in both forwarding and CONNECT tunneling configurations.\n\n### 3. A mutated proxy SSL context is reused\n\nThe same SSL context is reused as `proxy_ssl_context` across multiple connections, and certificate verification is disabled for one target server.\n\nurllib3 may modify the proxy SSL context's `verify_mode` in place. Later connections that reuse the same context may therefore connect to the HTTPS proxy without certificate verification.\n\n### 4. Target-specific TLS identity or credentials are applied to the proxy\n\nHTTPS requests are forwarded through an HTTPS proxy with `use_forwarding_for_https=True`, and target-specific SNI, hostname assertions, certificate fingerprint assertions, or TLS client credentials are configured.\n\nurllib3 may apply these target-specific settings to the proxy TLS handshake. This may cause urllib3 to:\n\n- send SNI intended for the target server to the proxy;\n- verify the proxy using a hostname or certificate fingerprint intended for the target server; or\n- present a TLS client certificate intended for the target server to the proxy.\n\nCode connecting through a plain HTTP proxy does not establish a TLS connection to the proxy and is not affected by this issue.\n\n## Remediation\n\nUpgrade to urllib3 2.8.0 or later.\n\nurllib3 2.8.0 independently applies the explicitly configured `proxy_ssl_context` and proxy-specific certificate assertions to the HTTPS proxy connection. Target-specific SNI, certificate assertions, and TLS client certificate parameters are no longer applied to the HTTPS proxy handshake.\n\nFor backward compatibility, when an HTTPS proxy is used with `use_forwarding_for_https=True` and `proxy_ssl_context` is not provided, urllib3 2.8.0 continues to use `ssl_context` for the TLS connection to the proxy. This configuration emits a `FutureWarning`. In urllib3 3.0, passing `ssl_context` with `use_forwarding_for_https=True` for an HTTPS proxy will raise an error. Applications should use `proxy_ssl_context` to configure TLS for an HTTPS forwarding proxy.\n\nThe fixes were implemented in commits b6447295fff7b38fdffc67e0df9712d60cef3cc3 and 07408cec79d1856d81bb42c74a904a24fdb9e465.\n\n|                                                                                                                          |\n|Package                                                                                           pkg:pypi/urllib3@2.7.0  |\n|Affected range                                                                                    >=1.26.0,<2.8.0         |\n|Fixed version                                                                                     2.8.0                   |\n|[[CVSS Score 7.6] [CVSS Vector CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N]]                          |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.26.0,<2.8.0",
+                "cvssV3": 7.6,
+                "cvssV3_severity": "HIGH",
+                "cvssV3_vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N",
+                "fixed_version": "2.8.0",
+                "purls": [
+                  "pkg:pypi/urllib3@2.7.0"
+                ],
+                "security-severity": "7.6",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2025-47273",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2025-47273: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2025-47273?s=github&n=setuptools&t=pypi&vr=%3C78.1.1",
+              "help": {
+                "text": "### Summary \nA path traversal vulnerability in `PackageIndex` was fixed in setuptools version 78.1.1\n\n### Details\n```\n    def _download_url(self, url, tmpdir):\n        # Determine download filename\n        #\n        name, _fragment = egg_info_for_url(url)\n        if name:\n            while '..' in name:\n                name = name.replace('..', '.').replace('\\\\', '_')\n        else:\n            name = \"__downloaded__\"  # default if URL has no path contents\n\n        if name.endswith('.[egg.zip](http://egg.zip/)'):\n            name = name[:-4]  # strip the extra .zip before download\n\n -->       filename = os.path.join(tmpdir, name)\n```\n\nHere: https://github.com/pypa/setuptools/blob/6ead555c5fb29bc57fe6105b1bffc163f56fd558/setuptools/package_index.py#L810C1-L825C88\n\n`os.path.join()` discards the first argument `tmpdir` if the second begins with a slash or drive letter.\n`name` is derived from a URL without sufficient sanitization. While there is some attempt to sanitize by replacing instances of '..' with '.', it is insufficient.\n\n### Risk Assessment\nAs easy_install and package_index are deprecated, the exploitation surface is reduced.\nHowever, it seems this could be exploited in a similar fashion like https://github.com/advisories/GHSA-r9hx-vwmv-q579, and as described by POC 4 in https://github.com/advisories/GHSA-cx63-2mw6-8hw5 report: via malicious URLs present on the pages of a package index.\n\n### Impact\nAn attacker would be allowed to write files to arbitrary locations on the filesystem with the permissions of the process running the Python code, which could escalate to RCE depending on the context.\n\n### References\nhttps://huntr.com/bounties/d6362117-ad57-4e83-951f-b8141c6e7ca5\nhttps://github.com/pypa/setuptools/issues/4946\n",
+                "markdown": "> ### Summary \nA path traversal vulnerability in `PackageIndex` was fixed in setuptools version 78.1.1\n\n### Details\n```\n    def _download_url(self, url, tmpdir):\n        # Determine download filename\n        #\n        name, _fragment = egg_info_for_url(url)\n        if name:\n            while '..' in name:\n                name = name.replace('..', '.').replace('\\\\', '_')\n        else:\n            name = \"__downloaded__\"  # default if URL has no path contents\n\n        if name.endswith('.[egg.zip](http://egg.zip/)'):\n            name = name[:-4]  # strip the extra .zip before download\n\n -->       filename = os.path.join(tmpdir, name)\n```\n\nHere: https://github.com/pypa/setuptools/blob/6ead555c5fb29bc57fe6105b1bffc163f56fd558/setuptools/package_index.py#L810C1-L825C88\n\n`os.path.join()` discards the first argument `tmpdir` if the second begins with a slash or drive letter.\n`name` is derived from a URL without sufficient sanitization. While there is some attempt to sanitize by replacing instances of '..' with '.', it is insufficient.\n\n### Risk Assessment\nAs easy_install and package_index are deprecated, the exploitation surface is reduced.\nHowever, it seems this could be exploited in a similar fashion like https://github.com/advisories/GHSA-r9hx-vwmv-q579, and as described by POC 4 in https://github.com/advisories/GHSA-cx63-2mw6-8hw5 report: via malicious URLs present on the pages of a package index.\n\n### Impact\nAn attacker would be allowed to write files to arbitrary locations on the filesystem with the permissions of the process running the Python code, which could escalate to RCE depending on the context.\n\n### References\nhttps://huntr.com/bounties/d6362117-ad57-4e83-951f-b8141c6e7ca5\nhttps://github.com/pypa/setuptools/issues/4946\n\n|                                                                                                                                  |\n|Package                                                                                               pkg:pypi/setuptools@70.3.0  |\n|Affected range                                                                                        <78.1.1                     |\n|Fixed version                                                                                         78.1.1                      |\n|[[CVSS Score 7.7] [CVSS Vector CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:H/VA:N/SC:N/SI:N/SA:N/E:P]]                              |\n"
+              },
+              "properties": {
+                "affected_version": "<78.1.1",
+                "cvssV3": 7.7,
+                "cvssV3_severity": "HIGH",
+                "cvssV3_vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:H/VA:N/SC:N/SI:N/SA:N/E:P",
+                "fixed_version": "78.1.1",
+                "purls": [
+                  "pkg:pypi/setuptools@70.3.0"
+                ],
+                "security-severity": "7.7",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-85091",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-85091"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-85091?s=debian&n=zlib&ns=debian&t=deb&osn=debian&osv=13&vr=%3E0",
+              "help": {
+                "text": "zlib versions 1.3.1.2 through 1.3.2 contain a heap buffer overflow vulnerability in the gz_vacate() function when processing non-blocking gzwrite() operations with stale external buffer pointers. Attackers can trigger the overflow by calling gzprintf() or gzvprintf() after a write stall, causing an unchecked memmove() to write beyond the internal input buffer boundary.\n\n---\n- zlib <unfixed> (bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1146895)\nhttps://gist.github.com/thesmartshadow/e0b9481792afb7c31e86fee1ff084490\nhttps://github.com/madler/zlib/issues/1310\nhttps://github.com/madler/zlib/pull/1317\nFixed by: https://github.com/madler/zlib/commit/df84af25dc1942490e1d1c899a07619152a46148\nDiscussion on affected range: https://github.com/madler/zlib/issues/1310#issuecomment-5979623265\nSupport non-blocking devices in the gz* routines introduced with:\nhttps://github.com/madler/zlib/commit/81cc0bebedd935daeb81b0b6e475d8786b51af3d (v1.3.1.2)\n",
+                "markdown": "> zlib versions 1.3.1.2 through 1.3.2 contain a heap buffer overflow vulnerability in the gz_vacate() function when processing non-blocking gzwrite() operations with stale external buffer pointers. Attackers can trigger the overflow by calling gzprintf() or gzvprintf() after a write stall, causing an unchecked memmove() to write beyond the internal input buffer boundary.\n\n---\n- zlib <unfixed> (bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1146895)\nhttps://gist.github.com/thesmartshadow/e0b9481792afb7c31e86fee1ff084490\nhttps://github.com/madler/zlib/issues/1310\nhttps://github.com/madler/zlib/pull/1317\nFixed by: https://github.com/madler/zlib/commit/df84af25dc1942490e1d1c899a07619152a46148\nDiscussion on affected range: https://github.com/madler/zlib/issues/1310#issuecomment-5979623265\nSupport non-blocking devices in the gz* routines introduced with:\nhttps://github.com/madler/zlib/commit/81cc0bebedd935daeb81b0b6e475d8786b51af3d (v1.3.1.2)\n\n|                                                                                                                |\n|Package         pkg:deb/debian/zlib@1%3A1.3.dfsg%2Breally1.3.1-1?os_distro=trixie&os_name=debian&os_version=13  |\n|Affected range  >0                                                                                              |\n|Fixed version   not fixed                                                                                       |\n"
+              },
+              "properties": {
+                "affected_version": ">0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "not fixed",
+                "purls": [
+                  "pkg:deb/debian/zlib@1%3A1.3.dfsg%2Breally1.3.1-1?os_distro=trixie&os_name=debian&os_version=13"
+                ],
+                "security-severity": "8.3",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-97689",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-97689: Allocation of Resources Without Limits or Throttling"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-97689?s=github&n=urllib3&t=pypi&vr=%3E%3D1.10.3%2C%3C2.8.0",
+              "help": {
+                "text": "## Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.7.0/advanced-usage.html#streaming-and-i-o) is designed for efficiently handling large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once. When decoding a [chunked-transfer-encoded response](https://httpwg.org/specs/rfc9112.html#chunked.encoding), this API reads each chunk's size field by buffering until it sees `\\n` or EOF.\n\nA malicious HTTP server can return `Transfer-Encoding: chunked` and then send a very long run of bytes without any newline, causing the streaming client to buffer that entire run before urllib3 can reject the chunk size as invalid and allocate more memory than intended.\n\nTo fix the issue, we'll reject chunk-size fields larger than 65536 bytes, as already done in the non-streaming case, which is currently handled by the Python standard library. Note that this only applies to reading the chunk-size field, not the chunk data, which is already handled correctly. Thus, there shouldn't be any impact for non-malicious servers.\n\n## Affected usages\n\nApplications and libraries using urllib3 versions earlier than 2.8.0 may be affected when streaming a chunked response from untrusted sources. Specifically, this affects the [read_chunked()](https://urllib3.readthedocs.io/en/stable/reference/urllib3.response.html#urllib3.response.BaseHTTPResponse.read_chunked) and [stream()](https://urllib3.readthedocs.io/en/stable/reference/urllib3.response.html#urllib3.response.BaseHTTPResponse.stream) methods of the HTTPResponse object.\n\nThis also affects requests streaming API, which uses urllib3 under the hood.\n\n## Remediation\n\nUpgrade to urllib3 version 2.8.0 or later, where chunk-size fields larger than 65536 will be rejected. If upgrading is not immediately possible, consider reading the response at once using the [read()](https://urllib3.readthedocs.io/en/stable/reference/urllib3.response.html#urllib3.response.BaseHTTPResponse.read) method.\n",
+                "markdown": "> ## Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.7.0/advanced-usage.html#streaming-and-i-o) is designed for efficiently handling large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once. When decoding a [chunked-transfer-encoded response](https://httpwg.org/specs/rfc9112.html#chunked.encoding), this API reads each chunk's size field by buffering until it sees `\\n` or EOF.\n\nA malicious HTTP server can return `Transfer-Encoding: chunked` and then send a very long run of bytes without any newline, causing the streaming client to buffer that entire run before urllib3 can reject the chunk size as invalid and allocate more memory than intended.\n\nTo fix the issue, we'll reject chunk-size fields larger than 65536 bytes, as already done in the non-streaming case, which is currently handled by the Python standard library. Note that this only applies to reading the chunk-size field, not the chunk data, which is already handled correctly. Thus, there shouldn't be any impact for non-malicious servers.\n\n## Affected usages\n\nApplications and libraries using urllib3 versions earlier than 2.8.0 may be affected when streaming a chunked response from untrusted sources. Specifically, this affects the [read_chunked()](https://urllib3.readthedocs.io/en/stable/reference/urllib3.response.html#urllib3.response.BaseHTTPResponse.read_chunked) and [stream()](https://urllib3.readthedocs.io/en/stable/reference/urllib3.response.html#urllib3.response.BaseHTTPResponse.stream) methods of the HTTPResponse object.\n\nThis also affects requests streaming API, which uses urllib3 under the hood.\n\n## Remediation\n\nUpgrade to urllib3 version 2.8.0 or later, where chunk-size fields larger than 65536 will be rejected. If upgrading is not immediately possible, consider reading the response at once using the [read()](https://urllib3.readthedocs.io/en/stable/reference/urllib3.response.html#urllib3.response.BaseHTTPResponse.read) method.\n\n|                                                                                                                          |\n|Package                                                                                           pkg:pypi/urllib3@2.7.0  |\n|Affected range                                                                                    >=1.10.3,<2.8.0         |\n|Fixed version                                                                                     2.8.0                   |\n|[[CVSS Score 8.9] [CVSS Vector CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:H]]                          |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.10.3,<2.8.0",
+                "cvssV3": 8.9,
+                "cvssV3_severity": "HIGH",
+                "cvssV3_vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:H",
+                "fixed_version": "2.8.0",
+                "purls": [
+                  "pkg:pypi/urllib3@2.7.0"
+                ],
+                "security-severity": "8.9",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            }
+          ],
+          "version": "1.21.0"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "CVE-2026-57585",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-57585                                \nSeverity         :HIGH                                          \nPackage          :pkg:pypi/msgpack@1.1.2                        \nAffected range   :<1.2.1                                        \nFixed version    :1.2.1                                         \nCVSS Score       :7.5                                           \nCVSS Vector      :CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  \nEPSS Score       :0.004880                                      \nEPSS Percentile  :0.404800                                      \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/local/lib/python3.12/site-packages/pip/_vendor/bom.cdx.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "GHSA-6v7p-g79w-8964",
+          "ruleIndex": 1,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability   :GHSA-6v7p-g79w-8964                           \nSeverity        :HIGH                                          \nPackage         :pkg:pypi/msgpack@1.1.2                        \nAffected range  :<=1.2.0                                       \nFixed version   :1.2.1                                         \nCVSS Score      :7.5                                           \nCVSS Vector     :CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/local/lib/python3.12/site-packages/pip/_vendor/bom.cdx.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-97687",
+          "ruleIndex": 2,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-97687                                                   \nSeverity         :HIGH                                                             \nPackage          :pkg:pypi/urllib3@2.7.0                                           \nAffected range   :>=1.26.0,<2.8.0                                                  \nFixed version    :2.8.0                                                            \nCVSS Score       :7.6                                                              \nCVSS Vector      :CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N  \nEPSS Score       :0.002060                                                         \nEPSS Percentile  :0.099220                                                         \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/local/lib/python3.12/site-packages/pip/_vendor/bom.cdx.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-47273",
+          "ruleIndex": 3,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2025-47273                                                       \nSeverity         :HIGH                                                                 \nPackage          :pkg:pypi/setuptools@70.3.0                                           \nAffected range   :<78.1.1                                                              \nFixed version    :78.1.1                                                               \nCVSS Score       :7.7                                                                  \nCVSS Vector      :CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:H/VA:N/SC:N/SI:N/SA:N/E:P  \nEPSS Score       :0.015920                                                             \nEPSS Percentile  :0.751940                                                             \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/local/lib/python3.12/site-packages/pip/_vendor/bom.cdx.json"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-85091",
+          "ruleIndex": 4,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-85091                                                                                  \nSeverity         :HIGH                                                                                            \nPackage          :pkg:deb/debian/zlib@1%3A1.3.dfsg%2Breally1.3.1-1?os_distro=trixie&os_name=debian&os_version=13  \nAffected range   :>0                                                                                              \nFixed version    :not fixed                                                                                       \nEPSS Score       :0.003560                                                                                        \nEPSS Percentile  :0.275930                                                                                        \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/doc/zlib1g/copyright"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/var/lib/dpkg/status"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-97689",
+          "ruleIndex": 5,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-97689                                                   \nSeverity         :HIGH                                                             \nPackage          :pkg:pypi/urllib3@2.7.0                                           \nAffected range   :>=1.10.3,<2.8.0                                                  \nFixed version    :2.8.0                                                            \nCVSS Score       :8.9                                                              \nCVSS Vector      :CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:H  \nEPSS Score       :0.003350                                                         \nEPSS Percentile  :0.251660                                                         \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/local/lib/python3.12/site-packages/pip/_vendor/bom.cdx.json"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

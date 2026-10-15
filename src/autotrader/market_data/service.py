@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from datetime import timedelta
 from decimal import Decimal
 from itertools import pairwise
 
@@ -97,7 +97,7 @@ class MarketDataService:
 
     def validate_order_book(self, order_book: OrderBook, provider_latency_ms: Decimal = Decimal("0")) -> tuple[list[str], OrderBookMetrics]:
         reasons: list[str] = []
-        now = datetime.now(tz=UTC)
+        now = utc_now()
         age = Decimal(str(max((now - order_book.timestamp).total_seconds(), 0)))
         best_bid = order_book.best_bid or Decimal("0")
         best_ask = order_book.best_ask or Decimal("0")
@@ -114,6 +114,8 @@ class MarketDataService:
             reasons.append("inconsistent_bid_ask")
         if age > Decimal(self.max_staleness_seconds):
             reasons.append("stale_order_book")
+        if (order_book.timestamp-now).total_seconds()>5:
+            reasons.append('future_order_book')
         if order_book.bids and any(left.price < right.price for left, right in pairwise(order_book.bids)):
             reasons.append("bid_levels_not_descending")
         if order_book.asks and any(left.price > right.price for left, right in pairwise(order_book.asks)):
@@ -182,10 +184,10 @@ class MarketDataService:
         ]
         if gaps:
             reasons.append("incorrect_candle_interval")
-        latest_age = datetime.now(tz=UTC) - ordered[-1].timestamp
+        latest_age = utc_now() - ordered[-1].timestamp
         if latest_age > timedelta(minutes=max(interval_minutes * 3, 15)):
             reasons.append("stale_candles")
-        if ordered[-1].timestamp + expected > datetime.now(tz=UTC):
+        if ordered[-1].timestamp + expected > utc_now():
             reasons.append("forming_candle")
         return reasons
 

@@ -1,0 +1,770 @@
+{
+  "checked_at": "2026-10-15T14:41:24.258071+00:00",
+  "status": "FAILED",
+  "meaning": "Unresolved scanner findings; exploitability/applicability is not inferred or suppressed.",
+  "services": {
+    "backend": {
+      "image": "autotrader-v34-acceptance-backend",
+      "image_id": "sha256:3af7bbe6f9d9a92d1cb1bf70bb698482bf6d6827f3b2e14140a356e309c99674",
+      "report": "container-release-cves.sarif",
+      "scope": "all severities",
+      "status": "PASSED",
+      "unique_critical_cves": 0,
+      "unique_high_cves": 0,
+      "findings": []
+    },
+    "frontend": {
+      "image": "autotrader-v34-acceptance-frontend",
+      "image_id": "sha256:5250748338aaf83fd6eae766163199b9bf0ee13ad7550a632b6f6971a58efaf5",
+      "report": "frontend-container-cves.sarif",
+      "scope": "all severities",
+      "status": "PASSED",
+      "unique_critical_cves": 0,
+      "unique_high_cves": 0,
+      "findings": []
+    },
+    "postgres": {
+      "image": "autotrader-v34-postgres:16-alpine",
+      "image_id": "sha256:d7738da8df28702f32253d29af1176573084f630f631b1d9e668ea872af59057",
+      "report": "postgres-container-cves.sarif",
+      "scope": "high and critical",
+      "status": "FAILED",
+      "unique_critical_cves": 0,
+      "unique_high_cves": 1,
+      "findings": [
+        {
+          "cve": "CVE-2026-86140",
+          "severity": "HIGH",
+          "package": "pkg:apk/alpine/libxml2@2.13.9-r2?os_name=alpine&os_version=3.24",
+          "fixed_version": "not fixed",
+          "paths": [
+            "/lib/apk/db/installed",
+            "/usr/lib/libxml2.so.2.13.9"
+          ]
+        }
+      ]
+    },
+    "redis": {
+      "image": "autotrader-v34-redis:7-alpine",
+      "image_id": "sha256:0a31d46f8fd65ad93d24f3d9fcabcc3dde00fe1193fad08465e860698c1b26f8",
+      "report": "redis-container-cves.sarif",
+      "scope": "high and critical",
+      "status": "PASSED",
+      "unique_critical_cves": 0,
+      "unique_high_cves": 0,
+      "findings": []
+    },
+    "prometheus": {
+      "image": "prom/prometheus:v3.15.0",
+      "image_id": "sha256:efd719c99d83b060d9daefdcf00360461adf279f45ef5391f8d111892118753e",
+      "report": "prometheus-container-cves.sarif",
+      "scope": "high and critical",
+      "status": "FAILED",
+      "unique_critical_cves": 2,
+      "unique_high_cves": 9,
+      "findings": [
+        {
+          "cve": "CVE-2026-42154",
+          "severity": "HIGH",
+          "package": "pkg:golang/github.com/prometheus/prometheus@0.0.0-20260925072538-5241a27fe3c6%2Bdirty",
+          "fixed_version": "0.305.2",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56866",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "fixed_version": "0.60.0",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "fixed_version": "0.60.0",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78667",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "fixed_version": "0.60.0",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-94439",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-94440",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-97031",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "fixed_version": "0.60.0",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56857",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ]
+        }
+      ]
+    },
+    "grafana": {
+      "image": "autotrader-v34-grafana:13.2.4",
+      "image_id": "sha256:6a3f252fe2d73b7364f18101db80d6303adb40735b2580cb878899c3891a98b8",
+      "report": "grafana-container-cves.sarif",
+      "scope": "high and critical",
+      "status": "FAILED",
+      "unique_critical_cves": 2,
+      "unique_high_cves": 14,
+      "findings": [
+        {
+          "cve": "CVE-2026-21728",
+          "severity": "HIGH",
+          "package": "pkg:golang/github.com/grafana/tempo@1.5.1-0.20260910130453-bcfe9f230c1d",
+          "fixed_version": "2.8.4",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-28377",
+          "severity": "HIGH",
+          "package": "pkg:golang/github.com/grafana/tempo@1.5.1-0.20260910130453-bcfe9f230c1d",
+          "fixed_version": "2.10.3",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56855",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/crypto@0.55.0",
+          "fixed_version": "0.56.0",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56866",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56866",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56866",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "fixed_version": "0.60.0",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.59.0",
+          "fixed_version": "0.60.0",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "fixed_version": "0.60.0",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.59.0",
+          "fixed_version": "0.60.0",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78662",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/crypto@0.55.0",
+          "fixed_version": "0.56.0",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78667",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78667",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78667",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "fixed_version": "0.60.0",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.59.0",
+          "fixed_version": "0.60.0",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-94439",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-94439",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-94439",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-94440",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-94440",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-94440",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-97031",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-97031",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-97031",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-84304",
+          "severity": "HIGH",
+          "package": "pkg:golang/google.golang.org/grpc@1.83.0",
+          "fixed_version": "1.83.1",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-84445",
+          "severity": "HIGH",
+          "package": "pkg:golang/google.golang.org/grpc@1.83.0",
+          "fixed_version": "1.83.2",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/golang.org/x/net@0.59.0",
+          "fixed_version": "0.60.0",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "fixed_version": "0.60.0",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56857",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56857",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "fixed_version": "1.27.2",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56857",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "fixed_version": "1.26.9",
+          "paths": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ]
+        }
+      ]
+    }
+  }
+}

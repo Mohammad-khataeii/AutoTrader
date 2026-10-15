@@ -107,7 +107,7 @@ def calculate_features(candles: Sequence[Candle], order_book_imbalance: Decimal 
             slow = _ema(closes[:index], 26)
             if fast is not None and slow is not None:
                 macd_series.append(fast - slow)
-    support_window = ordered[-20:] if len(ordered) >= 20 else ordered
+    support_window = ordered[-21:-1] if len(ordered)>1 else ordered
     avg_volume = sum(volumes[-20:]) / Decimal(min(len(volumes), 20))
     recent_volume = volumes[-1]
     relative_volume = recent_volume / avg_volume if avg_volume > 0 else None
@@ -136,7 +136,10 @@ def calculate_features(candles: Sequence[Candle], order_book_imbalance: Decimal 
         timestamp=latest.timestamp,
         timeframe=latest.timeframe,
         data_quality=quality,
-        metadata={"source": latest.source, "observations": len(ordered), "missing": missing},
+        metadata={"source": latest.source, "observations": len(ordered), "missing": missing,
+            "last_high":latest.high,"last_low":latest.low,"last_close":latest.close,
+            "previous_close":previous_close,
+            "retest_level": max(c.high for c in ordered[-22:-2]) if len(ordered)>22 else resistance},
         rsi=_rsi(closes),
         macd=macd,
         macd_signal=_ema(macd_series, 9) if macd_series else None,
@@ -160,4 +163,38 @@ def calculate_features(candles: Sequence[Candle], order_book_imbalance: Decimal 
         breakout_distance=breakout_distance,
         volume_acceleration=volume_acceleration,
     )
+
+
+def higher_timeframe_context(candles:Sequence[Candle])->dict[str,object]:
+    """Four-bar confirmation from complete, contiguous UTC-aligned groups only."""
+    from datetime import UTC, datetime, timedelta
+
+    from autotrader.domain import utc_now
+    if not candles:
+        return {'available':False,'veto':True,'reason':'missing_primary_history'}
+    minutes=int(candles[0].timeframe.removesuffix('m'))
+    step=timedelta(minutes=minutes)
+    seconds=minutes*60*4
+    groups:dict[int,list[Candle]]={}
+    for candle in sorted(candles,key=lambda c:c.timestamp):
+        if candle.timestamp+step>utc_now():
+            continue
+        key=int(candle.timestamp.timestamp())//seconds*seconds
+        groups.setdefault(key,[]).append(candle)
+    aggregated=[]
+    for key,rows in sorted(groups.items()):
+        start=datetime.fromtimestamp(key,tz=UTC)
+        if len(rows)!=4 or [c.timestamp for c in rows]!=[start+step*i for i in range(4)]:
+            continue
+        aggregated.append(Candle(rows[0].symbol,start,rows[0].open,max(c.high for c in rows),
+            min(c.low for c in rows),rows[-1].close,sum((c.volume for c in rows),Decimal(0)),
+            timeframe=f'{minutes*4}m',source='resampled:'+rows[0].source))
+    if len(aggregated)<50:
+        return {'available':False,'veto':True,'timeframe':f'{minutes*4}m','observations':len(aggregated),'reason':'insufficient_confirmation_history'}
+    features=calculate_features(aggregated)
+    veto=bool(features.ema_21 and features.ema_50 and features.momentum is not None and
+        features.ema_21<features.ema_50 and features.momentum<Decimal('-.01'))
+    return {'available':True,'veto':veto,'timeframe':features.timeframe,'timestamp':features.timestamp.isoformat(),
+        'ema_21':str(features.ema_21),'ema_50':str(features.ema_50),'momentum':str(features.momentum),
+        'observations':len(aggregated)}
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import secrets
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -11,12 +12,15 @@ from typing import Any
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+from prometheus_client import CONTENT_TYPE_LATEST, Gauge, generate_latest
+from pydantic import BaseModel, Field, HttpUrl, field_validator
+from sqlalchemy import select
 from starlette.responses import Response
 
 from autotrader.ai import make_ai_provider
 from autotrader.config import Settings, get_settings
 from autotrader.decision import DecisionEngine
+from autotrader.domain import Candle, OrderType, new_id, utc_now
 from autotrader.execution_gateway import PaperExecutionGateway
 from autotrader.market_data.revolut import RevolutXPublicClient
 from autotrader.market_data.service import MarketDataService
@@ -26,12 +30,47 @@ from autotrader.persistence.database import (
     make_engine,
     make_session_factory,
 )
-from autotrader.persistence.repository import PersistentTradingRepository
+from autotrader.persistence.models import BacktestRunModel, MarketCandle
+from autotrader.persistence.repository import PersistentTradingRepository, _json
 from autotrader.risk import RiskEngine, RiskLimits
 from autotrader.scanner import MarketScanner, ScanCandidate, ScanResult
 from autotrader.strategies import BreakoutStrategyEngine
 
 security = HTTPBasic()
+equity_metric=Gauge('autotrader_equity_eur','Validated paper account equity')
+cash_metric=Gauge('autotrader_available_cash_eur','Available paper cash')
+risk_metric=Gauge('autotrader_risk_halted','Persistent non-healthy runtime state')
+reconciliation_metric=Gauge('autotrader_reconciliation_errors','Financial replay mismatches')
+
+
+class BacktestRequest(BaseModel):
+    symbol:str=Field(default="BTC-EUR",pattern=r"^[A-Z0-9]+-EUR$")
+    max_bars:int=Field(default=300,ge=51,le=500)
+    entry_order_type:OrderType=OrderType.MARKET
+
+
+class CorrectionRequest(BaseModel):
+    request_id:str=Field(min_length=1,max_length=64,pattern=r'^[A-Za-z0-9_-]+$')
+    fingerprint:str=Field(pattern=r'^[a-f0-9]{64}$')
+    reason:str=Field(min_length=20,max_length=2000)
+
+
+class NewsRequest(BaseModel):
+    event_id:str=Field(min_length=1,max_length=64,pattern=r'^[A-Za-z0-9_-]+$')
+    symbol:str=Field(pattern=r'^[A-Z0-9]+-EUR$')
+    timestamp:datetime
+    title:str=Field(min_length=1,max_length=300)
+    body:str=Field(min_length=1,max_length=2000)
+    url:HttpUrl
+    source:str=Field(min_length=1,max_length=64)
+
+    @field_validator('timestamp')
+    @classmethod
+    def valid_time(cls,value:datetime)->datetime:
+        from datetime import timedelta
+        if value.tzinfo is None or value>utc_now()+timedelta(seconds=5):
+            raise ValueError('News timestamp must be timezone-aware and cannot be in the future.')
+        return value
 
 
 def _settings() -> Settings:
@@ -70,6 +109,7 @@ def create_app() -> FastAPI:
         base_url=settings.revolut_x_base_url,
         region=settings.revolut_x_region,
         timeout=float(settings.market_data_timeout_seconds),
+        rate_reserver=repository.reserve_public_request,
     )
     market_data = MarketDataService(market_client, max_staleness_seconds=settings.market_data_max_staleness_seconds)
     gateway = PaperExecutionGateway(
@@ -118,6 +158,14 @@ def create_app() -> FastAPI:
 
     @app.get("/metrics", dependencies=[Depends(require_user)])
     async def metrics() -> Response:
+        snapshot=await repository.snapshot()
+        if snapshot['equity']:
+            equity_metric.set(float(snapshot['equity']))
+        else:
+            equity_metric.set(float('nan'))
+        cash_metric.set(float(snapshot['available_cash']))
+        risk_metric.set(snapshot['risk_state']!='HEALTHY')
+        reconciliation_metric.set(len(await repository.verify_invariants(Decimal(500))))
         return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
     @app.get("/api/overview", dependencies=[Depends(require_user)])
@@ -156,6 +204,83 @@ def create_app() -> FastAPI:
     async def history() -> dict[str, object]:
         return await repository.history()
 
+    @app.get('/api/reconciliation/repair-plan',dependencies=[Depends(require_user)])
+    async def correction_plan()->dict[str,Any]:
+        from autotrader.persistence.corrections import review_projection_repair
+        try:
+            return await review_projection_repair(repository)
+        except ValueError as exc:
+            raise HTTPException(status_code=409,detail=str(exc)) from None
+
+    @app.post('/api/reconciliation/repair')
+    async def correction_apply(request:CorrectionRequest,actor:str=Depends(require_user))->dict[str,str]:
+        from autotrader.persistence.corrections import apply_projection_repair
+        try:
+            return await apply_projection_repair(repository,request_id=request.request_id,
+                fingerprint=request.fingerprint,actor=actor,reason=request.reason)
+        except ValueError as exc:
+            raise HTTPException(status_code=409,detail=str(exc)) from None
+
+    @app.get("/api/ai", dependencies=[Depends(require_user)])
+    async def ai_status() -> dict[str, object]:
+        return {"provider":settings.ai_provider.value,"model":settings.ai_model if settings.ai_provider.value=="openai" else "mock-v1" if settings.ai_provider.value=="mock" else "",
+            "budget":await repository.ai_budget_status(settings.ai_monthly_budget_usd),
+            "account_model_verified":False if settings.ai_provider.value!="openai" else "verified_per_request"}
+
+    @app.post('/api/news',dependencies=[Depends(require_user)])
+    async def ingest_news(request:NewsRequest)->dict[str,str]:
+        try:
+            await repository.record_news(request.event_id,request.symbol,request.timestamp,request.title,
+                request.body,str(request.url),request.source)
+        except ValueError as exc:
+            raise HTTPException(status_code=409,detail=str(exc)) from None
+        return {'event_id':request.event_id,'status':'UNVERIFIED_EXTERNAL_CONTEXT'}
+
+    @app.get("/api/settings", dependencies=[Depends(require_user)])
+    async def safe_settings() -> dict[str,object]:
+        from dataclasses import asdict
+        return {"mode":"paper","initial_cash_eur":"500","base_currency":"EUR",
+            "risk_limits":_jsonable(asdict(risk.limits)),"ai_provider":settings.ai_provider.value,
+            "ai_model":settings.ai_model,"scanner_max_pairs":settings.scanner_max_pairs,
+            "scan_interval_seconds":settings.worker_scan_interval_seconds,"live_execution":False}
+
+    @app.get("/api/backtests", dependencies=[Depends(require_user)])
+    async def backtest_runs() -> dict[str,object]:
+        async with repository.session_factory() as session:
+            rows=(await session.scalars(select(BacktestRunModel).order_by(BacktestRunModel.started_at.desc()).limit(20))).all()
+            return {"runs":[{"run_id":r.run_id,"symbol":r.symbol,"started_at":r.started_at.isoformat(),
+                "completed_at":r.completed_at.isoformat() if r.completed_at else None,"payload_json":json.loads(r.payload_json)} for r in rows]}
+
+    @app.post("/api/backtests", dependencies=[Depends(require_user)])
+    async def run_historical_backtest(request:BacktestRequest) -> dict[str,object]:
+        from dataclasses import asdict
+
+        from autotrader.backtest import Backtester
+        from autotrader.domain import TradingPair
+        from autotrader.portfolio import Portfolio
+        async with repository.session_factory() as session:
+            rows=(await session.scalars(select(MarketCandle).where(MarketCandle.symbol==request.symbol,
+                MarketCandle.timeframe=="5m").order_by(MarketCandle.timestamp.desc()).limit(request.max_bars))).all()
+            if len(rows)<51:
+                raise HTTPException(status_code=409,detail="At least 51 persisted closed candles are required.")
+            candles=[Candle(r.symbol,r.timestamp.replace(tzinfo=__import__('datetime').UTC) if r.timestamp.tzinfo is None else r.timestamp,
+                r.open,r.high,r.low,r.close,r.volume,r.timeframe,r.source) for r in reversed(rows)]
+        run_id=new_id("bt")
+        async with repository.session_factory() as session,session.begin():
+            session.add(BacktestRunModel(run_id=run_id,strategy_id="ensemble-v3.4",symbol=request.symbol,
+                started_at=utc_now(),payload_json='{"status":"RUNNING"}'))
+        try:
+            report=await Backtester(TradingPair(request.symbol,request.symbol.split('-')[0],'EUR'),
+                Portfolio(Decimal(500)),DecisionEngine(RiskEngine(RiskLimits())),entry_order_type=request.entry_order_type).run_async(candles)
+            result={"status":"COMPLETED","report":asdict(report)}
+        except Exception as exc:
+            result={"status":"FAILED","error":type(exc).__name__}
+        async with repository.session_factory() as session,session.begin():
+            row=await session.get(BacktestRunModel,run_id)
+            assert row is not None
+            row.completed_at,row.payload_json=utc_now(),_json(result)
+        return {"run_id":run_id,**_jsonable(result)}
+
     @app.get("/api/system", dependencies=[Depends(require_user)])
     async def system_health() -> dict[str, object]:
         health = await repository.operational_health()
@@ -169,8 +294,7 @@ def create_app() -> FastAPI:
 
     @app.get("/api/scanner", dependencies=[Depends(require_user)])
     async def scanner() -> dict[str, object]:
-        result = await app.state.scanner.scan_once(settings.scanner_max_pairs)
-        return _scan_response(result)
+        return await repository.read_scan()
 
     @app.post("/api/paper/orders", dependencies=[Depends(require_user)])
     async def create_paper_order() -> Any:

@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="66" time="259.116" timestamp="2026-10-15T11:40:04.140690+02:00" hostname="DESKTOP-O7BK3NI"><testcase classname="tests.test_api" name="test_api_scanner_serializes_domain_objects" time="1.922" /><testcase classname="tests.test_api" name="test_api_paper_order_rejects_when_no_real_candidate" time="0.510" /><testcase classname="tests.test_backtest" name="test_backtest_produces_reproducible_report_without_fabricating_profit" time="41.612" /><testcase classname="tests.test_config" name="test_live_trading_cannot_be_enabled" time="0.006" /><testcase classname="tests.test_decision_ai" name="test_ai_never_overrides_risk_limits" time="0.045"><failure message="AssertionError: assert 'position_size' in 'Entry conditions not met.'&#10; +  where 'Entry conditions not met.' = TradingDecision(decision_id='dec_d8a263111eec468b8ffe07ae52ab6c49', symbol='BTC-EUR', timestamp=datetime.datetime(2026...ason='Entry conditions not met.', explanation='aggregate_signal_score=2.8316; strategy_regime_or_failed_breakout_veto').rejected_reason">@pytest.mark.asyncio
+    async def test_ai_never_overrides_risk_limits() -&gt; None:
+        pair = TradingPair("BTC-EUR", "BTC", "EUR")
+        start = utc_now()
+        candles = []
+        for index in range(240):
+            close = Decimal("100") + Decimal(index)
+            candles.append(Candle(pair.symbol, start + timedelta(minutes=index), close - 1, close + 2, close - 2, close, Decimal("100") + index))
+        features = calculate_features(candles)
+        features.metadata["last_price"] = Decimal("340")
+        signals = BreakoutStrategyEngine().generate(features)
+        signals.append(
+            StrategySignal(
+                signal_id=new_id("sig"),
+                strategy_id="TEST_FORCE_ENTRY",
+                symbol=pair.symbol,
+                timestamp=utc_now(),
+                score=Decimal("2"),
+                data_quality=DataQuality.GOOD,
+                evidence={"test": "force risk path"},
+                entry_conditions=["test"],
+                invalidation_conditions=["test"],
+                estimated_cost_bps=Decimal("10"),
+                explanation="Synthetic strong signal for risk gating.",
+            )
+        )
+        ai = await MockAIProvider().assess(features, signals)
+        engine = DecisionEngine(RiskEngine(RiskLimits(max_position_size=Decimal("10"))), default_quote_amount=Decimal("75"))
+        decision = engine.decide(pair, features, signals, Portfolio(Decimal("500")), ai)
+        assert decision.action is DecisionAction.WAIT
+        assert not decision.accepted
+        assert decision.rejected_reason is not None
+&gt;       assert "position_size" in decision.rejected_reason
+E       AssertionError: assert 'position_size' in 'Entry conditions not met.'
+E        +  where 'Entry conditions not met.' = TradingDecision(decision_id='dec_d8a263111eec468b8ffe07ae52ab6c49', symbol='BTC-EUR', timestamp=datetime.datetime(2026...ason='Entry conditions not met.', explanation='aggregate_signal_score=2.8316; strategy_regime_or_failed_breakout_veto').rejected_reason
+
+tests\test_decision_ai.py:60: AssertionError</failure></testcase><testcase classname="tests.test_decision_ai" name="test_openai_budget_survives_provider_restart" time="2.381" /><testcase classname="tests.test_indicators" name="test_features_are_ordered_and_complete_for_sufficient_history" time="0.060" /><testcase classname="tests.test_indicators" name="test_insufficient_history_is_explicit" time="0.001" /><testcase classname="tests.test_position_manager_v3_2" name="test_position_manager_monitors_open_position_absent_from_scanner_shortlist" time="3.048" /><testcase classname="tests.test_position_manager_v3_2" name="test_position_manager_does_not_advance_target_without_fill" time="1.718" /><testcase classname="tests.test_revolut_client" name="test_v2_public_order_book_parses_documented_shape" time="0.407" /><testcase classname="tests.test_revolut_client" name="test_v2_public_order_book_rejects_unusable_books[data0]" time="0.513" /><testcase classname="tests.test_revolut_client" name="test_v2_public_order_book_rejects_unusable_books[data1]" time="0.436" /><testcase classname="tests.test_revolut_client" name="test_v2_public_order_book_rejects_unusable_books[data2]" time="0.411" /><testcase classname="tests.test_revolut_client" name="test_v2_public_order_book_rejects_unusable_books[data3]" time="0.414" /><testcase classname="tests.test_revolut_client" name="test_historical_candles_use_start_epoch_milliseconds" time="0.414" /><testcase classname="tests.test_revolut_client" name="test_candles_reject_missing_interval_and_forming_records" time="0.423" /><testcase classname="tests.test_revolut_client" name="test_public_pair_configuration_uses_documented_fields_and_skips_disabled" time="0.414" /><testcase classname="tests.test_revolut_client" name="test_retry_after_header_is_documented_as_milliseconds" time="0.001" /><testcase classname="tests.test_risk_and_paper" name="test_risk_preserves_minimum_cash_reserve" time="0.001" /><testcase classname="tests.test_risk_and_paper" name="test_risk_rejects_stop_loss_at_or_above_long_entry" time="0.001" /><testcase classname="tests.test_risk_and_paper" name="test_risk_rejects_planned_loss_after_execution_cost_allowance" time="0.001" /><testcase classname="tests.test_risk_and_paper" name="test_paper_buy_cannot_make_cash_negative" time="1.881" /><testcase classname="tests.test_risk_and_paper" name="test_partial_fill_status_and_no_live_flag" time="1.732" /><testcase classname="tests.test_risk_and_paper" name="test_duplicate_fill_event_is_idempotent" time="1.693" /><testcase classname="tests.test_v2_persistent_runtime" name="test_v2_persistent_buy_restart_sell_and_reconcile" time="3.112" /><testcase classname="tests.test_v2_persistent_runtime" name="test_v2_duplicate_order_submission_is_idempotent" time="2.149" /><testcase classname="tests.test_v2_persistent_runtime" name="test_reconciliation_failure_persists_halt_and_blocks_restart_entries" time="3.139" /><testcase classname="tests.test_v2_persistent_runtime" name="test_realized_pnl_since_uses_closing_fill_timestamp_not_open_date" time="2.068" /><testcase classname="tests.test_v34_acceptance" name="test_proof_a_targets_survive_actual_worker_restart_and_stop" time="11.168" /><testcase classname="tests.test_v34_acceptance" name="test_proof_b_unrealized_equity_halt_survives_process_restart" time="6.477" /><testcase classname="tests.test_v34_acceptance" name="test_proof_d_concurrent_buys_idempotency_and_sell_race" time="2.618" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[before_capital_reservation]" time="8.224" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[after_reservation_persistence]" time="7.909" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[before_order_dispatch]" time="7.901" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[after_order_dispatch]" time="8.116" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[before_fill_persistence]" time="7.954" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[after_fill_persistence]" time="7.963" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[before_ledger_posting]" time="7.907" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[after_ledger_commit]" time="5.169" /><testcase classname="tests.test_v34_acceptance" name="test_journal_and_fills_are_immutable_in_database" time="2.222" /><testcase classname="tests.test_v34_acceptance" name="test_proof_c_full_autonomous_lifecycle_and_authenticated_api" time="12.386" /><testcase classname="tests.test_v34_ai_budget" name="test_concurrent_budget_reservations_and_idempotent_settlement" time="2.181" /><testcase classname="tests.test_v34_ai_budget" name="test_openai_boundary_validation_usage_and_unknown_outcomes[valid]" time="3.201" /><testcase classname="tests.test_v34_ai_budget" name="test_openai_boundary_validation_usage_and_unknown_outcomes[invalid]" time="1.988" /><testcase classname="tests.test_v34_ai_budget" name="test_openai_boundary_validation_usage_and_unknown_outcomes[timeout]" time="2.019" /><testcase classname="tests.test_v34_ai_budget" name="test_off_mode_requires_no_key_or_network" time="0.003" /><testcase classname="tests.test_v34_migrations" name="test_populated_v33_history_is_preserved_and_quarantined" time="4.548" /><testcase classname="tests.test_v34_migrations" name="test_failed_postgres_migration_rolls_back_and_retries" time="6.241" /><testcase classname="tests.test_v34_risk_accounting" name="test_fees_cost_basis_realized_pnl_and_duplicate_fill" time="2.620" /><testcase classname="tests.test_v34_risk_accounting" name="test_weekly_unrealized_loss_after_day_rollover" time="3.158" /><testcase classname="tests.test_v34_risk_accounting" name="test_missing_or_stale_mark_blocks_entries" time="2.566" /><testcase classname="tests.test_v34_risk_accounting" name="test_time_exit_and_cooldown_use_shared_clock" time="2.626" /><testcase classname="tests.test_v34_risk_accounting" name="test_real_postgres_deadlock_is_retried" time="3.319" /><testcase classname="tests.test_v34_risk_accounting" name="test_exit_process_crash_rolls_back_target_and_ledger[during_target_completion-11.01]" time="8.913" /><testcase classname="tests.test_v34_risk_accounting" name="test_exit_process_crash_rolls_back_target_and_ledger[during_protective_stop_processing-9.7]" time="7.856" /><testcase classname="tests.test_v34_risk_accounting" name="test_exit_process_crash_rolls_back_target_and_ledger[after_reservation_persistence-11.01]" time="8.011" /><testcase classname="tests.test_v34_risk_accounting" name="test_exit_process_crash_rolls_back_target_and_ledger[after_ledger_commit-11.01]" time="5.144" /><testcase classname="tests.test_v34_risk_accounting" name="test_lost_database_connection_after_commit_does_not_duplicate_economics" time="2.217"><failure message="sqlalchemy.exc.DBAPIError: (sqlalchemy.dialects.postgresql.asyncpg.Error) connection was closed in the middle of operation: terminating connection due to administrator command&#10;[SQL: SELECT pg_terminate_backend($1)]&#10;[parameters: (898,)]&#10;(Background on this error at: https://sqlalche.me/e/21/dbapi)">asyncpg.exceptions.AdminShutdownError: terminating connection due to administrator command
+
+The above exception was the direct cause of the following exception:
+
+self = &lt;sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_cursor object at 0x00000229E7C6EC70&gt;
+operation = 'SELECT pg_terminate_backend($1)', parameters = (898,)
+
+    async def _prepare_and_execute(self, operation, parameters):
+        adapt_connection = self._adapt_connection
+    
+        async with adapt_connection._execute_mutex:
+            if adapt_connection._transaction is None:
+                await adapt_connection._start_transaction()
+    
+            if parameters is None:
+                parameters = ()
+    
+            try:
+                prepared_stmt, attributes = await adapt_connection._prepare(
+                    operation, self._invalidate_schema_cache_asof
+                )
+    
+                if attributes:
+                    self._description = [
+                        (
+                            attr.name,
+                            attr.type.oid,
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                        )
+                        for attr in attributes
+                    ]
+                else:
+                    self._description = None
+    
+                if self.server_side:
+                    self._cursor = await prepared_stmt.cursor(*parameters)
+                    self._rowcount = -1
+                else:
+&gt;                   self._rows = deque(await prepared_stmt.fetch(*parameters))
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\asyncpg.py:605: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\asyncpg\prepared_stmt.py:177: in fetch
+    data = await self.__bind_execute(args, 0, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\asyncpg\prepared_stmt.py:268: in __bind_execute
+    data, status, _ = await self.__do_execute(
+.venv\Lib\site-packages\asyncpg\prepared_stmt.py:257: in __do_execute
+    return await executor(protocol)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+&gt;   ???
+E   asyncpg.exceptions.ConnectionDoesNotExistError: connection was closed in the middle of operation: terminating connection due to administrator command
+
+asyncpg/protocol/protocol.pyx:197: ConnectionDoesNotExistError
+
+The above exception was the direct cause of the following exception:
+
+self = &lt;sqlalchemy.engine.base.Connection object at 0x00000229E9250EC0&gt;
+dialect = &lt;sqlalchemy.dialects.postgresql.asyncpg.PGDialect_asyncpg object at 0x00000229E9054FB0&gt;
+context = &lt;sqlalchemy.dialects.postgresql.asyncpg.PGExecutionContext_asyncpg object at 0x00000229E9253A40&gt;
+statement = &lt;sqlalchemy.dialects.postgresql.asyncpg.PGCompiler_asyncpg object at 0x00000229E9253B00&gt;
+parameters = [(898,)]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Unpack[TupleAny]]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        evt_handled: bool = False
+        try:
+            if self._has_events or self.engine._has_events:
+                for fn in self.dispatch.before_cursor_execute:
+                    str_statement, effective_parameters = fn(
+                        self,
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                        context.executemany,
+                    )
+    
+            if self._echo:
+                self._log_info(str_statement)
+    
+                stats = context._get_cache_stats()
+    
+                if not self.engine.hide_parameters:
+                    self._log_info(
+                        "[%s] %r",
+                        stats,
+                        sql_util._repr_params(
+                            effective_parameters,
+                            batches=10,
+                            ismulti=context.executemany,
+                        ),
+                    )
+                else:
+                    self._log_info(
+                        "[%s] [SQL parameters hidden due to "
+                        "hide_parameters=True]",
+                        stats,
+                    )
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1946: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:1192: in do_execute
+    cursor.execute(statement, parameters)
+.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\asyncpg.py:656: in execute
+    await_(self._prepare_and_execute(operation, parameters))
+.venv\Lib\site-packages\sqlalchemy\util\concurrency.py:167: in await_
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\concurrency.py:205: in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\asyncpg.py:618: in _prepare_and_execute
+    self._handle_exception(error)
+.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\asyncpg.py:568: in _handle_exception
+    self._adapt_connection._handle_exception(error)
+.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\asyncpg.py:847: in _handle_exception
+    super()._handle_exception(error)
+.venv\Lib\site-packages\sqlalchemy\connectors\asyncio.py:412: in _handle_exception
+    self._handle_exception_no_connection(self.dbapi, error)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+cls = &lt;class 'sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_connection'&gt;
+dbapi = &lt;sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi object at 0x00000229E9056E70&gt;
+error = ConnectionDoesNotExistError('connection was closed in the middle of operation: terminating connection due to administrator command')
+
+    @classmethod
+    def _handle_exception_no_connection(
+        cls, dbapi: Any, error: Exception
+    ) -&gt; NoReturn:
+        if not isinstance(error, AsyncAdapt_asyncpg_dbapi.Error):
+            exception_mapping = dbapi._asyncpg_error_translate
+    
+            for super_ in type(error).__mro__:
+                if super_ in exception_mapping:
+                    message = error.args[0]
+                    translated_error = exception_mapping[super_](
+                        message, error
+                    )
+&gt;                   raise translated_error from error
+E                   sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.Error: connection was closed in the middle of operation: terminating connection due to administrator command
+
+.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\asyncpg.py:840: Error
+
+The above exception was the direct cause of the following exception:
+
+pg_repo = &lt;autotrader.persistence.repository.PersistentTradingRepository object at 0x00000229E8ED80B0&gt;
+
+    async def test_lost_database_connection_after_commit_does_not_duplicate_economics(pg_repo:PersistentTradingRepository)-&gt;None:
+        repo=pg_repo
+        await repo.initialize_portfolio(D(500))
+        first=await buy(repo,'committed-key')
+        assert first.accepted
+        async with repo.session_factory() as lost:
+            pid=await lost.scalar(text('SELECT pg_backend_pid()'))
+            await lost.commit()
+            async with repo.session_factory() as killer:
+&gt;               await killer.execute(text('SELECT pg_terminate_backend(:pid)'),{'pid':pid})
+
+tests\test_v34_risk_accounting.py:166: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\sqlalchemy\ext\asyncio\session.py:651: in execute
+    result = await greenlet_spawn(
+.venv\Lib\site-packages\sqlalchemy\util\concurrency.py:212: in greenlet_spawn
+    result = context.switch(value)
+             ^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\orm\session.py:2473: in execute
+    return self._execute_internal(
+.venv\Lib\site-packages\sqlalchemy\orm\session.py:2373: in _execute_internal
+    result = conn.execute(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1451: in execute
+    return meth(
+.venv\Lib\site-packages\sqlalchemy\sql\elements.py:533: in _execute_on_connection
+    return connection._execute_clauseelement(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1671: in _execute_clauseelement
+    ret = self._execute_context(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1825: in _execute_context
+    return self._exec_single_context(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1965: in _exec_single_context
+    self._handle_dbapi_exception(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:2335: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1946: in _exec_single_context
+    self.dialect.do_execute(
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:1192: in do_execute
+    cursor.execute(statement, parameters)
+.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\asyncpg.py:656: in execute
+    await_(self._prepare_and_execute(operation, parameters))
+.venv\Lib\site-packages\sqlalchemy\util\concurrency.py:167: in await_
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\util\concurrency.py:205: in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\asyncpg.py:618: in _prepare_and_execute
+    self._handle_exception(error)
+.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\asyncpg.py:568: in _handle_exception
+    self._adapt_connection._handle_exception(error)
+.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\asyncpg.py:847: in _handle_exception
+    super()._handle_exception(error)
+.venv\Lib\site-packages\sqlalchemy\connectors\asyncio.py:412: in _handle_exception
+    self._handle_exception_no_connection(self.dbapi, error)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+cls = &lt;class 'sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_connection'&gt;
+dbapi = &lt;sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi object at 0x00000229E9056E70&gt;
+error = ConnectionDoesNotExistError('connection was closed in the middle of operation: terminating connection due to administrator command')
+
+    @classmethod
+    def _handle_exception_no_connection(
+        cls, dbapi: Any, error: Exception
+    ) -&gt; NoReturn:
+        if not isinstance(error, AsyncAdapt_asyncpg_dbapi.Error):
+            exception_mapping = dbapi._asyncpg_error_translate
+    
+            for super_ in type(error).__mro__:
+                if super_ in exception_mapping:
+                    message = error.args[0]
+                    translated_error = exception_mapping[super_](
+                        message, error
+                    )
+&gt;                   raise translated_error from error
+E                   sqlalchemy.exc.DBAPIError: (sqlalchemy.dialects.postgresql.asyncpg.Error) connection was closed in the middle of operation: terminating connection due to administrator command
+E                   [SQL: SELECT pg_terminate_backend($1)]
+E                   [parameters: (898,)]
+E                   (Background on this error at: https://sqlalche.me/e/21/dbapi)
+
+.venv\Lib\site-packages\sqlalchemy\dialects\postgresql\asyncpg.py:840: DBAPIError</failure></testcase><testcase classname="tests.test_v34_risk_accounting" name="test_trailing_stop_never_moves_down_and_cooldown_survives_repository_reopen" time="2.489" /><testcase classname="tests.test_v34_risk_accounting" name="test_worker_crash_during_cancellation_recovers_reservation" time="10.928" /><testcase classname="tests.test_v3_3_postgres_failure_hunt" name="test_postgres_target_lifecycle_repository_reopen_and_symbol_reuse" time="2.618" /><testcase classname="tests.test_v3_3_postgres_failure_hunt" name="test_postgres_parallel_buy_reservations_cannot_make_negative_cash" time="2.938" /><testcase classname="tests.test_v3_3_postgres_failure_hunt" name="test_postgres_stop_and_target_race_cannot_oversell" time="2.255" /><testcase classname="tests.test_v3_3_postgres_failure_hunt" name="test_postgres_unfilled_buy_releases_pending_reservation" time="2.033" /><testcase classname="tests.test_worker_allocation" name="test_worker_allocates_across_ranked_candidates_until_cycle_capacity" time="0.003" /></testsuite></testsuites>

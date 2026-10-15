@@ -388,3 +388,8 @@ class AIUsageModel(Base, AuditMixin):
     input_tokens: Mapped[int] = mapped_column(default=0)
     output_tokens: Mapped[int] = mapped_column(default=0)
     error: Mapped[str | None] = mapped_column(Text)
+    provider: Mapped[str] = mapped_column(String(32), default="openai")
+    candidate_symbol: Mapped[str] = mapped_column(String(32))
+    cached_input_tokens: Mapped[int] = mapped_column(default=0)
+    cache_write_tokens: Mapped[int] = mapped_column(default=0)
+    pricing_json: Mapped[str] = mapped_column(Text)

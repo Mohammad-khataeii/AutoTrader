@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime
 from decimal import ROUND_DOWN, Decimal
 from enum import StrEnum
 from typing import Any
@@ -9,7 +9,8 @@ from uuid import uuid4
 
 
 def utc_now() -> datetime:
-    return datetime.now(tz=UTC)
+    from autotrader.clock import now
+    return now()
 
 
 def new_id(prefix: str) -> str:
@@ -207,6 +208,7 @@ class AIAssessment:
     tokens_used: int = 0
     estimated_cost_usd: Decimal = Decimal("0")
     failed: bool = False
+    potential_catalyst_interpretation: str = ""
 
 
 @dataclass(frozen=True)

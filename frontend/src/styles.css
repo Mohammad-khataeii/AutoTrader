@@ -181,3 +181,14 @@ pre {
   }
 }
 
+:root { color-scheme: light; }
+input { margin: 0.5rem; padding: 0.5rem; border: 1px solid #bbb; border-radius: 4px; }
+label { display: block; }
+.controls { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.controls button, form button, .panel button { padding: 0.6rem; cursor: pointer; }
+.workspace button { background: #24413b; color: #fff; }
+.workspace button:disabled { opacity: 0.6; cursor: wait; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+td, th { padding: 0.65rem; text-align: left; border-bottom: 1px solid #ddd; max-width: 30rem; overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; }

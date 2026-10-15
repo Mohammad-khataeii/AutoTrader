@@ -99,7 +99,7 @@ def test_paper_buy_cannot_make_cash_negative() -> None:
 def test_partial_fill_status_and_no_live_flag() -> None:
     portfolio = Portfolio(Decimal("500"))
     broker = PaperBroker(portfolio, fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
-    order = broker.submit_order(PAIR, Side.BUY, OrderType.MARKET, Decimal("0.01"), Decimal("500"), book(ask_qty=Decimal("0.001")))
+    order = broker.submit_order(PAIR, Side.BUY, OrderType.MARKET, Decimal("0.0015"), Decimal("100"), book(ask_qty=Decimal("0.001")))
     assert order.status is OrderStatus.PARTIALLY_FILLED
     assert order.simulated is True
     assert next(iter(broker.fills.values())).simulated is True

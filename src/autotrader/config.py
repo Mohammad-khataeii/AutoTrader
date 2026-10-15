@@ -8,12 +8,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class AIProvider(StrEnum):
+    OFF = "off"
     MOCK = "mock"
     OPENAI = "openai"
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", env_prefix="", extra="ignore",env_ignore_empty=True)
 
     app_name: str = "Revolut X AutoTrader"
     environment: str = "local"
@@ -29,6 +30,7 @@ class Settings(BaseSettings):
     market_data_max_staleness_seconds: int = 90
     scanner_max_pairs: int = 8
     worker_scan_interval_seconds: int = 60
+    worker_position_interval_seconds: int = Field(default=5,ge=1,le=60)
     worker_max_entries_per_cycle: int = 3
     market_data_replay_file: str | None = None
 
@@ -48,10 +50,16 @@ class Settings(BaseSettings):
     default_slippage_bps: Decimal = Decimal("8")
 
     ai_provider: AIProvider = AIProvider.MOCK
-    ai_model: str = "configured-model-id"
+    ai_model: str = ""
     openai_api_key: SecretStr | None = None
     ai_monthly_budget_usd: Decimal = Decimal("10")
     ai_timeout_seconds: Decimal = Decimal("12")
+    ai_input_price_per_million: Decimal | None = None
+    ai_cached_input_price_per_million: Decimal | None = None
+    ai_cache_write_price_per_million: Decimal | None = None
+    ai_output_price_per_million: Decimal | None = None
+    ai_max_output_tokens: int = Field(default=2048, ge=1, le=8192)
+    ai_max_prompt_bytes: int = Field(default=16000, ge=1024, le=64000)
 
     telegram_bot_token: SecretStr | None = None
     telegram_chat_id: str | None = None
@@ -68,6 +76,14 @@ class Settings(BaseSettings):
         weak_values = {"", "change-me", "REPLACE_WITH_STRONG_PASSWORD"}
         if self.environment.lower() not in {"local", "test"} and self.dashboard_password.get_secret_value() in weak_values:
             raise ValueError("A strong DASHBOARD_PASSWORD is required outside local/test environments.")
+        if self.environment.lower() not in {"local","test"}:
+            password=self.dashboard_password.get_secret_value()
+            if len(password)<20 or "REPLACE" in password.upper():
+                raise ValueError("DASHBOARD_PASSWORD must be a generated secret of at least 20 characters.")
+            if not self.database_url.startswith("postgresql+asyncpg://"):
+                raise ValueError("Production operation requires PostgreSQL.")
+        if not self.paper_trading_enabled:
+            raise ValueError("Only paper trading is supported.")
         if self.market_data_replay_file and self.environment != "test":
             raise ValueError("File replay is restricted to ENVIRONMENT=test.")
         return self

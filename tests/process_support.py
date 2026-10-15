@@ -18,7 +18,7 @@ from autotrader.domain import utc_now
 def replay_frame(frame_id: str, price: Decimal, bid_quantity: str = "1000", *, qualifying: bool = False) -> dict[str, Any]:
     # Every observation is closed and timestamped. No internal trading component is mocked.
     now = utc_now()
-    end = now.replace(second=0, microsecond=0) - timedelta(minutes=5)
+    end = now.replace(second=0, microsecond=0) - timedelta(minutes=now.minute%5+5)
     candles = []
     for i in range(240):
         close = Decimal("9.8") + Decimal(i) / Decimal("2000") if qualifying else price
@@ -51,13 +51,77 @@ class WorkerProcess:
         self.process = subprocess.Popen([sys.executable, "-m", "autotrader.worker.runner"], env=env,
             stdout=self.log, stderr=subprocess.STDOUT, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
 
+    @property
+    def actual_pid(self)->int|None:
+        if not self.log_path.exists():
+            return None
+        for line in self.log_path.read_text(encoding='utf-8').splitlines():
+            import re
+            server=re.search(r'Started server process \[(\d+)\]',line)
+            if server:
+                return int(server.group(1))
+            try:
+                row=json.loads(line)
+                if row.get('message')=='worker_process_identity':
+                    return int(row['process_id'])
+            except (ValueError,TypeError):
+                continue
+        return None
+
+    async def wait_started(self,repo:Any)->int:
+        from autotrader.persistence.models import SystemStateModel
+        async def started()->int|None:
+            async with repo.session_factory() as session:
+                row=await session.get(SystemStateModel,'worker_instance')
+                if row:
+                    data=json.loads(row.payload_json)
+                    if data['process_id']==self.actual_pid:
+                        return int(data['process_id'])
+            return None
+        return int(await wait_for(started,worker=self))
+
     def kill(self) -> int:
+        actual=self.actual_pid
         if self.process.poll() is None:
-            self.process.kill()
+            if os.name=='nt':
+                # Windows venv launchers spawn a different actual interpreter.
+                # Terminate only this owned process tree, never just the launcher.
+                result=subprocess.run(['taskkill','/PID',str(self.process.pid),'/T','/F'],
+                    capture_output=True,text=True,check=False)
+                assert result.returncode==0 or self.process.poll() is not None,result.stderr
+            else:
+                self.process.kill()
         self.process.wait(timeout=15)
         self.log.close()
         assert self.process.poll() is not None
-        return self.process.pid
+        if actual is not None:
+            assert not pid_alive(actual),f'Actual worker {actual} survived process termination'
+        return actual or self.process.pid
+
+
+def pid_alive(pid:int)->bool:
+    if os.name=='nt':
+        import ctypes
+        from ctypes import wintypes
+        kernel=ctypes.WinDLL('kernel32',use_last_error=True)
+        kernel.OpenProcess.restype=wintypes.HANDLE
+        kernel.OpenProcess.argtypes=[wintypes.DWORD,wintypes.BOOL,wintypes.DWORD]
+        handle=kernel.OpenProcess(0x1000,False,pid)
+        if not handle:
+            return False
+        code=wintypes.DWORD()
+        kernel.GetExitCodeProcess.argtypes=[wintypes.HANDLE,ctypes.POINTER(wintypes.DWORD)]
+        queried=kernel.GetExitCodeProcess(handle,ctypes.byref(code))
+        kernel.CloseHandle.argtypes=[wintypes.HANDLE]
+        kernel.CloseHandle(handle)
+        if not queried:
+            raise OSError('Could not verify termination of the actual worker process')
+        return code.value==259
+    try:
+        os.kill(pid,0)
+        return True
+    except ProcessLookupError:
+        return False
 
 
 class ApiProcess(WorkerProcess):

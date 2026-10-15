@@ -7,6 +7,8 @@ __pycache__/
 .mypy_cache/
 .hypothesis/
 .env
+.env-*
+.secrets/
 *.db
 frontend/dist/
 test-results/

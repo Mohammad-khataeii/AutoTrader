@@ -111,8 +111,8 @@ async def test_postgres_target_lifecycle_repository_reopen_and_symbol_reuse(pg_r
 
     from autotrader.persistence.models import CooldownModel
     async with repo.session_factory() as session, session.begin():
-        cooldown = await session.get(CooldownModel, PAIR.symbol)
-        cooldown.expires_at = utc_now() - timedelta(seconds=1)
+        for cooldown in (await session.scalars(select(CooldownModel))).all():
+            cooldown.expires_at = utc_now() - timedelta(seconds=1)
     restarted = PersistentTradingRepository(repo.session_factory)
     buy_2 = await restarted.submit_order(PAIR, Side.BUY, OrderType.MARKET, Decimal("1"), Decimal("80"), book(Decimal("80")), "buy-2", fee_bps=Decimal("0"), slippage_bps=Decimal("0"), stop_loss=Decimal("78"))
     assert buy_2.status is OrderStatus.FILLED

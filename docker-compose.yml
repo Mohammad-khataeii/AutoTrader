@@ -1,104 +1,142 @@
+x-runtime: &runtime
+  build:
+    context: .
+    dockerfile: Dockerfile.backend
+  environment: &environment
+    ENVIRONMENT: ${ENVIRONMENT:-production}
+    DASHBOARD_USERNAME: ${DASHBOARD_USERNAME:-admin}
+    DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD:?DASHBOARD_PASSWORD must be set}
+    DATABASE_URL: postgresql+asyncpg://autotrader:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}@postgres:5432/autotrader
+    REDIS_URL: redis://redis:6379/0
+    AI_PROVIDER: ${AI_PROVIDER:-mock}
+    AI_MODEL: ${AI_MODEL:-}
+    OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    AI_INPUT_PRICE_PER_MILLION: ${AI_INPUT_PRICE_PER_MILLION:-}
+    AI_CACHED_INPUT_PRICE_PER_MILLION: ${AI_CACHED_INPUT_PRICE_PER_MILLION:-}
+    AI_CACHE_WRITE_PRICE_PER_MILLION: ${AI_CACHE_WRITE_PRICE_PER_MILLION:-}
+    AI_OUTPUT_PRICE_PER_MILLION: ${AI_OUTPUT_PRICE_PER_MILLION:-}
+  restart: unless-stopped
+  networks: [app, data]
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+  read_only: true
+  tmpfs: [/tmp]
+  cpus: 1.0
+  mem_limit: 512m
+  logging:
+    driver: json-file
+    options: {max-size: 10m, max-file: "3"}
+
 services:
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
-    env_file:
-      - path: .env
-        required: false
-    environment:
-      ENVIRONMENT: ${ENVIRONMENT:-production}
-      DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD:?DASHBOARD_PASSWORD must be set}
-      DATABASE_URL: postgresql+asyncpg://autotrader:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}@postgres:5432/autotrader
-      REDIS_URL: redis://redis:6379/0
+  migrate:
+    <<: *runtime
+    command: [python, -m, alembic, upgrade, head]
+    restart: "no"
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    ports:
-      - "127.0.0.1:8000:8000"
-    restart: unless-stopped
+      postgres: {condition: service_healthy}
+  backend:
+    <<: *runtime
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    ports: ["127.0.0.1:${API_PORT:-8000}:8000"]
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz')"]
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+  worker:
+    <<: *runtime
+    command: [autotrader-worker]
+    environment:
+      <<: *environment
+      WORKER_SCAN_INTERVAL_SECONDS: ${WORKER_SCAN_INTERVAL_SECONDS:-60}
+      SCANNER_MAX_PAIRS: ${SCANNER_MAX_PAIRS:-8}
+    depends_on:
+      backend: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -m, autotrader.worker.health]
       interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    stop_grace_period: 30s
+  frontend:
+    build: {context: ./frontend}
+    depends_on:
+      backend: {condition: service_healthy}
+    ports: ["127.0.0.1:${FRONTEND_PORT:-3000}:80"]
+    restart: unless-stopped
+    networks: [app]
+    security_opt: [no-new-privileges:true]
+    cpus: 0.5
+    mem_limit: 128m
+    healthcheck:
+      test: [CMD, wget, -q, --spider, "http://127.0.0.1/healthz"]
+      interval: 15s
       timeout: 5s
       retries: 3
-
-  worker:
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
-    command: ["autotrader-worker"]
-    env_file:
-      - path: .env
-        required: false
-    environment:
-      ENVIRONMENT: ${ENVIRONMENT:-production}
-      DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD:?DASHBOARD_PASSWORD must be set}
-      DATABASE_URL: postgresql+asyncpg://autotrader:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}@postgres:5432/autotrader
-      REDIS_URL: redis://redis:6379/0
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    restart: unless-stopped
-
-  frontend:
-    build:
-      context: ./frontend
-    depends_on:
-      - backend
-    ports:
-      - "127.0.0.1:3000:80"
-    restart: unless-stopped
-
   postgres:
-    image: postgres:16-alpine
+    image: autotrader-v34-postgres:16-alpine
+    build: {context: ., dockerfile: Dockerfile.postgres}
     environment:
       POSTGRES_USER: autotrader
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
       POSTGRES_DB: autotrader
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U autotrader"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:7-alpine
-    command: ["redis-server", "--appendonly", "yes"]
-    volumes:
-      - redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  prometheus:
-    image: prom/prometheus:v2.54.1
-    volumes:
-      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    ports:
-      - "127.0.0.1:9090:9090"
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    networks: [data]
     restart: unless-stopped
-
+    cpus: 1.0
+    mem_limit: 512m
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U autotrader]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  redis:
+    image: autotrader-v34-redis:7-alpine
+    build: {context: ., dockerfile: Dockerfile.redis}
+    command: [redis-server, --appendonly, "yes", --maxmemory, 128mb, --maxmemory-policy, noeviction]
+    volumes: [redis-data:/data]
+    networks: [data]
+    restart: unless-stopped
+    mem_limit: 256m
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  prometheus:
+    image: prom/prometheus:v3.15.0
+    profiles: [monitoring]
+    volumes: [./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro]
+    secrets: [dashboard_password]
+    networks: [app]
+    ports: ["127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"]
+    restart: unless-stopped
+    mem_limit: 256m
   grafana:
-    image: grafana/grafana:11.2.2
+    image: autotrader-v34-grafana:13.2.4
+    build: {context: ., dockerfile: Dockerfile.grafana}
+    profiles: [monitoring]
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD must be set}
+      GF_USERS_ALLOW_SIGN_UP: "false"
     volumes:
       - grafana-data:/var/lib/grafana
       - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
-    ports:
-      - "127.0.0.1:3001:3000"
+    networks: [app]
+    ports: ["127.0.0.1:${GRAFANA_PORT:-3001}:3000"]
     restart: unless-stopped
-
+    mem_limit: 256m
+networks:
+  app: {}
+  data: {internal: true}
 volumes:
-  postgres-data:
-  redis-data:
-  grafana-data:
+  postgres-data: {}
+  redis-data: {}
+  grafana-data: {}
+secrets:
+  dashboard_password:
+    file: ${PROM_PASSWORD_FILE:-.secrets/dashboard_password}

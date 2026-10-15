@@ -51,12 +51,15 @@ class DecisionEngine:
             action = DecisionAction.BUY
         if ai_assessment and ai_assessment.failed:
             reasons.append("AI failed; deterministic path used.")
-        elif ai_assessment and ai_assessment.suggested_action in {DecisionAction.WAIT, DecisionAction.HOLD} and action is DecisionAction.BUY:
+        elif ai_assessment and ai_assessment.provider != "off" and ai_assessment.suggested_action in {DecisionAction.WAIT, DecisionAction.HOLD} and action is DecisionAction.BUY:
             action = DecisionAction.WAIT
             reasons.append("AI contradicted entry; waiting.")
         if features.data_quality.value != "GOOD":
             action = DecisionAction.WAIT
             reasons.append(f"data_quality={features.data_quality}")
+        if any(signal.evidence.get("veto") for signal in signals):
+            action=DecisionAction.WAIT
+            reasons.append("strategy_regime_or_failed_breakout_veto")
 
         accepted = False
         rejected_reason = None

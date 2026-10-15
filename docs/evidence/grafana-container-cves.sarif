@@ -1,0 +1,2240 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "fullName": "Docker Scout",
+          "informationUri": "https://docker.com/products/docker-scout",
+          "name": "docker scout",
+          "rules": [
+            {
+              "id": "CVE-2026-21728",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-21728: Uncontrolled Resource Consumption"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-21728?s=github&n=tempo&ns=github.com%2Fgrafana&t=golang&vr=%3E%3D1.3.0%2C%3C2.8.4",
+              "help": {
+                "text": "Tempo queries with large limits can cause large memory allocations which can impact the availability of the service, depending on its deployment strategy.\n\nMitigation can be done by setting max_result_limit in the search config, e.g. to 262144 (2^18).\n",
+                "markdown": "> Tempo queries with large limits can cause large memory allocations which can impact the availability of the service, depending on its deployment strategy.\n\nMitigation can be done by setting max_result_limit in the search config, e.g. to 262144 (2^18).\n\n|                                                                                                                                                        |\n|Package                                                                        pkg:golang/github.com/grafana/tempo@1.5.1-0.20260910130453-bcfe9f230c1d  |\n|Affected range                                                                 >=1.3.0,<2.8.4                                                           |\n|Fixed version                                                                  2.8.4                                                                    |\n|[[CVSS Score 7.5] [CVSS Vector CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H]]                                                                           |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.3.0,<2.8.4",
+                "cvssV3": 7.5,
+                "cvssV3_severity": "HIGH",
+                "cvssV3_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "fixed_version": "2.8.4",
+                "purls": [
+                  "pkg:golang/github.com/grafana/tempo@1.5.1-0.20260910130453-bcfe9f230c1d"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-28377",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-28377: Inadequate Encryption Strength"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-28377?s=github&n=tempo&ns=github.com%2Fgrafana&t=golang&vr=%3C2.10.3",
+              "help": {
+                "text": "A vulnerability in Grafana Tempo exposes the S3 SSE-C encryption key in plaintext through the /status/config endpoint, potentially allowing unauthorized users to obtain the key used to encrypt trace data stored in S3.\n",
+                "markdown": "> A vulnerability in Grafana Tempo exposes the S3 SSE-C encryption key in plaintext through the /status/config endpoint, potentially allowing unauthorized users to obtain the key used to encrypt trace data stored in S3.\n\n|                                                                                                                                                        |\n|Package                                                                        pkg:golang/github.com/grafana/tempo@1.5.1-0.20260910130453-bcfe9f230c1d  |\n|Affected range                                                                 <2.10.3                                                                  |\n|Fixed version                                                                  2.10.3                                                                   |\n|[[CVSS Score 7.5] [CVSS Vector CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N]]                                                                           |\n"
+              },
+              "properties": {
+                "affected_version": "<2.10.3",
+                "cvssV3": 7.5,
+                "cvssV3_severity": "HIGH",
+                "cvssV3_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+                "fixed_version": "2.10.3",
+                "purls": [
+                  "pkg:golang/github.com/grafana/tempo@1.5.1-0.20260910130453-bcfe9f230c1d"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-56855",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-56855"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-56855?s=golang&n=crypto&ns=golang.org%2Fx&t=golang&vr=%3C0.56.0",
+              "help": {
+                "text": "Previously, after a channel has been established, a malicious peer could send crafted messages that would deadlock the entire connection.\n\nNow, we handle all RFC 4254 channel messages; global requests are handled explicitly. Then, treat all other messages as a protocol error and tear the connection down instead of buffering and blocking.\n",
+                "markdown": "> Previously, after a channel has been established, a malicious peer could send crafted messages that would deadlock the entire connection.\n\nNow, we handle all RFC 4254 channel messages; global requests are handled explicitly. Then, treat all other messages as a protocol error and tear the connection down instead of buffering and blocking.\n\n|                                                       |\n|Package         pkg:golang/golang.org/x/crypto@0.55.0  |\n|Affected range  <0.56.0                                |\n|Fixed version   0.56.0                                 |\n"
+              },
+              "properties": {
+                "affected_version": "<0.56.0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "0.56.0",
+                "purls": [
+                  "pkg:golang/golang.org/x/crypto@0.55.0"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-56866",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-56866"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-56866?s=golang&n=stdlib&t=golang&vr=%3E%3D1.27.0-0%2C%3C1.27.2",
+              "help": {
+                "text": "When http.Transport sends an HTTP/1 CONNECT request with a non-empty Request.Body, it writes the body directly to the connection without framing after the request headers. If the server rejects the CONNECT request with a non-2xx keep-alive response, Transport returns the connection to the idle pool. Because CONNECT requests do not have a request body, the server may interpret the trailing body bytes as a subsequent pipelined HTTP/1.1 request on the connection, leaving the pooled connection desynchronized and causing the next caller that reuses it to read the response to the injected request. In reverse proxies (including httputil.ReverseProxy) that forward CONNECT requests through a shared Transport, this can lead to cross-user response poisoning.\n",
+                "markdown": "> When http.Transport sends an HTTP/1 CONNECT request with a non-empty Request.Body, it writes the body directly to the connection without framing after the request headers. If the server rejects the CONNECT request with a non-2xx keep-alive response, Transport returns the connection to the idle pool. Because CONNECT requests do not have a request body, the server may interpret the trailing body bytes as a subsequent pipelined HTTP/1.1 request on the connection, leaving the pooled connection desynchronized and causing the next caller that reuses it to read the response to the injected request. In reverse proxies (including httputil.ReverseProxy) that forward CONNECT requests through a shared Transport, this can lead to cross-user response poisoning.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.27.1  |\n|Affected range  >=1.27.0-0,<1.27.2        |\n|Fixed version   1.27.2                    |\n"
+              },
+              "properties": {
+                "affected_version": "<1.26.9",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.26.9",
+                "purls": [
+                  "pkg:golang/stdlib@1.26.6",
+                  "pkg:golang/stdlib@1.26.7",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78659",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-78659"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-78659?s=golang&n=stdlib&t=golang&vr=%3C1.26.9",
+              "help": {
+                "text": "When \"Trailer\" headers are sent by a client, the HTTP server internally uses the header values to populate the Request.Trailer map passed to the server handler. Because Request.Trailer is a map, each entry incurs memory overhead. For HTTP/2 servers, a malicious client can exploit this by sending a \"Trailer\" header that declares a large number of fields, causing the server to allocate a disproportionate amount of memory while bypassing Server.MaxHeaderValueCount and Server.MaxHeaderBytes limits. This exploit is not applicable for HTTP/1 servers, which do not support multiplexing a large number of requests over one TCP connection, and whose Server.MaxHeaderBytes are calculated differently.\n",
+                "markdown": "> When \"Trailer\" headers are sent by a client, the HTTP server internally uses the header values to populate the Request.Trailer map passed to the server handler. Because Request.Trailer is a map, each entry incurs memory overhead. For HTTP/2 servers, a malicious client can exploit this by sending a \"Trailer\" header that declares a large number of fields, causing the server to allocate a disproportionate amount of memory while bypassing Server.MaxHeaderValueCount and Server.MaxHeaderBytes limits. This exploit is not applicable for HTTP/1 servers, which do not support multiplexing a large number of requests over one TCP connection, and whose Server.MaxHeaderBytes are calculated differently.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.26.7  |\n|Affected range  <1.26.9                   |\n|Fixed version   1.26.9                    |\n"
+              },
+              "properties": {
+                "affected_version": "<0.60.0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "0.60.0",
+                "purls": [
+                  "pkg:golang/golang.org/x/net@0.58.0",
+                  "pkg:golang/golang.org/x/net@0.59.0",
+                  "pkg:golang/stdlib@1.26.6",
+                  "pkg:golang/stdlib@1.26.7",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78660",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-78660"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-78660?s=golang&n=stdlib&t=golang&vr=%3E%3D1.27.0-0%2C%3C1.27.2",
+              "help": {
+                "text": "Historically, we have been rather lax about malformed framing-related headers in our HTTP/2 implementation, as they cannot interfere with HTTP/2 framing. However, this makes it possible for our HTTP/2 implementation to forward responses containing such headers to an HTTP/1 client when acting as a reverse proxy. If the HTTP/1 client also does not behave strictly enough, this can result in response smuggling.\n",
+                "markdown": "> Historically, we have been rather lax about malformed framing-related headers in our HTTP/2 implementation, as they cannot interfere with HTTP/2 framing. However, this makes it possible for our HTTP/2 implementation to forward responses containing such headers to an HTTP/1 client when acting as a reverse proxy. If the HTTP/1 client also does not behave strictly enough, this can result in response smuggling.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.27.1  |\n|Affected range  >=1.27.0-0,<1.27.2        |\n|Fixed version   1.27.2                    |\n"
+              },
+              "properties": {
+                "affected_version": "<1.26.9",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.26.9",
+                "purls": [
+                  "pkg:golang/golang.org/x/net@0.58.0",
+                  "pkg:golang/golang.org/x/net@0.59.0",
+                  "pkg:golang/stdlib@1.26.6",
+                  "pkg:golang/stdlib@1.26.7",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78662",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-78662"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-78662?s=golang&n=crypto&ns=golang.org%2Fx&t=golang&vr=%3C0.56.0",
+              "help": {
+                "text": "Previously, a channel registered in the mux's chanList is not usable until it is established. A malicious peer was able flood the channel's incomingRequests, deadlocking the entire connection.\n\nNow, we add an atomic established state, set when a channel becomes usable. Until such a time, handlePacket drops every packet other than the open confirmation/failure, without blocking and without tearing down the connection.\n",
+                "markdown": "> Previously, a channel registered in the mux's chanList is not usable until it is established. A malicious peer was able flood the channel's incomingRequests, deadlocking the entire connection.\n\nNow, we add an atomic established state, set when a channel becomes usable. Until such a time, handlePacket drops every packet other than the open confirmation/failure, without blocking and without tearing down the connection.\n\n|                                                       |\n|Package         pkg:golang/golang.org/x/crypto@0.55.0  |\n|Affected range  <0.56.0                                |\n|Fixed version   0.56.0                                 |\n"
+              },
+              "properties": {
+                "affected_version": "<0.56.0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "0.56.0",
+                "purls": [
+                  "pkg:golang/golang.org/x/crypto@0.55.0"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78667",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-78667"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-78667?s=golang&n=stdlib&t=golang&vr=%3C1.26.9",
+              "help": {
+                "text": "When parsing a Range header containing a large number of small ranges, FileServer(FS), ServeContent, and ServeFile(FS) can consume an excessive amount of CPU.\n",
+                "markdown": "> When parsing a Range header containing a large number of small ranges, FileServer(FS), ServeContent, and ServeFile(FS) can consume an excessive amount of CPU.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.26.7  |\n|Affected range  <1.26.9                   |\n|Fixed version   1.26.9                    |\n"
+              },
+              "properties": {
+                "affected_version": "<1.26.9",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.26.9",
+                "purls": [
+                  "pkg:golang/stdlib@1.26.6",
+                  "pkg:golang/stdlib@1.26.7",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78669",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-78669"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-78669?s=golang&n=stdlib&t=golang&vr=%3E%3D1.27.0-0%2C%3C1.27.2",
+              "help": {
+                "text": "A malicious HTTP/2 peer can cause excessive CPU consumption in the client or server by opening a large number of streams and then sending many small SETTINGS frames containing SETTINGS_INITIAL_WINDOW_SIZE values.\n",
+                "markdown": "> A malicious HTTP/2 peer can cause excessive CPU consumption in the client or server by opening a large number of streams and then sending many small SETTINGS frames containing SETTINGS_INITIAL_WINDOW_SIZE values.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.27.1  |\n|Affected range  >=1.27.0-0,<1.27.2        |\n|Fixed version   1.27.2                    |\n"
+              },
+              "properties": {
+                "affected_version": "<1.26.9",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.26.9",
+                "purls": [
+                  "pkg:golang/golang.org/x/net@0.58.0",
+                  "pkg:golang/golang.org/x/net@0.59.0",
+                  "pkg:golang/stdlib@1.26.6",
+                  "pkg:golang/stdlib@1.26.7",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-94439",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-94439"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-94439?s=golang&n=stdlib&t=golang&vr=%3C1.26.9",
+              "help": {
+                "text": "When an HTTP server handler sends a 2xx response to an HTTP/1 CONNECT request and returns without hijacking the connection, the server improperly continues to read and serve requests from the connection. Since a 2xx response to an HTTP/1 CONNECT converts the connection into a tunnel, the server should not treat the connection as continuing to contain HTTP.\n\nThe impact of this misbehavior is mostly limited to potential request smuggling, where an intermediate proxy considers the data on the connection to be tunneled and the server considers it to be HTTP.\n",
+                "markdown": "> When an HTTP server handler sends a 2xx response to an HTTP/1 CONNECT request and returns without hijacking the connection, the server improperly continues to read and serve requests from the connection. Since a 2xx response to an HTTP/1 CONNECT converts the connection into a tunnel, the server should not treat the connection as continuing to contain HTTP.\n\nThe impact of this misbehavior is mostly limited to potential request smuggling, where an intermediate proxy considers the data on the connection to be tunneled and the server considers it to be HTTP.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.26.6  |\n|Affected range  <1.26.9                   |\n|Fixed version   1.26.9                    |\n"
+              },
+              "properties": {
+                "affected_version": "<1.26.9",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.26.9",
+                "purls": [
+                  "pkg:golang/stdlib@1.26.6",
+                  "pkg:golang/stdlib@1.26.7",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-94440",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-94440"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-94440?s=golang&n=stdlib&t=golang&vr=%3E%3D1.27.0-0%2C%3C1.27.2",
+              "help": {
+                "text": "Parsing a multipart form can bypass memory limits and read an arbitrarily long line into memory when the remaining limit at the start of a part is less than 400 bytes.\n",
+                "markdown": "> Parsing a multipart form can bypass memory limits and read an arbitrarily long line into memory when the remaining limit at the start of a part is less than 400 bytes.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.27.1  |\n|Affected range  >=1.27.0-0,<1.27.2        |\n|Fixed version   1.27.2                    |\n"
+              },
+              "properties": {
+                "affected_version": "<1.26.9",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.26.9",
+                "purls": [
+                  "pkg:golang/stdlib@1.26.6",
+                  "pkg:golang/stdlib@1.26.7",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-97031",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-97031"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-97031?s=golang&n=stdlib&t=golang&vr=%3C1.26.9",
+              "help": {
+                "text": "Multiple ECH outer extension references are not permitted under RFC 9849; previously, a client could send a well-crafted packet that could trigger memory exhaustion in the server process by specifying multiple references.\n\nWe now reject these as malformed and curb the memory amplification vector as a result.\n",
+                "markdown": "> Multiple ECH outer extension references are not permitted under RFC 9849; previously, a client could send a well-crafted packet that could trigger memory exhaustion in the server process by specifying multiple references.\n\nWe now reject these as malformed and curb the memory amplification vector as a result.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.26.6  |\n|Affected range  <1.26.9                   |\n|Fixed version   1.26.9                    |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.27.0-0,<1.27.2",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.27.2",
+                "purls": [
+                  "pkg:golang/stdlib@1.26.6",
+                  "pkg:golang/stdlib@1.26.7",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-84304",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-84304: Uncontrolled Resource Consumption"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-84304?s=github&n=grpc&ns=google.golang.org&t=golang&vr=%3C%3D1.83.0",
+              "help": {
+                "text": "### Impact\nAn unauthenticated remote attacker can initiate a gRPC stream and purposefully fragment their payload into millions of tiny (e.g., 1-byte) HTTP/2 DATA frames. Even if the total payload volume falls within the configured connection and stream flow-control windows, each independent fragment incurs memory overhead due to internal tracking structures and queue allocation.\n\nRepeated fragmentation massively inflates the heap space consumed by the stream. An attacker multiplexing multiple concurrent streams can exhaust the memory bounds of the runtime, forcing a runtime panic or OutOfMemory condition and leading to a remote Denial of Service (DoS).\n\n### Patches\nThe change to fix this issue is merged in `master` and a patch release, 1.83.1, has been published that contains this fix.\n\n### Workarounds\nThis vulnerability is mitigated by implementing receive buffer compaction. Consecutive small data buffers are automatically coalesced into larger buffers from a shared pool once the overhead is perceived to be excessive relative to actual payload data, drastically minimizing per-frame memory overheads.\n\nThis behavior is enabled by default. A temporary escape hatch is provided via the environment variable `GRPC_GO_EXPERIMENTAL_ENABLE_RECEIVE_BUFFER_COMPACTION=false` to disable the feature if unforeseen issues arise, but it will be removed in a future release.\n",
+                "markdown": "> ### Impact\nAn unauthenticated remote attacker can initiate a gRPC stream and purposefully fragment their payload into millions of tiny (e.g., 1-byte) HTTP/2 DATA frames. Even if the total payload volume falls within the configured connection and stream flow-control windows, each independent fragment incurs memory overhead due to internal tracking structures and queue allocation.\n\nRepeated fragmentation massively inflates the heap space consumed by the stream. An attacker multiplexing multiple concurrent streams can exhaust the memory bounds of the runtime, forcing a runtime panic or OutOfMemory condition and leading to a remote Denial of Service (DoS).\n\n### Patches\nThe change to fix this issue is merged in `master` and a patch release, 1.83.1, has been published that contains this fix.\n\n### Workarounds\nThis vulnerability is mitigated by implementing receive buffer compaction. Consecutive small data buffers are automatically coalesced into larger buffers from a shared pool once the overhead is perceived to be excessive relative to actual payload data, drastically minimizing per-frame memory overheads.\n\nThis behavior is enabled by default. A temporary escape hatch is provided via the environment variable `GRPC_GO_EXPERIMENTAL_ENABLE_RECEIVE_BUFFER_COMPACTION=false` to disable the feature if unforeseen issues arise, but it will be removed in a future release.\n\n|                                                                                                                                            |\n|Package                                                                                           pkg:golang/google.golang.org/grpc@1.83.0  |\n|Affected range                                                                                    <=1.83.0                                  |\n|Fixed version                                                                                     1.83.1                                    |\n|[[CVSS Score 8.7] [CVSS Vector CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N]]                                            |\n"
+              },
+              "properties": {
+                "affected_version": "<=1.83.0",
+                "cvssV3": 8.7,
+                "cvssV3_severity": "HIGH",
+                "cvssV3_vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
+                "fixed_version": "1.83.1",
+                "purls": [
+                  "pkg:golang/google.golang.org/grpc@1.83.0"
+                ],
+                "security-severity": "8.7",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-84445",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-84445: Improper Validation of Array Index"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-84445?s=github&n=grpc&ns=google.golang.org&t=golang&vr=%3E%3D1.83.0%2C%3C1.83.2",
+              "help": {
+                "text": "A vulnerability exists in gRPC-Go servers configured with `xds.NewGRPCServer()` where a crafted request missing both `:authority` and `Host` headers can cause a server panic, resulting in a Denial of Service (DoS).\n\nServers built with `xds.NewGRPCServer` install an xDS routing interceptor on every RPC. This interceptor looks up the request’s `:authority` header to pick a virtual host. The HTTP/2 server transport previously accepted requests that had neither `:authority` nor `Host`. When this happened, the xDS routing interceptor attempted to access the first element of an empty slice of authorities, leading to an index out of bounds panic. Since the per-RPC goroutine does not recover from panics, the entire server process would terminate.\n\nThis panic occurs in the interceptor pipeline, meaning the transport credentials handshake (TLS, mTLS, or ALTS) and HTTP/2 connection establishment must complete successfully before the crafted request can reach this logic.\n- Insecure/Standard TLS: If the server permits insecure (plaintext) connections or standard credentials (where client certs are not checked), any unauthenticated remote attacker can trigger the crash.\n- mTLS / ALTS: If strict transport-level authentication is enforced at the network edge or transport layer (e.g., requiring a valid client certificate), the attacker must possess valid transport credentials to initiate the stream and trigger the panic.\n\n### Impact\nAn attacker can cause a complete outage of the gRPC server by sending a request missing both `:authority` and `Host` headers, provided they can successfully establish a transport connection.\n\n### Patches\nThe issue has been addressed in `master` (and backported to `1.84.0`, `1.83.2` and `1.82.2`). The fix updates the HTTP/2 transport layer to reject requests missing both `:authority` and `Host` headers early, maintaining consistency with and other gRPC language implementations.\n",
+                "markdown": "> A vulnerability exists in gRPC-Go servers configured with `xds.NewGRPCServer()` where a crafted request missing both `:authority` and `Host` headers can cause a server panic, resulting in a Denial of Service (DoS).\n\nServers built with `xds.NewGRPCServer` install an xDS routing interceptor on every RPC. This interceptor looks up the request’s `:authority` header to pick a virtual host. The HTTP/2 server transport previously accepted requests that had neither `:authority` nor `Host`. When this happened, the xDS routing interceptor attempted to access the first element of an empty slice of authorities, leading to an index out of bounds panic. Since the per-RPC goroutine does not recover from panics, the entire server process would terminate.\n\nThis panic occurs in the interceptor pipeline, meaning the transport credentials handshake (TLS, mTLS, or ALTS) and HTTP/2 connection establishment must complete successfully before the crafted request can reach this logic.\n- Insecure/Standard TLS: If the server permits insecure (plaintext) connections or standard credentials (where client certs are not checked), any unauthenticated remote attacker can trigger the crash.\n- mTLS / ALTS: If strict transport-level authentication is enforced at the network edge or transport layer (e.g., requiring a valid client certificate), the attacker must possess valid transport credentials to initiate the stream and trigger the panic.\n\n### Impact\nAn attacker can cause a complete outage of the gRPC server by sending a request missing both `:authority` and `Host` headers, provided they can successfully establish a transport connection.\n\n### Patches\nThe issue has been addressed in `master` (and backported to `1.84.0`, `1.83.2` and `1.82.2`). The fix updates the HTTP/2 transport layer to reject requests missing both `:authority` and `Host` headers early, maintaining consistency with and other gRPC language implementations.\n\n|                                                                                                                                                                                                                                                           |\n|Package                                                                                                                                                                                                          pkg:golang/google.golang.org/grpc@1.83.0  |\n|Affected range                                                                                                                                                                                                   >=1.83.0,<1.83.2                          |\n|Fixed version                                                                                                                                                                                                    1.83.2                                    |\n|[[CVSS Score 8.7] [CVSS Vector CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X]]                                            |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.83.0,<1.83.2",
+                "cvssV3": 8.7,
+                "cvssV3_severity": "HIGH",
+                "cvssV3_vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+                "fixed_version": "1.83.2",
+                "purls": [
+                  "pkg:golang/google.golang.org/grpc@1.83.0"
+                ],
+                "security-severity": "8.7",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78663",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-78663"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-78663?s=golang&n=net&ns=golang.org%2Fx&t=golang&vr=%3C0.60.0",
+              "help": {
+                "text": "The HTTP/2 server can refund connection-level flow control twice for the same data: Once when a client resets a stream (refunding data for any sent-but-unread portion of the stream), and again when a request handler reads the buffered data. A malicious client can exploit this to bypass the configured connection-level flow control limit (MaxReceiveBufferPerConnection). Total buffered data is still limited by the concurrent stream limit and stream-level flow control.\n",
+                "markdown": "> The HTTP/2 server can refund connection-level flow control twice for the same data: Once when a client resets a stream (refunding data for any sent-but-unread portion of the stream), and again when a request handler reads the buffered data. A malicious client can exploit this to bypass the configured connection-level flow control limit (MaxReceiveBufferPerConnection). Total buffered data is still limited by the concurrent stream limit and stream-level flow control.\n\n|                                                    |\n|Package         pkg:golang/golang.org/x/net@0.58.0  |\n|Affected range  <0.60.0                             |\n|Fixed version   0.60.0                              |\n"
+              },
+              "properties": {
+                "affected_version": "<1.26.9",
+                "cvssV3_severity": "CRITICAL",
+                "fixed_version": "1.26.9",
+                "purls": [
+                  "pkg:golang/golang.org/x/net@0.58.0",
+                  "pkg:golang/golang.org/x/net@0.59.0",
+                  "pkg:golang/stdlib@1.26.6",
+                  "pkg:golang/stdlib@1.26.7",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "9.1",
+                "tags": [
+                  "CRITICAL"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-56857",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-56857"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-56857?s=golang&n=stdlib&t=golang&vr=%3C1.26.9",
+              "help": {
+                "text": "On Windows, when the target of Root.Mkdir or Root.MkdirAll is a junction pointing to an empty location, the operation can create a directory at the junction target even when that target is located outside the root. This only applies to operations where the last path component is a junction (path/to/junction, but not path/junction/target).\n",
+                "markdown": "> On Windows, when the target of Root.Mkdir or Root.MkdirAll is a junction pointing to an empty location, the operation can create a directory at the junction target even when that target is located outside the root. This only applies to operations where the last path component is a junction (path/to/junction, but not path/junction/target).\n\n|                                          |\n|Package         pkg:golang/stdlib@1.26.6  |\n|Affected range  <1.26.9                   |\n|Fixed version   1.26.9                    |\n"
+              },
+              "properties": {
+                "affected_version": "<1.26.9",
+                "cvssV3_severity": "CRITICAL",
+                "fixed_version": "1.26.9",
+                "purls": [
+                  "pkg:golang/stdlib@1.26.6",
+                  "pkg:golang/stdlib@1.26.7",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "9.8",
+                "tags": [
+                  "CRITICAL"
+                ]
+              }
+            }
+          ],
+          "version": "1.21.0"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "CVE-2026-21728",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-21728                                                           \nSeverity         :HIGH                                                                     \nPackage          :pkg:golang/github.com/grafana/tempo@1.5.1-0.20260910130453-bcfe9f230c1d  \nAffected range   :>=1.3.0,<2.8.4                                                           \nFixed version    :2.8.4                                                                    \nCVSS Score       :7.5                                                                      \nCVSS Vector      :CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H                             \nEPSS Score       :0.006370                                                                 \nEPSS Percentile  :0.493060                                                                 \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-28377",
+          "ruleIndex": 1,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-28377                                                           \nSeverity         :HIGH                                                                     \nPackage          :pkg:golang/github.com/grafana/tempo@1.5.1-0.20260910130453-bcfe9f230c1d  \nAffected range   :<2.10.3                                                                  \nFixed version    :2.10.3                                                                   \nCVSS Score       :7.5                                                                      \nCVSS Vector      :CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N                             \nEPSS Score       :0.001640                                                                 \nEPSS Percentile  :0.052010                                                                 \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-56855",
+          "ruleIndex": 2,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-56855                         \nSeverity         :HIGH                                   \nPackage          :pkg:golang/golang.org/x/crypto@0.55.0  \nAffected range   :<0.56.0                                \nFixed version    :0.56.0                                 \nEPSS Score       :0.005000                               \nEPSS Percentile  :0.413440                               \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-56866",
+          "ruleIndex": 3,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-56866            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.6  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.003090                  \nEPSS Percentile  :0.220360                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-56866",
+          "ruleIndex": 3,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-56866            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.7  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.003090                  \nEPSS Percentile  :0.220360                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-56866",
+          "ruleIndex": 3,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-56866            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.003090                  \nEPSS Percentile  :0.220360                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78659",
+          "ruleIndex": 4,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78659                      \nSeverity         :HIGH                                \nPackage          :pkg:golang/golang.org/x/net@0.58.0  \nAffected range   :<0.60.0                             \nFixed version    :0.60.0                              \nEPSS Score       :0.005700                            \nEPSS Percentile  :0.458830                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78659",
+          "ruleIndex": 4,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78659            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.6  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.005700                  \nEPSS Percentile  :0.458830                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78659",
+          "ruleIndex": 4,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78659            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.005700                  \nEPSS Percentile  :0.458830                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78659",
+          "ruleIndex": 4,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78659                      \nSeverity         :HIGH                                \nPackage          :pkg:golang/golang.org/x/net@0.59.0  \nAffected range   :<0.60.0                             \nFixed version    :0.60.0                              \nEPSS Score       :0.005700                            \nEPSS Percentile  :0.458830                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78659",
+          "ruleIndex": 4,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78659            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.7  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.005700                  \nEPSS Percentile  :0.458830                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78660",
+          "ruleIndex": 5,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78660            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.7  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.003030                  \nEPSS Percentile  :0.214290                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78660",
+          "ruleIndex": 5,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78660                      \nSeverity         :HIGH                                \nPackage          :pkg:golang/golang.org/x/net@0.58.0  \nAffected range   :<0.60.0                             \nFixed version    :0.60.0                              \nEPSS Score       :0.003030                            \nEPSS Percentile  :0.214290                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78660",
+          "ruleIndex": 5,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78660            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.6  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.003030                  \nEPSS Percentile  :0.214290                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78660",
+          "ruleIndex": 5,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78660                      \nSeverity         :HIGH                                \nPackage          :pkg:golang/golang.org/x/net@0.59.0  \nAffected range   :<0.60.0                             \nFixed version    :0.60.0                              \nEPSS Score       :0.003030                            \nEPSS Percentile  :0.214290                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78660",
+          "ruleIndex": 5,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78660            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.003030                  \nEPSS Percentile  :0.214290                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78662",
+          "ruleIndex": 6,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78662                         \nSeverity         :HIGH                                   \nPackage          :pkg:golang/golang.org/x/crypto@0.55.0  \nAffected range   :<0.56.0                                \nFixed version    :0.56.0                                 \nEPSS Score       :0.004310                               \nEPSS Percentile  :0.357740                               \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78667",
+          "ruleIndex": 7,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78667            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.6  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.003790                  \nEPSS Percentile  :0.302490                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78667",
+          "ruleIndex": 7,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78667            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.003790                  \nEPSS Percentile  :0.302490                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78667",
+          "ruleIndex": 7,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78667            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.7  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.003790                  \nEPSS Percentile  :0.302490                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78669",
+          "ruleIndex": 8,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78669            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.7  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.005680                  \nEPSS Percentile  :0.457310                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78669",
+          "ruleIndex": 8,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78669                      \nSeverity         :HIGH                                \nPackage          :pkg:golang/golang.org/x/net@0.58.0  \nAffected range   :<0.60.0                             \nFixed version    :0.60.0                              \nEPSS Score       :0.005680                            \nEPSS Percentile  :0.457310                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78669",
+          "ruleIndex": 8,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78669                      \nSeverity         :HIGH                                \nPackage          :pkg:golang/golang.org/x/net@0.59.0  \nAffected range   :<0.60.0                             \nFixed version    :0.60.0                              \nEPSS Score       :0.005680                            \nEPSS Percentile  :0.457310                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78669",
+          "ruleIndex": 8,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78669            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.6  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.005680                  \nEPSS Percentile  :0.457310                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78669",
+          "ruleIndex": 8,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78669            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.005680                  \nEPSS Percentile  :0.457310                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-94439",
+          "ruleIndex": 9,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-94439            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.7  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.003150                  \nEPSS Percentile  :0.227480                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-94439",
+          "ruleIndex": 9,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-94439            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.003150                  \nEPSS Percentile  :0.227480                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-94439",
+          "ruleIndex": 9,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-94439            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.6  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.003150                  \nEPSS Percentile  :0.227480                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-94440",
+          "ruleIndex": 10,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-94440            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.6  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.004040                  \nEPSS Percentile  :0.329420                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-94440",
+          "ruleIndex": 10,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-94440            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.7  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.004040                  \nEPSS Percentile  :0.329420                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-94440",
+          "ruleIndex": 10,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-94440            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.004040                  \nEPSS Percentile  :0.329420                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-97031",
+          "ruleIndex": 11,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-97031            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.003940                  \nEPSS Percentile  :0.319010                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-97031",
+          "ruleIndex": 11,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-97031            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.7  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.003940                  \nEPSS Percentile  :0.319010                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-97031",
+          "ruleIndex": 11,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-97031            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.26.6  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.003940                  \nEPSS Percentile  :0.319010                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-84304",
+          "ruleIndex": 12,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-84304                                                   \nSeverity         :HIGH                                                             \nPackage          :pkg:golang/google.golang.org/grpc@1.83.0                         \nAffected range   :<=1.83.0                                                         \nFixed version    :1.83.1                                                           \nCVSS Score       :8.7                                                              \nCVSS Vector      :CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N  \nEPSS Score       :0.006090                                                         \nEPSS Percentile  :0.479010                                                         \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-84445",
+          "ruleIndex": 13,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-84445                                                                                                                                                                  \nSeverity         :HIGH                                                                                                                                                                            \nPackage          :pkg:golang/google.golang.org/grpc@1.83.0                                                                                                                                        \nAffected range   :>=1.83.0,<1.83.2                                                                                                                                                                \nFixed version    :1.83.2                                                                                                                                                                          \nCVSS Score       :8.7                                                                                                                                                                             \nCVSS Vector      :CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X  \nEPSS Score       :0.006410                                                                                                                                                                        \nEPSS Percentile  :0.495170                                                                                                                                                                        \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78663",
+          "ruleIndex": 14,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78663            \nSeverity         :CRITICAL                  \nPackage          :pkg:golang/stdlib@1.26.7  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.005740                  \nEPSS Percentile  :0.460670                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78663",
+          "ruleIndex": 14,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78663            \nSeverity         :CRITICAL                  \nPackage          :pkg:golang/stdlib@1.26.6  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.005740                  \nEPSS Percentile  :0.460670                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78663",
+          "ruleIndex": 14,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78663            \nSeverity         :CRITICAL                  \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.005740                  \nEPSS Percentile  :0.460670                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78663",
+          "ruleIndex": 14,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78663                      \nSeverity         :CRITICAL                            \nPackage          :pkg:golang/golang.org/x/net@0.59.0  \nAffected range   :<0.60.0                             \nFixed version    :0.60.0                              \nEPSS Score       :0.005740                            \nEPSS Percentile  :0.460670                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78663",
+          "ruleIndex": 14,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78663                      \nSeverity         :CRITICAL                            \nPackage          :pkg:golang/golang.org/x/net@0.58.0  \nAffected range   :<0.60.0                             \nFixed version    :0.60.0                              \nEPSS Score       :0.005740                            \nEPSS Percentile  :0.460670                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-56857",
+          "ruleIndex": 15,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-56857            \nSeverity         :CRITICAL                  \nPackage          :pkg:golang/stdlib@1.26.7  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.004930                  \nEPSS Percentile  :0.408460                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-56857",
+          "ruleIndex": 15,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-56857            \nSeverity         :CRITICAL                  \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.004930                  \nEPSS Percentile  :0.408460                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-56857",
+          "ruleIndex": 15,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-56857            \nSeverity         :CRITICAL                  \nPackage          :pkg:golang/stdlib@1.26.6  \nAffected range   :<1.26.9                   \nFixed version    :1.26.9                    \nEPSS Score       :0.004930                  \nEPSS Percentile  :0.408460                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

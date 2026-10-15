@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from autotrader.domain import Balance, Fill, Position, Side, new_id, utc_now
+from autotrader.domain import Balance, Fill, Position
 
 
 class Portfolio:
@@ -43,31 +43,14 @@ class Portfolio:
         balance.available += released
 
     def apply_fill(self, fill: Fill) -> None:
+        """Compatibility check for an already persisted projection.
+
+        Economic effects belong to PersistentTradingRepository, where database
+        uniqueness and journal transactions establish idempotency across processes.
+        """
         if fill.fill_id in self.processed_fill_ids:
             return
-        self.processed_fill_ids.add(fill.fill_id)
-        notional = fill.quantity * fill.price
-        quote = self.balances[self.quote_asset]
-        if fill.side is Side.BUY:
-            quote.reserved = max(quote.reserved - notional - fill.fee, Decimal("0"))
-            position = self.positions.get(fill.symbol)
-            if position is None or position.closed_at is not None:
-                self.positions[fill.symbol] = Position(new_id("pos"), fill.symbol, fill.quantity, fill.price, fill.timestamp)
-            else:
-                total_quantity = position.quantity + fill.quantity
-                position.average_entry_price = ((position.quantity * position.average_entry_price) + notional) / total_quantity
-                position.quantity = total_quantity
-        else:
-            position = self.positions.get(fill.symbol)
-            if position is None or position.quantity < fill.quantity:
-                raise ValueError("Cannot sell more than the available position quantity.")
-            proceeds = notional - fill.fee
-            quote.available += proceeds
-            position.quantity -= fill.quantity
-            position.realized_pnl += proceeds - (fill.quantity * position.average_entry_price)
-            if position.quantity <= 0:
-                position.quantity = Decimal("0")
-                position.closed_at = utc_now()
+        raise ValueError("Unpersisted fills must go through the authoritative paper repository.")
 
     def snapshot(self) -> dict[str, str]:
         return {

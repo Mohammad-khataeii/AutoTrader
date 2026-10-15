@@ -1,47 +1,48 @@
-# Revolut X AutoTrader V1.0
+# Revolut X AutoTrader V3.4
 
-Autonomous cryptocurrency research and paper-trading platform for Revolut X markets.
+Autonomous EUR 500 **paper trading** using public Revolut X market data,
+PostgreSQL accounting, FastAPI and a React dashboard. The worker discovers
+setups, applies deterministic risk controls, simulates orders and manages exits.
+Live trading is rejected at startup. No exchange trading credentials are used.
+AI defaults to mock; no paid API key is needed.
 
-This milestone is deliberately paper-only:
+## Start
 
-- live trading configuration is rejected at startup
-- Revolut X integration is read-only market data
-- order execution is simulated by `PaperBroker`
-- AI assessments cannot bypass deterministic risk controls
-
-## Quick Start
-
-```bash
-docker compose up --build
+```sh
+python scripts/generate_env.py --output .env
+docker compose --profile monitoring up --build -d
+docker compose ps
+docker compose exec backend autotrader-reconcile
 ```
 
-Dashboard: http://localhost:3000
+The generator creates private secrets and refuses overwrites. Sign in using the
+credentials in your local `.env`. Dashboard: http://localhost:3000. API readiness:
+http://localhost:8000/readyz. Services bind to loopback; database/cache ports are
+internal. See [deployment](docs/V3_4_DEPLOYMENT.md) for VPS access and backup.
 
-API health: http://localhost:8000/healthz
+## Verify
 
-Default dashboard/API basic auth: `admin` / `change-me`.
-
-## Local Verification
-
-```bash
-python3 -m pip install -e ".[dev]"
-python3 -m ruff check .
-python3 -m pytest
-python3 -m mypy src/autotrader
-cd frontend
-npm install
-npm test
-npm run build
-npm audit --audit-level=moderate
+```sh
+python -m pip install -e '.[dev]'
+# Set AUTOTRADER_TEST_PG_ADMIN_URL to a disposable PostgreSQL admin database.
+python -m pytest -q -s
+python -m ruff check src tests scripts alembic
+python -m mypy src/autotrader
+npm ci --prefix frontend
+npm run typecheck --prefix frontend
+npm test --prefix frontend
+npm run build --prefix frontend
 ```
 
-## Documentation
+PostgreSQL tests create independent databases and fail if PostgreSQL is missing;
+they never silently substitute SQLite. Browser/deployment verification requires
+the explicitly selected isolated deployment described in the evidence.
 
-- [Architecture](docs/ARCHITECTURE.md)
-- [Operations](docs/OPERATIONS.md)
-- [Test Report](docs/TEST_REPORT.md)
+## Engineering status
 
-## Current Limitations
-
-The requested V0.2 repository was not present in this workspace, so this is a new implementation rather than a refactor. Persistence is scaffolded with migrations for core audit tables, while full repository-backed runtime state and production-grade worker reconciliation remain the next major hardening step.
-
+Read the [execution tracker](docs/V3_4_EXECUTION_TRACKER.md),
+[executed evidence](docs/V3_4_TEST_EVIDENCE.md),
+[known limitations](docs/V3_4_KNOWN_LIMITATIONS.md), and
+[continuation checkpoint](docs/CONTINUE_FROM_HERE.md).
+The short real-data replay lost money; no profitable edge has been established.
+Earlier V1-V3 documentation is historical and does not establish V3.4 acceptance.

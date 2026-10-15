@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
-from autotrader.api.main import app
+from autotrader.api.main import create_app
 from autotrader.scanner import ScanResult
 
 
@@ -20,10 +22,12 @@ class UnavailableScanner:
         )
 
 
-def test_api_scanner_serializes_domain_objects() -> None:
-    app.state.scanner = UnavailableScanner()
-    client = TestClient(app)
-    response = client.get("/api/scanner", auth=("admin", "change-me"))
+def test_api_scanner_serializes_domain_objects(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("DATABASE_URL",f"sqlite+aiosqlite:///{tmp_path / 'api.db'}")
+    app=create_app()
+    with TestClient(app) as client:
+        client.portal.call(app.state.repository.store_scan, __import__("asyncio").run(UnavailableScanner().scan_once(1)))
+        response = client.get("/api/scanner", auth=("admin", "change-me"))
     assert response.status_code == 200
     payload = response.json()
     assert payload["status"] == "DATA_UNAVAILABLE"
@@ -33,6 +37,7 @@ def test_api_scanner_serializes_domain_objects() -> None:
 
 
 def test_api_paper_order_rejects_when_no_real_candidate() -> None:
+    app=create_app()
     app.state.scanner = UnavailableScanner()
     client = TestClient(app)
     response = client.post("/api/paper/orders", auth=("admin", "change-me"))

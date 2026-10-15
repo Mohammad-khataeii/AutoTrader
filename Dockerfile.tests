@@ -1,0 +1,8 @@
+ARG RUNTIME_IMAGE=autotrader-v34-acceptance-backend
+FROM ${RUNTIME_IMAGE}
+# Verification only: the deployed image does not contain test/install tools.
+USER root
+RUN python -m ensurepip && python -m pip install --no-cache-dir pytest==9.1.1 pytest-asyncio==1.4.0
+WORKDIR /verification
+ENV ENVIRONMENT=test PYTHONDONTWRITEBYTECODE=1
+CMD ["python", "scripts/run_linux_tests.py"]

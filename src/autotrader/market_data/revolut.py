@@ -2,16 +2,21 @@ from __future__ import annotations
 
 import asyncio
 import random
+from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from typing import Any, cast
 
 import httpx
 
-from autotrader.domain import Candle, OrderBook, OrderBookLevel, TradingPair
+from autotrader.domain import Candle, OrderBook, OrderBookLevel, TradingPair, utc_now
 
 
 class MarketDataError(RuntimeError):
+    pass
+
+
+class RateLimitDeferred(MarketDataError):
     pass
 
 
@@ -71,9 +76,11 @@ class RevolutXPublicClient:
         base_url: str = "https://revx.revolut.com/api",
         region: str = "EEA",
         timeout: float = 8.0,
+        rate_reserver:Callable[[str],Awaitable[float]]|None=None,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.region = region
+        self.rate_reserver=rate_reserver
         self._client = httpx.AsyncClient(base_url=self.base_url, timeout=timeout)
         self._limiters: dict[str, TokenBucket] = {
             "/1.0/public/configuration/pairs": TokenBucket(Decimal("1"), Decimal("1")),
@@ -88,22 +95,34 @@ class RevolutXPublicClient:
         await self._client.aclose()
 
     async def _request(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
+        if not path.startswith(('/1.0/public/','/2.0/public/')):
+            raise MarketDataError('Only public read-only exchange paths are allowed.')
         if not self._breaker.allow():
             raise MarketDataError("Revolut X circuit breaker is open.")
         params = {"region": self.region, **(params or {})}
-        await self._limiter_for(path).acquire()
-
         for attempt in range(4):
+            await self._limiter_for(path).acquire()
+            if self.rate_reserver:
+                family=next((prefix for prefix in self._limiters if path.startswith(prefix)),path)
+                while (delay:=await self.rate_reserver(family))>0:
+                    await asyncio.sleep(delay)
             try:
                 response = await self._client.get(path, params=params)
                 if response.status_code == 429:
                     retry_after = _retry_after_seconds(response.headers.get("Retry-After"))
+                    if retry_after > 30:
+                        raise RateLimitDeferred("Provider requested deferred retry; rate limit respected.")
                     await asyncio.sleep(float(retry_after))
                     continue
                 response.raise_for_status()
                 payload = cast(dict[str, Any], response.json())
+                if not isinstance(payload,dict):
+                    raise MarketDataError("Expected JSON object from provider.")
                 self._breaker.success()
                 return payload
+            except RateLimitDeferred:
+                self._breaker.failure()
+                raise
             except (httpx.HTTPError, ValueError, MarketDataError) as exc:
                 self._breaker.failure()
                 if attempt == 3:
@@ -208,8 +227,11 @@ class RevolutXPublicClient:
                     source="revolut-x",
                 )
             )
-        _validate_candle_sequence(candles, interval_minutes)
-        return candles
+        _validate_candle_sequence(candles, interval_minutes, allow_forming=True)
+        # The provider includes the candle at the inclusive until boundary. It is
+        # deliberately excluded from closed-candle strategies, never fabricated.
+        end = min(utc_now(), datetime.fromtimestamp(until_ms/1000,tz=UTC))
+        return [c for c in candles if c.timestamp+timedelta(minutes=interval_minutes)<=end]
 
 
 def _split_symbol(symbol: str) -> tuple[str, str]:
@@ -240,7 +262,10 @@ def _required_decimal(raw: dict[str, Any], field: str, *, context: str) -> Decim
     if field not in raw:
         raise MarketDataError(f"Missing {field} in {context}.")
     try:
-        return Decimal(str(raw[field]))
+        result = Decimal(str(raw[field]))
+        if not result.is_finite():
+            raise ValueError("Non-finite decimal")
+        return result
     except Exception as exc:
         raise MarketDataError(f"Invalid decimal {field} in {context}: {raw[field]!r}") from exc
 
@@ -292,13 +317,13 @@ def _validate_region(metadata: Any, expected_region: str) -> None:
         raise MarketDataError(f"Region mismatch: expected {expected_region}, got {region}.")
 
 
-def _validate_candle_sequence(candles: list[Candle], interval_minutes: int) -> None:
+def _validate_candle_sequence(candles: list[Candle], interval_minutes: int, *, allow_forming: bool = False) -> None:
     if not candles:
         return
     expected_interval = timedelta(minutes=interval_minutes)
     seen: set[datetime] = set()
     previous: Candle | None = None
-    now = datetime.now(tz=UTC)
+    now = utc_now()
     for candle in candles:
         if candle.timestamp in seen:
             raise MarketDataError(f"Duplicate candle timestamp: {candle.timestamp.isoformat()}.")
@@ -309,7 +334,9 @@ def _validate_candle_sequence(candles: list[Candle], interval_minutes: int) -> N
                 raise MarketDataError("Out-of-order or duplicate candle interval.")
             if delta > expected_interval:
                 raise MarketDataError("Missing candle interval.")
-        if candle.timestamp + expected_interval > now:
+        if candle.timestamp > now + timedelta(seconds=5):
+            raise MarketDataError("Future candle timestamp.")
+        if not allow_forming and candle.timestamp + expected_interval > now:
             raise MarketDataError("Latest candle is still forming.")
         previous = candle
 
@@ -317,4 +344,10 @@ def _validate_candle_sequence(candles: list[Candle], interval_minutes: int) -> N
 def _retry_after_seconds(value: str | None) -> Decimal:
     if value is None:
         return Decimal("1")
-    return Decimal(value) / Decimal("1000")
+    try:
+        delay=Decimal(value)/Decimal(1000)
+        if not delay.is_finite() or delay < 0:
+            raise ValueError("Invalid Retry-After")
+        return delay
+    except Exception as exc:
+        raise MarketDataError("Invalid provider Retry-After header.") from exc

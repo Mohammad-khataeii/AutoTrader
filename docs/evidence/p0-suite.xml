@@ -1,0 +1,1035 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="22" failures="0" skipped="0" tests="61" time="137.963" timestamp="2026-10-15T11:13:46.347538+02:00" hostname="DESKTOP-O7BK3NI"><testcase classname="tests.test_api" name="test_api_scanner_serializes_domain_objects" time="0.009" /><testcase classname="tests.test_api" name="test_api_paper_order_rejects_when_no_real_candidate" time="0.006" /><testcase classname="tests.test_backtest" name="test_backtest_produces_reproducible_report_without_fabricating_profit" time="0.183" /><testcase classname="tests.test_config" name="test_live_trading_cannot_be_enabled" time="0.002" /><testcase classname="tests.test_decision_ai" name="test_ai_never_overrides_risk_limits" time="0.024" /><testcase classname="tests.test_decision_ai" name="test_openai_budget_survives_provider_restart" time="1.644" /><testcase classname="tests.test_indicators" name="test_features_are_ordered_and_complete_for_sufficient_history" time="0.043" /><testcase classname="tests.test_indicators" name="test_insufficient_history_is_explicit" time="0.001" /><testcase classname="tests.test_position_manager_v3_2" name="test_position_manager_monitors_open_position_absent_from_scanner_shortlist" time="3.079" /><testcase classname="tests.test_position_manager_v3_2" name="test_position_manager_does_not_advance_target_without_fill" time="1.779" /><testcase classname="tests.test_revolut_client" name="test_v2_public_order_book_parses_documented_shape" time="0.555" /><testcase classname="tests.test_revolut_client" name="test_v2_public_order_book_rejects_unusable_books[data0]" time="0.486" /><testcase classname="tests.test_revolut_client" name="test_v2_public_order_book_rejects_unusable_books[data1]" time="0.429" /><testcase classname="tests.test_revolut_client" name="test_v2_public_order_book_rejects_unusable_books[data2]" time="0.429" /><testcase classname="tests.test_revolut_client" name="test_v2_public_order_book_rejects_unusable_books[data3]" time="0.424" /><testcase classname="tests.test_revolut_client" name="test_historical_candles_use_start_epoch_milliseconds" time="0.463" /><testcase classname="tests.test_revolut_client" name="test_candles_reject_missing_interval_and_forming_records" time="0.442" /><testcase classname="tests.test_revolut_client" name="test_public_pair_configuration_uses_documented_fields_and_skips_disabled" time="0.490" /><testcase classname="tests.test_revolut_client" name="test_retry_after_header_is_documented_as_milliseconds" time="0.001" /><testcase classname="tests.test_risk_and_paper" name="test_risk_preserves_minimum_cash_reserve" time="0.001" /><testcase classname="tests.test_risk_and_paper" name="test_risk_rejects_stop_loss_at_or_above_long_entry" time="0.001" /><testcase classname="tests.test_risk_and_paper" name="test_risk_rejects_planned_loss_after_execution_cost_allowance" time="0.001" /><testcase classname="tests.test_risk_and_paper" name="test_paper_buy_cannot_make_cash_negative" time="0.001" /><testcase classname="tests.test_risk_and_paper" name="test_partial_fill_status_and_no_live_flag" time="0.001" /><testcase classname="tests.test_risk_and_paper" name="test_duplicate_fill_event_is_idempotent" time="0.001" /><testcase classname="tests.test_v2_persistent_runtime" name="test_v2_persistent_buy_restart_sell_and_reconcile" time="3.233" /><testcase classname="tests.test_v2_persistent_runtime" name="test_v2_duplicate_order_submission_is_idempotent" time="2.328" /><testcase classname="tests.test_v2_persistent_runtime" name="test_reconciliation_failure_persists_halt_and_blocks_restart_entries" time="3.194" /><testcase classname="tests.test_v2_persistent_runtime" name="test_realized_pnl_since_uses_closing_fill_timestamp_not_open_date" time="2.004" /><testcase classname="tests.test_v34_acceptance" name="test_proof_a_targets_survive_actual_worker_restart_and_stop" time="11.921" /><testcase classname="tests.test_v34_acceptance" name="test_proof_b_unrealized_equity_halt_survives_process_restart" time="6.754" /><testcase classname="tests.test_v34_acceptance" name="test_proof_d_concurrent_buys_idempotency_and_sell_race" time="2.880" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[before_capital_reservation]" time="8.693" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[after_reservation_persistence]" time="8.413" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[before_order_dispatch]" time="8.412" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[after_order_dispatch]" time="8.483" /><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[before_fill_persistence]" time="2.112"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_worker_entry_crash_boundaries_recover[before_fill_persistence]&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1DA829D0&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[after_fill_persistence]" time="2.041"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_worker_entry_crash_boundaries_recover[after_fill_persistence]&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1E06B290&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[before_ledger_posting]" time="2.070"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_worker_entry_crash_boundaries_recover[before_ledger_posting]&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1DE6F210&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_acceptance" name="test_worker_entry_crash_boundaries_recover[after_ledger_commit]" time="2.067"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_worker_entry_crash_boundaries_recover[after_ledger_commit]&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1C15AD90&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_acceptance" name="test_journal_and_fills_are_immutable_in_database" time="2.073"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_journal_and_fills_are_immutable_in_database&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1DFF7810&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_acceptance" name="test_proof_c_full_autonomous_lifecycle_and_authenticated_api" time="2.040"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_proof_c_full_autonomous_lifecycle_and_authenticated_api&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1DE93010&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_migrations" name="test_populated_v33_history_is_preserved_and_quarantined" time="4.767" /><testcase classname="tests.test_v34_migrations" name="test_failed_postgres_migration_rolls_back_and_retries" time="6.295" /><testcase classname="tests.test_v34_risk_accounting" name="test_fees_cost_basis_realized_pnl_and_duplicate_fill" time="2.040"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_fees_cost_basis_realized_pnl_and_duplicate_fill&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1D46F510&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_risk_accounting" name="test_weekly_unrealized_loss_after_day_rollover" time="2.054"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_weekly_unrealized_loss_after_day_rollover&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1C00C610&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_risk_accounting" name="test_missing_or_stale_mark_blocks_entries" time="2.076"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_missing_or_stale_mark_blocks_entries&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1DEBBFD0&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_risk_accounting" name="test_time_exit_and_cooldown_use_shared_clock" time="2.053"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_time_exit_and_cooldown_use_shared_clock&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1C21C410&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_risk_accounting" name="test_real_postgres_deadlock_is_retried" time="2.044"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_real_postgres_deadlock_is_retried&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1DF458D0&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_risk_accounting" name="test_exit_process_crash_rolls_back_target_and_ledger[during_target_completion-11.01]" time="2.059"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_exit_process_crash_rolls_back_target_and_ledger[during_target_completion-11.01]&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1DF77CD0&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_risk_accounting" name="test_exit_process_crash_rolls_back_target_and_ledger[during_protective_stop_processing-9.7]" time="2.055"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_exit_process_crash_rolls_back_target_and_ledger[during_protective_stop_processing-9.7]&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1E0BD190&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_risk_accounting" name="test_exit_process_crash_rolls_back_target_and_ledger[after_reservation_persistence-11.01]" time="2.166"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_exit_process_crash_rolls_back_target_and_ledger[after_reservation_persistence-11.01]&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1BFA5D90&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_risk_accounting" name="test_exit_process_crash_rolls_back_target_and_ledger[after_ledger_commit-11.01]" time="2.179"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_exit_process_crash_rolls_back_target_and_ledger[after_ledger_commit-11.01]&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1BF93E50&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_risk_accounting" name="test_lost_database_connection_after_commit_does_not_duplicate_economics" time="2.075"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_lost_database_connection_after_commit_does_not_duplicate_economics&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1DE7B810&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_risk_accounting" name="test_trailing_stop_never_moves_down_and_cooldown_survives_repository_reopen" time="2.117"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_trailing_stop_never_moves_down_and_cooldown_survives_repository_reopen&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1C08D610&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v34_risk_accounting" name="test_worker_crash_during_cancellation_recovers_reservation" time="2.068"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_worker_crash_during_cancellation_recovers_reservation&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1E0E3E50&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v3_3_postgres_failure_hunt" name="test_postgres_target_lifecycle_repository_reopen_and_symbol_reuse" time="2.104"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_postgres_target_lifecycle_repository_reopen_and_symbol_reuse&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1DF934D0&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v3_3_postgres_failure_hunt" name="test_postgres_parallel_buy_reservations_cannot_make_negative_cash" time="2.048"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_postgres_parallel_buy_reservations_cannot_make_negative_cash&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1BF21110&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v3_3_postgres_failure_hunt" name="test_postgres_stop_and_target_race_cannot_oversell" time="2.077"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_postgres_stop_and_target_race_cannot_oversell&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1E0A2690&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_v3_3_postgres_failure_hunt" name="test_postgres_unfilled_buy_releases_pending_reservation" time="2.066"><error message="failed on setup with &quot;RuntimeError: Incompatible database schema; run alembic upgrade head.&quot;">self = &lt;Coroutine test_postgres_unfilled_buy_releases_pending_reservation&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\conftest.py:44: in pg_repo
+    await create_schema(engine)
+src\autotrader\persistence\database.py:46: in create_schema
+    await check_schema(engine)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+engine = &lt;sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x0000025C1DEB7E90&gt;
+
+    async def check_schema(engine: AsyncEngine) -&gt; None:
+        async with engine.connect() as connection:
+            revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
+            if revision != "0007_ai_usage_details":
+&gt;               raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
+E               RuntimeError: Incompatible database schema; run alembic upgrade head.
+
+src\autotrader\persistence\database.py:53: RuntimeError</error></testcase><testcase classname="tests.test_worker_allocation" name="test_worker_allocates_across_ranked_candidates_until_cycle_capacity" time="0.003" /></testsuite></testsuites>

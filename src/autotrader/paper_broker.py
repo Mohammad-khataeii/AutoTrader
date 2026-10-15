@@ -1,118 +1,76 @@
+"""Synchronous compatibility facade over the authoritative paper repository.
+
+The autonomous worker uses PaperExecutionGateway. This facade keeps existing
+local simulation callers working without a second financial execution engine.
+"""
 from __future__ import annotations
 
+import asyncio
+import tempfile
 from decimal import Decimal
+from pathlib import Path
+from types import SimpleNamespace
 
-from autotrader.domain import (
-    Fill,
-    Order,
-    OrderBook,
-    OrderStatus,
-    OrderType,
-    Side,
-    TradingPair,
-    new_id,
-    quantize_down,
-    utc_now,
-)
+from sqlalchemy import select
+
+from autotrader.domain import Fill, Order, OrderBook, OrderType, Side, TradingPair, new_id
+from autotrader.persistence.database import create_schema, make_engine, make_session_factory
+from autotrader.persistence.models import FillModel, TradingDecisionModel
+from autotrader.persistence.repository import PersistentTradingRepository
 from autotrader.portfolio import Portfolio
 
 
 class PaperBroker:
-    """Simulated exchange. This class has no live-order dependency by design."""
+    def __init__(self,portfolio:Portfolio,fee_bps:Decimal=Decimal(10),slippage_bps:Decimal=Decimal(8))->None:
+        self.portfolio,self.fee_bps,self.slippage_bps=portfolio,fee_bps,slippage_bps
+        self.orders:dict[str,Order]={}
+        self.fills:dict[str,Fill]={}
+        self._directory=tempfile.TemporaryDirectory(prefix='paper-broker-')
+        self._url=f"sqlite+aiosqlite:///{Path(self._directory.name)/'paper.db'}"
+        asyncio.run(self._initialize())
 
-    def __init__(self, portfolio: Portfolio, fee_bps: Decimal = Decimal("10"), slippage_bps: Decimal = Decimal("8")) -> None:
-        self.portfolio = portfolio
-        self.fee_bps = fee_bps
-        self.slippage_bps = slippage_bps
-        self.orders: dict[str, Order] = {}
-        self.fills: dict[str, Fill] = {}
-
-    def submit_order(
-        self,
-        pair: TradingPair,
-        side: Side,
-        order_type: OrderType,
-        quantity: Decimal,
-        quote_amount: Decimal,
-        order_book: OrderBook,
-        limit_price: Decimal | None = None,
-        decision_id: str | None = None,
-    ) -> Order:
-        order = Order(
-            order_id=new_id("ord"),
-            client_order_id=new_id("client"),
-            symbol=pair.symbol,
-            side=side,
-            order_type=order_type,
-            quantity=quantize_down(quantity, pair.quantity_step),
-            quote_amount=quote_amount,
-            limit_price=limit_price,
-            status=OrderStatus.PENDING,
-            created_at=utc_now(),
-            decision_id=decision_id,
-            simulated=True,
-        )
+    async def _initialize(self)->None:
+        engine=make_engine(SimpleNamespace(database_url=self._url))  # type: ignore[arg-type]
         try:
-            self._accept(order, pair, order_book)
-        except ValueError as exc:
-            order.status = OrderStatus.REJECTED
-            order.rejection_reason = str(exc)
-        self.orders[order.order_id] = order
-        return order
+            await create_schema(engine)
+            await PersistentTradingRepository(make_session_factory(engine)).initialize_portfolio(self.portfolio.cash)
+        finally:
+            await engine.dispose()
 
-    def cancel(self, order_id: str) -> Order:
-        order = self.orders[order_id]
-        if order.status in {OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED}:
+    def submit_order(self,pair:TradingPair,side:Side,order_type:OrderType,quantity:Decimal,
+                     quote_amount:Decimal,order_book:OrderBook,limit_price:Decimal|None=None,
+                     decision_id:str|None=None,*,stop_loss:Decimal|None=None)->Order:
+        return asyncio.run(self._submit(pair,side,order_type,quantity,quote_amount,order_book,
+            limit_price,decision_id,stop_loss))
+
+    async def _submit(self,pair:TradingPair,side:Side,order_type:OrderType,quantity:Decimal,
+                      quote:Decimal,book:OrderBook,limit:Decimal|None,decision_id:str|None,stop:Decimal|None)->Order:
+        engine=make_engine(SimpleNamespace(database_url=self._url))  # type: ignore[arg-type]
+        repo=PersistentTradingRepository(make_session_factory(engine))
+        try:
+            if decision_id:
+                async with repo.session_factory() as s,s.begin():
+                    if await s.get(TradingDecisionModel,decision_id) is None:
+                        s.add(TradingDecisionModel(decision_id=decision_id,symbol=pair.symbol,action=side.value,
+                            accepted=True,payload_json='{"origin":"manual local simulation proposal; repository risk required"}'))
+            protective=stop if stop is not None else (book.best_ask*Decimal('.98') if book.best_ask else None)
+            order=await repo.submit_order(pair,side,order_type,quantity,quote,book,new_id('compat'),
+                decision_id=decision_id,limit_price=limit,fee_bps=self.fee_bps,slippage_bps=self.slippage_bps,
+                stop_loss=protective)
+            self.orders[order.order_id]=order
+            snapshot=await repo.snapshot()
+            balance=self.portfolio.balances[self.portfolio.quote_asset]
+            balance.available,balance.reserved=Decimal(snapshot['available_cash']),Decimal(snapshot['reserved_cash'])
+            for p in await repo.list_positions():
+                self.portfolio.positions[p.symbol]=p
+            async with repo.session_factory() as s:
+                for f in (await s.scalars(select(FillModel))).all():
+                    self.fills[f.fill_id]=Fill(f.fill_id,f.order_id,f.symbol,Side(f.side),f.quantity,f.price,f.fee,f.created_at,True)
+            self.portfolio.processed_fill_ids.update(self.fills)
             return order
-        order.status = OrderStatus.CANCELLED
-        if order.side is Side.BUY:
-            self.portfolio.release_cash(order.quote_amount)
-        return order
+        finally:
+            await engine.dispose()
 
-    def _accept(self, order: Order, pair: TradingPair, order_book: OrderBook) -> None:
-        if order.quantity <= 0:
-            raise ValueError("Order quantity rounds to zero.")
-        if order.side is Side.BUY:
-            self.portfolio.reserve_cash(order.quote_amount)
-        order.status = OrderStatus.ACCEPTED
-        self._try_fill(order, pair, order_book)
-
-    def _try_fill(self, order: Order, pair: TradingPair, order_book: OrderBook) -> None:
-        book_side = order_book.asks if order.side is Side.BUY else order_book.bids
-        if not book_side:
-            return
-        remaining = order.quantity - order.filled_quantity
-        filled_qty = Decimal("0")
-        cost = Decimal("0")
-        for level in book_side:
-            if remaining <= 0:
-                break
-            if order.order_type is OrderType.LIMIT and order.limit_price is not None:
-                crosses = level.price <= order.limit_price if order.side is Side.BUY else level.price >= order.limit_price
-                if not crosses:
-                    continue
-            qty = min(remaining, level.quantity)
-            fill_price = self._with_slippage(level.price, order.side)
-            filled_qty += qty
-            cost += qty * fill_price
-            remaining -= qty
-        if filled_qty == 0:
-            return
-        avg_price = cost / filled_qty
-        fee = cost * self.fee_bps / Decimal("10000")
-        fill = Fill(new_id("fill"), order.order_id, order.symbol, order.side, filled_qty, avg_price, fee, utc_now(), simulated=True)
-        self.fills[fill.fill_id] = fill
-        self.portfolio.apply_fill(fill)
-        order.filled_quantity += filled_qty
-        order.average_fill_price = avg_price
-        order.status = OrderStatus.FILLED if order.filled_quantity >= order.quantity else OrderStatus.PARTIALLY_FILLED
-        if order.side is Side.BUY and order.status is OrderStatus.FILLED:
-            unspent = max(order.quote_amount - cost - fee, Decimal("0"))
-            self.portfolio.release_cash(unspent)
-
-    def _with_slippage(self, price: Decimal, side: Side) -> Decimal:
-        multiplier = Decimal("1") + (self.slippage_bps / Decimal("10000"))
-        if side is Side.SELL:
-            multiplier = Decimal("1") - (self.slippage_bps / Decimal("10000"))
-        return price * multiplier
-
+    def cancel(self,order_id:str)->Order:
+        # Orders are immediate-or-cancel; no unbacked mutable in-memory reservation.
+        return self.orders[order_id]

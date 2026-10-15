@@ -1,0 +1,4 @@
+FROM grafana/grafana:13.2.4
+USER root
+RUN apk upgrade --no-cache
+USER 472

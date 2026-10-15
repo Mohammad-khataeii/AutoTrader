@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from autotrader.domain import MarketFeatures, StrategySignal, new_id, utc_now
+from autotrader.domain import MarketFeatures, StrategySignal, new_id
 
 
 def _score(value: Decimal | None, low: Decimal, high: Decimal) -> Decimal:
@@ -21,22 +21,22 @@ class BreakoutStrategyEngine:
             self._volatility_compression(features),
             self._resistance_breakout(features),
             self._momentum_acceleration(features),
-            self._catalyst_placeholder(features),
-            self._market_structure_reversal(features),
+            self._failed_breakout(features),
+            self._risk_off(features),
             self._relative_strength(features, btc_features, eth_features),
             self._liquidity_order_book(features),
         ]
-        return [signal for signal in signals if signal.score > Decimal("0")]
+        return signals
 
     def _build(self, features: MarketFeatures, strategy_id: str, score: Decimal, evidence: dict[str, object], entry: list[str], invalidation: list[str], explanation: str) -> StrategySignal:
         return StrategySignal(
             signal_id=new_id("sig"),
             strategy_id=strategy_id,
             symbol=features.symbol,
-            timestamp=utc_now(),
+            timestamp=features.timestamp,
             score=score.quantize(Decimal("0.0001")),
             data_quality=features.data_quality,
-            evidence=evidence,
+            evidence={**evidence,"strategy_version":"3.4.0","qualified":score>0 or bool(evidence.get("veto"))},
             entry_conditions=entry,
             invalidation_conditions=invalidation,
             estimated_cost_bps=features.spread_bps or Decimal("25"),
@@ -56,25 +56,33 @@ class BreakoutStrategyEngine:
         return self._build(features, "B_VOLATILITY_COMPRESSION", max(score, Decimal("0")), {"bollinger_width": width, "atr": features.atr}, ["range compression persists", "break above compression high with volume"], ["close below compression low"], "Volatility appears compressed, which can precede expansion.")
 
     def _resistance_breakout(self, features: MarketFeatures) -> StrategySignal:
-        score = _score(features.breakout_distance, Decimal("-0.003"), Decimal("0.02"))
-        return self._build(features, "C_RESISTANCE_BREAKOUT", score, {"resistance": features.resistance, "breakout_distance": features.breakout_distance}, ["close above resistance", "retest holds"], ["failed retest", "close back inside range"], "Price is approaching or clearing recent resistance.")
+        level = features.metadata.get("retest_level")
+        previous = features.metadata.get("previous_close")
+        low, close = features.metadata.get("last_low"), features.metadata.get("last_close")
+        retest = bool(level and previous and low and close and previous>level and low<=level*Decimal("1.002") and close>=level)
+        score=Decimal("0.8") if retest else Decimal(0)
+        return self._build(features,"C_BREAKOUT_RETEST",score,{"resistance":level,"retest_confirmed":retest},["previous completed close above resistance","completed retest holds"],["close back below resistance"],"Completed-candle breakout and retest evidence.")
 
     def _momentum_acceleration(self, features: MarketFeatures) -> StrategySignal:
         trend_ok = features.ema_9 is not None and features.ema_21 is not None and features.ema_9 > features.ema_21
         score = _score(features.momentum, Decimal("0.001"), Decimal("0.025")) + (Decimal("0.25") if trend_ok else Decimal("0"))
         return self._build(features, "D_MOMENTUM_ACCELERATION", min(score, Decimal("1")), {"momentum": features.momentum, "ema_9": features.ema_9, "ema_21": features.ema_21}, ["momentum stays positive", "short EMA remains above medium EMA"], ["momentum turns negative"], "Momentum is strengthening without being treated as a calibrated probability.")
 
-    def _catalyst_placeholder(self, features: MarketFeatures) -> StrategySignal:
-        return self._build(features, "E_CATALYST_DRIVEN", Decimal("0"), {"news_events": 0}, ["credible catalyst confirmed by source"], ["catalyst disproven or stale"], "No connected news provider evidence is available in this offline build.")
+    def _failed_breakout(self, features: MarketFeatures) -> StrategySignal:
+        high,close=features.metadata.get("last_high"),features.metadata.get("last_close")
+        resistance=features.resistance
+        failed=bool(high and close and resistance and high>resistance*Decimal("1.001") and close<resistance)
+        return self._build(features,"E_FAILED_BREAKOUT_REJECTION",Decimal(0),{"veto":failed,"resistance":resistance,"high":high,"close":close},[],["failed resistance breakout"],"Resistance rejection veto; never opens a short position.")
 
-    def _market_structure_reversal(self, features: MarketFeatures) -> StrategySignal:
-        oversold = features.rsi is not None and features.rsi < Decimal("35")
-        reclaim = features.vwap is not None and features.metadata.get("observations", 0) and features.support is not None
-        score = Decimal("0.55") if oversold and reclaim else Decimal("0")
-        return self._build(features, "F_MARKET_STRUCTURE_REVERSAL", score, {"rsi": features.rsi, "support": features.support, "vwap": features.vwap}, ["higher low forms", "price reclaims VWAP"], ["new low with expanding volume"], "Potential reversal evidence after selling exhaustion.")
+    def _risk_off(self, features: MarketFeatures) -> StrategySignal:
+        risk_off=bool(features.ema_21 and features.ema_50 and features.momentum is not None and features.ema_21<features.ema_50 and features.momentum<Decimal("-0.01"))
+        higher=features.metadata.get('higher_timeframe_confirmation',{})
+        confirmation_veto=bool(higher.get('veto'))
+        return self._build(features,"F_MARKET_REGIME_RISK_OFF",Decimal(0),{"veto":risk_off or confirmation_veto,"higher_timeframe":higher,"regime":"RISK_OFF" if risk_off else "TREND" if features.ema_21 and features.ema_50 and features.ema_21>features.ema_50 else "RANGE"},[],["market regime risk off","higher timeframe confirmation unavailable or risk off"],"Market-regime entry veto and protective invalidation evidence.")
+
 
     def _relative_strength(self, features: MarketFeatures, btc_features: MarketFeatures | None, eth_features: MarketFeatures | None) -> StrategySignal:
-        benchmark = [item.momentum for item in (btc_features, eth_features) if item and item.momentum is not None]
+        benchmark = [item.momentum for item in (btc_features, eth_features) if item and item.symbol!=features.symbol and item.momentum is not None]
         relative = None
         if features.momentum is not None and benchmark:
             relative = features.momentum - (sum(benchmark) / Decimal(len(benchmark)))

@@ -15,6 +15,7 @@ from autotrader.domain import (
     TradingDecision,
     TradingPair,
     new_id,
+    utc_now,
 )
 from autotrader.market_data.service import MarketDataService
 from autotrader.persistence.repository import PersistentTradingRepository
@@ -39,6 +40,7 @@ class PaperExecutionGateway:
         initial_cash: Decimal,
         fee_bps: Decimal,
         slippage_bps: Decimal,
+        entry_order_type: OrderType = OrderType.MARKET,
     ) -> None:
         self.repository = repository
         self.market_data = market_data
@@ -46,6 +48,7 @@ class PaperExecutionGateway:
         self.initial_cash = initial_cash
         self.fee_bps = fee_bps
         self.slippage_bps = slippage_bps
+        self.entry_order_type = entry_order_type
 
     async def execute_entry_decision(
         self,
@@ -56,6 +59,10 @@ class PaperExecutionGateway:
     ) -> ExecutionResult:
         if decision.action is not DecisionAction.BUY or not decision.accepted:
             return ExecutionResult(False, decision.rejected_reason or "decision_not_accepted")
+        from autotrader.persistence.accounting import aware
+        age=(utc_now()-aware(decision.timestamp)).total_seconds()
+        if age>self.repository.mark_max_age_seconds or age < -5:
+            return ExecutionResult(False,'stale_or_future_decision')
         if decision.symbol != pair.symbol:
             return ExecutionResult(False, "decision_pair_mismatch")
         if pair.quote_asset != self.repository.quote_asset:
@@ -82,7 +89,7 @@ class PaperExecutionGateway:
         order = await self.repository.submit_order(
             pair=pair,
             side=Side.BUY,
-            order_type=OrderType.MARKET,
+            order_type=self.entry_order_type,
             quantity=decision.proposed_quantity,
             quote_amount=decision.proposed_quote_amount,
             order_book=order_book,
@@ -92,6 +99,7 @@ class PaperExecutionGateway:
             slippage_bps=self.slippage_bps,
             stop_loss=decision.stop_loss,
             targets=list(decision.take_profit_targets),
+            limit_price=decision.entry_price if self.entry_order_type is OrderType.LIMIT else None,
         )
         return ExecutionResult(order.status in {OrderStatus.FILLED, OrderStatus.PARTIALLY_FILLED}, order.rejection_reason or order.status.value, order)
 
@@ -127,7 +135,8 @@ class PaperExecutionGateway:
             exit_target_id=exit_target_id,
             exit_reason={"protective_stop": "STOP", "take_profit_target": "TAKE_PROFIT", "time_exit": "TIME_EXIT", "market_risk": "MARKET_RISK", "emergency": "EMERGENCY"}.get(reason, "MANUAL_EXIT"),
         )
-        return ExecutionResult(order.status is not OrderStatus.REJECTED, reason, order)
+        accepted=order.status in {OrderStatus.FILLED,OrderStatus.PARTIALLY_FILLED}
+        return ExecutionResult(accepted, reason if accepted else order.rejection_reason or order.status.value, order)
 
     def cycle_key(self, prefix: str, symbol: str) -> str:
         # New decisions get new keys. A caller retry must retain the returned key.

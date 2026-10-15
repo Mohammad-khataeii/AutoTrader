@@ -1,0 +1,20 @@
+# V3.4 separate adversarial review
+
+The implementation was re-examined assuming its apparent successful tests were insufficient. This was a separate review pass after the initial P0 milestone, followed by executable regressions. No external human review or paid-provider invoice audit was performed.
+
+| Attack/incorrect assumption | Finding and correction | Executed regression |
+|---|---|---|
+| Kill Popen.pid and call it a worker restart | Windows venv launcher PID differed from the interpreter. Earlier restart evidence was invalidated. Harness now reads the actual logged interpreter PID, matches persisted worker_instance, terminates the owned process tree and queries kernel termination before starting a distinct interpreter. | Proof A/B/C; actual PID outputs in complete-regression evidence |
+| Increase the mutable position quantity, then SELL it | Exit admission and dispatch now compare quantity/basis to immutable fills/journal and halt on mismatch. | test_corrupt_position_projection_cannot_authorize_oversell |
+| Appreciate another asset after a BUY reservation commits | Marked exposure and pending reservations are checked again at dispatch; the stale risk decision cannot authorize excess exposure. | test_marked_exposure_and_pending_dispatch_are_risk_checked |
+| Include the provider's forming candle | Public smoke exposed an inclusive current candle. Parser now excludes the forming candle and rejects malformed/future observations. | Public smoke and client contract tests |
+| Count fees twice or infer historical results from present average price | Entry fees enter basis, closing fills release proportional basis, fees/realized P&L are immutable postings and independently replayed. | test_fees_cost_basis_realized_pnl_and_duplicate_fill |
+| Replay a successful duplicate fill after lost acknowledgement | Deterministic fill/order keys and transactional history prevent a second economic effect after a real connection termination. | test_lost_database_connection_after_commit_does_not_duplicate_economics |
+| Trust successful SQL without exercising lock contention | A two-session lock cycle creates a real PostgreSQL deadlock; the failed transaction retries exactly once. | test_real_postgres_deadlock_is_retried |
+| Let an AI timeout or invalid JSON reset budget | SENT/UNKNOWN holds persist, reported invalid responses are charged, SDK retries are disabled and concurrent reservations stay within USD10. | test_concurrent_budget_reservations_and_idempotent_settlement; test_openai_boundary_validation_usage_and_unknown_outcomes |
+| Treat an article instruction as authority | Article content is explicitly untrusted and extra model fields are forbidden; hard deterministic risk remains independent. | OpenAI boundary injection/schema tests |
+| Repair balances by adding convenient cash | Fingerprinted explicit correction restores projections to proven history; zero-economic audit, authenticated actor/reason, stale-plan refusal, concurrent retry identity, and legacy/source refusal are tested. | test_authenticated_reviewed_projection_repair_is_atomic_and_idempotent; test_projection_repair_cannot_invent_meaning_for_economic_history |
+| Count a rendered chart container as a usable chart | Screenshot revealed animation hiding the actual curve. Animation disabled and Playwright asserts the SVG area/path and actual backend balance. | frontend/e2e/dashboard.spec.ts |
+| Count a backtest button as working without clicking it | Playwright selects LIMIT IOC, executes a persisted historical replay and retrieves the completed stored report. | frontend/e2e/dashboard.spec.ts |
+
+Static searches found no runtime create_all call, sequential symbol/position SELL-to-target allocation, artificial step counter or live exchange submission method. The Revolut adapter's only HTTP method is GET. A production security scan is separate from npm/pip audits; image findings are retained and not silently suppressed. Fresh combined regression and final image/deployment reports are the authoritative gates.

@@ -7,7 +7,7 @@ from decimal import Decimal
 from autotrader.ai import AIProviderClient
 from autotrader.decision import DecisionEngine
 from autotrader.domain import AIAssessment, MarketFeatures, StrategySignal, TradingDecision
-from autotrader.indicators import calculate_features
+from autotrader.indicators import calculate_features, higher_timeframe_context
 from autotrader.market_data.revolut import MarketDataError
 from autotrader.market_data.service import MarketDataService, ValidatedMarket
 from autotrader.persistence.repository import PersistentTradingRepository
@@ -68,6 +68,7 @@ class MarketScanner:
             return ScanResult("DATA_UNAVAILABLE", 0, rejected, [str(exc)], [], Decimal("0"))
 
         portfolio = await self._portfolio()
+        benchmarks:dict[str,MarketFeatures]={}
         for pair in pairs:
             try:
                 market = await self.market_data.get_validated_market(pair)
@@ -79,6 +80,7 @@ class MarketScanner:
                 rejected.append({"symbol": pair.symbol, "reasons": market.rejected_reasons})
                 continue
             features = calculate_features(market.candles, market.metrics.imbalance, market.metrics.spread_bps)
+            features.metadata['higher_timeframe_confirmation']=higher_timeframe_context(market.candles)
             features.metadata.update(
                 {
                     "last_price": market.metrics.mid,
@@ -93,7 +95,8 @@ class MarketScanner:
                     "provider": market.order_book.source,
                 }
             )
-            signals = self.strategy_engine.generate(features)
+            benchmarks[pair.base_asset]=features
+            signals = self.strategy_engine.generate(features,benchmarks.get('BTC'),benchmarks.get('ETH'))
             await self.repository.store_market_analysis(market.candles, features, market.order_book)
             ai = await self.ai_provider.assess(features, signals)
             decision = self.decision_engine.decide(pair, features, signals, portfolio, ai)

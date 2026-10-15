@@ -17,7 +17,7 @@ from autotrader.domain import (
     TradingPair,
 )
 from autotrader.execution_gateway import PaperExecutionGateway
-from autotrader.indicators import calculate_features
+from autotrader.indicators import calculate_features, higher_timeframe_context
 from autotrader.persistence.repository import PersistentTradingRepository
 from autotrader.portfolio import Portfolio
 from autotrader.risk import RiskEngine
@@ -69,6 +69,7 @@ class PaperTradingRuntime:
                 portfolio.positions[position.symbol] = position
 
         features = calculate_features(candles)
+        features.metadata['higher_timeframe_confirmation']=higher_timeframe_context(candles)
         features.metadata["last_price"] = candles[-1].close
         if order_book.mid and order_book.spread:
             features.metadata["last_price"] = order_book.mid

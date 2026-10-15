@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import signal
 from dataclasses import dataclass
 
 from autotrader.ai import make_ai_provider
@@ -71,6 +72,7 @@ async def main() -> None:
         base_url=settings.revolut_x_base_url,
         region=settings.revolut_x_region,
         timeout=float(settings.market_data_timeout_seconds),
+        rate_reserver=repository.reserve_public_request,
     )
     replay_client = None
     if settings.market_data_replay_file:
@@ -118,22 +120,44 @@ async def main() -> None:
     )
     await repository.recover_pending_orders()
     await repository.reconcile_runtime_health(settings.initial_cash_eur)
+    await repository.worker_heartbeat(key='worker_instance')
     logger.info("starting worker in durable paper mode", extra={"ai_provider": settings.ai_provider})
+    stopping=asyncio.Event()
+    loop=asyncio.get_running_loop()
+    for signum in (signal.SIGINT,signal.SIGTERM):
+        try:
+            loop.add_signal_handler(signum,stopping.set)
+        except (NotImplementedError,RuntimeError):
+            pass
+    async def protective_loop()->None:
+        while not stopping.is_set():
+            try:
+                await position_manager.monitor_once()
+                await repository.snapshot()
+                await repository.worker_heartbeat(key="position_monitor")
+            except Exception:
+                logger.exception("independent position monitoring cycle failed")
+            try:
+                await asyncio.wait_for(stopping.wait(),timeout=settings.worker_position_interval_seconds)
+            except TimeoutError:
+                pass
+    protective_task=asyncio.create_task(protective_loop()) if replay_client is None else None
     try:
-        while True:
+        while not stopping.is_set():
             try:
                 frame_id = replay_client.refresh() if replay_client else None
                 if replay_client and frame_id == await repository.last_worker_frame():
                     await asyncio.sleep(settings.worker_scan_interval_seconds)
                     continue
                 await repository.recover_pending_orders()
-                position_actions = await position_manager.monitor_once()
+                position_actions = await position_manager.monitor_once() if replay_client else []
                 if position_actions:
                     logger.info(
                         "position manager actions",
                         extra={"actions": [action.reason for action in position_actions]},
                     )
                 result = await scanner.scan_once(settings.scanner_max_pairs)
+                await repository.store_scan(result)
                 executions = await execute_ranked_candidates(
                     result.candidates,
                     execution_gateway,
@@ -158,13 +182,23 @@ async def main() -> None:
             problems = await repository.reconcile_runtime_health(settings.initial_cash_eur)
             if problems:
                 logger.error("reconciliation failed", extra={"problems": problems})
-            await asyncio.sleep(settings.worker_scan_interval_seconds)
+            try:
+                await asyncio.wait_for(stopping.wait(),timeout=settings.worker_scan_interval_seconds)
+            except TimeoutError:
+                pass
     finally:
+        if protective_task:
+            protective_task.cancel()
+            await asyncio.gather(protective_task,return_exceptions=True)
         await market_data.close()
         await engine.dispose()
 
 
 def run() -> None:
+    from autotrader.logging_config import configure_logging
+    configure_logging()
+    import os
+    logger.info('worker_process_identity',extra={'process_id':os.getpid(),'parent_process_id':os.getppid()})
     asyncio.run(main())
 
 

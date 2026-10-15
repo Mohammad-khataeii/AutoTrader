@@ -1,0 +1,15 @@
+{
+  "prometheus": [
+    {
+      "health": "up",
+      "lastError": "",
+      "scrapeUrl": "http://backend:8000/metrics"
+    }
+  ],
+  "grafana": {
+    "database": "ok",
+    "version": "13.2.4",
+    "commit": "0e79aef9d91abf3bdadae9af15763029072fb45b"
+  },
+  "after_verification": "Optional monitoring containers stopped pending security remediation; volumes retained."
+}

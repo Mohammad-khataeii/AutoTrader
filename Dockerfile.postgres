@@ -1,0 +1,18 @@
+FROM postgres:16-alpine AS patched
+# Keep PostgreSQL 16/data compatibility; replace the old Go privilege helper
+# with Alpine's small C helper implementing the same user/command interface.
+RUN apk add --no-cache su-exec \
+    && apk upgrade --no-cache \
+    && cp /sbin/su-exec /usr/local/bin/gosu
+
+# Copy the patched final filesystem so removed/replaced helper binaries are
+# absent from all shipped layers. Retain the upstream data/entrypoint contract.
+FROM scratch
+COPY --from=patched / /
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+    LANG=en_US.utf8 PG_MAJOR=16 PGDATA=/var/lib/postgresql/data
+VOLUME /var/lib/postgresql/data
+EXPOSE 5432
+STOPSIGNAL SIGINT
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["postgres"]

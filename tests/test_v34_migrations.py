@@ -41,7 +41,7 @@ async def test_populated_v33_history_is_preserved_and_quarantined(pg_repo: Persi
     assert result.returncode == 0,result.stderr
     async with pg_repo.session_factory() as s:
         row = (await s.execute(text("SELECT position_id,attribution_status,quantity,price FROM fills WHERE fill_id='f'"))).one()
-        assert row == ("old","UNRESOLVED",Decimal(1),Decimal(100))
+        assert row == (None,"UNRESOLVED",Decimal(1),Decimal(100))
         assert (await s.execute(text("SELECT previous_position_id FROM legacy_attribution_report WHERE fill_id='f'"))).scalar() == "old"
         assert (await s.execute(text("SELECT COUNT(*) FROM positions"))).scalar() == 2
     await pg_repo.initialize_portfolio(Decimal(500))
@@ -49,6 +49,10 @@ async def test_populated_v33_history_is_preserved_and_quarantined(pg_repo: Persi
     problems = await pg_repo.verify_invariants(Decimal(500))
     assert "unresolved_legacy_fill_attribution" in problems
     assert "missing_or_incorrect_initial_funding" in problems
+    from autotrader.persistence.corrections import review_projection_repair
+    await pg_repo.set_control('pause')
+    with pytest.raises(ValueError,match='Immutable history requires reviewed remediation'):
+        await review_projection_repair(pg_repo)
     async with pg_repo.session_factory() as s:
         assert (await s.execute(text("SELECT COUNT(*) FROM financial_journal"))).scalar() == 0
 

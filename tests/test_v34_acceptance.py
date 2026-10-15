@@ -64,21 +64,26 @@ async def test_proof_a_targets_survive_actual_worker_restart_and_stop(pg_repo: P
     repo = pg_repo
     await repo.initialize_portfolio(D(500))
     entry = await buy(repo)
+    ai_request=await repo.reserve_ai_budget(D('.01'),'external-boundary-test','BTC-EUR',{})
+    await repo.finish_ai_request(ai_request,cost=D('.004'),input_tokens=10,output_tokens=10)
     assert entry.order is not None and entry.order.filled_quantity == D(10)
     first = (await repo.list_positions())[0]
     replay = tmp_path / "replay.json"
     write_frame(replay, replay_frame("tp1", D("11.01")))
     worker = WorkerProcess(repo.test_database_url, replay)  # type: ignore[attr-defined]
     try:
+        await worker.wait_started(repo)
         await wait_for(lambda: targets_equal(repo, [D(3), D(0), D(0)]), worker=worker)
         write_frame(replay, replay_frame("tp2-partial", D("12.01"), "1.5"))
         await wait_for(lambda: targets_equal(repo, [D(3), D("1.5"), D(0)]), worker=worker)
         old_pid = worker.kill()
         assert worker.process.returncode is not None
         worker = WorkerProcess(repo.test_database_url, replay)  # type: ignore[attr-defined]
-        assert worker.process.pid != old_pid
+        restarted_pid=await worker.wait_started(repo)
+        assert restarted_pid != old_pid
         await asyncio.sleep(2)
         assert await targets_equal(repo, [D(3), D("1.5"), D(0)])
+        assert D((await repo.ai_budget_status())['spent_usd'])==D('.004')
         write_frame(replay, replay_frame("tp2-complete", D("12.02"), "2.5"))
         await wait_for(lambda: targets_equal(repo, [D(3), D(4), D(0)]), worker=worker)
         write_frame(replay, replay_frame("stop", D("10.1"), "100"))
@@ -93,8 +98,8 @@ async def test_proof_a_targets_survive_actual_worker_restart_and_stop(pg_repo: P
     assert (await repo.list_positions())[0].closed_at is not None
     async with repo.session_factory() as s, s.begin():
         # Advance only the external cooldown boundary; every position/fill came through execution.
-        cooldown = await s.get(CooldownModel, "BTC-EUR")
-        cooldown.expires_at = utc_now() - timedelta(seconds=1)
+        for cooldown in (await s.scalars(select(CooldownModel))).all():
+            cooldown.expires_at = utc_now() - timedelta(seconds=1)
     again = await buy(repo, "fresh-setup")
     assert again.accepted
     second = next(p for p in await repo.list_positions() if p.closed_at is None)
@@ -104,7 +109,7 @@ async def test_proof_a_targets_survive_actual_worker_restart_and_stop(pg_repo: P
     async with repo.session_factory() as s:
         stop = await s.scalar(select(FillModel).where(FillModel.side == "SELL", FillModel.exit_target_id.is_(None)))
         assert stop and stop.quantity == D(3) and stop.exit_intent_id
-    print(f"PROOF_A worker killed pid={old_pid}; restarted pid={worker.process.pid}; TP=[3,4,0]; reconciliation=[]")
+    print(f"PROOF_A actual interpreter killed pid={old_pid}; restarted actual pid={restarted_pid}; TP=[3,4,0]; reconciliation=[]")
 
 
 async def test_proof_b_unrealized_equity_halt_survives_process_restart(pg_repo: PersistentTradingRepository, tmp_path: Path) -> None:
@@ -119,15 +124,29 @@ async def test_proof_b_unrealized_equity_halt_survives_process_restart(pg_repo: 
     assert D(snapshot["cash"]) == 300 and D(snapshot["open_exposure"]) == 180
     assert D(snapshot["equity"]) == 480 and D(snapshot["daily_equity_change"]) == -20
     assert snapshot["risk_state"] == "RISK_HALTED"
+    api=ApiProcess(repo.test_database_url,tmp_path)  # type: ignore[attr-defined]
+    try:
+        async with httpx.AsyncClient(base_url=api.url,auth=('admin','change-me'),timeout=5) as client:
+            async def ready()->bool:
+                try:
+                    return (await client.get('/readyz')).status_code==200
+                except httpx.TransportError:
+                    return False
+            await wait_for(ready,worker=api)
+            body=(await client.get('/api/overview')).json()
+            assert D(body['portfolio']['equity'])==480
+            assert body['portfolio']['risk_state']=='RISK_HALTED'
+    finally:
+        api.kill()
     assert not (await buy(repo, "blocked", symbol="SOL-EUR")).accepted
     replay = tmp_path / "halt.json"
     write_frame(replay, replay_frame("halt", D("9")))
     process1 = WorkerProcess(repo.test_database_url, replay)  # type: ignore[attr-defined]
-    await asyncio.sleep(2)
+    await process1.wait_started(repo)
     old_pid = process1.kill()
     process2 = WorkerProcess(repo.test_database_url, replay)  # type: ignore[attr-defined]
     try:
-        await asyncio.sleep(2)
+        actual_new_pid=await process2.wait_started(repo)
         assert await repo.get_runtime_health() is RuntimeHealth.RISK_HALTED
         p = next(p for p in await repo.list_positions() if p.symbol == "ETH-EUR")
         exit_result = await gateway(repo).execute_exit(TradingPair("ETH-EUR","ETH","EUR"), p.quantity,
@@ -136,7 +155,8 @@ async def test_proof_b_unrealized_equity_halt_survives_process_restart(pg_repo: 
         assert await repo.get_runtime_health() is RuntimeHealth.RISK_HALTED
     finally:
         process2.kill()
-    assert process2.process.pid != old_pid
+    assert actual_new_pid != old_pid
+    print(f'PROOF_B actual worker killed={old_pid}; replacement={actual_new_pid}; API equity=480 risk=RISK_HALTED')
     assert await repo.verify_invariants(D(500)) == []
 
 
@@ -211,6 +231,7 @@ async def test_proof_c_full_autonomous_lifecycle_and_authenticated_api(pg_repo: 
             async def opened() -> bool:
                 return any(p.quantity > 0 for p in await repo.list_positions())
             await wait_for(opened, worker=worker)
+            await worker.wait_started(repo)
             position = (await repo.list_positions())[0]
             targets = await repo.list_targets(position.position_id)
             assert len(targets) == 3
@@ -219,7 +240,8 @@ async def test_proof_c_full_autonomous_lifecycle_and_authenticated_api(pg_repo: 
             await wait_for(lambda: targets_equal(repo, [q1,D(0),D(0)]),worker=worker)
             old_pid = worker.kill()
             worker = WorkerProcess(repo.test_database_url, replay)  # type: ignore[attr-defined]
-            assert worker.process.pid != old_pid
+            actual_new_pid=await worker.wait_started(repo)
+            assert actual_new_pid != old_pid
             async def recovered_frame() -> bool:
                 return await repo.last_worker_frame() == "autonomous-tp1"
             await wait_for(recovered_frame,worker=worker)
@@ -248,7 +270,7 @@ async def test_proof_c_full_autonomous_lifecycle_and_authenticated_api(pg_repo: 
             assert (await client.post("/api/controls/pause",auth=auth)).json()["control"] == "PAUSED"
             assert (await client.post("/api/controls/resume",auth=auth)).json()["control"] == "RUNNING"
             assert D(overview["portfolio"]["available_cash"]) >= 150
-            print(f"PROOF_C API pid={api.process.pid}; worker restart {old_pid}->{worker.process.pid}; fills=4; targets=[{q1},{q2},0]; journal replay=[]")
+            print(f"PROOF_C actual API pid={api.actual_pid}; actual worker restart {old_pid}->{actual_new_pid}; fills=4; targets=[{q1},{q2},0]; journal replay=[]")
     finally:
         worker.kill()
         api.kill()

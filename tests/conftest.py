@@ -25,6 +25,10 @@ async def pg_repo(request: pytest.FixtureRequest) -> AsyncIterator[PersistentTra
         with psycopg.connect(admin, autocommit=True) as conn:
             conn.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(name)))
             info = conn.info.get_parameters()
+            # libpq deliberately omits the password from connection info. Keep
+            # explicitly supplied credentials for child migration/worker URLs.
+            from psycopg.conninfo import conninfo_to_dict
+            info.update(conninfo_to_dict(admin))
         info["dbname"] = name
         from sqlalchemy.engine import URL
         return URL.create("postgresql+asyncpg", username=info.get("user"), password=info.get("password"),

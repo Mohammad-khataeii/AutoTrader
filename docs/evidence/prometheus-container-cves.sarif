@@ -1,0 +1,665 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "fullName": "Docker Scout",
+          "informationUri": "https://docker.com/products/docker-scout",
+          "name": "docker scout",
+          "rules": [
+            {
+              "id": "CVE-2026-42154",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-42154: Uncontrolled Resource Consumption"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-42154?s=github&n=prometheus&ns=github.com%2Fprometheus&t=golang&vr=%3C0.305.2",
+              "help": {
+                "text": "### Impact\n\nThe remote read endpoint (`/api/v1/read`) does not validate the declared decoded length in a snappy-compressed request body before allocating memory.\nAn unauthenticated attacker can send a small payload that causes a huge heap allocation per request. Under concurrent load this can exhaust available memory and crash the Prometheus process.\n\n### Patches\n_Has the problem been patched? What versions should users upgrade to?_\n\nFixed in 3.11.3 and 3.5.3 LTS. Users should upgrade to these versions or later.\n\n### Workarounds\nUser who can not upgrade can place Prometheus behind a reverse proxy or firewall that requires authentication before requests reach /api/v1/read.\n",
+                "markdown": "> ### Impact\n\nThe remote read endpoint (`/api/v1/read`) does not validate the declared decoded length in a snappy-compressed request body before allocating memory.\nAn unauthenticated attacker can send a small payload that causes a huge heap allocation per request. Under concurrent load this can exhaust available memory and crash the Prometheus process.\n\n### Patches\n_Has the problem been patched? What versions should users upgrade to?_\n\nFixed in 3.11.3 and 3.5.3 LTS. Users should upgrade to these versions or later.\n\n### Workarounds\nUser who can not upgrade can place Prometheus behind a reverse proxy or firewall that requires authentication before requests reach /api/v1/read.\n\n|                                                                                                                                                                      |\n|Package                                                                        pkg:golang/github.com/prometheus/prometheus@0.0.0-20260925072538-5241a27fe3c6%2Bdirty  |\n|Affected range                                                                 <0.305.2                                                                               |\n|Fixed version                                                                  0.305.2                                                                                |\n|[[CVSS Score 7.5] [CVSS Vector CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H]]                                                                                         |\n"
+              },
+              "properties": {
+                "affected_version": "<0.305.2",
+                "cvssV3": 7.5,
+                "cvssV3_severity": "HIGH",
+                "cvssV3_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "fixed_version": "0.305.2",
+                "purls": [
+                  "pkg:golang/github.com/prometheus/prometheus@0.0.0-20260925072538-5241a27fe3c6%2Bdirty"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-56866",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-56866"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-56866?s=golang&n=stdlib&t=golang&vr=%3E%3D1.27.0-0%2C%3C1.27.2",
+              "help": {
+                "text": "When http.Transport sends an HTTP/1 CONNECT request with a non-empty Request.Body, it writes the body directly to the connection without framing after the request headers. If the server rejects the CONNECT request with a non-2xx keep-alive response, Transport returns the connection to the idle pool. Because CONNECT requests do not have a request body, the server may interpret the trailing body bytes as a subsequent pipelined HTTP/1.1 request on the connection, leaving the pooled connection desynchronized and causing the next caller that reuses it to read the response to the injected request. In reverse proxies (including httputil.ReverseProxy) that forward CONNECT requests through a shared Transport, this can lead to cross-user response poisoning.\n",
+                "markdown": "> When http.Transport sends an HTTP/1 CONNECT request with a non-empty Request.Body, it writes the body directly to the connection without framing after the request headers. If the server rejects the CONNECT request with a non-2xx keep-alive response, Transport returns the connection to the idle pool. Because CONNECT requests do not have a request body, the server may interpret the trailing body bytes as a subsequent pipelined HTTP/1.1 request on the connection, leaving the pooled connection desynchronized and causing the next caller that reuses it to read the response to the injected request. In reverse proxies (including httputil.ReverseProxy) that forward CONNECT requests through a shared Transport, this can lead to cross-user response poisoning.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.27.1  |\n|Affected range  >=1.27.0-0,<1.27.2        |\n|Fixed version   1.27.2                    |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.27.0-0,<1.27.2",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.27.2",
+                "purls": [
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78659",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-78659"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-78659?s=golang&n=net&ns=golang.org%2Fx&t=golang&vr=%3C0.60.0",
+              "help": {
+                "text": "When \"Trailer\" headers are sent by a client, the HTTP server internally uses the header values to populate the Request.Trailer map passed to the server handler. Because Request.Trailer is a map, each entry incurs memory overhead. For HTTP/2 servers, a malicious client can exploit this by sending a \"Trailer\" header that declares a large number of fields, causing the server to allocate a disproportionate amount of memory while bypassing Server.MaxHeaderValueCount and Server.MaxHeaderBytes limits. This exploit is not applicable for HTTP/1 servers, which do not support multiplexing a large number of requests over one TCP connection, and whose Server.MaxHeaderBytes are calculated differently.\n",
+                "markdown": "> When \"Trailer\" headers are sent by a client, the HTTP server internally uses the header values to populate the Request.Trailer map passed to the server handler. Because Request.Trailer is a map, each entry incurs memory overhead. For HTTP/2 servers, a malicious client can exploit this by sending a \"Trailer\" header that declares a large number of fields, causing the server to allocate a disproportionate amount of memory while bypassing Server.MaxHeaderValueCount and Server.MaxHeaderBytes limits. This exploit is not applicable for HTTP/1 servers, which do not support multiplexing a large number of requests over one TCP connection, and whose Server.MaxHeaderBytes are calculated differently.\n\n|                                                    |\n|Package         pkg:golang/golang.org/x/net@0.58.0  |\n|Affected range  <0.60.0                             |\n|Fixed version   0.60.0                              |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.27.0-0,<1.27.2",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.27.2",
+                "purls": [
+                  "pkg:golang/golang.org/x/net@0.58.0",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78660",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-78660"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-78660?s=golang&n=stdlib&t=golang&vr=%3E%3D1.27.0-0%2C%3C1.27.2",
+              "help": {
+                "text": "Historically, we have been rather lax about malformed framing-related headers in our HTTP/2 implementation, as they cannot interfere with HTTP/2 framing. However, this makes it possible for our HTTP/2 implementation to forward responses containing such headers to an HTTP/1 client when acting as a reverse proxy. If the HTTP/1 client also does not behave strictly enough, this can result in response smuggling.\n",
+                "markdown": "> Historically, we have been rather lax about malformed framing-related headers in our HTTP/2 implementation, as they cannot interfere with HTTP/2 framing. However, this makes it possible for our HTTP/2 implementation to forward responses containing such headers to an HTTP/1 client when acting as a reverse proxy. If the HTTP/1 client also does not behave strictly enough, this can result in response smuggling.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.27.1  |\n|Affected range  >=1.27.0-0,<1.27.2        |\n|Fixed version   1.27.2                    |\n"
+              },
+              "properties": {
+                "affected_version": "<0.60.0",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "0.60.0",
+                "purls": [
+                  "pkg:golang/golang.org/x/net@0.58.0",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78667",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-78667"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-78667?s=golang&n=stdlib&t=golang&vr=%3E%3D1.27.0-0%2C%3C1.27.2",
+              "help": {
+                "text": "When parsing a Range header containing a large number of small ranges, FileServer(FS), ServeContent, and ServeFile(FS) can consume an excessive amount of CPU.\n",
+                "markdown": "> When parsing a Range header containing a large number of small ranges, FileServer(FS), ServeContent, and ServeFile(FS) can consume an excessive amount of CPU.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.27.1  |\n|Affected range  >=1.27.0-0,<1.27.2        |\n|Fixed version   1.27.2                    |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.27.0-0,<1.27.2",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.27.2",
+                "purls": [
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78669",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-78669"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-78669?s=golang&n=net&ns=golang.org%2Fx&t=golang&vr=%3C0.60.0",
+              "help": {
+                "text": "A malicious HTTP/2 peer can cause excessive CPU consumption in the client or server by opening a large number of streams and then sending many small SETTINGS frames containing SETTINGS_INITIAL_WINDOW_SIZE values.\n",
+                "markdown": "> A malicious HTTP/2 peer can cause excessive CPU consumption in the client or server by opening a large number of streams and then sending many small SETTINGS frames containing SETTINGS_INITIAL_WINDOW_SIZE values.\n\n|                                                    |\n|Package         pkg:golang/golang.org/x/net@0.58.0  |\n|Affected range  <0.60.0                             |\n|Fixed version   0.60.0                              |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.27.0-0,<1.27.2",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.27.2",
+                "purls": [
+                  "pkg:golang/golang.org/x/net@0.58.0",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-94439",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-94439"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-94439?s=golang&n=stdlib&t=golang&vr=%3E%3D1.27.0-0%2C%3C1.27.2",
+              "help": {
+                "text": "When an HTTP server handler sends a 2xx response to an HTTP/1 CONNECT request and returns without hijacking the connection, the server improperly continues to read and serve requests from the connection. Since a 2xx response to an HTTP/1 CONNECT converts the connection into a tunnel, the server should not treat the connection as continuing to contain HTTP.\n\nThe impact of this misbehavior is mostly limited to potential request smuggling, where an intermediate proxy considers the data on the connection to be tunneled and the server considers it to be HTTP.\n",
+                "markdown": "> When an HTTP server handler sends a 2xx response to an HTTP/1 CONNECT request and returns without hijacking the connection, the server improperly continues to read and serve requests from the connection. Since a 2xx response to an HTTP/1 CONNECT converts the connection into a tunnel, the server should not treat the connection as continuing to contain HTTP.\n\nThe impact of this misbehavior is mostly limited to potential request smuggling, where an intermediate proxy considers the data on the connection to be tunneled and the server considers it to be HTTP.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.27.1  |\n|Affected range  >=1.27.0-0,<1.27.2        |\n|Fixed version   1.27.2                    |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.27.0-0,<1.27.2",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.27.2",
+                "purls": [
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-94440",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-94440"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-94440?s=golang&n=stdlib&t=golang&vr=%3E%3D1.27.0-0%2C%3C1.27.2",
+              "help": {
+                "text": "Parsing a multipart form can bypass memory limits and read an arbitrarily long line into memory when the remaining limit at the start of a part is less than 400 bytes.\n",
+                "markdown": "> Parsing a multipart form can bypass memory limits and read an arbitrarily long line into memory when the remaining limit at the start of a part is less than 400 bytes.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.27.1  |\n|Affected range  >=1.27.0-0,<1.27.2        |\n|Fixed version   1.27.2                    |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.27.0-0,<1.27.2",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.27.2",
+                "purls": [
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-97031",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-97031"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-97031?s=golang&n=stdlib&t=golang&vr=%3E%3D1.27.0-0%2C%3C1.27.2",
+              "help": {
+                "text": "Multiple ECH outer extension references are not permitted under RFC 9849; previously, a client could send a well-crafted packet that could trigger memory exhaustion in the server process by specifying multiple references.\n\nWe now reject these as malformed and curb the memory amplification vector as a result.\n",
+                "markdown": "> Multiple ECH outer extension references are not permitted under RFC 9849; previously, a client could send a well-crafted packet that could trigger memory exhaustion in the server process by specifying multiple references.\n\nWe now reject these as malformed and curb the memory amplification vector as a result.\n\n|                                          |\n|Package         pkg:golang/stdlib@1.27.1  |\n|Affected range  >=1.27.0-0,<1.27.2        |\n|Fixed version   1.27.2                    |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.27.0-0,<1.27.2",
+                "cvssV3_severity": "HIGH",
+                "fixed_version": "1.27.2",
+                "purls": [
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "7.5",
+                "tags": [
+                  "HIGH"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-78663",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-78663"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-78663?s=golang&n=net&ns=golang.org%2Fx&t=golang&vr=%3C0.60.0",
+              "help": {
+                "text": "The HTTP/2 server can refund connection-level flow control twice for the same data: Once when a client resets a stream (refunding data for any sent-but-unread portion of the stream), and again when a request handler reads the buffered data. A malicious client can exploit this to bypass the configured connection-level flow control limit (MaxReceiveBufferPerConnection). Total buffered data is still limited by the concurrent stream limit and stream-level flow control.\n",
+                "markdown": "> The HTTP/2 server can refund connection-level flow control twice for the same data: Once when a client resets a stream (refunding data for any sent-but-unread portion of the stream), and again when a request handler reads the buffered data. A malicious client can exploit this to bypass the configured connection-level flow control limit (MaxReceiveBufferPerConnection). Total buffered data is still limited by the concurrent stream limit and stream-level flow control.\n\n|                                                    |\n|Package         pkg:golang/golang.org/x/net@0.58.0  |\n|Affected range  <0.60.0                             |\n|Fixed version   0.60.0                              |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.27.0-0,<1.27.2",
+                "cvssV3_severity": "CRITICAL",
+                "fixed_version": "1.27.2",
+                "purls": [
+                  "pkg:golang/golang.org/x/net@0.58.0",
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "9.1",
+                "tags": [
+                  "CRITICAL"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2026-56857",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "CVE-2026-56857"
+              },
+              "helpUri": "https://scout.docker.com/v/CVE-2026-56857?s=golang&n=stdlib&t=golang&vr=%3E%3D1.27.0-0%2C%3C1.27.2",
+              "help": {
+                "text": "On Windows, when the target of Root.Mkdir or Root.MkdirAll is a junction pointing to an empty location, the operation can create a directory at the junction target even when that target is located outside the root. This only applies to operations where the last path component is a junction (path/to/junction, but not path/junction/target).\n",
+                "markdown": "> On Windows, when the target of Root.Mkdir or Root.MkdirAll is a junction pointing to an empty location, the operation can create a directory at the junction target even when that target is located outside the root. This only applies to operations where the last path component is a junction (path/to/junction, but not path/junction/target).\n\n|                                          |\n|Package         pkg:golang/stdlib@1.27.1  |\n|Affected range  >=1.27.0-0,<1.27.2        |\n|Fixed version   1.27.2                    |\n"
+              },
+              "properties": {
+                "affected_version": ">=1.27.0-0,<1.27.2",
+                "cvssV3_severity": "CRITICAL",
+                "fixed_version": "1.27.2",
+                "purls": [
+                  "pkg:golang/stdlib@1.27.1"
+                ],
+                "security-severity": "9.8",
+                "tags": [
+                  "CRITICAL"
+                ]
+              }
+            }
+          ],
+          "version": "1.21.0"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "CVE-2026-42154",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-42154                                                                         \nSeverity         :HIGH                                                                                   \nPackage          :pkg:golang/github.com/prometheus/prometheus@0.0.0-20260925072538-5241a27fe3c6%2Bdirty  \nAffected range   :<0.305.2                                                                               \nFixed version    :0.305.2                                                                                \nCVSS Score       :7.5                                                                                    \nCVSS Vector      :CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H                                           \nEPSS Score       :0.008930                                                                               \nEPSS Percentile  :0.585790                                                                               \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-56866",
+          "ruleIndex": 1,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-56866            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.003090                  \nEPSS Percentile  :0.220360                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78659",
+          "ruleIndex": 2,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78659            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.005700                  \nEPSS Percentile  :0.458830                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78659",
+          "ruleIndex": 2,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78659                      \nSeverity         :HIGH                                \nPackage          :pkg:golang/golang.org/x/net@0.58.0  \nAffected range   :<0.60.0                             \nFixed version    :0.60.0                              \nEPSS Score       :0.005700                            \nEPSS Percentile  :0.458830                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78660",
+          "ruleIndex": 3,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78660                      \nSeverity         :HIGH                                \nPackage          :pkg:golang/golang.org/x/net@0.58.0  \nAffected range   :<0.60.0                             \nFixed version    :0.60.0                              \nEPSS Score       :0.003030                            \nEPSS Percentile  :0.214290                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78660",
+          "ruleIndex": 3,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78660            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.003030                  \nEPSS Percentile  :0.214290                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78667",
+          "ruleIndex": 4,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78667            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.003790                  \nEPSS Percentile  :0.302490                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78669",
+          "ruleIndex": 5,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78669            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.005680                  \nEPSS Percentile  :0.457310                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78669",
+          "ruleIndex": 5,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78669                      \nSeverity         :HIGH                                \nPackage          :pkg:golang/golang.org/x/net@0.58.0  \nAffected range   :<0.60.0                             \nFixed version    :0.60.0                              \nEPSS Score       :0.005680                            \nEPSS Percentile  :0.457310                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-94439",
+          "ruleIndex": 6,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-94439            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.003150                  \nEPSS Percentile  :0.227480                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-94440",
+          "ruleIndex": 7,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-94440            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.004040                  \nEPSS Percentile  :0.329420                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-97031",
+          "ruleIndex": 8,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-97031            \nSeverity         :HIGH                      \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.003940                  \nEPSS Percentile  :0.319010                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78663",
+          "ruleIndex": 9,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78663            \nSeverity         :CRITICAL                  \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.005740                  \nEPSS Percentile  :0.460670                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-78663",
+          "ruleIndex": 9,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-78663                      \nSeverity         :CRITICAL                            \nPackage          :pkg:golang/golang.org/x/net@0.58.0  \nAffected range   :<0.60.0                             \nFixed version    :0.60.0                              \nEPSS Score       :0.005740                            \nEPSS Percentile  :0.460670                            \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2026-56857",
+          "ruleIndex": 10,
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Vulnerability    :CVE-2026-56857            \nSeverity         :CRITICAL                  \nPackage          :pkg:golang/stdlib@1.27.1  \nAffected range   :>=1.27.0-0,<1.27.2        \nFixed version    :1.27.2                    \nEPSS Score       :0.004930                  \nEPSS Percentile  :0.408460                  \n"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/prometheus"
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/bin/promtool"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

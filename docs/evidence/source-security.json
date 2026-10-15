@@ -1,0 +1,32 @@
+{
+  "status": "PASSED",
+  "tracked_text_files_scanned": 167,
+  "secret_findings": [],
+  "exchange_http_methods": [
+    "aclose",
+    "get"
+  ],
+  "published_ports": [
+    {
+      "container": "autotrader-v34-acceptance-frontend-1",
+      "ports": "127.0.0.1:13000->80/tcp"
+    },
+    {
+      "container": "autotrader-v34-acceptance-backend-1",
+      "ports": "127.0.0.1:18000->8000/tcp"
+    },
+    {
+      "container": "autotrader-v34-acceptance-redis-1",
+      "ports": "6379/tcp"
+    },
+    {
+      "container": "autotrader-v34-acceptance-postgres-1",
+      "ports": "5432/tcp"
+    },
+    {
+      "container": "autotrader-v34-acceptance-worker-1",
+      "ports": "8000/tcp"
+    }
+  ],
+  "scope": "working contents of tracked source/evidence and isolated test deployment; not a remote penetration test"
+}

@@ -29,11 +29,16 @@ def make_session_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSession
 async def create_schema(engine: AsyncEngine) -> None:
     """Compatibility entry point: apply versioned Alembic migrations, never create_all."""
     import asyncio
+    import os
     import subprocess
     import sys
     from pathlib import Path
 
-    root = Path(__file__).resolve().parents[3]
+    root = Path(os.getenv("AUTOTRADER_MIGRATIONS_ROOT",str(Path.cwd())))
+    if not (root/"alembic.ini").is_file():
+        root=Path(__file__).resolve().parents[3]
+    if not (root/"alembic.ini").is_file():
+        raise RuntimeError("Alembic project files unavailable; set AUTOTRADER_MIGRATIONS_ROOT.")
     url = engine.url.render_as_string(hide_password=False)
     result = await asyncio.to_thread(
         subprocess.run,
@@ -49,5 +54,5 @@ async def create_schema(engine: AsyncEngine) -> None:
 async def check_schema(engine: AsyncEngine) -> None:
     async with engine.connect() as connection:
         revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
-        if revision != "0006_v34_accounting":
+        if revision != "0009_legacy_quarantine":
             raise RuntimeError("Incompatible database schema; run alembic upgrade head.")
