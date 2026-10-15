@@ -9,7 +9,7 @@ END_TO_END_VERIFIED, BLOCKED. Passing software tests does not establish trading 
 | M1 | Executable bid stops and net target floors | INTEGRATION_TESTED | execution/pricing.py, position_manager.py, accounting.py | evidence/v4-execution.xml: 9 passed | No live orders |
 | M2 | Shared finite depth and execution quality | INTEGRATION_TESTED | execution/pricing.py, accounting.py | evidence/v4-execution.xml: 9 passed | IOC model |
 | M3 | V4 financial regression/restarts | NOT_STARTED | tests | Pending | Baseline precedes changes |
-| M4 | Long horizon genuine dataset pipeline | NOT_STARTED | Pending | None | No V4 dataset fetched |
+| M4 | Long horizon genuine dataset pipeline | INTEGRATION_TESTED | research/data.py, research/cli.py | v4-data-unit.xml: 9 passed; v4-datasets.json: 48 datasets, 76606 observations | Daily multi-year; other timeframes shorter, gaps retained |
 | M5 | Point-in-time regimes | NOT_STARTED | Pending | None | V3 rules only |
 | M6 | Versioned integrated strategies | NOT_STARTED | Pending | None | V3 strategies only |
 | M7 | Frozen optimization/OOS/benchmarks | NOT_STARTED | Pending | None | No V4 performance result |

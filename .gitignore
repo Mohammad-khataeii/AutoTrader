@@ -16,3 +16,4 @@ playwright-report/
 .tools/
 docs/evidence/*.log
 *.egg-info/
+.data/
