@@ -1,21 +1,21 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from dataclasses import replace
 from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Any
 
 from autotrader.clock import at
-from autotrader.domain import Candle, MarketFeatures
+from autotrader.domain import Candle, DataQuality, MarketFeatures
 from autotrader.indicators import calculate_features, higher_timeframe_context
 from autotrader.research.data import TIMEFRAMES, HistoricalBar
 
 
 def build_panel(bars: list[HistoricalBar]) -> tuple[dict[datetime, list[Candle]], dict[datetime, dict[str, MarketFeatures]], dict[str, Any]]:
     frames: dict[datetime, list[Candle]] = defaultdict(list)
+    flags = {(bar.symbol, bar.start): bar.quality_flags for bar in bars}
     for bar in bars:
-        if "SUSPICIOUS_RANGE" in bar.quality_flags:
-            continue
         candle = bar.candle()
         frames[candle.timestamp].append(candle)
     histories: dict[str, list[Candle]] = defaultdict(list)
@@ -32,6 +32,11 @@ def build_panel(bars: list[HistoricalBar]) -> tuple[dict[datetime, list[Candle]]
             if len(history) < 50:
                 continue
             f = calculate_features(history, Decimal(0), Decimal(10))
+            # Full-range quality is knowable only at this candle's close. Never
+            # remove the current open/execution event using its later high/low.
+            if "SUSPICIOUS_RANGE" in flags[(candle.symbol, candle.timestamp.isoformat())]:
+                f = replace(f, data_quality=DataQuality.INVALID)
+                f.metadata["quality_review_required"] = "completed_suspicious_range"
             f.metadata.update({"available_at": available_at.isoformat(),
                 "_feature_timestamp": candle.timestamp.isoformat(),
                 "history_contiguous": all((right.timestamp - left.timestamp).total_seconds() == seconds for left, right in zip(history[-50:-1], history[-49:], strict=True)),

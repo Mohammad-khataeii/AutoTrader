@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal as D
 
+from autotrader.domain import DataQuality
 from autotrader.execution.postings import closing_posting
 from autotrader.research.data import HistoricalBar
 from autotrader.research.simulation import ResearchSimulation
@@ -56,3 +58,14 @@ def test_no_trade_or_tiny_sample_cannot_pass_validation() -> None:
     assert not gates["passed"]
     assert "adequate_closed_positions" in gates["failure_reasons"]
     assert "multiple_comparison_block_interval_positive" in gates["failure_reasons"]
+
+
+def test_full_candle_quality_cannot_remove_an_entry_before_the_range_is_known() -> None:
+    bars = fixture_bars()
+    bars[210] = replace(bars[210], high="200", low="50", quality_flags=("SUSPICIOUS_RANGE",))
+    sim = ResearchSimulation(bars)
+    start = datetime.fromisoformat(bars[210].start)
+    result = sim.run(start=start, end=start+timedelta(days=1), strategy_ids={"A_TREND_PULLBACK"})
+    assert any(fill["side"] == "BUY" and fill["timestamp"] == start.isoformat() for fill in result["fills"])
+    assert result["net_profit"] < 0
+    assert sim.features[start+timedelta(days=1)]["BTC-EUR"].data_quality is DataQuality.INVALID
