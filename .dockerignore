@@ -1,6 +1,7 @@
 .git
 .venv
 .tools
+.data
 .env
 .secrets
 *.db

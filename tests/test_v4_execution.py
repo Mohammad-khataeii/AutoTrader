@@ -163,3 +163,51 @@ async def test_repository_enforces_target_floor_even_for_direct_market_caller(pg
         assert row and row.order_type == "LIMIT" and "execution_quality" in json.loads(row.execution_json)
     assert (await pg_repo.list_targets())[0]["filled_quantity"] == "0E-12"
     assert await pg_repo.verify_invariants(D(500)) == []
+
+
+async def test_stop_wins_when_raised_stop_and_next_target_are_both_eligible(pg_repo: PersistentTradingRepository) -> None:
+    from test_v34_acceptance import buy
+    await pg_repo.initialize_portfolio(D(500))
+    assert (await buy(pg_repo)).accepted
+    boundary = Boundary(book("13", "13.01"))
+    gateway = PaperExecutionGateway(pg_repo, market_data=boundary, risk_engine=RiskEngine(RiskLimits()),
+        initial_cash=D(500), fee_bps=D(0), slippage_bps=D(0))
+    manager = PositionManager(repository=pg_repo, market_data=boundary, execution_gateway=gateway)
+    assert (await manager.monitor_once([PAIR]))[0].reason == "take_profit_target"
+    boundary.observation = book("12.5", "12.51")
+    assert (await manager.monitor_once([PAIR]))[0].reason == "protective_stop"
+    assert [D(t["filled_quantity"]) for t in await pg_repo.list_targets()] == [D(3),D(0),D(0)]
+    assert (await pg_repo.list_positions())[0].quantity == 0
+    assert await pg_repo.verify_invariants(D(500)) == []
+
+
+async def test_provider_outage_records_watch_without_fabricated_fill(pg_repo: PersistentTradingRepository) -> None:
+    boundary, manager = await setup(pg_repo, book("97.9", "98.3"))
+    boundary.outage = True
+    assert "provider_outage" in (await manager.monitor_once([PAIR]))[0].reason
+    assert len(await pg_repo.list_fills()) == 1
+    boundary.outage = False
+    assert (await manager.monitor_once([PAIR]))[0].reason == "protective_stop"
+    assert await pg_repo.verify_invariants(D(500)) == []
+
+
+async def test_failed_breakout_reduction_keeps_target_progress_unchanged(pg_repo: PersistentTradingRepository) -> None:
+    from dataclasses import replace
+
+    from test_v4_regimes_strategies import features
+    from test_v34_acceptance import buy
+    await pg_repo.initialize_portfolio(D(500))
+    assert (await buy(pg_repo)).accepted
+    observation = book("10.49", "10.51")
+    f = replace(features(), timestamp=utc_now(), ema_21=D("10.4"), ema_50=D("10.2"), resistance=D("10.9"),
+        metadata={"last_high":"11", "last_close":"10.5", "regime_assessment":{"regime":"MODERATE_BULL"}})
+    await pg_repo.store_market_analysis([], f, observation)
+    boundary = Boundary(observation)
+    gateway = PaperExecutionGateway(pg_repo, market_data=boundary, risk_engine=RiskEngine(RiskLimits()),
+        initial_cash=D(500), fee_bps=D(0), slippage_bps=D(0))
+    manager = PositionManager(repository=pg_repo, market_data=boundary, execution_gateway=gateway)
+    action = (await manager.monitor_once([PAIR]))[0]
+    assert action.reason == "failed_breakout"
+    assert (await pg_repo.list_positions())[0].quantity == 0
+    assert all(D(t["filled_quantity"]) == 0 for t in await pg_repo.list_targets())
+    assert await pg_repo.verify_invariants(D(500)) == []

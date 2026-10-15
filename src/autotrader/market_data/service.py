@@ -97,6 +97,8 @@ class MarketDataService:
 
     def validate_order_book(self, order_book: OrderBook, provider_latency_ms: Decimal = Decimal("0")) -> tuple[list[str], OrderBookMetrics]:
         reasons: list[str] = []
+        if any(not level.price.is_finite() or not level.quantity.is_finite() for level in (*order_book.bids, *order_book.asks)):
+            return ["non_finite_order_book_level"], OrderBookMetrics(**{name: Decimal(0) for name in OrderBookMetrics.__dataclass_fields__})
         now = utc_now()
         age = Decimal(str(max((now - order_book.timestamp).total_seconds(), 0)))
         best_bid = order_book.best_bid or Decimal("0")

@@ -4,6 +4,8 @@ import asyncio
 import logging
 import signal
 from dataclasses import dataclass
+from decimal import Decimal
+from pathlib import Path
 
 from autotrader.ai import make_ai_provider
 from autotrader.config import get_settings
@@ -37,15 +39,22 @@ async def execute_ranked_candidates(
     executions: list[CandidateExecution] = []
     accepted_entries = 0
     for candidate in candidates:
+        selected_decision = candidate.decision
         if accepted_entries >= max_entries:
             executions.append(CandidateExecution(candidate.market.pair.symbol, False, "cycle_capacity_reached", None))
             continue
         if not candidate.decision.accepted:
             executions.append(CandidateExecution(candidate.market.pair.symbol, False, "decision_not_accepted", None))
             continue
+        if hasattr(execution_gateway, "allocate_candidate") and hasattr(candidate, "features"):
+            allocated, allocation_reason = await execution_gateway.allocate_candidate(candidate)
+            if allocated is None:
+                executions.append(CandidateExecution(candidate.market.pair.symbol, False, allocation_reason, None))
+                continue
+            selected_decision = allocated
         result: ExecutionResult = await execution_gateway.execute_entry_decision(
             candidate.market.pair,
-            candidate.decision,
+            selected_decision,
             candidate.market.order_book,
             candidate.decision.decision_id,
         )
@@ -68,6 +77,8 @@ async def main() -> None:
     await create_schema(engine)
     repository = PersistentTradingRepository(make_session_factory(engine))
     await repository.initialize_portfolio(settings.initial_cash_eur)
+    await repository.configure_research_policy(Path(settings.research_root), test_environment=settings.environment == "test",
+        approved={s.strip() for s in settings.approved_strategy_ids.split(",") if s.strip()})
     market_client = RevolutXPublicClient(
         base_url=settings.revolut_x_base_url,
         region=settings.revolut_x_region,
@@ -100,10 +111,11 @@ async def main() -> None:
         risk_engine=risk,
         initial_cash=settings.initial_cash_eur,
         fee_bps=settings.default_fee_bps,
+        allocation_profile=settings.allocation_profile,
         slippage_bps=settings.default_slippage_bps,
     )
     strategy_engine = BreakoutStrategyEngine()
-    decision_engine = DecisionEngine(risk)
+    decision_engine = DecisionEngine(risk, default_quote_amount={"conservative":Decimal(50), "balanced":Decimal(75), "opportunistic":Decimal(100)}[settings.allocation_profile])
     ai_provider = make_ai_provider(settings, repository)
     scanner = MarketScanner(
         market_data=market_data,
@@ -176,6 +188,7 @@ async def main() -> None:
                         },
                     )
                 await repository.snapshot()
+                await repository.refresh_opportunity_feedback()
                 await repository.worker_heartbeat(frame_id)
             except MarketDataError as exc:
                 logger.warning("market data unavailable; skipping worker cycle", extra={"error": str(exc)})

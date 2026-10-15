@@ -44,7 +44,7 @@ async def test_ai_never_overrides_risk_limits() -> None:
             timestamp=utc_now(),
             score=Decimal("2"),
             data_quality=DataQuality.GOOD,
-            evidence={"test": "force risk path"},
+            evidence={"test": "force risk path", "strategy_version":"4.0.0", "entry_eligible":True},
             entry_conditions=["test"],
             invalidation_conditions=["test"],
             estimated_cost_bps=Decimal("10"),

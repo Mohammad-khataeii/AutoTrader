@@ -10,11 +10,11 @@ END_TO_END_VERIFIED, BLOCKED. Passing software tests does not establish trading 
 | M2 | Shared finite depth and execution quality | INTEGRATION_TESTED | execution/pricing.py, accounting.py | evidence/v4-execution.xml: 9 passed | IOC model |
 | M3 | V4 financial regression/restarts | END_TO_END_VERIFIED | full original suite plus execution/data tests | evidence/v4-financial-regression.xml: 98 passed in455.16s | Isolated PostgreSQL; subsequent strategy integration needs rerun |
 | M4 | Long horizon genuine dataset pipeline | INTEGRATION_TESTED | research/data.py, research/cli.py | v4-data-unit.xml: 9 passed; v4-datasets.json: 48 datasets, 76606 observations | Daily multi-year; other timeframes shorter, gaps retained |
-| M5 | Point-in-time regimes | NOT_STARTED | Pending | None | V3 rules only |
-| M6 | Versioned integrated strategies | NOT_STARTED | Pending | None | V3 strategies only |
-| M7 | Frozen optimization/OOS/benchmarks | NOT_STARTED | Pending | None | No V4 performance result |
-| M8 | Validated allocation/position policy | NOT_STARTED | Pending | None | V3 hard limits retained |
-| M9 | Event-driven AI/comparison | NOT_STARTED | Pending | None | AI mock/off |
-| M10 | Genuine execution/research UI | NOT_STARTED | Pending | None | Existing UI only |
-| M11 | Security remediation/rate limits | NOT_STARTED | Pending | V3 scan only | Support image findings remain |
-| M12 | V4 lifecycle/deployment gates | NOT_STARTED | Pending | None | Not V4 complete |
+| M5 | Point-in-time regimes | INTEGRATION_TESTED | research/regimes.py, panel.py, indicators.py | v4-regimes-strategies.xml and causal-prefix checks | Heuristic states, not truth labels |
+| M6 | Versioned integrated strategies | END_TO_END_VERIFIED | research/strategies.py, scanner.py, decision.py | v4-lifecycle.xml: real scanner and worker | No candidate validated |
+| M7 | Frozen optimization/OOS/benchmarks | INTEGRATION_TESTED | research/workflow.py, simulation.py | full genuine daily/4h studies, final portable-source rerun pending | No predictive edge; historical test reused during engineering |
+| M8 | Validated allocation/position policy | END_TO_END_VERIFIED | allocation.py, research_policy.py, execution/protection.py | v4-promotion-policy.xml and v4-lifecycle.xml | Production holds cash until approval and validation |
+| M9 | Event-driven AI/comparison | INTEGRATION_TESTED | ai.py, ai_events.py | v4-ai-security.xml: 9 passed; matched mock study | Paid Sol account access not tested |
+| M10 | Genuine execution/research UI | IMPLEMENTED_UNVERIFIED | ResearchPanels.tsx, API, research worker | TypeScript build and API tests pass; browser/queued-job proof in progress | Windows/Linux report pointer fixed, retest pending |
+| M11 | Security remediation/rate limits | BLOCKED | api/security.py, Docker images | Auth test passes; support images rescanned | Support image findings require disposition/remediation |
+| M12 | V4 lifecycle/deployment gates | IMPLEMENTED_UNVERIFIED | worker/API/Docker/frontend | v4-lifecycle.xml passes; full Linux/browser/restore gates pending | Not release complete yet |

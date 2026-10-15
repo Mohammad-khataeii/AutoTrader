@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, dataclass
 from datetime import UTC
 from decimal import ROUND_CEILING, ROUND_DOWN, Decimal
+from hashlib import sha256
 from itertools import pairwise
 from typing import Any
 
@@ -11,6 +13,17 @@ from autotrader.domain import OrderBook, Side, quantize_down, utc_now
 ZERO = Decimal(0)
 SCALE = Decimal("0.000000000001")
 BPS = Decimal(10000)
+
+
+def book_payload(book: OrderBook) -> dict[str, Any]:
+    return {"timestamp": book.timestamp.isoformat(), "source": book.source,
+            "bids": [[str(level.price), str(level.quantity)] for level in book.bids],
+            "asks": [[str(level.price), str(level.quantity)] for level in book.asks]}
+
+
+def observation_key(book: OrderBook) -> str:
+    encoded = json.dumps({"symbol": book.symbol, **book_payload(book)}, sort_keys=True)
+    return "depth:" + sha256(encoded.encode()).hexdigest()[:58]
 
 
 def exact(value: Decimal) -> Decimal:

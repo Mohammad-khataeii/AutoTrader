@@ -15,6 +15,10 @@ x-runtime: &runtime
     AI_CACHED_INPUT_PRICE_PER_MILLION: ${AI_CACHED_INPUT_PRICE_PER_MILLION:-}
     AI_CACHE_WRITE_PRICE_PER_MILLION: ${AI_CACHE_WRITE_PRICE_PER_MILLION:-}
     AI_OUTPUT_PRICE_PER_MILLION: ${AI_OUTPUT_PRICE_PER_MILLION:-}
+    RESEARCH_ROOT: /app/research
+    ALLOCATION_PROFILE: ${ALLOCATION_PROFILE:-balanced}
+    APPROVED_STRATEGY_IDS: ${APPROVED_STRATEGY_IDS:-}
+  volumes: [./.data/research:/app/research:ro]
   restart: unless-stopped
   networks: [app, data]
   security_opt: [no-new-privileges:true]
@@ -28,6 +32,14 @@ x-runtime: &runtime
     options: {max-size: 10m, max-file: "3"}
 
 services:
+  research-worker:
+    <<: *runtime
+    profiles: [research]
+    command: [autotrader-research-worker]
+    volumes: [./.data/research:/app/research]
+    mem_limit: 1536m
+    depends_on:
+      migrate: {condition: service_completed_successfully}
   migrate:
     <<: *runtime
     command: [python, -m, alembic, upgrade, head]

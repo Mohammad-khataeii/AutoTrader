@@ -75,7 +75,10 @@ def main() -> None:
     catalog = asyncio.run(download(args.root, start=start, end=end, assets=args.assets,
         hourly_days=args.hourly_days, intraday_days=args.intraday_days))
     if args.action == "full":
-        raise SystemExit("Data acquired. Research engine is not yet implemented; no performance result is claimed.")
+        from autotrader.research.workflow import run_full
+        report = run_full(args.root, catalog)
+        print(json.dumps({"run_id": report["run_id"], "verdict": report["verdict"],
+                          "passed_strategies": report["passed_strategies"]}), flush=True)
     if catalog["failures"]:
         raise SystemExit(2)
 

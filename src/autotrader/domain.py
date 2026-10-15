@@ -23,6 +23,14 @@ def quantize_down(value: Decimal, step: Decimal) -> Decimal:
     return (value / step).to_integral_value(rounding=ROUND_DOWN) * step
 
 
+def timeframe_seconds(timeframe: str) -> int:
+    import re
+    matched = re.fullmatch(r"([1-9][0-9]*)([mhd])", timeframe)
+    if matched is None:
+        raise ValueError("unsupported_timeframe")
+    return int(matched[1]) * {"m":60, "h":3600, "d":86400}[matched[2]]
+
+
 class Side(StrEnum):
     BUY = "BUY"
     SELL = "SELL"

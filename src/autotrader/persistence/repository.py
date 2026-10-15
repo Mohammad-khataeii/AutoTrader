@@ -27,6 +27,8 @@ from autotrader.domain import (
 )
 from autotrader.persistence.accounting import AccountingRepositoryMixin
 from autotrader.persistence.ai_budget import AIBudgetRepositoryMixin
+from autotrader.persistence.ai_events import AIEventMixin
+from autotrader.persistence.analytics import AnalyticsMixin
 from autotrader.persistence.models import (
     AccountModel,
     AIAssessmentModel,
@@ -47,6 +49,8 @@ from autotrader.persistence.models import (
     SystemStateModel,
     TradingDecisionModel,
 )
+from autotrader.persistence.research_jobs import ResearchJobsMixin
+from autotrader.persistence.research_policy import ResearchPolicyMixin
 
 
 def _json(value: object) -> str:
@@ -95,7 +99,7 @@ def _default_target_quantities(original_quantity: Decimal, quantity_step: Decima
     return [*quantities, final_quantity]
 
 
-class PersistentTradingRepository(AccountingRepositoryMixin, AIBudgetRepositoryMixin):
+class PersistentTradingRepository(AccountingRepositoryMixin, AIBudgetRepositoryMixin, AIEventMixin, ResearchPolicyMixin, AnalyticsMixin, ResearchJobsMixin):
     RUNTIME_STATE_KEY = "runtime_health"
 
     def __init__(self, session_factory: async_sessionmaker[Any], quote_asset: str = "EUR") -> None:
@@ -240,16 +244,28 @@ class PersistentTradingRepository(AccountingRepositoryMixin, AIBudgetRepositoryM
             "risk_state": (await self.get_runtime_health()).value,
             "incidents": [{"message": r.message, "severity": r.severity, "state": r.status, "created_at": r.created_at.isoformat()} for r in incidents]}
 
-    async def market_risk_off(self, symbol: str) -> bool:
+    async def market_exit_reason(self, symbol: str) -> str | None:
         async with self.session_factory() as session:
             row = await session.scalar(select(MarketFeature).where(MarketFeature.symbol == symbol).order_by(MarketFeature.timestamp.desc()).limit(1))
             if row is None:
-                return False
+                return None
             from autotrader.persistence.accounting import aware
             if (utc_now() - aware(row.timestamp)).total_seconds() > 900:
-                return False
+                return None
             f = json.loads(row.payload_json)
-            return bool(f.get("ema_21") and f.get("ema_50") and f.get("momentum") and Decimal(f["ema_21"]) < Decimal(f["ema_50"]) and Decimal(f["momentum"]) < Decimal("-0.01"))
+            regime = f.get("metadata", {}).get("regime_assessment", {}).get("regime")
+            if regime in {"BEAR", "LIQUIDITY_STRESS"}:
+                return "regime_exit"
+            metadata = f.get("metadata", {})
+            high, close, resistance = metadata.get("last_high"), metadata.get("last_close"), f.get("resistance")
+            if high and close and resistance and Decimal(high) > Decimal(resistance)*Decimal("1.001") and Decimal(close) < Decimal(resistance):
+                return "failed_breakout"
+            if f.get("ema_21") and f.get("ema_50") and f.get("momentum") and Decimal(f["ema_21"]) < Decimal(f["ema_50"]) and Decimal(f["momentum"]) < Decimal("-0.01"):
+                return "market_risk"
+            return None
+
+    async def market_risk_off(self, symbol: str) -> bool:
+        return bool(await self.market_exit_reason(symbol))
 
 
     async def store_analysis(
@@ -261,10 +277,13 @@ class PersistentTradingRepository(AccountingRepositoryMixin, AIBudgetRepositoryM
     ) -> None:
         async with self.session_factory() as session, session.begin():
             for signal in signals:
-                version_id=signal.strategy_id+':3.4.0'
+                version = str(signal.evidence.get("strategy_version", "3.4.0"))
+                version_id=signal.strategy_id+':'+version
                 if await session.get(StrategyVersionModel,version_id) is None:
                     session.add(StrategyVersionModel(version_id=version_id,strategy_id=signal.strategy_id,
-                        version='3.4.0',active=True,payload_json='{"calibrated_predictive_edge":false}'))
+                        version=version,active=True,payload_json=_json({"calibrated_predictive_edge":False,
+                            "parameters":signal.evidence.get("parameters",{}), "entry_conditions":signal.entry_conditions,
+                            "invalidation_conditions":signal.invalidation_conditions})))
                 if await session.get(StrategySignalModel, signal.signal_id) is None:
                     session.add(
                         StrategySignalModel(
@@ -299,6 +318,7 @@ class PersistentTradingRepository(AccountingRepositoryMixin, AIBudgetRepositoryM
                         accepted=decision.accepted,
                         rejected_reason=decision.rejected_reason,
                         payload_json=_json(decision),
+                        created_at=decision.timestamp,
                     )
                 )
             if risk_evaluation and await session.get(RiskEvaluationModel, risk_evaluation.evaluation_id) is None:

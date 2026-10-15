@@ -7,17 +7,19 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
+from pathlib import Path
 from typing import Any
 
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from prometheus_client import CONTENT_TYPE_LATEST, Gauge, generate_latest
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
 from sqlalchemy import select
 from starlette.responses import Response
 
 from autotrader.ai import make_ai_provider
+from autotrader.api.security import AuthenticationThrottle
 from autotrader.config import Settings, get_settings
 from autotrader.decision import DecisionEngine
 from autotrader.domain import Candle, OrderType, new_id, utc_now
@@ -32,11 +34,15 @@ from autotrader.persistence.database import (
 )
 from autotrader.persistence.models import BacktestRunModel, MarketCandle
 from autotrader.persistence.repository import PersistentTradingRepository, _json
+from autotrader.research.artifacts import load_latest
+from autotrader.research.data import ASSETS
+from autotrader.research.strategies import REGISTRY
+from autotrader.research.workflow import GRID, STRATEGIES
 from autotrader.risk import RiskEngine, RiskLimits
 from autotrader.scanner import MarketScanner, ScanCandidate, ScanResult
 from autotrader.strategies import BreakoutStrategyEngine
 
-security = HTTPBasic()
+security = HTTPBasic(auto_error=False)
 equity_metric=Gauge('autotrader_equity_eur','Validated paper account equity')
 cash_metric=Gauge('autotrader_available_cash_eur','Available paper cash')
 risk_metric=Gauge('autotrader_risk_halted','Persistent non-healthy runtime state')
@@ -47,6 +53,24 @@ class BacktestRequest(BaseModel):
     symbol:str=Field(default="BTC-EUR",pattern=r"^[A-Z0-9]+-EUR$")
     max_bars:int=Field(default=300,ge=51,le=500)
     entry_order_type:OrderType=OrderType.MARKET
+
+
+class ResearchParametersRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    relative_volume: Decimal = Field(default=Decimal("1.5"), ge=1, le=4)
+    compression_width: Decimal = Field(default=Decimal(".06"), ge=Decimal(".01"), le=Decimal(".2"))
+    breakout_buffer: Decimal = Field(default=Decimal(".001"), ge=0, le=Decimal(".02"))
+    relative_return: Decimal = Field(default=Decimal(".02"), ge=0, le=Decimal(".2"))
+    stop_atr: Decimal = Field(default=Decimal("1.5"), ge=1, le=4)
+    target_atr: Decimal = Field(default=Decimal("1.5"), ge=1, le=6)
+
+
+class ResearchRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    strategies: list[str] = Field(default_factory=lambda:list(STRATEGIES), min_length=1, max_length=6)
+    timeframes: list[str] = Field(default_factory=lambda:["1d", "4h"], min_length=1, max_length=2)
+    assets: list[str] = Field(default_factory=lambda:list(ASSETS), min_length=1, max_length=8)
+    grid: list[ResearchParametersRequest] = Field(default_factory=lambda:[ResearchParametersRequest.model_validate(p.payload()) for p in GRID], min_length=1, max_length=9)
 
 
 class CorrectionRequest(BaseModel):
@@ -77,11 +101,15 @@ def _settings() -> Settings:
     return get_settings()
 
 
-def require_user(credentials: HTTPBasicCredentials = Depends(security), settings: Settings = Depends(_settings)) -> str:
+def require_user(request: Request, credentials: HTTPBasicCredentials | None = Depends(security), settings: Settings = Depends(_settings)) -> str:
     password = settings.dashboard_password.get_secret_value()
-    ok = secrets.compare_digest(credentials.username, settings.dashboard_username) and secrets.compare_digest(credentials.password, password)
+    ok = credentials is not None and secrets.compare_digest(credentials.username.encode(), settings.dashboard_username.encode()) and secrets.compare_digest(credentials.password.encode(), password.encode())
     if not ok:
+        retry = request.app.state.auth_throttle.failure(request.client.host if request.client else "unknown")
+        if retry is not None:
+            raise HTTPException(status_code=429, detail="Too many failed authentication attempts", headers={"Retry-After":str(retry)})
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, headers={"WWW-Authenticate": "Basic"})
+    assert credentials is not None
     return credentials.username
 
 
@@ -102,7 +130,7 @@ def create_app() -> FastAPI:
             max_new_entries_per_day=settings.max_new_entries_per_day,
         )
     )
-    decision_engine = DecisionEngine(risk)
+    decision_engine = DecisionEngine(risk, default_quote_amount={"conservative":Decimal(50), "balanced":Decimal(75), "opportunistic":Decimal(100)}[settings.allocation_profile])
     strategy_engine = BreakoutStrategyEngine()
     ai_provider = make_ai_provider(settings, repository)
     market_client = RevolutXPublicClient(
@@ -118,6 +146,7 @@ def create_app() -> FastAPI:
         risk_engine=risk,
         initial_cash=settings.initial_cash_eur,
         fee_bps=settings.default_fee_bps,
+        allocation_profile=settings.allocation_profile,
         slippage_bps=settings.default_slippage_bps,
     )
     scanner_service = MarketScanner(
@@ -133,11 +162,14 @@ def create_app() -> FastAPI:
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         await create_schema(engine)
         await repository.initialize_portfolio(settings.initial_cash_eur)
+        await repository.configure_research_policy(Path(settings.research_root), test_environment=settings.environment == "test",
+            approved={s.strip() for s in settings.approved_strategy_ids.split(",") if s.strip()})
         yield
         await market_data.close()
         await engine.dispose()
 
-    app = FastAPI(title=settings.app_name, version="3.4.0", lifespan=lifespan)
+    app = FastAPI(title=settings.app_name, version="4.0.0", lifespan=lifespan)
+    app.state.auth_throttle = AuthenticationThrottle()
     app.state.repository = repository
     app.state.engine = engine
     app.state.market_data = market_data
@@ -242,7 +274,52 @@ def create_app() -> FastAPI:
         return {"mode":"paper","initial_cash_eur":"500","base_currency":"EUR",
             "risk_limits":_jsonable(asdict(risk.limits)),"ai_provider":settings.ai_provider.value,
             "ai_model":settings.ai_model,"scanner_max_pairs":settings.scanner_max_pairs,
-            "scan_interval_seconds":settings.worker_scan_interval_seconds,"live_execution":False}
+            "scan_interval_seconds":settings.worker_scan_interval_seconds,"live_execution":False,
+            "allocation_profile":settings.allocation_profile,"strategy_promotion":"explicit approval plus matching validated research required"}
+
+    @app.get("/api/execution", dependencies=[Depends(require_user)])
+    async def execution_quality() -> dict[str, Any]:
+        return await repository.execution_analytics(settings.default_fee_bps, settings.default_slippage_bps)
+
+    @app.get("/api/intelligence", dependencies=[Depends(require_user)])
+    async def opportunity_intelligence() -> dict[str, Any]:
+        return await repository.opportunity_analytics()
+
+    @app.get("/api/research", dependencies=[Depends(require_user)])
+    async def research_catalog() -> dict[str, Any]:
+        from dataclasses import asdict
+        root = Path(settings.research_root)
+        try:
+            latest = load_latest(root)
+            catalog = json.loads((root / "catalog.json").read_text(encoding="utf-8")) if (root / "catalog.json").exists() else {}
+        except (ValueError, OSError) as exc:
+            return {"status":"DATA_UNAVAILABLE", "error":str(exc), "datasets":[], "latest":None}
+        return {"status":"AVAILABLE" if latest else "NO_RESEARCH_RUN", "latest":latest,
+            "runs":[{"run_id":path.parent.name, "verdict":json.loads(path.read_text(encoding="utf-8")).get("verdict")} for path in sorted(root.glob("runs/*/summary.json"), reverse=True)][:30],
+            "jobs":await repository.research_jobs(),
+            "datasets":[{k:v for k,v in m.items() if k not in {"provenance", "gaps"}} for m in catalog.get("manifests", [])],
+            "registry":[asdict(spec) for spec in REGISTRY], "acquisition_failures":catalog.get("failures", [])}
+
+    @app.post("/api/research/jobs", dependencies=[Depends(require_user)], status_code=202)
+    async def queue_research(request: ResearchRequest) -> dict[str, str]:
+        if any(s not in STRATEGIES for s in request.strategies) or any(a not in ASSETS for a in request.assets) or any(tf not in {"1d", "4h"} for tf in request.timeframes):
+            raise HTTPException(status_code=400, detail="Unknown strategy or EUR asset")
+        try:
+            job_id = await repository.queue_research(request.model_dump(mode="json"))
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+        return {"job_id":job_id, "status":"QUEUED", "worker":"Dedicated research worker; paper protection remains independent"}
+
+    @app.get("/api/research/runs/{run_id}/{artifact}", dependencies=[Depends(require_user)])
+    async def research_artifact(run_id: str, artifact: str) -> dict[str, Any]:
+        import re
+        if not re.fullmatch(r"research-\d{8}T\d{6}", run_id) or (artifact != "summary.json" and not re.fullmatch(r"(?:1d|4h)-[A-Z0-9_]+-(?:test|validation)\.json", artifact)):
+            raise HTTPException(status_code=400, detail="Unsupported research artifact identity")
+        root = Path(settings.research_root).resolve()
+        path = (root / "runs" / run_id / artifact).resolve()
+        if not path.is_relative_to(root) or not path.is_file():
+            raise HTTPException(status_code=404, detail="Research artifact not found")
+        return dict(json.loads(path.read_text(encoding="utf-8")))
 
     @app.get("/api/backtests", dependencies=[Depends(require_user)])
     async def backtest_runs() -> dict[str,object]:

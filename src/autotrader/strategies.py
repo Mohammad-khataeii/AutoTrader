@@ -3,6 +3,7 @@ from __future__ import annotations
 from decimal import Decimal
 
 from autotrader.domain import MarketFeatures, StrategySignal, new_id
+from autotrader.research.strategies import V4StrategyEngine
 
 
 def _score(value: Decimal | None, low: Decimal, high: Decimal) -> Decimal:
@@ -12,7 +13,7 @@ def _score(value: Decimal | None, low: Decimal, high: Decimal) -> Decimal:
     return (clipped - low) / (high - low)
 
 
-class BreakoutStrategyEngine:
+class LegacyStrategyEngine:
     """Produces structured evidence from independent research hypotheses."""
 
     def generate(self, features: MarketFeatures, btc_features: MarketFeatures | None = None, eth_features: MarketFeatures | None = None) -> list[StrategySignal]:
@@ -94,4 +95,8 @@ class BreakoutStrategyEngine:
         spread_penalty = _score(features.spread_bps, Decimal("10"), Decimal("150")) if features.spread_bps is not None else Decimal("0.5")
         score = max(imbalance_score - (spread_penalty / Decimal("2")), Decimal("0"))
         return self._build(features, "H_LIQUIDITY_ORDER_BOOK", score, {"imbalance": features.order_book_imbalance, "spread_bps": features.spread_bps}, ["bid pressure remains constructive", "spread remains acceptable"], ["spread widens", "book imbalance reverses"], "Order-book pressure is constructive after spread adjustment.")
+
+
+class BreakoutStrategyEngine(V4StrategyEngine):
+    """Production V4 hypotheses; LegacyStrategyEngine is retained for comparison."""
 

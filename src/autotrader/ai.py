@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import replace
 from decimal import Decimal
+from hashlib import sha256
 from typing import TYPE_CHECKING, Protocol
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError
 
 from autotrader.config import AIProvider, Settings
 from autotrader.domain import (
@@ -40,17 +42,21 @@ class AIProviderClient(Protocol):
         ...
 
 
+def mock_suggested_action(features: MarketFeatures, signals: list[StrategySignal]) -> DecisionAction:
+    total_score = sum((signal.score for signal in signals), Decimal(0))
+    qualified = any(s.evidence.get("entry_eligible") for s in signals)
+    veto = any(s.evidence.get("veto") for s in signals)
+    if (qualified or total_score >= Decimal("1.5")) and features.data_quality.value == "GOOD" and not veto:
+        return DecisionAction.BUY
+    return DecisionAction.HOLD if total_score <= Decimal(".2") else DecisionAction.WAIT
+
+
 class MockAIProvider:
     def __init__(self, model: str = "mock-v1") -> None:
         self.model = model
 
     async def assess(self, features: MarketFeatures, signals: list[StrategySignal]) -> AIAssessment:
-        total_score = sum((signal.score for signal in signals), Decimal("0"))
-        action = DecisionAction.WAIT
-        if total_score >= Decimal("1.5") and features.data_quality.value == "GOOD":
-            action = DecisionAction.BUY
-        elif total_score <= Decimal("0.2"):
-            action = DecisionAction.HOLD
+        action = mock_suggested_action(features, signals)
         return AIAssessment(
             assessment_id=new_id("ai"),
             symbol=features.symbol,
@@ -91,7 +97,11 @@ class OpenAIProvider:
         request_id = None
         news=await self.repository.news_context(features.symbol)
         prompt = _build_prompt(features, signals,news)
-        prompt_bytes = len(prompt.encode("utf-8"))
+        schema = AIResponseSchema.model_json_schema()
+        schema["required"] = list(schema["properties"])
+        for prop in schema["properties"].values():
+            prop.pop("default", None)
+        prompt_bytes = len(prompt.encode("utf-8")) + len(json.dumps(schema).encode("utf-8"))
         if prompt_bytes > self.settings.ai_max_prompt_bytes:
             return _failed_assessment(features, self.settings.ai_model, "AI prompt exceeds configured token-cost bound.")
         input_price = self.settings.ai_input_price_per_million or Decimal(0)
@@ -119,7 +129,7 @@ class OpenAIProvider:
                 await self.repository.ai_request_sent(request_id)
                 response = await client.responses.create(model=self.settings.ai_model,input=prompt,
                     max_output_tokens=self.settings.ai_max_output_tokens,
-                    text={"format":{"type":"json_object"}},store=False,service_tier="default",
+                    text={"format":{"type":"json_schema", "name":"crypto_assessment", "strict":True, "schema":schema}},store=False,service_tier="default",
                     prompt_cache_options={"mode":"explicit"})
             usage = response.usage
             if usage is None:
@@ -164,12 +174,53 @@ class OffAIProvider:
         return replace(_failed_assessment(features,"","AI analysis disabled."),provider="off",failed=False)
 
 
+class EventDrivenAIProvider:
+    def __init__(self, provider: AIProviderClient, repository: PersistentTradingRepository,
+                 model: str) -> None:
+        self.provider, self.repository, self.model = provider, repository, model
+
+    async def assess(self, features: MarketFeatures, signals: list[StrategySignal]) -> AIAssessment:
+        from autotrader.persistence.repository import _json
+        qualified = any(s.evidence.get("entry_eligible") for s in signals)
+        legacy_value = sum((s.score for s in signals), Decimal(0)) >= Decimal("1.2")
+        news = await self.repository.news_context(features.symbol)
+        if features.data_quality.value != "GOOD" or not (qualified or legacy_value or news):
+            return replace(_failed_assessment(features, self.model, "No high-value or material-change AI event."),
+                provider="event-gate", failed=False)
+        price = Decimal(str(features.metadata.get("last_close", 0)))
+        context = {"symbol": features.symbol, "timeframe": features.timeframe, "model": self.model,
+            "quality": features.data_quality.value,
+            "regime": features.metadata.get("regime_assessment", {}).get("regime"),
+            "signals": [(s.strategy_id, s.evidence.get("strategy_version"), bool(s.evidence.get("entry_eligible")),
+                         bool(s.evidence.get("veto")), s.evidence.get("parameters")) for s in signals],
+            "price_1pct_bucket": math.floor(math.log(float(price)) / math.log(1.01)) if price > 0 else None,
+            "rsi_5pt_bucket": int((features.rsi or Decimal(0)) / 5),
+            "momentum_10bps_bucket": int((features.momentum or Decimal(0)) / Decimal(".001")),
+            "news_sha256": sha256(_json(news).encode()).hexdigest(), "schema_version": "4.0.0"}
+        key = "aie:" + sha256(_json(context).encode()).hexdigest()[:60]
+        claim, cached = await self.repository.claim_ai_event(key)
+        if cached:
+            result = TypeAdapter(AIAssessment).validate_python(cached)
+            return replace(result, assessment_id=new_id("ai"), timestamp=utc_now(),
+                tokens_used=0, estimated_cost_usd=Decimal(0), explanation=result.explanation + " [Persistent event cache hit]")
+        if claim is None:
+            return _failed_assessment(features, self.model, "Equivalent AI event is already in progress; deterministic policy applies.")
+        try:
+            result = await self.provider.assess(features, signals)
+        except Exception as exc:
+            result = _failed_assessment(features, self.model, "AI event failed: " + type(exc).__name__)
+        await self.repository.finish_ai_event(key, claim, json.loads(_json(result)), ttl=30 if result.failed else 900)
+        return result
+
+
 def make_ai_provider(settings: Settings, repository: PersistentTradingRepository | None = None) -> AIProviderClient:
     if settings.ai_provider is AIProvider.OFF:
         return OffAIProvider()
     if settings.ai_provider is AIProvider.OPENAI:
-        return OpenAIProvider(settings, repository)
-    return MockAIProvider()
+        provider: AIProviderClient = OpenAIProvider(settings, repository)
+    else:
+        provider = MockAIProvider()
+    return EventDrivenAIProvider(provider, repository, settings.ai_model or "mock-v1") if repository is not None else provider
 
 
 def _build_prompt(features: MarketFeatures, signals: list[StrategySignal],news:list[dict[str,str]]|None=None) -> str:

@@ -32,14 +32,20 @@ class DecisionEngine:
         entries_today: int = 0,
     ) -> TradingDecision:
         total_score = sum((signal.score for signal in signals), Decimal("0"))
-        price = features.metadata.get("last_price")
+        price = features.metadata.get("best_ask", features.metadata.get("last_price"))
         entry_price = Decimal(str(price)) if price is not None else features.vwap or features.ema_9
         if entry_price is None or entry_price <= 0:
             return self._reject(pair.symbol, signals, ai_assessment, "No valid entry price.", DecisionAction.WAIT)
 
         atr = features.atr or (entry_price * Decimal("0.02"))
-        stop_loss = quantize_down(max(entry_price - (atr * Decimal("1.5")), Decimal("0")), pair.price_step)
+        v4_signals = [signal for signal in signals if signal.evidence.get("strategy_version") == "4.0.0"]
+        parameters = v4_signals[0].evidence.get("parameters", {}) if v4_signals else {}
+        stop_atr = Decimal(parameters.get("stop_atr", "1.5"))
+        target_atr = Decimal(parameters.get("target_atr", "1"))
+        stop_loss = quantize_down(max(entry_price - (atr * stop_atr), Decimal("0")), pair.price_step)
         quote_amount = min(self.default_quote_amount, Decimal("100"))
+        if v4_signals and 0 < stop_loss < entry_price:
+            quote_amount = min(quote_amount, Decimal(5) / ((entry_price - stop_loss) / entry_price + Decimal(".005")))
         # Size with a conservative execution-cost cushion so market orders do not rely on
         # spending more than the capital reserved by the risk engine.
         execution_buffer = Decimal("1.005")
@@ -47,8 +53,10 @@ class DecisionEngine:
 
         action = DecisionAction.WAIT
         reasons = [f"aggregate_signal_score={total_score}"]
-        if total_score >= Decimal("1.2"):
+        eligible = [s.strategy_id for s in v4_signals if s.evidence.get("entry_eligible")]
+        if (v4_signals and eligible) or (not v4_signals and total_score >= Decimal("1.2")):
             action = DecisionAction.BUY
+        reasons.append(f"explicit_eligible_strategies={eligible}")
         if ai_assessment and ai_assessment.failed:
             reasons.append("AI failed; deterministic path used.")
         elif ai_assessment and ai_assessment.provider != "off" and ai_assessment.suggested_action in {DecisionAction.WAIT, DecisionAction.HOLD} and action is DecisionAction.BUY:
@@ -74,9 +82,9 @@ class DecisionEngine:
             rejected_reason = "Entry conditions not met."
 
         targets = (
-            quantize_down(entry_price + atr, pair.price_step),
-            quantize_down(entry_price + (atr * Decimal("2")), pair.price_step),
-            quantize_down(entry_price + (atr * Decimal("3")), pair.price_step),
+            quantize_down(entry_price + atr * target_atr, pair.price_step),
+            quantize_down(entry_price + (atr * target_atr * Decimal("2")), pair.price_step),
+            quantize_down(entry_price + (atr * target_atr * Decimal("3")), pair.price_step),
         )
         return TradingDecision(
             decision_id=new_id("dec"),

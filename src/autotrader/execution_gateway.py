@@ -1,8 +1,14 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from typing import TYPE_CHECKING
+
+from autotrader.allocation import allocation_advice
+
+if TYPE_CHECKING:
+    from autotrader.scanner import ScanCandidate
 
 from autotrader.domain import (
     DecisionAction,
@@ -41,6 +47,7 @@ class PaperExecutionGateway:
         fee_bps: Decimal,
         slippage_bps: Decimal,
         entry_order_type: OrderType = OrderType.MARKET,
+        allocation_profile: str = "balanced",
     ) -> None:
         self.repository = repository
         self.market_data = market_data
@@ -49,6 +56,18 @@ class PaperExecutionGateway:
         self.fee_bps = fee_bps
         self.slippage_bps = slippage_bps
         self.entry_order_type = entry_order_type
+        self.allocation_profile = allocation_profile
+
+    async def allocate_candidate(self, candidate: ScanCandidate) -> tuple[TradingDecision | None, str]:
+        metadata = {**candidate.features.metadata, "_feature_timestamp": candidate.features.timestamp.isoformat()}
+        advice = allocation_advice(metadata, await self.repository.allocation_context(), profile=self.allocation_profile)
+        await self.repository.store_allocation_advice(candidate.decision.decision_id, asdict(advice))
+        if not advice.accepted:
+            return None, ",".join(advice.reasons)
+        quote = min(candidate.decision.proposed_quote_amount, advice.quote_cap)
+        ratio = quote / candidate.decision.proposed_quote_amount if candidate.decision.proposed_quote_amount > 0 else Decimal(0)
+        return replace(candidate.decision, proposed_quote_amount=quote,
+            proposed_quantity=candidate.decision.proposed_quantity * ratio), "allocation_accepted"
 
     async def execute_entry_decision(
         self,
@@ -133,7 +152,7 @@ class PaperExecutionGateway:
             slippage_bps=self.slippage_bps,
             position_id=position_id,
             exit_target_id=exit_target_id,
-            exit_reason={"protective_stop": "STOP", "take_profit_target": "TAKE_PROFIT", "time_exit": "TIME_EXIT", "market_risk": "MARKET_RISK", "emergency": "EMERGENCY"}.get(reason, "MANUAL_EXIT"),
+            exit_reason={"protective_stop": "STOP", "take_profit_target": "TAKE_PROFIT", "time_exit": "TIME_EXIT", "market_risk": "MARKET_RISK", "regime_exit":"MARKET_RISK", "failed_breakout":"FAILED_BREAKOUT", "emergency": "EMERGENCY"}.get(reason, "MANUAL_EXIT"),
         )
         accepted=order.status in {OrderStatus.FILLED,OrderStatus.PARTIALLY_FILLED}
         return ExecutionResult(accepted, reason if accepted else order.rejection_reason or order.status.value, order)

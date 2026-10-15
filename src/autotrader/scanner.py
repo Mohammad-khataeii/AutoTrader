@@ -69,6 +69,7 @@ class MarketScanner:
 
         portfolio = await self._portfolio()
         benchmarks:dict[str,MarketFeatures]={}
+        prepared: list[tuple[ValidatedMarket, MarketFeatures]] = []
         for pair in pairs:
             try:
                 market = await self.market_data.get_validated_market(pair)
@@ -96,10 +97,14 @@ class MarketScanner:
                 }
             )
             benchmarks[pair.base_asset]=features
+            prepared.append((market, features))
+        # Evaluate the whole completed-bar cross-section so BTC and ETH receive
+        # the same available benchmark context as assets discovered after them.
+        for market, features in prepared:
             signals = self.strategy_engine.generate(features,benchmarks.get('BTC'),benchmarks.get('ETH'))
             await self.repository.store_market_analysis(market.candles, features, market.order_book)
             ai = await self.ai_provider.assess(features, signals)
-            decision = self.decision_engine.decide(pair, features, signals, portfolio, ai)
+            decision = self.decision_engine.decide(market.pair, features, signals, portfolio, ai)
             await self.repository.store_analysis(signals, ai, decision)
             score = sum((signal.score for signal in signals), Decimal("0"))
             candidates.append(ScanCandidate(market, features, signals, ai, decision, score))

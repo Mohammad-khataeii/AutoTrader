@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -33,6 +34,9 @@ class Settings(BaseSettings):
     worker_position_interval_seconds: int = Field(default=5,ge=1,le=60)
     worker_max_entries_per_cycle: int = 3
     market_data_replay_file: str | None = None
+    research_root: str = ".data/research"
+    approved_strategy_ids: str = ""
+    allocation_profile: Literal["conservative", "balanced", "opportunistic"] = "balanced"
 
     paper_trading_enabled: bool = True
     live_trading_enabled: bool = False

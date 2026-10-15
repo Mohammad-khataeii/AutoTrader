@@ -17,6 +17,19 @@ def _ema(values: Sequence[Decimal], period: int) -> Decimal | None:
     return ema
 
 
+def _ema_series(values: Sequence[Decimal], period: int) -> list[Decimal]:
+    """Exactly the prefix EMA recurrence, computed once rather than quadratically."""
+    if len(values) < period:
+        return []
+    alpha = Decimal(2) / Decimal(period + 1)
+    current = sum(values[:period]) / Decimal(period)
+    result = [current]
+    for value in values[period:]:
+        current = value * alpha + current * (Decimal(1) - alpha)
+        result.append(current)
+    return result
+
+
 def _rsi(closes: Sequence[Decimal], period: int = 14) -> Decimal | None:
     if len(closes) <= period:
         return None
@@ -102,11 +115,9 @@ def calculate_features(candles: Sequence[Candle], order_book_imbalance: Decimal 
     macd = macd_fast - macd_slow if macd_fast is not None and macd_slow is not None else None
     macd_series: list[Decimal] = []
     if len(closes) >= 35:
-        for index in range(26, len(closes) + 1):
-            fast = _ema(closes[:index], 12)
-            slow = _ema(closes[:index], 26)
-            if fast is not None and slow is not None:
-                macd_series.append(fast - slow)
+        fast_series = _ema_series(closes, 12)[14:]
+        slow_series = _ema_series(closes, 26)
+        macd_series = [fast - slow for fast, slow in zip(fast_series, slow_series, strict=True)]
     support_window = ordered[-21:-1] if len(ordered)>1 else ordered
     avg_volume = sum(volumes[-20:]) / Decimal(min(len(volumes), 20))
     recent_volume = volumes[-1]
@@ -116,6 +127,8 @@ def calculate_features(candles: Sequence[Candle], order_book_imbalance: Decimal 
     volatility = Decimal(str(pstdev(float(value) for value in closes[-20:]))) if len(closes) >= 2 else None
     resistance = max(candle.high for candle in support_window)
     support = min(candle.low for candle in support_window)
+    prior_bands = _bollinger(closes[:-1])
+    prior_width = ((prior_bands[0] - prior_bands[2]) / prior_bands[1]) if prior_bands and prior_bands[1] else Decimal(1)
 
     quality = DataQuality.GOOD
     missing = []
@@ -139,6 +152,10 @@ def calculate_features(candles: Sequence[Candle], order_book_imbalance: Decimal 
         metadata={"source": latest.source, "observations": len(ordered), "missing": missing,
             "last_high":latest.high,"last_low":latest.low,"last_close":latest.close,
             "previous_close":previous_close,
+            "return_20": latest.close / closes[-21] - 1 if len(closes) > 20 else Decimal(0),
+            "return_history_20": [str(current / previous - 1) for previous, current in zip(closes[-21:-1], closes[-20:], strict=False)] if len(closes) > 20 else [],
+            "drawdown_50": latest.close / max(closes[-50:]) - 1,
+            "prior_bollinger_width": prior_width,
             "retest_level": max(c.high for c in ordered[-22:-2]) if len(ordered)>22 else resistance},
         rsi=_rsi(closes),
         macd=macd,

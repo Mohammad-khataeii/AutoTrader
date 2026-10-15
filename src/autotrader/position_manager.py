@@ -43,7 +43,12 @@ class PositionManager:
                 continue
             pair = pair_by_symbol.get(position.symbol)
             if pair is None:
-                pair = await self.market_data.resolve_pair(position.symbol)
+                try:
+                    pair = await self.market_data.resolve_pair(position.symbol)
+                except MarketDataError as exc:
+                    await self.repository.protection_watch(position.position_id, str(exc))
+                    actions.append(PositionAction(position.symbol, f"market_metadata_unavailable:{exc}", None))
+                    continue
                 if pair is None:
                     await self.repository.protection_watch(position.position_id, "market_metadata_unavailable")
                     actions.append(PositionAction(position.symbol, "market_metadata_unavailable", None))
@@ -67,7 +72,9 @@ class PositionManager:
             assert bid is not None
             await self.repository.protection_watch(position.position_id, None)
             await self.repository.record_mark(order_book)
-            await self.repository.update_position_monitor(position.position_id, bid)
+            await self.repository.update_position_monitor(position.position_id, bid,
+                fee_bps=getattr(self.execution_gateway, "fee_bps", Decimal(0)),
+                slippage_bps=getattr(self.execution_gateway, "slippage_bps", Decimal(0)))
             position = next(p for p in await self.repository.list_positions() if p.position_id == position.position_id)
             if position.protective_stop is not None and bid <= position.protective_stop:
                 result = await self.execution_gateway.execute_exit(
@@ -85,7 +92,7 @@ class PositionManager:
                     self._intent_key(position, "TIME_EXIT", order_book.timestamp.isoformat()), "time_exit", position_id=position.position_id)
                 actions.append(PositionAction(position.symbol, result.reason, result.order))
                 continue
-            reduction = "emergency" if await self.repository.control_state() == "EMERGENCY" else ("market_risk" if await self.repository.market_risk_off(position.symbol) else None)
+            reduction = "emergency" if await self.repository.control_state() == "EMERGENCY" else await self.repository.market_exit_reason(position.symbol)
             if reduction:
                 result = await self.execution_gateway.execute_exit(pair, position.quantity, order_book,
                     self._intent_key(position, reduction, order_book.timestamp.isoformat()), reduction, position_id=position.position_id)

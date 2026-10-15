@@ -39,10 +39,12 @@ def write_frame(path: Path, frame: dict[str, Any]) -> None:
 
 
 class WorkerProcess:
-    def __init__(self, database_url: str, replay_file: Path, failpoint: str | None = None) -> None:
+    def __init__(self, database_url: str, replay_file: Path, failpoint: str | None = None, *, execution_costs: tuple[str, str] | None = None) -> None:
         env = {**os.environ, "DATABASE_URL": database_url, "ENVIRONMENT": "test",
             "AI_PROVIDER": "mock", "MARKET_DATA_REPLAY_FILE": str(replay_file),
             "WORKER_SCAN_INTERVAL_SECONDS": "1", "DEFAULT_FEE_BPS": "0", "DEFAULT_SLIPPAGE_BPS": "0"}
+        if execution_costs is not None:
+            env["DEFAULT_FEE_BPS"], env["DEFAULT_SLIPPAGE_BPS"] = execution_costs
         env.pop("AUTOTRADER_FAILPOINT", None)
         if failpoint:
             env["AUTOTRADER_FAILPOINT"] = failpoint

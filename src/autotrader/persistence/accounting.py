@@ -26,9 +26,17 @@ from autotrader.domain import (
     TradingPair,
     new_id,
     quantize_down,
+    timeframe_seconds,
     utc_now,
 )
-from autotrader.execution.pricing import quote_execution, target_gross_floor
+from autotrader.execution.postings import closing_posting
+from autotrader.execution.pricing import (
+    book_payload,
+    observation_key,
+    quote_execution,
+    target_gross_floor,
+)
+from autotrader.execution.protection import trailing_update
 from autotrader.execution.quality import ExecutionQualityEngine
 from autotrader.failure_injection import failpoint
 from autotrader.persistence.models import (
@@ -42,6 +50,7 @@ from autotrader.persistence.models import (
     ExitTargetModel,
     FillModel,
     JournalEventModel,
+    MarketFeature,
     MarketMarkModel,
     OrderModel,
     PositionModel,
@@ -149,6 +158,12 @@ class AccountingRepositoryMixin:
             session.add(MarketMarkModel(symbol=book.symbol, price=book.mid, timestamp=book.timestamp, source=book.source))
         elif aware(book.timestamp) >= aware(row.timestamp):
             row.price, row.timestamp, row.source = book.mid, book.timestamp, book.source
+        observed = await session.get(SystemStateModel, "book:" + book.symbol)
+        if observed is None:
+            session.add(SystemStateModel(key="book:" + book.symbol, state="OBSERVED", reason="mark_and_executable_quote",
+                payload_json=json.dumps(book_payload(book))))
+        elif aware(datetime.fromisoformat(json.loads(observed.payload_json)["timestamp"])) <= aware(book.timestamp):
+            observed.payload_json = json.dumps(book_payload(book))
         await session.flush()
 
     async def _period_changes(self, session: Any, equity: Decimal, now: datetime) -> tuple[Decimal, Decimal]:
@@ -233,6 +248,13 @@ class AccountingRepositoryMixin:
             return "entries_paused:" + str(account.control)
         if health and health.state != "HEALTHY":
             return "runtime_not_healthy:" + str(health.state)
+        if own_order is not None:
+            promotion = await session.get(SystemStateModel, "research_entry_policy")
+            if promotion:
+                policy = json.loads(promotion.payload_json)
+                strategy_id = json.loads(own_order.execution_json).get("strategy_id")
+                if policy.get("require_validation") and strategy_id not in policy["allowed_strategy_ids"]:
+                    return "strategy_not_approved_and_validated"
         if stop is None:
             return "missing_protective_stop"
         cooldown = await session.get(CooldownModel, pair.symbol)
@@ -313,12 +335,12 @@ class AccountingRepositoryMixin:
                         if not await self._position_consistent(session,position):
                             error="position_reconciliation_required"
                             await self._health(session,RuntimeHealth.RECONCILIATION_REQUIRED,error)
-                        if exit_reason in {"STOP", "TIME_EXIT", "MARKET_RISK", "EMERGENCY"}:
+                        if exit_reason in {"STOP", "TIME_EXIT", "MARKET_RISK", "FAILED_BREAKOUT", "EMERGENCY"}:
                             outstanding = list((await session.scalars(select(OrderModel).where(OrderModel.position_id == position_id, OrderModel.side == "SELL", OrderModel.status.in_(["PENDING", "ACCEPTED"])))).all())
                             for pending in outstanding:
                                 await self._cancel(session, pending, "protective_exit_priority")
                         reserved = await session.scalar(select(func.sum(ExitIntentModel.reserved_quantity)).where(ExitIntentModel.position_id == position_id, ExitIntentModel.status == "OPEN")) or ZERO
-                        if exit_reason in {"STOP","TIME_EXIT","MARKET_RISK","EMERGENCY"}:
+                        if exit_reason in {"STOP","TIME_EXIT","MARKET_RISK","FAILED_BREAKOUT","EMERGENCY"}:
                             quantity=min(quantity,position.quantity-reserved)
                         if quantity > position.quantity - reserved:
                             error = "insufficient_unreserved_position_quantity"
@@ -345,6 +367,7 @@ class AccountingRepositoryMixin:
                         "bids": [[str(l.price), str(l.quantity)] for l in order_book.bids],
                         "asks": [[str(l.price), str(l.quantity)] for l in order_book.asks]}}
                 primary_strategy="ensemble-v3.4"
+                holding_seconds = None
                 if admission_quality is not None:
                     payload["admission_quality"] = admission_quality.payload()
                 if decision_id:
@@ -358,13 +381,22 @@ class AccountingRepositoryMixin:
                         strongest=await session.scalar(select(StrategySignalModel).where(StrategySignalModel.signal_id.in_(ids),StrategySignalModel.score>0).order_by(StrategySignalModel.score.desc(),StrategySignalModel.strategy_id).limit(1))
                         if strongest:
                             primary_strategy=strongest.strategy_id
+                            evidence = json.loads(strongest.payload_json).get("evidence", {})
+                            if evidence.get("strategy_version") == "4.0.0":
+                                holding_seconds = int(evidence.get("holding_bars", 12)) * timeframe_seconds(str(evidence.get("timeframe", "5m")))
                 hours={"A_VOLUME_ACCUMULATION":12,"B_VOLATILITY_COMPRESSION":24,"C_BREAKOUT_RETEST":8,"D_MOMENTUM_ACCELERATION":6,"G_RELATIVE_STRENGTH":8,"H_LIQUIDITY_ORDER_BOOK":4}.get(primary_strategy,24)
                 if side is Side.BUY and not error:
+                    promotion = await session.get(SystemStateModel, "research_entry_policy")
+                    if promotion:
+                        policy = json.loads(promotion.payload_json)
+                        if policy.get("require_validation") and primary_strategy not in policy["allowed_strategy_ids"]:
+                            error = "strategy_not_approved_and_validated"
+                            payload["rejection_reason"] = error
                     strategy_cooldown=await session.get(CooldownModel,self.strategy_cooldown_key(primary_strategy))
                     if strategy_cooldown and aware(strategy_cooldown.expires_at)>utc_now():
                         error='strategy_cooldown'
                         payload['rejection_reason']=error
-                payload.update(strategy_id=primary_strategy,holding_hours=hours)
+                payload.update(strategy_id=primary_strategy,holding_hours=hours,holding_seconds=holding_seconds)
                 if side is Side.BUY and not error:
                     position_id = new_id("pos")
                     position = PositionModel(position_id=position_id, account_id=self.account_id, symbol=pair.symbol,
@@ -482,8 +514,7 @@ class AccountingRepositoryMixin:
             failpoint("after_order_dispatch")
             # Account lock serializes consumption across intents and process restarts.
             # Only an actually different observation can supply new paper liquidity.
-            observation = json.dumps({"symbol": book.symbol, **payload["book"]}, sort_keys=True)
-            liquidity_key = "depth:" + sha256(observation.encode()).hexdigest()[:58]
+            liquidity_key = observation_key(book)
             liquidity = await session.get(SystemStateModel, liquidity_key)
             usage = json.loads(liquidity.payload_json) if liquidity else {"BUY": {}, "SELL": {}}
             consumed = {int(i): Decimal(q) for i, q in usage[row.side].items()}
@@ -525,9 +556,9 @@ class AccountingRepositoryMixin:
                 position.original_quantity = filled
                 position.average_entry_price = price
                 position.cost_basis = spend
-                position.highest_price = price
+                position.highest_price = book.best_bid
                 position.state = "OPEN"
-                position.expires_at = utc_now() + timedelta(hours=payload.get('holding_hours',24))
+                position.expires_at = utc_now() + timedelta(seconds=payload.get("holding_seconds") or payload.get('holding_hours',24)*3600)
                 self._journal(session, f"buy:{fill_id}", "BUY_FILL", cash=-notional, quantity=filled,
                     cost=notional, position_id=position.position_id, order_id=row.order_id, fill_id=fill_id)
                 self._journal(session, f"fee:{fill_id}", "FEE", cash=-fee, cost=fee,
@@ -535,16 +566,18 @@ class AccountingRepositoryMixin:
                 await self._release(session, row)
                 if payload["stop_loss"]:
                     await self._create_plan(session, position, Decimal(payload["stop_loss"]), [Decimal(t) for t in payload["targets"]], step,
-                        strategy_id=payload.get('strategy_id','ensemble-v3.4'),holding_hours=payload.get('holding_hours',24))
+                        strategy_id=payload.get('strategy_id','ensemble-v3.4'),holding_hours=payload.get('holding_hours',24),
+                        holding_seconds=payload.get("holding_seconds"))
             else:
                 if position is None or filled > position.quantity:
                     raise ValueError("Exit would oversell; transaction rolled back.")
-                released_basis = position.cost_basis if filled == position.quantity else exact(position.cost_basis * filled / position.quantity)
-                position.quantity -= filled
-                position.cost_basis -= released_basis
-                pnl = notional - fee - released_basis
+                posting = closing_posting(position.quantity, position.cost_basis, filled, notional, fee)
+                released_basis = posting.released_basis
+                position.quantity = posting.remaining_quantity
+                position.cost_basis = posting.remaining_basis
+                pnl = posting.realized_pnl
                 position.realized_pnl += pnl
-                balance.available += notional - fee
+                balance.available += posting.cash_credit
                 self._journal(session, f"sell:{fill_id}", "SELL_FILL", cash=notional, quantity=-filled,
                     cost=-released_basis, pnl=notional - released_basis, position_id=position.position_id, order_id=row.order_id, fill_id=fill_id)
                 self._journal(session, f"fee:{fill_id}", "FEE", cash=-fee, pnl=-fee,
@@ -635,13 +668,16 @@ class AccountingRepositoryMixin:
         return ids
 
     async def _create_plan(self, session: Any, p: PositionModel, stop: Decimal | None,
-                           targets: list[Decimal], step: Decimal,*,strategy_id:str='ensemble-v3.4',holding_hours:int=24) -> None:
+                           targets: list[Decimal], step: Decimal,*,strategy_id:str='ensemble-v3.4',holding_hours:int=24,
+                           holding_seconds:int|None=None) -> None:
         existing = await session.scalar(select(ExitPlanModel).where(ExitPlanModel.position_id == p.position_id))
         if existing and await session.scalar(select(func.count()).select_from(ExitTargetModel).where(ExitTargetModel.exit_plan_id == existing.exit_plan_id)):
             return
         p.protective_stop, p.initial_stop = stop, stop
         plan = existing or ExitPlanModel(exit_plan_id=new_id("plan"), position_id=p.position_id,
-            strategy_id=strategy_id, settings_json=json.dumps({"holding_hours": holding_hours, "cooldown_minutes": 30, "stop_priority": True,"trailing_distance_fraction":"0.03"}))
+            strategy_id=strategy_id, settings_json=json.dumps({"holding_hours": holding_hours,
+                "holding_seconds": holding_seconds or holding_hours*3600, "cooldown_minutes": 30, "stop_priority": True,
+                "trailing_policy":"v4-volatility-bid-trailing-1"}))
         session.add(plan)
         await session.flush()
         from autotrader.persistence.repository import _default_target_quantities
@@ -734,7 +770,8 @@ class AccountingRepositoryMixin:
                     status="WAITING_FOR_DATA", message="protection_data_unavailable:" + reason, payload_json=payload))
                 await self._health(session, RuntimeHealth.DATA_DEGRADED, "protection_data_unavailable:" + p.symbol)
 
-    async def update_position_monitor(self, position_id: str, price: Decimal) -> None:
+    async def update_position_monitor(self, position_id: str, price: Decimal, *,
+                                      fee_bps: Decimal = Decimal(10), slippage_bps: Decimal = Decimal(8)) -> None:
         async with self.session_factory() as session, session.begin():
             await self._lock_account(session)
             p = await session.get(PositionModel, position_id, with_for_update=True)
@@ -745,15 +782,26 @@ class AccountingRepositoryMixin:
             target1 = await session.scalar(select(ExitTargetModel).where(ExitTargetModel.position_id == position_id, ExitTargetModel.target_number == 1))
             if target1 and target1.status == "COMPLETED":
                 previous_stop = p.protective_stop
-                break_even = exact(p.cost_basis / p.quantity) if p.quantity > 0 else p.average_entry_price
-                p.trailing_distance = p.trailing_distance or p.average_entry_price * Decimal("0.03")
-                p.protective_stop = max(p.protective_stop or ZERO, break_even, p.highest_price - p.trailing_distance)
+                feature = await session.scalar(select(MarketFeature).where(MarketFeature.symbol == p.symbol,
+                    MarketFeature.timestamp <= utc_now()).order_by(MarketFeature.timestamp.desc()).limit(1))
+                atr = None
+                if feature and feature.data_quality == "GOOD" and (utc_now() - aware(feature.timestamp)).total_seconds() <= 900:
+                    raw_atr = json.loads(feature.payload_json).get("atr")
+                    atr = Decimal(raw_atr) if raw_atr else None
+                distance = p.trailing_distance or max(p.average_entry_price - (p.initial_stop or p.average_entry_price),
+                    p.average_entry_price * Decimal(".005"))
+                update = trailing_update(previous_stop=p.protective_stop or ZERO, highest_bid=p.highest_price,
+                    basis=p.cost_basis, quantity=p.quantity, distance=distance, atr=atr,
+                    fee_bps=fee_bps, slippage_bps=slippage_bps)
+                p.trailing_distance, p.protective_stop = update.distance, update.stop
                 if previous_stop != p.protective_stop:
                     session.add(SystemIncidentModel(incident_id=new_id("inc"), severity="INFO",
                         status="STOP_UPDATED", message="monotonic_bid_trailing_stop",
                         payload_json=json.dumps({"position_id": position_id, "old_stop": str(previous_stop),
                             "new_stop": str(p.protective_stop), "executable_bid": str(price),
-                            "policy": "v4-bid-trailing-1"})))
+                            "distance": str(update.distance), "observed_atr": str(atr),
+                            "breakeven_bid": str(update.breakeven_bid), "fee_bps": str(fee_bps),
+                            "slippage_bps": str(slippage_bps), "policy": "v4-volatility-bid-trailing-1"})))
 
     async def realized_pnl_since(self, since: datetime) -> Decimal:
         async with self.session_factory() as session:

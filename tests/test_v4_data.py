@@ -8,10 +8,13 @@ from pathlib import Path
 import httpx
 import pytest
 
+from autotrader.research.artifacts import load_latest
 from autotrader.research.data import (
     CoinbaseHistory,
     HistoricalBar,
     aggregate_complete,
+    canonical,
+    digest,
     load_dataset,
     save_dataset,
     validate_bar,
@@ -87,3 +90,15 @@ async def test_public_provider_page_filtering_and_cached_resumption(tmp_path: Pa
             await provider._get("/products", {})
     finally:
         await provider.close()
+
+
+def test_report_pointer_portable_between_windows_and_linux(tmp_path: Path) -> None:
+    run = tmp_path / "runs" / "research-20261015T000000"
+    run.mkdir(parents=True)
+    body = canonical({"verdict":"NO STRATEGY PASSED VALIDATION"})
+    (run / "summary.json").write_bytes(body)
+    (tmp_path / "latest-run.json").write_bytes(canonical({"summary":"runs\\research-20261015T000000\\summary.json", "summary_sha256":digest(body)}))
+    assert load_latest(tmp_path)["verdict"] == "NO STRATEGY PASSED VALIDATION"
+    (tmp_path / "latest-run.json").write_bytes(canonical({"summary":"../outside.json", "summary_sha256":digest(body)}))
+    with pytest.raises(ValueError, match="outside_store"):
+        load_latest(tmp_path)
