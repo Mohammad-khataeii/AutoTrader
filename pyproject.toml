@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "revolutx-autotrader"
+version = "1.0.0"
+description = "Autonomous Revolut X cryptocurrency research and paper-trading platform."
+requires-python = ">=3.12"
+dependencies = [
+  "alembic>=1.13",
+  "aiosqlite>=0.20",
+  "asyncpg>=0.29",
+  "fastapi>=0.115",
+  "greenlet>=3.0",
+  "httpx>=0.27",
+  "openai>=1.50",
+  "prometheus-client>=0.20",
+  "psycopg[binary]>=3.2",
+  "pydantic>=2.8",
+  "pydantic-settings>=2.4",
+  "python-json-logger>=2.0",
+  "python-multipart>=0.0.9",
+  "redis>=5.0",
+  "sqlalchemy>=2.0",
+  "uvicorn[standard]>=0.30",
+]
+
+[project.optional-dependencies]
+dev = [
+  "hypothesis>=6.112",
+  "mypy>=1.11",
+  "pytest>=8.3",
+  "pytest-asyncio>=0.24",
+  "ruff>=0.6",
+]
+
+[project.scripts]
+autotrader-api = "autotrader.api.main:run"
+autotrader-worker = "autotrader.worker.runner:run"
+autotrader-backtest = "autotrader.cli:backtest_main"
+autotrader-reconcile = "autotrader.cli:reconcile_main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+ignore = ["B008", "BLE001", "FURB157"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["autotrader"]

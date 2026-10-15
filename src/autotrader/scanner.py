@@ -1,0 +1,116 @@
+from __future__ import annotations
+
+import time
+from dataclasses import dataclass
+from decimal import Decimal
+
+from autotrader.ai import AIProviderClient
+from autotrader.decision import DecisionEngine
+from autotrader.domain import AIAssessment, MarketFeatures, StrategySignal, TradingDecision
+from autotrader.indicators import calculate_features
+from autotrader.market_data.revolut import MarketDataError
+from autotrader.market_data.service import MarketDataService, ValidatedMarket
+from autotrader.persistence.repository import PersistentTradingRepository
+from autotrader.portfolio import Portfolio
+from autotrader.strategies import BreakoutStrategyEngine
+
+
+@dataclass(frozen=True)
+class ScanCandidate:
+    market: ValidatedMarket
+    features: MarketFeatures
+    signals: list[StrategySignal]
+    ai_assessment: AIAssessment
+    decision: TradingDecision
+    score: Decimal
+
+
+@dataclass(frozen=True)
+class ScanResult:
+    status: str
+    scanned: int
+    rejected: list[dict[str, object]]
+    provider_errors: list[str]
+    candidates: list[ScanCandidate]
+    duration_ms: Decimal
+
+    @property
+    def best(self) -> ScanCandidate | None:
+        return self.candidates[0] if self.candidates else None
+
+
+class MarketScanner:
+    def __init__(
+        self,
+        *,
+        market_data: MarketDataService,
+        repository: PersistentTradingRepository,
+        strategy_engine: BreakoutStrategyEngine,
+        decision_engine: DecisionEngine,
+        ai_provider: AIProviderClient,
+        initial_cash: Decimal,
+    ) -> None:
+        self.market_data = market_data
+        self.repository = repository
+        self.strategy_engine = strategy_engine
+        self.decision_engine = decision_engine
+        self.ai_provider = ai_provider
+        self.initial_cash = initial_cash
+
+    async def scan_once(self, max_pairs: int = 8) -> ScanResult:
+        started = time.perf_counter()
+        rejected: list[dict[str, object]] = []
+        provider_errors: list[str] = []
+        candidates: list[ScanCandidate] = []
+        try:
+            pairs = await self.market_data.discover_pairs(limit=max_pairs)
+        except MarketDataError as exc:
+            return ScanResult("DATA_UNAVAILABLE", 0, rejected, [str(exc)], [], Decimal("0"))
+
+        portfolio = await self._portfolio()
+        for pair in pairs:
+            try:
+                market = await self.market_data.get_validated_market(pair)
+            except MarketDataError as exc:
+                provider_errors.append(f"{pair.symbol}:{exc}")
+                rejected.append({"symbol": pair.symbol, "reasons": ["provider_error"]})
+                continue
+            if not market.usable_for_entry:
+                rejected.append({"symbol": pair.symbol, "reasons": market.rejected_reasons})
+                continue
+            features = calculate_features(market.candles, market.metrics.imbalance, market.metrics.spread_bps)
+            features.metadata.update(
+                {
+                    "last_price": market.metrics.mid,
+                    "best_bid": market.metrics.best_bid,
+                    "best_ask": market.metrics.best_ask,
+                    "spread_bps": market.metrics.spread_bps,
+                    "bid_depth": market.metrics.bid_depth,
+                    "ask_depth": market.metrics.ask_depth,
+                    "liquidity_quote": market.metrics.liquidity_quote,
+                    "provider_latency_ms": market.metrics.provider_latency_ms,
+                    "order_book_age_seconds": market.metrics.age_seconds,
+                    "provider": market.order_book.source,
+                }
+            )
+            signals = self.strategy_engine.generate(features)
+            ai = await self.ai_provider.assess(features, signals)
+            decision = self.decision_engine.decide(pair, features, signals, portfolio, ai)
+            await self.repository.store_analysis(signals, ai, decision)
+            score = sum((signal.score for signal in signals), Decimal("0"))
+            candidates.append(ScanCandidate(market, features, signals, ai, decision, score))
+
+        candidates.sort(key=lambda candidate: (candidate.decision.accepted, candidate.score), reverse=True)
+        status = "OK" if candidates else ("DATA_UNAVAILABLE" if provider_errors and not rejected else "NO_CANDIDATES")
+        duration = Decimal(str(round((time.perf_counter() - started) * 1000, 3)))
+        return ScanResult(status, len(pairs), rejected, provider_errors, candidates, duration)
+
+    async def _portfolio(self) -> Portfolio:
+        await self.repository.initialize_portfolio(self.initial_cash)
+        snapshot = await self.repository.snapshot()
+        portfolio = Portfolio(Decimal(snapshot["available_cash"]), quote_asset=self.repository.quote_asset)
+        portfolio.balances[portfolio.quote_asset].reserved = Decimal(snapshot["reserved_cash"])
+        for position in await self.repository.list_positions():
+            if position.closed_at is None and position.quantity > 0:
+                portfolio.positions[position.symbol] = position
+        return portfolio
