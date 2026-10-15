@@ -1,5 +1,0 @@
-[console_scripts]
-autotrader-api = autotrader.api.main:run
-autotrader-backtest = autotrader.cli:backtest_main
-autotrader-reconcile = autotrader.cli:reconcile_main
-autotrader-worker = autotrader.worker.runner:run

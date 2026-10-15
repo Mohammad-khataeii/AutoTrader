@@ -60,9 +60,11 @@ class DataQuality(StrEnum):
 
 class RuntimeHealth(StrEnum):
     HEALTHY = "HEALTHY"
+    DATA_DEGRADED = "DATA_DEGRADED"
     RECONCILIATION_REQUIRED = "RECONCILIATION_REQUIRED"
     RISK_HALTED = "RISK_HALTED"
     RECOVERING = "RECOVERING"
+    STOPPED = "STOPPED"
 
 
 @dataclass(frozen=True)
@@ -260,6 +262,15 @@ class Position:
     target_quantities: list[Decimal] = field(default_factory=list)
     target_filled_quantities: list[Decimal] = field(default_factory=list)
     closed_at: datetime | None = None
+    target_ids: list[str] = field(default_factory=list)
+    exit_plan_id: str | None = None
+    cost_basis: Decimal = Decimal("0")
+    highest_price: Decimal | None = None
+    initial_stop: Decimal | None = None
+    trailing_distance: Decimal | None = None
+    expires_at: datetime | None = None
+    last_monitored_at: datetime | None = None
+    account_id: str | None = None
 
     @property
     def exposure(self) -> Decimal:

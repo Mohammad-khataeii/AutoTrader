@@ -55,15 +55,15 @@ class NoopMarketClient:
 
 
 def candles(symbol: str = "BTC-EUR", close: Decimal = Decimal("100")) -> list[Candle]:
-    start = utc_now()
+    start = utc_now() - timedelta(minutes=240)
     return [
         Candle(
             symbol=symbol,
             timestamp=start + timedelta(minutes=index),
-            open=close - Decimal("1"),
-            high=close + Decimal("2"),
-            low=close - Decimal("2"),
-            close=close + (Decimal(index) / Decimal("100")),
+            open=close - Decimal("0.1"),
+            high=close + Decimal("0.2"),
+            low=close - Decimal("0.2"),
+            close=close,
             volume=Decimal("100") + Decimal(index),
             source="fixture",
         )

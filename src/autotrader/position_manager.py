@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal
+from hashlib import sha256
 
-from autotrader.domain import Order, Position, TradingPair
+from autotrader.domain import Order, Position, TradingPair, utc_now
 from autotrader.execution_gateway import PaperExecutionGateway
 from autotrader.market_data.revolut import MarketDataError
 from autotrader.market_data.service import MarketDataService
+from autotrader.persistence.accounting import aware
 from autotrader.persistence.repository import PersistentTradingRepository
 
 
@@ -35,6 +37,9 @@ class PositionManager:
         for position in await self.repository.list_positions():
             if position.closed_at is not None or position.quantity <= 0:
                 continue
+            if position.account_id != self.repository.account_id:
+                actions.append(PositionAction(position.symbol, "unresolved_legacy_position", None))
+                continue
             pair = pair_by_symbol.get(position.symbol)
             if pair is None:
                 pair = await self.market_data.resolve_pair(position.symbol)
@@ -42,21 +47,39 @@ class PositionManager:
                     actions.append(PositionAction(position.symbol, "market_metadata_unavailable", None))
                     continue
             try:
-                market = await self.market_data.get_validated_market(pair)
+                if hasattr(self.market_data, "get_position_book"):
+                    order_book = await self.market_data.get_position_book(pair)
+                else:
+                    order_book = (await self.market_data.get_validated_market(pair)).order_book
             except MarketDataError as exc:
                 actions.append(PositionAction(position.symbol, f"market_data_unavailable:{exc}", None))
                 continue
-            mid = market.order_book.mid
+            mid = order_book.mid
             if mid is None:
                 continue
+            await self.repository.record_mark(order_book)
+            await self.repository.update_position_monitor(position.position_id, mid)
+            position = next(p for p in await self.repository.list_positions() if p.position_id == position.position_id)
             if position.protective_stop is not None and mid <= position.protective_stop:
                 result = await self.execution_gateway.execute_exit(
                     pair,
                     position.quantity,
-                    market.order_book,
-                    self.execution_gateway.cycle_key("stop", pair.symbol),
+                    order_book,
+                    self._intent_key(position, "STOP", order_book.timestamp.isoformat()),
                     "protective_stop",
+                    position_id=position.position_id,
                 )
+                actions.append(PositionAction(position.symbol, result.reason, result.order))
+                continue
+            if position.expires_at is not None and aware(position.expires_at) <= utc_now():
+                result = await self.execution_gateway.execute_exit(pair, position.quantity, order_book,
+                    self._intent_key(position, "TIME_EXIT", order_book.timestamp.isoformat()), "time_exit", position_id=position.position_id)
+                actions.append(PositionAction(position.symbol, result.reason, result.order))
+                continue
+            reduction = "emergency" if await self.repository.control_state() == "EMERGENCY" else ("market_risk" if await self.repository.market_risk_off(position.symbol) else None)
+            if reduction:
+                result = await self.execution_gateway.execute_exit(pair, position.quantity, order_book,
+                    self._intent_key(position, reduction, order_book.timestamp.isoformat()), reduction, position_id=position.position_id)
                 actions.append(PositionAction(position.symbol, result.reason, result.order))
                 continue
             target = position.take_profit_targets[0] if position.take_profit_targets else None
@@ -65,9 +88,11 @@ class PositionManager:
                 result = await self.execution_gateway.execute_exit(
                     pair,
                     quantity,
-                    market.order_book,
-                    self.execution_gateway.cycle_key("target", pair.symbol),
+                    order_book,
+                    self._intent_key(position, position.target_ids[0], order_book.timestamp.isoformat()),
                     "take_profit_target",
+                    position_id=position.position_id,
+                    exit_target_id=position.target_ids[0],
                 )
                 filled_quantity = (
                     await self.repository.filled_quantity_for_order(result.order.order_id)
@@ -78,6 +103,9 @@ class PositionManager:
                     await self.repository.sync_exit_plan_from_fills(position.symbol)
                 actions.append(PositionAction(position.symbol, result.reason, result.order))
         return actions
+
+    def _intent_key(self, position: Position, reason: str, observation_id: str) -> str:
+        return sha256(f"{position.position_id}:{reason}:{observation_id}".encode()).hexdigest()
 
     def _target_quantity(self, position: Position) -> Decimal:
         if position.target_quantities:

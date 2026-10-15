@@ -46,7 +46,7 @@ async def execute_ranked_candidates(
             candidate.market.pair,
             candidate.decision,
             candidate.market.order_book,
-            execution_gateway.cycle_key("worker-entry", candidate.market.pair.symbol),
+            candidate.decision.decision_id,
         )
         if result.accepted:
             accepted_entries += 1
@@ -72,6 +72,12 @@ async def main() -> None:
         region=settings.revolut_x_region,
         timeout=float(settings.market_data_timeout_seconds),
     )
+    replay_client = None
+    if settings.market_data_replay_file:
+        from autotrader.market_data.replay import FileReplayClient
+        await market_client.close()
+        replay_client = FileReplayClient(settings.market_data_replay_file)
+        market_client = replay_client  # type: ignore[assignment]
     market_data = MarketDataService(market_client, max_staleness_seconds=settings.market_data_max_staleness_seconds)
     risk = RiskEngine(
         RiskLimits(
@@ -110,10 +116,17 @@ async def main() -> None:
         market_data=market_data,
         execution_gateway=execution_gateway,
     )
+    await repository.recover_pending_orders()
+    await repository.reconcile_runtime_health(settings.initial_cash_eur)
     logger.info("starting worker in durable paper mode", extra={"ai_provider": settings.ai_provider})
     try:
         while True:
             try:
+                frame_id = replay_client.refresh() if replay_client else None
+                if replay_client and frame_id == await repository.last_worker_frame():
+                    await asyncio.sleep(settings.worker_scan_interval_seconds)
+                    continue
+                await repository.recover_pending_orders()
                 position_actions = await position_manager.monitor_once()
                 if position_actions:
                     logger.info(
@@ -138,6 +151,8 @@ async def main() -> None:
                             "provider_errors": len(result.provider_errors),
                         },
                     )
+                await repository.snapshot()
+                await repository.worker_heartbeat(frame_id)
             except MarketDataError as exc:
                 logger.warning("market data unavailable; skipping worker cycle", extra={"error": str(exc)})
             problems = await repository.reconcile_runtime_health(settings.initial_cash_eur)
@@ -151,3 +166,7 @@ async def main() -> None:
 
 def run() -> None:
     asyncio.run(main())
+
+
+if __name__ == "__main__":
+    run()

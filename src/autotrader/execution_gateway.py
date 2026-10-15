@@ -14,7 +14,7 @@ from autotrader.domain import (
     Side,
     TradingDecision,
     TradingPair,
-    utc_now,
+    new_id,
 )
 from autotrader.market_data.service import MarketDataService
 from autotrader.persistence.repository import PersistentTradingRepository
@@ -77,24 +77,8 @@ class PaperExecutionGateway:
             return ExecutionResult(False, ",".join(reasons))
         if decision.entry_price is None or decision.stop_loss is None:
             return ExecutionResult(False, "missing_entry_risk_inputs")
-        portfolio = await self._portfolio()
-        day_start = _period_start(days=0)
-        week_start = _week_start()
-        entries_today = await self.repository.count_buy_entries_since(day_start)
-        daily_pnl = await self.repository.realized_pnl_since(day_start)
-        weekly_pnl = await self.repository.realized_pnl_since(week_start)
-        risk = self.risk_engine.evaluate_entry(
-            portfolio,
-            pair,
-            decision.proposed_quote_amount,
-            decision.entry_price,
-            decision.stop_loss,
-            entries_today,
-            daily_pnl,
-            weekly_pnl,
-        )
-        if not risk.accepted:
-            return ExecutionResult(False, f"risk_rejected:{','.join(risk.reasons)}")
+        # The authoritative risk check runs under the account row lock in submit_order.
+        await self.repository.record_mark(order_book)
         order = await self.repository.submit_order(
             pair=pair,
             side=Side.BUY,
@@ -106,15 +90,10 @@ class PaperExecutionGateway:
             decision_id=decision.decision_id,
             fee_bps=self.fee_bps,
             slippage_bps=self.slippage_bps,
+            stop_loss=decision.stop_loss,
+            targets=list(decision.take_profit_targets),
         )
-        if order.status in {OrderStatus.FILLED, OrderStatus.PARTIALLY_FILLED}:
-            await self.repository.set_position_exit_plan(
-                pair.symbol,
-                decision.stop_loss,
-                list(decision.take_profit_targets),
-                pair.quantity_step,
-            )
-        return ExecutionResult(order.status is not OrderStatus.REJECTED, order.status.value, order)
+        return ExecutionResult(order.status in {OrderStatus.FILLED, OrderStatus.PARTIALLY_FILLED}, order.rejection_reason or order.status.value, order)
 
     async def execute_exit(
         self,
@@ -123,6 +102,9 @@ class PaperExecutionGateway:
         order_book: OrderBook,
         idempotency_key: str,
         reason: str,
+        *,
+        position_id: str | None = None,
+        exit_target_id: str | None = None,
     ) -> ExecutionResult:
         if quantity <= 0:
             return ExecutionResult(False, "non_positive_exit_quantity")
@@ -141,11 +123,15 @@ class PaperExecutionGateway:
             idempotency_key=idempotency_key,
             fee_bps=self.fee_bps,
             slippage_bps=self.slippage_bps,
+            position_id=position_id,
+            exit_target_id=exit_target_id,
+            exit_reason={"protective_stop": "STOP", "take_profit_target": "TAKE_PROFIT", "time_exit": "TIME_EXIT", "market_risk": "MARKET_RISK", "emergency": "EMERGENCY"}.get(reason, "MANUAL_EXIT"),
         )
         return ExecutionResult(order.status is not OrderStatus.REJECTED, reason, order)
 
     def cycle_key(self, prefix: str, symbol: str) -> str:
-        return f"{prefix}-{symbol}-{utc_now().strftime('%Y%m%d%H%M')}"
+        # New decisions get new keys. A caller retry must retain the returned key.
+        return new_id(prefix[:16])
 
     async def _portfolio(self) -> Portfolio:
         await self.repository.initialize_portfolio(self.initial_cash)

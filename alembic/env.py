@@ -33,6 +33,10 @@ def run_migrations_online() -> None:
     configuration["sqlalchemy.url"] = _migration_url()
     connectable = engine_from_config(configuration, prefix="sqlalchemy.", poolclass=pool.NullPool)
     with connectable.connect() as connection:
+        if connection.dialect.name == "postgresql":
+            # Serialize API/worker startup migrations using a session advisory lock.
+            connection.exec_driver_sql("SELECT pg_advisory_lock(3400000)")
+            connection.commit()
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
             context.run_migrations()

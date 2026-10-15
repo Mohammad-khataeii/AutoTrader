@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     scanner_max_pairs: int = 8
     worker_scan_interval_seconds: int = 60
     worker_max_entries_per_cycle: int = 3
+    market_data_replay_file: str | None = None
 
     paper_trading_enabled: bool = True
     live_trading_enabled: bool = False
@@ -67,6 +68,8 @@ class Settings(BaseSettings):
         weak_values = {"", "change-me", "REPLACE_WITH_STRONG_PASSWORD"}
         if self.environment.lower() not in {"local", "test"} and self.dashboard_password.get_secret_value() in weak_values:
             raise ValueError("A strong DASHBOARD_PASSWORD is required outside local/test environments.")
+        if self.market_data_replay_file and self.environment != "test":
+            raise ValueError("File replay is restricted to ENVIRONMENT=test.")
         return self
 
     @field_validator(

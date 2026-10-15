@@ -96,6 +96,7 @@ class RejectingGateway:
         _order_book: OrderBook,
         _idempotency_key: str,
         _reason: str,
+        **_identity: Any,
     ) -> ExecutionResult:
         return ExecutionResult(
             accepted=False,
@@ -145,15 +146,16 @@ async def seed_position(repo: PersistentTradingRepository) -> None:
         side=Side.BUY,
         order_type=OrderType.MARKET,
         quantity=Decimal("1"),
-        quote_amount=Decimal("101"),
-        order_book=book(price=Decimal("100")),
+        quote_amount=Decimal("100"),
+        order_book=book(price=Decimal("99.95")),
         idempotency_key="seed-buy",
         fee_bps=Decimal("0"),
         slippage_bps=Decimal("0"),
+        stop_loss=Decimal("98"),
     )
     await repo.set_position_exit_plan(
         PAIR.symbol,
-        stop_loss=Decimal("90"),
+        stop_loss=Decimal("98"),
         targets=[Decimal("101"), Decimal("200"), Decimal("300")],
         quantity_step=PAIR.quantity_step,
     )

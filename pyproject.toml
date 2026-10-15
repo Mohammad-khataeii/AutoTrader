@@ -47,6 +47,7 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+markers = ["legacy_schema: initialize an isolated PostgreSQL database at revision 0004 for upgrade testing"]
 
 [tool.ruff]
 target-version = "py312"

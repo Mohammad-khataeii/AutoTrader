@@ -20,7 +20,12 @@ from autotrader.decision import DecisionEngine
 from autotrader.execution_gateway import PaperExecutionGateway
 from autotrader.market_data.revolut import RevolutXPublicClient
 from autotrader.market_data.service import MarketDataService
-from autotrader.persistence.database import create_schema, make_engine, make_session_factory
+from autotrader.persistence.database import (
+    check_schema,
+    create_schema,
+    make_engine,
+    make_session_factory,
+)
 from autotrader.persistence.repository import PersistentTradingRepository
 from autotrader.risk import RiskEngine, RiskLimits
 from autotrader.scanner import MarketScanner, ScanCandidate, ScanResult
@@ -92,7 +97,7 @@ def create_app() -> FastAPI:
         await market_data.close()
         await engine.dispose()
 
-    app = FastAPI(title=settings.app_name, version="3.0.0", lifespan=lifespan)
+    app = FastAPI(title=settings.app_name, version="3.4.0", lifespan=lifespan)
     app.state.repository = repository
     app.state.engine = engine
     app.state.market_data = market_data
@@ -105,9 +110,13 @@ def create_app() -> FastAPI:
 
     @app.get("/readyz")
     async def readyz() -> dict[str, str | bool]:
+        try:
+            await check_schema(engine)
+        except Exception:
+            raise HTTPException(status_code=503, detail="Schema unavailable or incompatible") from None
         return {"ready": True, "live_trading_enabled": settings.live_trading_enabled}
 
-    @app.get("/metrics")
+    @app.get("/metrics", dependencies=[Depends(require_user)])
     async def metrics() -> Response:
         return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
@@ -118,7 +127,7 @@ def create_app() -> FastAPI:
             "portfolio": snapshot,
             "health": {
                 "api": "ok",
-                "risk": "ok",
+                "risk": snapshot.get("risk_state", "UNKNOWN"),
                 "ai_provider": settings.ai_provider,
                 "market_data": "revolut-x-public",
                 "mode": "paper",
@@ -126,7 +135,37 @@ def create_app() -> FastAPI:
             "orders": await repository.list_orders(),
             "fills": await repository.list_fills(),
             "positions": [_jsonable(position) for position in await repository.list_positions()],
+            "targets": await repository.list_targets(),
         }
+
+    @app.post("/api/controls/{action}", dependencies=[Depends(require_user)])
+    async def paper_control(action: str) -> dict[str, str]:
+        try:
+            return {"control": await repository.set_control(action), "mode": "paper"}
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from None
+
+    @app.post("/api/risk/recover", dependencies=[Depends(require_user)])
+    async def recover_risk() -> dict[str, str]:
+        problems = await repository.reset_runtime_health_after_reconciliation(settings.initial_cash_eur)
+        if problems:
+            raise HTTPException(status_code=409, detail=problems)
+        return {"risk_state": (await repository.get_runtime_health()).value}
+
+    @app.get("/api/history", dependencies=[Depends(require_user)])
+    async def history() -> dict[str, object]:
+        return await repository.history()
+
+    @app.get("/api/system", dependencies=[Depends(require_user)])
+    async def system_health() -> dict[str, object]:
+        health = await repository.operational_health()
+        try:
+            from redis.asyncio import Redis
+            async with Redis.from_url(settings.redis_url, socket_connect_timeout=1, socket_timeout=1) as redis:
+                health["redis"] = "ok" if await redis.ping() else "unavailable"
+        except Exception:
+            health["redis"] = "unavailable"
+        return health
 
     @app.get("/api/scanner", dependencies=[Depends(require_user)])
     async def scanner() -> dict[str, object]:
@@ -143,7 +182,7 @@ def create_app() -> FastAPI:
             candidate.market.pair,
             candidate.decision,
             candidate.market.order_book,
-            app.state.execution_gateway.cycle_key("api-entry", candidate.market.pair.symbol),
+            candidate.decision.decision_id,
         )
         if not execution.accepted:
             raise HTTPException(

@@ -7,7 +7,7 @@ from decimal import Decimal
 from itertools import pairwise
 
 from autotrader.domain import Candle, DataQuality, OrderBook, TradingPair, utc_now
-from autotrader.market_data.revolut import RevolutXPublicClient
+from autotrader.market_data.revolut import MarketDataError, RevolutXPublicClient
 
 
 @dataclass(frozen=True)
@@ -56,7 +56,7 @@ class MarketDataService:
     async def close(self) -> None:
         await self.client.close()
 
-    async def discover_pairs(self, quote_assets: tuple[str, ...] = ("EUR", "USD"), limit: int = 20) -> list[TradingPair]:
+    async def discover_pairs(self, quote_assets: tuple[str, ...] = ("EUR",), limit: int = 20) -> list[TradingPair]:
         pairs = await self.client.get_pairs()
         eligible = [pair for pair in pairs if pair.quote_asset in quote_assets]
         eligible.sort(key=lambda pair: (quote_assets.index(pair.quote_asset), _asset_priority(pair.base_asset), pair.symbol))
@@ -65,6 +65,13 @@ class MarketDataService:
     async def resolve_pair(self, symbol: str) -> TradingPair | None:
         pairs = await self.client.get_pairs()
         return next((pair for pair in pairs if pair.symbol == symbol), None)
+
+    async def get_position_book(self, pair: TradingPair) -> OrderBook:
+        book = await self.client.get_order_book(pair.symbol, limit=50)
+        reasons, _ = self.validate_order_book(book)
+        if reasons:
+            raise MarketDataError(",".join(reasons))
+        return book
 
     async def get_validated_market(self, pair: TradingPair) -> ValidatedMarket:
         until = utc_now()

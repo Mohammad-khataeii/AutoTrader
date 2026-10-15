@@ -94,6 +94,7 @@ class MarketScanner:
                 }
             )
             signals = self.strategy_engine.generate(features)
+            await self.repository.store_market_analysis(market.candles, features, market.order_book)
             ai = await self.ai_provider.assess(features, signals)
             decision = self.decision_engine.decide(pair, features, signals, portfolio, ai)
             await self.repository.store_analysis(signals, ai, decision)

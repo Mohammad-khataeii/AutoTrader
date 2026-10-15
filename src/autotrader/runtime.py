@@ -74,6 +74,7 @@ class PaperTradingRuntime:
             features.metadata["last_price"] = order_book.mid
 
         signals = self.strategy_engine.generate(features)
+        await self.repository.store_market_analysis(candles, features, order_book)
         ai_assessment = await self.ai_provider.assess(features, signals)
         decision = self.decision_engine.decide(pair, features, signals, portfolio, ai_assessment, entries_today)
 
