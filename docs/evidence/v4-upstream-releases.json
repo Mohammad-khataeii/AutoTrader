@@ -1,0 +1,12 @@
+{
+  "prometheus": {
+    "tag_name": "v3.15.0",
+    "published_at": "2026-09-25T08:56:22Z",
+    "html_url": "https://github.com/prometheus/prometheus/releases/tag/v3.15.0"
+  },
+  "grafana": {
+    "tag_name": "v13.2.4",
+    "published_at": "2026-10-13T11:41:03Z",
+    "html_url": "https://github.com/grafana/grafana/releases/tag/v13.2.4"
+  }
+}

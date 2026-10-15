@@ -1,0 +1,24 @@
+{
+  "status": "PASSED",
+  "checked_at": "2026-10-15T20:59:11.881318+00:00",
+  "image_id": "sha256:9b7d3872427c56f84ae04694e83364d23b1474ee75ad6cefb9a6e508d9ba6dbb",
+  "build": {
+    "version": "3.15.0",
+    "revision": "5241a27fe3c6983549fccc32f6e65917408c63cd",
+    "branch": "v4-security-rebuild",
+    "buildUser": "",
+    "buildDate": "",
+    "goVersion": "go1.27.2"
+  },
+  "config_check": "promtool check config PASSED",
+  "ui_asset_bytes": 1931373,
+  "authenticated_backend_scrape": "up=1",
+  "loopback_url": "http://127.0.0.1:19090",
+  "targets": [
+    {
+      "health": "up",
+      "scrapeUrl": "http://backend:8000/metrics",
+      "lastError": ""
+    }
+  ]
+}

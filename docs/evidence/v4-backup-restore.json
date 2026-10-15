@@ -1,0 +1,22 @@
+{
+  "status": "PASSED",
+  "project": "autotrader-v34-acceptance",
+  "restore_database": "autotrader_restore_b6e8957dc192",
+  "backup_bytes": 2658857,
+  "original": {
+    "journal_events": 51,
+    "fills": 19,
+    "positions": 6,
+    "journal_cash": "499.110340421159",
+    "schema": "0009_legacy_quarantine"
+  },
+  "restored": {
+    "journal_events": 51,
+    "fills": 19,
+    "positions": 6,
+    "journal_cash": "499.110340421159",
+    "schema": "0009_legacy_quarantine"
+  },
+  "reconciliation": [],
+  "existing_volumes_deleted": false
+}

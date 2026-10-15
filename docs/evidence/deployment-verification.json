@@ -2,12 +2,20 @@
   "status": "PASSED",
   "project": "autotrader-v34-acceptance",
   "volume_restart": true,
+  "restarted_services": [
+    "backend",
+    "frontend",
+    "postgres",
+    "redis",
+    "research-worker",
+    "worker"
+  ],
   "journal_events_preserved": 51,
   "postgresql": "ok",
   "redis": "ok",
   "scanner": "OK",
   "reconciliation": {
-    "checked_at": "2026-10-15T14:41:28.083009+00:00",
+    "checked_at": "2026-10-15T20:59:38.343443+00:00",
     "problems": []
   },
   "authentication": "PASSED",

@@ -1,8 +1,8 @@
 {
   "status": "PASSED",
   "project": "autotrader-v34-acceptance",
-  "restore_database": "autotrader_restore_2742014082b2",
-  "backup_bytes": 887196,
+  "restore_database": "autotrader_restore_b6e8957dc192",
+  "backup_bytes": 2658857,
   "original": {
     "journal_events": 51,
     "fills": 19,

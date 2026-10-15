@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-15T21:07:43.216703+00:00",
+  "status": "PARTIALLY_COMPLETE_WITH_BLOCKERS",
+  "source_fingerprint": "b31992258941962d61ee8bfaa7b38ea882a7f5449099ff78fb0045fc15e4966d",
+  "suites": {
+    "windows": {
+      "report": "docs/evidence/v4-release-windows.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "118",
+      "time": "516.226",
+      "timestamp": "2026-10-15T22:52:00.684682+02:00",
+      "hostname": "DESKTOP-O7BK3NI"
+    },
+    "linux": {
+      "report": "docs/evidence/v4-release-linux.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "118",
+      "time": "445.707",
+      "timestamp": "2026-10-15T20:59:52.669283+00:00",
+      "hostname": "5116269e80ce"
+    }
+  },
+  "required_documents": 15,
+  "research_run": "research-20261015T205023",
+  "research_verdict": "NO STRATEGY PASSED VALIDATION",
+  "security_status": "BLOCKED",
+  "security_report": "v4-security-assessment.json",
+  "scope": "Current connected paper runtime/research; whole-stack security remains blocked; no predictive edge claimed"
+}

@@ -1,0 +1,1016 @@
+{
+  "checked_at": "2026-10-15T21:00:22.730447+00:00",
+  "status": "BLOCKED",
+  "policy": "No scanner findings are deleted or silently suppressed. Configuration exclusions are not patched versions. Monitoring remains disabled until unresolved findings are remediated.",
+  "services": {
+    "backend": {
+      "image": "autotrader-v34-acceptance-backend",
+      "image_id": "sha256:c992668e84a530e9bf6de233b2c9069f600ce1e281e439fbd119f3afcbeb754b",
+      "platform": "linux/amd64",
+      "selected_in_compose": true,
+      "report": "v4-backend-container-cves.sarif",
+      "scope": "all severities",
+      "raw_unique_critical": 0,
+      "raw_unique_high": 0,
+      "unresolved_cves": [],
+      "findings": []
+    },
+    "frontend": {
+      "image": "autotrader-v34-acceptance-frontend",
+      "image_id": "sha256:d39b9b8c957d690ac15ba4cb7aa82c724f8bb48b3240110a082ae74b4a7a8906",
+      "platform": "linux/amd64",
+      "selected_in_compose": true,
+      "report": "v4-frontend-container-cves.sarif",
+      "scope": "all severities",
+      "raw_unique_critical": 0,
+      "raw_unique_high": 0,
+      "unresolved_cves": [],
+      "findings": []
+    },
+    "postgres": {
+      "image": "autotrader-v34-postgres:16-alpine",
+      "image_id": "sha256:32f0cccbbfd13412e484c1d27c0d467ece4a47991cb5787429192091d6dc30b5",
+      "platform": "linux/amd64",
+      "selected_in_compose": true,
+      "report": "v4-postgres-container-cves.sarif",
+      "scope": "high/critical",
+      "raw_unique_critical": 0,
+      "raw_unique_high": 1,
+      "unresolved_cves": [
+        "CVE-2026-86140"
+      ],
+      "findings": [
+        {
+          "cve": "CVE-2026-86140",
+          "severity": "HIGH",
+          "package": "pkg:apk/alpine/libxml2@2.13.9-r2?os_name=alpine&os_version=3.24",
+          "scanner_fixed_version": "not fixed",
+          "affected_binary_or_library": [
+            "/lib/apk/db/installed",
+            "/usr/lib/libxml2.so.2.13.9"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Affected libxml2 remains linked to PostgreSQL16. The app does not call SQL/XML; the database port is internal. No fixed package was supplied by the selected Alpine branch after a fresh rebuild. Do not substitute an unverified ABI-incompatible library or change database major version.",
+          "primary_evidence": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-86140"
+          ]
+        }
+      ]
+    },
+    "redis": {
+      "image": "autotrader-v34-redis:7-alpine",
+      "image_id": "sha256:88f4895a67b0ffe3734065265d5fce82ace9e4909f77c4bbc75355f0d17ff921",
+      "platform": "linux/amd64",
+      "selected_in_compose": true,
+      "report": "v4-redis-container-cves.sarif",
+      "scope": "high/critical",
+      "raw_unique_critical": 0,
+      "raw_unique_high": 0,
+      "unresolved_cves": [],
+      "findings": []
+    },
+    "prometheus": {
+      "image": "prom/prometheus:v3.15.0",
+      "image_id": "sha256:efd719c99d83b060d9daefdcf00360461adf279f45ef5391f8d111892118753e",
+      "platform": "linux/amd64",
+      "selected_in_compose": false,
+      "report": "v4-prometheus-container-cves.sarif",
+      "scope": "high/critical",
+      "raw_unique_critical": 2,
+      "raw_unique_high": 9,
+      "unresolved_cves": [
+        "CVE-2026-56866",
+        "CVE-2026-78659",
+        "CVE-2026-78660",
+        "CVE-2026-78663",
+        "CVE-2026-78667",
+        "CVE-2026-78669",
+        "CVE-2026-94439",
+        "CVE-2026-94440",
+        "CVE-2026-97031"
+      ],
+      "findings": [
+        {
+          "cve": "CVE-2026-42154",
+          "severity": "HIGH",
+          "package": "pkg:golang/github.com/prometheus/prometheus@0.0.0-20260925072538-5241a27fe3c6+dirty",
+          "scanner_fixed_version": "0.305.2",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "NOT_APPLICABLE_VERSION",
+          "reason": "The verified binary is Prometheus3.15.0. The upstream advisory's affected ranges end before3.11.3; the Go pseudo-version is misleading. Raw finding is retained.",
+          "primary_evidence": [
+            "https://github.com/prometheus/prometheus/security/advisories/GHSA-8rm2-7qqf-34qm"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56866",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "scanner_fixed_version": "0.60.0",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "scanner_fixed_version": "0.60.0",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78667",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "scanner_fixed_version": "0.60.0",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-94439",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-94440",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-97031",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "scanner_fixed_version": "0.60.0",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-56857",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/bin/prometheus",
+            "/bin/promtool"
+          ],
+          "disposition": "NOT_APPLICABLE_PLATFORM",
+          "reason": "The upstream advisory concerns Windows junction operations. These are Linux images/binaries. Raw finding is retained.",
+          "primary_evidence": [
+            "https://pkg.go.dev/vuln/GO-2026-6604"
+          ]
+        }
+      ]
+    },
+    "grafana": {
+      "image": "autotrader-v34-grafana:13.2.4",
+      "image_id": "sha256:45ea13cfa57d3e9f1906686216b7363f329781a5d0894999c04e73ffa31aa979",
+      "platform": "linux/amd64",
+      "selected_in_compose": true,
+      "report": "v4-grafana-container-cves.sarif",
+      "scope": "high/critical",
+      "raw_unique_critical": 2,
+      "raw_unique_high": 14,
+      "unresolved_cves": [
+        "CVE-2026-56855",
+        "CVE-2026-56866",
+        "CVE-2026-78659",
+        "CVE-2026-78660",
+        "CVE-2026-78662",
+        "CVE-2026-78663",
+        "CVE-2026-78667",
+        "CVE-2026-78669",
+        "CVE-2026-84304",
+        "CVE-2026-84445",
+        "CVE-2026-94439",
+        "CVE-2026-94440",
+        "CVE-2026-97031"
+      ],
+      "findings": [
+        {
+          "cve": "CVE-2026-21728",
+          "severity": "HIGH",
+          "package": "pkg:golang/github.com/grafana/tempo@1.5.1-0.20260910130453-bcfe9f230c1d",
+          "scanner_fixed_version": "2.8.4",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+          ],
+          "disposition": "NOT_REACHABLE_CURRENT_CONFIGURATION",
+          "reason": "These advisories concern Tempo server query/config endpoints. Compose does not deploy a Tempo server or configure its datasource. The client dependency remains present; reevaluate before enabling Tempo. Monitoring is stopped.",
+          "primary_evidence": [
+            "https://grafana.com/security/security-advisories/cve-2026-21728/"
+          ]
+        },
+        {
+          "cve": "CVE-2026-28377",
+          "severity": "HIGH",
+          "package": "pkg:golang/github.com/grafana/tempo@1.5.1-0.20260910130453-bcfe9f230c1d",
+          "scanner_fixed_version": "2.10.3",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64"
+          ],
+          "disposition": "NOT_REACHABLE_CURRENT_CONFIGURATION",
+          "reason": "These advisories concern Tempo server query/config endpoints. Compose does not deploy a Tempo server or configure its datasource. The client dependency remains present; reevaluate before enabling Tempo. Monitoring is stopped.",
+          "primary_evidence": [
+            "https://grafana.com/security/security-advisories/cve-2026-28377/"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56855",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/crypto@0.55.0",
+          "scanner_fixed_version": "0.56.0",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-56866",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-56866",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-56866",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.59.0",
+          "scanner_fixed_version": "0.60.0",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "scanner_fixed_version": "0.60.0",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78659",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.59.0",
+          "scanner_fixed_version": "0.60.0",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "scanner_fixed_version": "0.60.0",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78660",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78662",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/crypto@0.55.0",
+          "scanner_fixed_version": "0.56.0",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78667",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78667",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78667",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "scanner_fixed_version": "0.60.0",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78669",
+          "severity": "HIGH",
+          "package": "pkg:golang/golang.org/x/net@0.59.0",
+          "scanner_fixed_version": "0.60.0",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-94439",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-94439",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-94439",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-94440",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-94440",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-94440",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-97031",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-97031",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-97031",
+          "severity": "HIGH",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-84304",
+          "severity": "HIGH",
+          "package": "pkg:golang/google.golang.org/grpc@1.83.0",
+          "scanner_fixed_version": "1.83.1",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-84445",
+          "severity": "HIGH",
+          "package": "pkg:golang/google.golang.org/grpc@1.83.0",
+          "scanner_fixed_version": "1.83.2",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/golang.org/x/net@0.58.0",
+          "scanner_fixed_version": "0.60.0",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/golang.org/x/net@0.59.0",
+          "scanner_fixed_version": "0.60.0",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-78663",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "UNRESOLVED_POTENTIALLY_APPLICABLE",
+          "reason": "Package/version match retained; symbol-level reachability is not established. Upgrade/rebuild and rescan before enabling optional monitoring.",
+          "primary_evidence": []
+        },
+        {
+          "cve": "CVE-2026-56857",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.26.7",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/elasticsearch/gpx_grafana_elasticsearch_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-postgresql-datasource/gpx_grafana_postgresql_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/grafana-pyroscope-datasource/gpx_grafana-pyroscope-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/influxdb/gpx_grafana_influxdb_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/jaeger/gpx_grafana-jaeger-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/loki/gpx_grafana-loki-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mssql/gpx_grafana-mssql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/mysql/gpx_grafana-mysql-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/stackdriver/gpx_grafana_cloudmonitoring_datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/tempo/gpx_grafana-tempo-datasource_linux_amd64",
+            "/usr/share/grafana/data/plugins-bundled/zipkin/gpx_grafana-zipkin-datasource_linux_amd64"
+          ],
+          "disposition": "NOT_APPLICABLE_PLATFORM",
+          "reason": "The upstream advisory concerns Windows junction operations. These are Linux images/binaries. Raw finding is retained.",
+          "primary_evidence": [
+            "https://pkg.go.dev/vuln/GO-2026-6604"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56857",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.27.1",
+          "scanner_fixed_version": "1.27.2",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/prometheus/gpx_grafana-prometheus-datasource_linux_amd64"
+          ],
+          "disposition": "NOT_APPLICABLE_PLATFORM",
+          "reason": "The upstream advisory concerns Windows junction operations. These are Linux images/binaries. Raw finding is retained.",
+          "primary_evidence": [
+            "https://pkg.go.dev/vuln/GO-2026-6604"
+          ]
+        },
+        {
+          "cve": "CVE-2026-56857",
+          "severity": "CRITICAL",
+          "package": "pkg:golang/stdlib@1.26.6",
+          "scanner_fixed_version": "1.26.9",
+          "affected_binary_or_library": [
+            "/usr/share/grafana/data/plugins-bundled/opentsdb/gpx_grafana-opentsdb-datasource_linux_amd64"
+          ],
+          "disposition": "NOT_APPLICABLE_PLATFORM",
+          "reason": "The upstream advisory concerns Windows junction operations. These are Linux images/binaries. Raw finding is retained.",
+          "primary_evidence": [
+            "https://pkg.go.dev/vuln/GO-2026-6604"
+          ]
+        }
+      ]
+    },
+    "prometheus_patched": {
+      "image": "autotrader-v4-prometheus:3.15.0-patched",
+      "image_id": "sha256:9b7d3872427c56f84ae04694e83364d23b1474ee75ad6cefb9a6e508d9ba6dbb",
+      "platform": "linux/amd64",
+      "selected_in_compose": true,
+      "report": "v4-prometheus-patched-cves.sarif",
+      "scope": "high/critical",
+      "raw_unique_critical": 0,
+      "raw_unique_high": 0,
+      "unresolved_cves": [],
+      "findings": []
+    }
+  }
+}

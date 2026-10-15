@@ -1,0 +1,493 @@
+{
+  "comparisons": 180,
+  "costs": {
+    "fee_bps": "10",
+    "slippage_bps": "8",
+    "spread_bps": "10",
+    "volume_participation": ".01"
+  },
+  "created_at": "2026-10-15T20:50:23.828586+00:00",
+  "dataset_catalog_hash": "0059e9bf854b3bbf88696a35f68c8f36de7dbd7b7f465cb0702e121f41546af3",
+  "embargo_bars": 1,
+  "fixed_split_fractions": [
+    0.6,
+    0.2,
+    0.2
+  ],
+  "optimization": "training only; no validation/test retuning; failed candidates remain failed",
+  "parameter_grid": [
+    {
+      "breakout_buffer": "0.001",
+      "compression_width": "0.06",
+      "relative_return": "0.02",
+      "relative_volume": "1.2",
+      "stop_atr": "1.5",
+      "target_atr": "1.5"
+    },
+    {
+      "breakout_buffer": "0.001",
+      "compression_width": "0.06",
+      "relative_return": "0.02",
+      "relative_volume": "1.5",
+      "stop_atr": "2",
+      "target_atr": "2"
+    },
+    {
+      "breakout_buffer": "0.001",
+      "compression_width": "0.06",
+      "relative_return": "0.02",
+      "relative_volume": "2",
+      "stop_atr": "2.5",
+      "target_atr": "3"
+    }
+  ],
+  "purge_bars": 12,
+  "run_id": "research-20261015T205023",
+  "source_files": {
+    "__init__.py": "27885f61b87657d3565b322fadb69960619bb5c058df3dd514c9ca2f99a27cc1",
+    "ai.py": "cd965f54d50eb595cdae62ee6f2d3a50fadc7dc2ebc9684e4c3a9db601dea6e8",
+    "allocation.py": "a1790e38cbd092367e5b3cff10e84f3d79600c53d72933d2bd0930466a2b6d9b",
+    "api/__init__.py": "0518a7a8cddf7d93c1511930658ce71a53311a41fa374092ccb0b11a23a4c63d",
+    "api/main.py": "31f97da55c3c29cbd6ddb72871a550b5f8c291d6a31ea5a7fcceb54afc2404c9",
+    "api/security.py": "beb71afd71835881c6bf7aac2032403b83dff950f5c19058fa4ac537e6331a42",
+    "backtest.py": "ef2f346c2106ced5712bc884721ca446cebdcb86d10e686b3cf4826861f8aa9c",
+    "cli.py": "65ae926cfb5da0e594322a3574ae112b43f1c3505b770bf578b09b6339b16328",
+    "clock.py": "5c8aa70595f49803798ab8381fc644e1ab77adbd6cb2445c6c51bd2b3c20e186",
+    "config.py": "1aaf39e40a2edc5e1f83a05515549e52026df3617a6b10805d51dba88dc356b6",
+    "decision.py": "6b5aa1816cae0c3779af8636d2124ea54029cfac1ebbf2173258fd5ada21c87d",
+    "domain.py": "300650e89ba4798ae4ce1b7ca40cf89d2d0dd71ce40e45c201d7efc477f2c18f",
+    "execution/__init__.py": "383f03b379a3058f5fe5019f1faab7a98985b57dad83b890f0c7b79c70292f13",
+    "execution/postings.py": "a5bb95a9fb0247501cbdbab116125915da9651346114fb2a1e0377534e04c872",
+    "execution/pricing.py": "e8209888a8f28641359799a020c83dd5d9e4ece95fd5fc2095389f769820625d",
+    "execution/protection.py": "726bd7139e9e1061261d7ea38dd2b98fa7b88e4e71738c906c6e223e2c299b15",
+    "execution/quality.py": "bab507cee176870e6453a38db4eaa1c6d8bd77456868811c67061b7402e9bbff",
+    "execution_gateway.py": "3cb12f8a05d8fbb494bd5d33fc2260b27ce1d72cfb8b88eb0ae8db8a451d4078",
+    "failure_injection.py": "f21b5e44715e510ac0019ca62939fe7c115b656bb31db42faefcb90dccc8a834",
+    "indicators.py": "bc67d326cedcad396128909f8cd6804a0f0395b137c1fc6a505983c3dc88eb5b",
+    "logging_config.py": "6e651df83b0fae507e1c99ada16ec9a949ed5cc9e71fcfc325d2a3f43ea0239d",
+    "market_data/__init__.py": "9399decb6fe14820f5aac99df0d1992ee756ffb6bb9ed1c64becef2237dafb9b",
+    "market_data/replay.py": "c667af1f0a2aa85b7f03ac8600c358c8c8070ebd30b0e3e933c8c851f6972228",
+    "market_data/revolut.py": "814e14e350db10dfdcd9e158736e7260e661bd5e6d4042c5189ae1f0f6f09617",
+    "market_data/service.py": "01c22666cf13edef7e11b3d08d43e5e16fd0ffa0ef489659acd7404b7f0bdfb4",
+    "notifications.py": "9e68f7e1a9c0a4a768e36276e787100c1fb3277cd64b6e98bff81e1491bfb776",
+    "paper_broker.py": "91a4577f0caef13cef8dda8ff2d8779b29b3c4a10de91d426a5fed45eabff09d",
+    "persistence/__init__.py": "af859e1d52d2166c523805cae920533e9b82d40e8978ed84b69eb2bc759dee7d",
+    "persistence/accounting.py": "c1e17411df79b03f9c2a38647fc185523d140070854915c5a2134ab10b70faf6",
+    "persistence/ai_budget.py": "7f789e813f246771c3d2307ea842149bb757e7b91218a8aecd97efd254f44dd6",
+    "persistence/ai_events.py": "51a3b7230c2d6a12eb06f56f19a94321f455c3e7045a16f8f3c3e0e07a5475d5",
+    "persistence/analytics.py": "bd65879634bdbef58946e439ae3c625256cd8f083d445b13fbb6a93a47bf1b51",
+    "persistence/corrections.py": "5b9dad750cafbed8da08314b99a4ea084f72ca42753ef0e6a6b7f6c293d436fa",
+    "persistence/database.py": "5948cd4fa9514757f6cc25f9182ffc1c40c7093a0d3be824d0078ea28f5f8a30",
+    "persistence/models.py": "b0b8df3b75f67b266f0e500360991b82903894128a9f8f479948ebc3b3fb353b",
+    "persistence/repository.py": "5be2cd197ef26deef386094ab338df7abb1eb026cce137a2febaba91c0358367",
+    "persistence/research_jobs.py": "dc887ccfa14114c4d525545f9c235ba3ea1771364b9a993c980987b9b8ad98ca",
+    "persistence/research_policy.py": "7676b3cb06f741f46d13f2a6b6546592580eeaa733ceca4962c4a65f6d5340bb",
+    "persistence/retry.py": "a3315cedf236b0261c3251dc5a5d473277a98113c94c203d460101598e1004fb",
+    "portfolio.py": "0077e326010067be2855c058c47ad0bfd47cb682ad99ee753a4339517b3f80e6",
+    "position_manager.py": "1a2ab35e351fda6a15337028993fdc92dbcb25e4a54a386e47a6d09b8f3a7d78",
+    "research/__init__.py": "06b7c2cbc6a4db73dc404eb87d5eea83531009255cfc13bef04ce0a0c19e18b3",
+    "research/artifacts.py": "859cb4506a538b8e6de6f279cf39ff76f0f128262fe114de00ce8a214ff82203",
+    "research/cli.py": "8a7ceab2b49f772dfa4cfaf9f2c084c691e43b8167537c51e7d7583a5158b69b",
+    "research/data.py": "4f81fe1ae2af627d285b5fb7ac2284da06815e784418e069b7077915df3a8c6a",
+    "research/panel.py": "1e93f663738a721778b3ed1c3087b5482e34995e766bfd6fa5ca1444830b551d",
+    "research/regimes.py": "c0477ac82ee808aa61281d2db21dd64ad557d5a4bf47be5ea0d371b5ebe897ee",
+    "research/simulation.py": "55f8a3c16451ced34bc8e0abe5692821467dcfa8dd4ed96b93471b9280551e9d",
+    "research/strategies.py": "ef706337ef30f2836f2a3329a1c783f5f50c72bf946ed31618db9f33c81d7210",
+    "research/worker.py": "41760d2d73af48a9c3c7c4f17fb3211b088f010c19dfcb908ae85738f00ad028",
+    "research/workflow.py": "930e9ba9d2973956cebe7465417f01cf2e93430ded472a13b343a47c48ce00a1",
+    "risk.py": "135d2a09812d035a3bc5408d03b360aea201e24414da4331b773a2e537d6304b",
+    "runtime.py": "821e5c253f01f404553f52817cd95dc9f5271eb1149d74da5e10492609aee2f5",
+    "scanner.py": "2d7e70a3590b2a249c684162df154d70b0fd9bc0bcf420edc8688da89fd01cf5",
+    "strategies.py": "739e920d5f1a8d0ad7e85410ed844cf2d2d37cf89e2887f5b4c1b2b72a5a8b18",
+    "worker/__init__.py": "58769d216d63d3f4960c59051d976f00c6414b64ee5cc345a00466dacc0344f2",
+    "worker/health.py": "2a2ce350c1229d9051af04f4205f3ee6e1b500c86c64d65598fafc2d527ae73b",
+    "worker/runner.py": "e7f5f8e3c6babd81a9be796c30afb5810c5b4444766731bb2f4949f39aab4e31"
+  },
+  "source_fingerprint": "b31992258941962d61ee8bfaa7b38ea882a7f5449099ff78fb0045fc15e4966d",
+  "datasets": [
+    {
+      "actual_last_start": "2026-10-14T00:00:00+00:00",
+      "actual_start": "2020-01-01T00:00:00+00:00",
+      "base": "BTC",
+      "dataset_version": "b0d28c0c10574b445222a8bf187730e210f6443ffdb1fa98b494b7389bfce52a",
+      "duplicates_removed": 0,
+      "file": "datasets/BTC-EUR-1d-b0d28c0c10574b44.jsonl.gz",
+      "file_sha256": "19c7e6d12139336fd880bcde40f7b68d824cb07a29d9e59b9fa6d8b7f1f95bb9",
+      "historical_l2": false,
+      "missing_observations": 0,
+      "observations": 2479,
+      "quality_counts": {
+        "SUSPICIOUS_RANGE": 2
+      },
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2020-01-01T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "BTC-EUR",
+      "timeframe": "1d"
+    },
+    {
+      "actual_last_start": "2026-10-14T20:00:00+00:00",
+      "actual_start": "2026-04-18T00:00:00+00:00",
+      "base": "BTC",
+      "dataset_version": "bbedf3b2efe640f199d58dcf6d9c0e872cdd5ae82eca28abb616b7358e750a19",
+      "duplicates_removed": 0,
+      "file": "datasets/BTC-EUR-4h-bbedf3b2efe640f1.jsonl.gz",
+      "file_sha256": "13566cc2c635a81dd81024707a0a6b59544a52019c68a6163fb1824d917e3381",
+      "historical_l2": false,
+      "missing_observations": 2,
+      "observations": 1078,
+      "quality_counts": {},
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2026-04-18T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public:aggregated"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "BTC-EUR",
+      "timeframe": "4h"
+    },
+    {
+      "actual_last_start": "2026-10-14T00:00:00+00:00",
+      "actual_start": "2020-01-01T00:00:00+00:00",
+      "base": "ETH",
+      "dataset_version": "5a6cf5eb45f15faa004c21b6ab78a8dd78e78dd5c1700bdf8e57ee621548e635",
+      "duplicates_removed": 0,
+      "file": "datasets/ETH-EUR-1d-5a6cf5eb45f15faa.jsonl.gz",
+      "file_sha256": "943b58551e92a8664df7d5e6c5f77f25836d8cd6c304565fb71d8930e74190db",
+      "historical_l2": false,
+      "missing_observations": 0,
+      "observations": 2479,
+      "quality_counts": {
+        "SUSPICIOUS_RANGE": 3
+      },
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2020-01-01T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "ETH-EUR",
+      "timeframe": "1d"
+    },
+    {
+      "actual_last_start": "2026-10-14T20:00:00+00:00",
+      "actual_start": "2026-04-18T00:00:00+00:00",
+      "base": "ETH",
+      "dataset_version": "2e85790da7f02df539fab548f8de3fbbe0cd75173ff4372009dc419210246af8",
+      "duplicates_removed": 0,
+      "file": "datasets/ETH-EUR-4h-2e85790da7f02df5.jsonl.gz",
+      "file_sha256": "ca6af9b2972e04f3ff0df45a27440e2d37a23c953fc3b63009ef50051ca6cc66",
+      "historical_l2": false,
+      "missing_observations": 2,
+      "observations": 1078,
+      "quality_counts": {},
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2026-04-18T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public:aggregated"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "ETH-EUR",
+      "timeframe": "4h"
+    },
+    {
+      "actual_last_start": "2026-10-14T00:00:00+00:00",
+      "actual_start": "2021-06-17T00:00:00+00:00",
+      "base": "SOL",
+      "dataset_version": "11dd4b874b231458221bdeedd57858df7a5fa569c53aeaf73c3b7202f1dac211",
+      "duplicates_removed": 0,
+      "file": "datasets/SOL-EUR-1d-11dd4b874b231458.jsonl.gz",
+      "file_sha256": "2b5b3d9919260fea0a1b3413c2a98a0bae2b3143c730756cd2af5f848df885e4",
+      "historical_l2": false,
+      "missing_observations": 533,
+      "observations": 1946,
+      "quality_counts": {
+        "SUSPICIOUS_RANGE": 4
+      },
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2020-01-01T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "SOL-EUR",
+      "timeframe": "1d"
+    },
+    {
+      "actual_last_start": "2026-10-14T20:00:00+00:00",
+      "actual_start": "2026-04-18T00:00:00+00:00",
+      "base": "SOL",
+      "dataset_version": "ccca33436b95611e98cd8fca5030d53f21e305b13b3b20fe504743577250675c",
+      "duplicates_removed": 0,
+      "file": "datasets/SOL-EUR-4h-ccca33436b95611e.jsonl.gz",
+      "file_sha256": "70cfe340ee86b04cb3d1ee005f02593388ead1e8ce47f14a726b322a29aa6dc3",
+      "historical_l2": false,
+      "missing_observations": 2,
+      "observations": 1078,
+      "quality_counts": {},
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2026-04-18T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public:aggregated"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "SOL-EUR",
+      "timeframe": "4h"
+    },
+    {
+      "actual_last_start": "2026-10-14T00:00:00+00:00",
+      "actual_start": "2020-01-01T00:00:00+00:00",
+      "base": "XRP",
+      "dataset_version": "fc3419188473bfd17560d817adcc91b1e4c436743764c0994c837294408a790e",
+      "duplicates_removed": 0,
+      "file": "datasets/XRP-EUR-1d-fc3419188473bfd1.jsonl.gz",
+      "file_sha256": "f09d76a53955117d040ac55d050f3b8b46624d8367300d31f084f97cfb3c1cf9",
+      "historical_l2": false,
+      "missing_observations": 904,
+      "observations": 1575,
+      "quality_counts": {
+        "SUSPICIOUS_RANGE": 9
+      },
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2020-01-01T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "XRP-EUR",
+      "timeframe": "1d"
+    },
+    {
+      "actual_last_start": "2026-10-14T20:00:00+00:00",
+      "actual_start": "2026-04-18T00:00:00+00:00",
+      "base": "XRP",
+      "dataset_version": "078a3564d6a3faf2b10c3f48da65685432331e21f593e723fb13a26a7d134f9e",
+      "duplicates_removed": 0,
+      "file": "datasets/XRP-EUR-4h-078a3564d6a3faf2.jsonl.gz",
+      "file_sha256": "a6b5d0e82b7e282af1c20988f2ac8c2aa2ad7b05733a1e38316eaaa12a393dc3",
+      "historical_l2": false,
+      "missing_observations": 2,
+      "observations": 1078,
+      "quality_counts": {},
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2026-04-18T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public:aggregated"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "XRP-EUR",
+      "timeframe": "4h"
+    },
+    {
+      "actual_last_start": "2026-10-14T00:00:00+00:00",
+      "actual_start": "2021-03-18T00:00:00+00:00",
+      "base": "ADA",
+      "dataset_version": "c4a892a4dcc3720b831a4458893834a3ac095b1656a33a60dddce09490a1a68f",
+      "duplicates_removed": 0,
+      "file": "datasets/ADA-EUR-1d-c4a892a4dcc3720b.jsonl.gz",
+      "file_sha256": "bbff1b718827bac6943759e5d77c7c64cc8fc1bd7549f2e8a03a2a01d7321645",
+      "historical_l2": false,
+      "missing_observations": 442,
+      "observations": 2037,
+      "quality_counts": {
+        "SUSPICIOUS_RANGE": 2
+      },
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2020-01-01T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "ADA-EUR",
+      "timeframe": "1d"
+    },
+    {
+      "actual_last_start": "2026-10-14T20:00:00+00:00",
+      "actual_start": "2026-04-18T00:00:00+00:00",
+      "base": "ADA",
+      "dataset_version": "00c172322e941c9c36f804b616192c558da9ec949ba7807aa6a89a743d625cee",
+      "duplicates_removed": 0,
+      "file": "datasets/ADA-EUR-4h-00c172322e941c9c.jsonl.gz",
+      "file_sha256": "f67f6d0e5f9dcaca598d2fb8beb26a2fbc892210d9eca8fc13e6e6d7b15414b9",
+      "historical_l2": false,
+      "missing_observations": 3,
+      "observations": 1077,
+      "quality_counts": {},
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2026-04-18T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public:aggregated"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "ADA-EUR",
+      "timeframe": "4h"
+    },
+    {
+      "actual_last_start": "2026-10-14T00:00:00+00:00",
+      "actual_start": "2020-07-21T00:00:00+00:00",
+      "base": "LINK",
+      "dataset_version": "e84288f231ffe7af7219cbb4fd4c3c93b232c27bb015893d207b906d24beed9d",
+      "duplicates_removed": 0,
+      "file": "datasets/LINK-EUR-1d-e84288f231ffe7af.jsonl.gz",
+      "file_sha256": "ba1a258276742ed71104a6345fbf042b3fece16b66e86d896a6096233ca15852",
+      "historical_l2": false,
+      "missing_observations": 202,
+      "observations": 2277,
+      "quality_counts": {
+        "SUSPICIOUS_RANGE": 5
+      },
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2020-01-01T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "LINK-EUR",
+      "timeframe": "1d"
+    },
+    {
+      "actual_last_start": "2026-10-14T20:00:00+00:00",
+      "actual_start": "2026-04-18T00:00:00+00:00",
+      "base": "LINK",
+      "dataset_version": "0f50e6280f50d5c82a01376ca88845855e4d33fc13db1217ec5875ddea5cf44a",
+      "duplicates_removed": 0,
+      "file": "datasets/LINK-EUR-4h-0f50e6280f50d5c8.jsonl.gz",
+      "file_sha256": "0c99645c13903233ddc1317db0aec21753d95ee74dbede6910a621a07f552e8f",
+      "historical_l2": false,
+      "missing_observations": 20,
+      "observations": 1060,
+      "quality_counts": {},
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2026-04-18T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public:aggregated"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "LINK-EUR",
+      "timeframe": "4h"
+    },
+    {
+      "actual_last_start": "2026-10-14T00:00:00+00:00",
+      "actual_start": "2021-09-30T00:00:00+00:00",
+      "base": "AVAX",
+      "dataset_version": "dddf505bfc0e8e9004a5f9f5193b6c08373282e48d66904ff9f26631218c6c1c",
+      "duplicates_removed": 0,
+      "file": "datasets/AVAX-EUR-1d-dddf505bfc0e8e90.jsonl.gz",
+      "file_sha256": "d1c0dbe75f6902cbdbbb09fd2dd0319bfc314dbd313837a57d4cb85d7480b1ae",
+      "historical_l2": false,
+      "missing_observations": 638,
+      "observations": 1841,
+      "quality_counts": {
+        "SUSPICIOUS_RANGE": 3
+      },
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2020-01-01T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "AVAX-EUR",
+      "timeframe": "1d"
+    },
+    {
+      "actual_last_start": "2026-10-14T20:00:00+00:00",
+      "actual_start": "2026-04-18T00:00:00+00:00",
+      "base": "AVAX",
+      "dataset_version": "e36a9d2f08bf0cda2b6f7c5a5d32281f2445fa5fac29c6724ae489be793be84f",
+      "duplicates_removed": 0,
+      "file": "datasets/AVAX-EUR-4h-e36a9d2f08bf0cda.jsonl.gz",
+      "file_sha256": "fb36dd77dae9f63ccec566a66e33eb6c007643ef09981a0befc713f31e205b9c",
+      "historical_l2": false,
+      "missing_observations": 151,
+      "observations": 929,
+      "quality_counts": {},
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2026-04-18T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public:aggregated"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "AVAX-EUR",
+      "timeframe": "4h"
+    },
+    {
+      "actual_last_start": "2026-10-14T00:00:00+00:00",
+      "actual_start": "2021-06-16T00:00:00+00:00",
+      "base": "DOT",
+      "dataset_version": "1b7ff32d6f3e615c4d3296f67214f3052bc4e8f2d0e72a190a15c2781120c3f1",
+      "duplicates_removed": 0,
+      "file": "datasets/DOT-EUR-1d-1b7ff32d6f3e615c.jsonl.gz",
+      "file_sha256": "6461ca8bb0e06771c1418ade93b1dba82dd35ae598554449e513a244e8c5c493",
+      "historical_l2": false,
+      "missing_observations": 532,
+      "observations": 1947,
+      "quality_counts": {
+        "SUSPICIOUS_RANGE": 3
+      },
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2020-01-01T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "DOT-EUR",
+      "timeframe": "1d"
+    },
+    {
+      "actual_last_start": "2026-10-14T20:00:00+00:00",
+      "actual_start": "2026-04-18T00:00:00+00:00",
+      "base": "DOT",
+      "dataset_version": "7b9f3d0d73104756f990c543dbe380c8aa95661e4bcf399a5f257782b07b936c",
+      "duplicates_removed": 0,
+      "file": "datasets/DOT-EUR-4h-7b9f3d0d73104756.jsonl.gz",
+      "file_sha256": "903a4da581b83ccbc6cf9bb6e3c8617346ff804f2dd52dce312e905c16d3680f",
+      "historical_l2": false,
+      "missing_observations": 465,
+      "observations": 615,
+      "quality_counts": {},
+      "quote": "EUR",
+      "requested_end_exclusive": "2026-10-15T00:00:00+00:00",
+      "requested_start": "2026-04-18T00:00:00+00:00",
+      "schema": "eur-ohlcv-4.0.0",
+      "source": [
+        "coinbase-exchange-public:aggregated"
+      ],
+      "survivorship_bias": "current product universe; delisted assets not represented",
+      "symbol": "DOT-EUR",
+      "timeframe": "4h"
+    }
+  ]
+}

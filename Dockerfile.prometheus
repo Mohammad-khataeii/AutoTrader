@@ -1,0 +1,35 @@
+FROM golang:1.27.2-alpine AS build
+RUN apk add --no-cache git
+WORKDIR /src
+# Pinned upstream v3.15.0 commit and checksum-verified official prebuilt UI.
+ADD --checksum=sha256:eee7ec029ffdba7d9ee59171cad5ddaff10e71514b0bae1a6fde6dc1ae99e181 https://codeload.github.com/prometheus/prometheus/tar.gz/5241a27fe3c6983549fccc32f6e65917408c63cd /tmp/source.tgz
+ADD --checksum=sha256:fa8c918ed05e3f89e232e9b69eccd6ed074602cd9e8a2cab7a92bec9651974ae https://github.com/prometheus/prometheus/releases/download/v3.15.0/prometheus-web-ui-3.15.0.tar.gz /tmp/ui.tgz
+RUN tar -xzf /tmp/source.tgz --strip-components=1 -C /src \
+    && tar -xzf /tmp/ui.tgz -C /src/web/ui
+ENV CGO_ENABLED=0 GOTOOLCHAIN=local GOMAXPROCS=2
+RUN apk add --no-cache bash gzip \
+    && bash scripts/compress_assets.sh
+RUN --mount=type=cache,id=autotrader-go-modules,target=/go/pkg/mod \
+    go get golang.org/x/net@v0.60.0
+RUN --mount=type=cache,id=autotrader-go-modules,target=/go/pkg/mod \
+    --mount=type=cache,id=autotrader-go-build,target=/root/.cache/go-build \
+    go build -p 2 -tags netgo,builtinassets \
+      -ldflags='-X github.com/prometheus/common/version.Version=3.15.0 -X github.com/prometheus/common/version.Revision=5241a27fe3c6983549fccc32f6e65917408c63cd -X github.com/prometheus/common/version.Branch=v4-security-rebuild' \
+      -o /out/prometheus ./cmd/prometheus \
+    && go build -p 2 -tags netgo,builtinassets \
+      -ldflags='-X github.com/prometheus/common/version.Version=3.15.0 -X github.com/prometheus/common/version.Revision=5241a27fe3c6983549fccc32f6e65917408c63cd -X github.com/prometheus/common/version.Branch=v4-security-rebuild' \
+      -o /out/promtool ./cmd/promtool
+
+FROM prom/prometheus:v3.15.0 AS patched
+COPY --from=build /out/prometheus /bin/prometheus
+COPY --from=build /out/promtool /bin/promtool
+
+# Flatten the final filesystem so old Go executables are absent from shipped layers.
+FROM scratch
+COPY --from=patched / /
+USER nobody
+WORKDIR /prometheus
+EXPOSE 9090
+VOLUME /prometheus
+ENTRYPOINT ["/bin/prometheus"]
+CMD ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus"]

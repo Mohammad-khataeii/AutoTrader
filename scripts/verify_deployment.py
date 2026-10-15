@@ -45,8 +45,12 @@ def main()->None:
     before=client.get('/api/history').json()
     before_ids={e['ledger_event_id'] for e in before['journal']}
     assert sum(e['event_type']=='INITIAL_FUNDING' for e in before['journal'])==1
+    restarted_services=[]
     if args.restart:
-        result=subprocess.run(['docker','compose','-p',args.project,'--env-file',str(args.env_file),'restart'],check=False,capture_output=True,text=True)
+        compose=['docker','compose','-p',args.project,'--env-file',str(args.env_file)]
+        restarted_services=subprocess.check_output([*compose,'ps','--status','running','--services'],text=True).split()
+        assert {'postgres','redis','backend','worker','frontend'} <= set(restarted_services)
+        result=subprocess.run([*compose,'restart',*restarted_services],check=False,capture_output=True,text=True)
         assert result.returncode==0,result.stderr
         deadline=time.monotonic()+120
         while True:
@@ -66,6 +70,7 @@ def main()->None:
     assert final['reconciliation']['problems']==[]
     client.post('/api/controls/resume')
     result={'status':'PASSED','project':args.project,'volume_restart':args.restart,
+        'restarted_services':restarted_services,
         'journal_events_preserved':len(before_ids),'postgresql':final['postgresql'],'redis':final['redis'],
         'scanner':client.get('/api/scanner').json()['status'],'reconciliation':final['reconciliation'],
         'authentication':'PASSED','persistent_controls':'PASSED'}
