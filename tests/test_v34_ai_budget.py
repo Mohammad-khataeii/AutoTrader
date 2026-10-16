@@ -77,7 +77,7 @@ async def test_openai_boundary_validation_usage_and_unknown_outcomes(pg_repo:Per
     status=await pg_repo.ai_budget_status()
     if outcome=='timeout':
         assert D(status['reserved_usd'])>0 and D(status['spent_usd'])==0
-        assert status['errors'][0]['status']=='UNKNOWN'
+        assert status['errors'][0]['status']=='OUTCOME_UNKNOWN'
     else:
         assert D(status['spent_usd'])==D('.000382')
         assert D(status['reserved_usd'])==0

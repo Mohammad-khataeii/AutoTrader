@@ -62,7 +62,7 @@ async def test_ai_never_overrides_risk_limits() -> None:
 
 @pytest.mark.asyncio
 async def test_openai_budget_survives_provider_restart(pg_repo: PersistentTradingRepository) -> None:
-    settings_obj = Settings(ai_provider=AIProvider.OPENAI,openai_api_key=SecretStr("test-no-network"),
+    settings_obj = Settings(environment="test",ai_provider=AIProvider.OPENAI,openai_api_key=SecretStr("test-no-network"),
         ai_model="gpt-6.1-sol",ai_input_price_per_million=Decimal(2),
         ai_cached_input_price_per_million=Decimal("0.2"),ai_cache_write_price_per_million=Decimal("2.5"),ai_output_price_per_million=Decimal(10))
     await pg_repo.initialize_portfolio(Decimal(500))

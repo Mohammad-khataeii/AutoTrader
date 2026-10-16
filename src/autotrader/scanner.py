@@ -1,12 +1,18 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from decimal import Decimal
 
 from autotrader.ai import AIProviderClient
 from autotrader.decision import DecisionEngine
-from autotrader.domain import AIAssessment, MarketFeatures, StrategySignal, TradingDecision
+from autotrader.domain import (
+    AIAssessment,
+    DecisionAction,
+    MarketFeatures,
+    StrategySignal,
+    TradingDecision,
+)
 from autotrader.indicators import calculate_features, higher_timeframe_context
 from autotrader.market_data.revolut import MarketDataError
 from autotrader.market_data.service import MarketDataService, ValidatedMarket
@@ -105,6 +111,10 @@ class MarketScanner:
             await self.repository.store_market_analysis(market.candles, features, market.order_book)
             ai = await self.ai_provider.assess(features, signals)
             decision = self.decision_engine.decide(market.pair, features, signals, portfolio, ai)
+            policy_reason=await self.repository.candidate_policy_reason(signals)
+            if policy_reason and decision.accepted:
+                decision=replace(decision,accepted=False,action=DecisionAction.WAIT,rejected_reason=policy_reason,
+                    explanation=decision.explanation+'; research admission: '+policy_reason)
             await self.repository.store_analysis(signals, ai, decision)
             score = sum((signal.score for signal in signals), Decimal("0"))
             candidates.append(ScanCandidate(market, features, signals, ai, decision, score))

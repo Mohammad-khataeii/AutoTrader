@@ -14,7 +14,7 @@ from autotrader.domain import utc_now
 from autotrader.research.artifacts import source_fingerprint
 from autotrader.research.data import atomic_write, canonical, digest, load_dataset
 from autotrader.research.simulation import Costs, ResearchSimulation
-from autotrader.research.strategies import REGISTRY, StrategyParameters
+from autotrader.research.strategies import REGISTRY, VERSION, StrategyParameters
 
 GRID = (
     StrategyParameters(relative_volume=Decimal("1.2"), stop_atr=Decimal("1.5"), target_atr=Decimal("1.5")),
@@ -140,6 +140,7 @@ def run_full(root: Path, catalog: dict[str, Any], *, timeframes: tuple[str, ...]
         "purge_bars": 12, "embargo_bars": 1, "fixed_split_fractions": [.6, .2, .2],
         "comparisons": len(strategies) * len(grid) * len(timeframes) * 5,
         "costs": {"fee_bps": "10", "slippage_bps": "8", "spread_bps": "10", "volume_participation": ".01"}}
+    manifest["holdout_disclosure"] = "Historical intervals can overlap V4 engineering studies. No untouched prospective holdout is claimed; frozen future pilot is separate."
     atomic_write(output / "manifest.json", canonical(manifest))
     summary: dict[str, Any] = {"run_id": run_id, "source_fingerprint": source_hash, "timeframes": {}, "passed_strategies": [], "failures": []}
     frozen_all = {}
@@ -193,25 +194,38 @@ def run_full(root: Path, catalog: dict[str, Any], *, timeframes: tuple[str, ...]
                 gates["checks"]["multiple_timeframe_validation"] = len(timeframes) >= 2
                 gates["failure_reasons"] = [key for key, passed in gates["checks"].items() if not passed]
                 gates["passed"] = not gates["failure_reasons"]
-                result = {"validation": compact(validation), "out_of_sample": compact(test), "walk_forward": wf,
+                result: dict[str, Any] = {"validation": compact(validation), "out_of_sample": compact(test), "walk_forward": wf,
                     "sensitivity": [compact(r) for r in sensitivity], "training_grid": trained[strategy],
                     "gates": gates, "frozen_parameters_sha256": frozen_hash}
+                identity: dict[str, Any] = {"strategy_id": strategy, "strategy_version": VERSION,
+                    "frozen_parameters": params.payload(), "parameter_hash": digest(canonical(params.payload())),
+                    "source_fingerprint": source_hash, "dataset_fingerprint": digest(canonical([m["dataset_version"] for m in manifests if m["timeframe"] == timeframe])),
+                    "research_run_id": run_id, "research_timeframe": timeframe,
+                    "execution_assumptions_hash": digest(canonical(manifest["costs"])),
+                    "validation_status": "RESEARCH_PASSED" if gates["passed"] else "RESEARCH_REJECTED"}
+                result["candidate"] = {**identity, "candidate_id": digest(canonical(identity)),
+                    "promotion_decision": "AWAITING_APPROVAL" if gates["passed"] else "RESEARCH_REJECTED",
+                    "approved_at": None, "approving_authority": None}
                 results[strategy] = result
                 atomic_write(output / f"{timeframe}-{strategy}-test.json", canonical(test))
                 atomic_write(output / f"{timeframe}-{strategy}-validation.json", canonical(validation))
                 print(f"OOS {timeframe} {strategy}: PnL {test['net_profit']:.4f}, closed positions {test['trades']}, passed={gates['passed']}", flush=True)
             legacy = sim.run(start=test_start, end=end, strategy_ids=set(), legacy=True)
             passed = {s for s, r in results.items() if r["gates"]["passed"]}
-            ensemble = sim.run(start=test_start, end=end, strategy_ids=passed)
-            ai_compare = sim.run(start=test_start, end=end, strategy_ids=set(strategies), ai_mode="RULE_PLUS_AI_MOCK")
-            rules_compare = sim.run(start=test_start, end=end, strategy_ids=set(strategies))
+            frozen_members = {s: grid[selected[s]] for s in strategies}
+            ensemble = sim.run(start=test_start, end=end, strategy_ids=passed,
+                member_parameters={s: frozen_members[s] for s in passed})
+            ai_compare = sim.run(start=test_start, end=end, strategy_ids=set(strategies), member_parameters=frozen_members, ai_mode="RULE_PLUS_AI_MOCK")
+            rules_compare = sim.run(start=test_start, end=end, strategy_ids=set(strategies), member_parameters=frozen_members)
+            default_compare = sim.run(start=test_start, end=end, strategy_ids=set(strategies))
             atomic_write(output / f"{timeframe}-legacy-common-execution.json", canonical(legacy))
             atomic_write(output / f"{timeframe}-validated-ensemble.json", canonical(ensemble))
             atomic_write(output / f"{timeframe}-rules-comparison.json", canonical(rules_compare))
             atomic_write(output / f"{timeframe}-mock-ai-comparison.json", canonical(ai_compare))
             summary["timeframes"][timeframe] = {"frozen_parameters": frozen, "strategies": results,
                 "benchmarks": {**passive_benchmarks(sim, test_start, end, Costs()),
-                    "V3_4_SIGNALS_COMMON_EXECUTION": compact(legacy), "VALIDATED_ENSEMBLE": compact(ensemble)},
+                    "V3_4_SIGNALS_COMMON_EXECUTION": compact(legacy), "VALIDATED_ENSEMBLE": compact(ensemble),
+                    "V4_RUNTIME_DEFAULT_PARAMETERS": compact(default_compare), "V4_1_INDEPENDENTLY_FROZEN_PARAMETERS": compact(rules_compare)},
                 "mock_ai_comparison": {"RULE_ONLY": compact(rules_compare), "RULE_PLUS_AI_MOCK": compact(ai_compare),
                     "conclusion": "Matched deterministic mock integration only; no predictive AI edge is established"}}
         common_passed = set.intersection(*[{s for s, r in result["strategies"].items() if r["gates"]["passed"]} for result in summary["timeframes"].values()])
@@ -225,7 +239,8 @@ def run_full(root: Path, catalog: dict[str, Any], *, timeframes: tuple[str, ...]
                 sim = ResearchSimulation(bars)
                 frozen = result["frozen_parameters"]
                 ensemble = sim.run(start=datetime.fromisoformat(frozen["test_start"]),
-                    end=datetime.fromisoformat(frozen["test_end_exclusive"]), strategy_ids=common_passed)
+                    end=datetime.fromisoformat(frozen["test_end_exclusive"]), strategy_ids=common_passed,
+                    member_parameters={s: StrategyParameters(**{k: Decimal(v) for k, v in frozen["grid"][frozen["selected_grid_index"][s]].items()}) for s in common_passed})
                 result["benchmarks"]["VALIDATED_ENSEMBLE"] = compact(ensemble)
                 atomic_write(output / f"{timeframe}-validated-ensemble.json", canonical(ensemble))
         summary["verdict"] = "VALIDATED_CANDIDATES_REQUIRE_REVIEW" if common_passed else "NO STRATEGY PASSED VALIDATION"

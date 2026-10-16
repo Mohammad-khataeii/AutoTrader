@@ -4,11 +4,11 @@ import json
 import secrets
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, Request, status
@@ -33,6 +33,7 @@ from autotrader.persistence.database import (
     make_session_factory,
 )
 from autotrader.persistence.models import BacktestRunModel, MarketCandle
+from autotrader.persistence.pilot import pilot_configuration
 from autotrader.persistence.repository import PersistentTradingRepository, _json
 from autotrader.research.artifacts import load_latest
 from autotrader.research.data import ASSETS, TIMEFRAMES
@@ -79,6 +80,15 @@ class CorrectionRequest(BaseModel):
     reason:str=Field(min_length=20,max_length=2000)
 
 
+class PromotionRequest(BaseModel):
+    approve: bool
+    reason: str = Field(min_length=20,max_length=2000)
+
+
+class PilotRequest(BaseModel):
+    request_id: str = Field(min_length=1,max_length=64,pattern=r'^[A-Za-z0-9_-]+$')
+
+
 class NewsRequest(BaseModel):
     event_id:str=Field(min_length=1,max_length=64,pattern=r'^[A-Za-z0-9_-]+$')
     symbol:str=Field(pattern=r'^[A-Z0-9]+-EUR$')
@@ -101,15 +111,18 @@ def _settings() -> Settings:
     return get_settings()
 
 
-def require_user(request: Request, credentials: HTTPBasicCredentials | None = Depends(security), settings: Settings = Depends(_settings)) -> str:
+async def require_user(request: Request, credentials: HTTPBasicCredentials | None = Depends(security), settings: Settings = Depends(_settings)) -> str:
     client = request.client.host if request.client else "unknown"
-    retry = request.app.state.auth_throttle.retry_after(client)
+    try:
+        retry = await request.app.state.repository.authentication_attempt(client)
+    except Exception:
+        raise HTTPException(status_code=503,detail='Authentication store unavailable') from None
     if retry is not None:
         raise HTTPException(status_code=429, detail="Authentication cooldown active", headers={"Retry-After":str(retry)})
     password = settings.dashboard_password.get_secret_value()
     ok = credentials is not None and secrets.compare_digest(credentials.username.encode(), settings.dashboard_username.encode()) and secrets.compare_digest(credentials.password.encode(), password.encode())
     if not ok:
-        retry = request.app.state.auth_throttle.failure(client)
+        retry = await request.app.state.repository.authentication_attempt(client,failed=True)
         if retry is not None:
             raise HTTPException(status_code=429, detail="Too many failed authentication attempts", headers={"Retry-After":str(retry)})
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, headers={"WWW-Authenticate": "Basic"})
@@ -167,12 +180,14 @@ def create_app() -> FastAPI:
         await create_schema(engine)
         await repository.initialize_portfolio(settings.initial_cash_eur)
         await repository.configure_research_policy(Path(settings.research_root), test_environment=settings.environment == "test",
-            approved={s.strip() for s in settings.approved_strategy_ids.split(",") if s.strip()})
+            approved={s.strip() for s in settings.approved_strategy_ids.split(",") if s.strip()},
+            execution_costs={'fee_bps':str(settings.default_fee_bps),'slippage_bps':str(settings.default_slippage_bps),'spread_bps':'10','volume_participation':'.01'})
+        strategy_engine.member_parameters=await repository.frozen_runtime_parameters()
         yield
         await market_data.close()
         await engine.dispose()
 
-    app = FastAPI(title=settings.app_name, version="4.0.0", lifespan=lifespan)
+    app = FastAPI(title=settings.app_name, version="4.1.0", lifespan=lifespan)
     app.state.auth_throttle = AuthenticationThrottle()
     app.state.repository = repository
     app.state.engine = engine
@@ -182,7 +197,7 @@ def create_app() -> FastAPI:
 
     @app.get("/healthz")
     async def healthz() -> dict[str, str]:
-        return {"status": "ok", "mode": "paper"}
+        return {"status": "ok", "mode": "paper", "version":"4.1.0"}
 
     @app.get("/readyz")
     async def readyz() -> dict[str, str | bool]:
@@ -208,6 +223,7 @@ def create_app() -> FastAPI:
     async def overview() -> dict[str, object]:
         snapshot = await repository.snapshot()
         return {
+            "application_version":"4.1.0",
             "portfolio": snapshot,
             "health": {
                 "api": "ok",
@@ -260,7 +276,10 @@ def create_app() -> FastAPI:
     @app.get("/api/ai", dependencies=[Depends(require_user)])
     async def ai_status() -> dict[str, object]:
         return {"provider":settings.ai_provider.value,"model":settings.ai_model if settings.ai_provider.value=="openai" else "mock-v1" if settings.ai_provider.value=="mock" else "",
-            "budget":await repository.ai_budget_status(settings.ai_monthly_budget_usd),
+            "enabled":settings.ai_provider.value!='off',
+            "paid_enabled":settings.ai_provider.value=='openai',
+            "budget":await repository.ai_budget_status(settings.ai_monthly_budget_usd,
+                max_per_day=settings.ai_max_analyses_per_day,max_per_hour=settings.ai_max_analyses_per_hour),
             "account_model_verified":False if settings.ai_provider.value!="openai" else "verified_per_request"}
 
     @app.post('/api/news',dependencies=[Depends(require_user)])
@@ -271,6 +290,48 @@ def create_app() -> FastAPI:
         except ValueError as exc:
             raise HTTPException(status_code=409,detail=str(exc)) from None
         return {'event_id':request.event_id,'status':'UNVERIFIED_EXTERNAL_CONTEXT'}
+
+    @app.get('/api/research/promotions',dependencies=[Depends(require_user)])
+    async def promotions() -> Any:
+        return await repository.promotion_candidates()
+
+    @app.post('/api/research/promotions/{candidate_id}')
+    async def promotion_decision(candidate_id: str, request: PromotionRequest, actor: str = Depends(require_user)) -> Any:
+        try:
+            await repository.decide_promotion(candidate_id,approve=request.approve,actor=actor,reason=request.reason)
+            await repository.configure_research_policy(Path(settings.research_root),test_environment=settings.environment=='test',approved=set(),
+                execution_costs={'fee_bps':str(settings.default_fee_bps),'slippage_bps':str(settings.default_slippage_bps),'spread_bps':'10','volume_participation':'.01'})
+            strategy_engine.member_parameters=await repository.frozen_runtime_parameters()
+            return await repository.promotion_candidates()
+        except ValueError as exc:
+            raise HTTPException(status_code=409,detail=str(exc)) from None
+
+    @app.get('/api/pilots',dependencies=[Depends(require_user)])
+    async def pilots() -> Any:
+        return await repository.pilots()
+
+    @app.post('/api/pilots',dependencies=[Depends(require_user)],status_code=201)
+    async def start_pilot(request: PilotRequest) -> Any:
+        try:
+            return await repository.start_pilot(request.request_id,pilot_configuration(settings),test_environment=settings.environment=='test')
+        except ValueError as exc:
+            raise HTTPException(status_code=409,detail=str(exc)) from None
+
+    @app.get('/api/pilots/{pilot_id}/report',dependencies=[Depends(require_user)])
+    async def pilot_report(pilot_id: str, day: date | None = None, format: Literal['json','csv'] = 'json') -> Any:
+        try:
+            report=await repository.pilot_report(pilot_id,day)
+        except ValueError as exc:
+            raise HTTPException(status_code=409,detail=str(exc)) from None
+        if format=='csv':
+            import csv
+            import io
+            stream=io.StringIO()
+            writer=csv.DictWriter(stream,fieldnames=list(report))
+            writer.writeheader()
+            writer.writerow({key:json.dumps(value) if isinstance(value,(list,dict)) else value for key,value in report.items()})
+            return Response(stream.getvalue(),media_type='text/csv',headers={'Content-Disposition':'attachment; filename="paper-pilot-report.csv"'})
+        return report
 
     @app.get("/api/settings", dependencies=[Depends(require_user)])
     async def safe_settings() -> dict[str,object]:
@@ -302,7 +363,8 @@ def create_app() -> FastAPI:
             "runs":[{"run_id":path.parent.name, "verdict":json.loads(path.read_text(encoding="utf-8")).get("verdict")} for path in sorted(root.glob("runs/*/summary.json"), reverse=True)][:30],
             "jobs":await repository.research_jobs(),
             "datasets":[{k:v for k,v in m.items() if k not in {"provenance", "gaps"}} for m in catalog.get("manifests", [])],
-            "registry":[asdict(spec) for spec in REGISTRY], "acquisition_failures":catalog.get("failures", [])}
+            "registry":[asdict(spec) for spec in REGISTRY], "acquisition_failures":catalog.get("failures", []),
+            "promotions":await repository.promotion_candidates()}
 
     @app.post("/api/research/jobs", dependencies=[Depends(require_user)], status_code=202)
     async def queue_research(request: ResearchRequest) -> dict[str, str]:

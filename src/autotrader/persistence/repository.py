@@ -49,6 +49,8 @@ from autotrader.persistence.models import (
     SystemStateModel,
     TradingDecisionModel,
 )
+from autotrader.persistence.operations import OperationsMixin
+from autotrader.persistence.pilot import PilotMixin
 from autotrader.persistence.research_jobs import ResearchJobsMixin
 from autotrader.persistence.research_policy import ResearchPolicyMixin
 
@@ -99,7 +101,7 @@ def _default_target_quantities(original_quantity: Decimal, quantity_step: Decima
     return [*quantities, final_quantity]
 
 
-class PersistentTradingRepository(AccountingRepositoryMixin, AIBudgetRepositoryMixin, AIEventMixin, ResearchPolicyMixin, AnalyticsMixin, ResearchJobsMixin):
+class PersistentTradingRepository(PilotMixin, OperationsMixin, AccountingRepositoryMixin, AIBudgetRepositoryMixin, AIEventMixin, ResearchPolicyMixin, AnalyticsMixin, ResearchJobsMixin):
     RUNTIME_STATE_KEY = "runtime_health"
 
     def __init__(self, session_factory: async_sessionmaker[Any], quote_asset: str = "EUR") -> None:
@@ -227,6 +229,8 @@ class PersistentTradingRepository(AccountingRepositoryMixin, AIBudgetRepositoryM
             age = (utc_now() - aware(datetime.fromisoformat(heartbeat))).total_seconds() if heartbeat else None
             incidents = (await session.scalars(select(SystemIncidentModel).order_by(SystemIncidentModel.created_at.desc()).limit(20))).all()
             pending = await session.scalar(select(func.count()).select_from(OrderModel).where(OrderModel.status.in_(["PENDING", "ACCEPTED"])))
+            operation=await session.get(SystemStateModel,"operation")
+            lease=await session.get(SystemStateModel,"coordinator_lease")
             scanner=await session.get(SystemStateModel,"scanner")
             monitor=await session.get(SystemStateModel,"position_monitor")
             monitor_time=json.loads(monitor.payload_json).get('heartbeat') if monitor else None
@@ -236,7 +240,10 @@ class PersistentTradingRepository(AccountingRepositoryMixin, AIBudgetRepositoryM
                 'age_seconds':(utc_now()-aware(m.timestamp)).total_seconds()} for m in marks]
             dialect=session.bind.dialect.name
         problems = await self.verify_invariants(Decimal("500"))
-        return {"postgresql": "ok" if dialect=='postgresql' else 'not_configured',"database_engine":dialect,
+        return {"operational_state":operation.state if operation else "INITIALIZING",
+            "operation":json.loads(operation.payload_json) if operation else {},
+            "coordinator":json.loads(lease.payload_json) if lease else {},
+            "postgresql": "ok" if dialect=='postgresql' else 'not_configured',"database_engine":dialect,
             "exchange_data":scanner.state if scanner else 'no_scan_yet',"data_freshness":freshness,
             "position_monitor_heartbeat":monitor_time,"worker": "ok" if age is not None and age < 180 else "stale_or_absent",
             "worker_heartbeat": heartbeat, "worker_age_seconds": age, "pending_intents": pending,

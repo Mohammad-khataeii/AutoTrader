@@ -15,7 +15,7 @@ class AIProvider(StrEnum):
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="", extra="ignore",env_ignore_empty=True)
+    model_config = SettingsConfigDict(env_file=".env", env_prefix="", extra="ignore",env_ignore_empty=True,hide_input_in_errors=True)
 
     app_name: str = "Revolut X AutoTrader"
     environment: str = "local"
@@ -57,6 +57,12 @@ class Settings(BaseSettings):
     ai_model: str = ""
     openai_api_key: SecretStr | None = None
     ai_monthly_budget_usd: Decimal = Decimal("10")
+    ai_max_analyses_per_day: int = Field(default=30, ge=0, le=30)
+    ai_max_analyses_per_hour: int = Field(default=6, ge=0, le=6)
+    ai_require_persistent_quota: bool = True
+    ai_pricing_verified_at: str = ""
+    ai_portfolio_daily_reserve: int = Field(default=3,ge=0,le=30)
+    ai_portfolio_hourly_reserve: int = Field(default=1,ge=0,le=6)
     ai_timeout_seconds: Decimal = Decimal("12")
     ai_input_price_per_million: Decimal | None = None
     ai_cached_input_price_per_million: Decimal | None = None
@@ -88,8 +94,17 @@ class Settings(BaseSettings):
                 raise ValueError("Production operation requires PostgreSQL.")
         if not self.paper_trading_enabled:
             raise ValueError("Only paper trading is supported.")
+        if self.ai_provider is AIProvider.OPENAI and not self.ai_require_persistent_quota:
+            raise ValueError("Paid AI requires persistent quota enforcement.")
+        if self.ai_monthly_budget_usd > 10:
+            raise ValueError("AI monthly budget cannot exceed USD 10.")
         if self.market_data_replay_file and self.environment != "test":
             raise ValueError("File replay is restricted to ENVIRONMENT=test.")
+        if self.environment=='test' and self.database_url.startswith('postgresql'):
+            from sqlalchemy.engine import make_url
+            database=make_url(self.database_url).database or ''
+            if not database.startswith(('autotrader_v34_','autotrader_v41_','autotrader_test_','autotrader_acceptance_')):
+                raise ValueError('Acceptance requires an explicitly isolated test database; production paper accounts are forbidden.')
         return self
 
     @field_validator(
@@ -105,7 +120,7 @@ class Settings(BaseSettings):
     )
     @classmethod
     def money_must_be_non_negative(cls, value: Decimal) -> Decimal:
-        if value < 0:
+        if not value.is_finite() or value < 0:
             raise ValueError("Money values must be non-negative.")
         return value
 

@@ -29,7 +29,7 @@ from autotrader.execution.pricing import quote_execution, target_gross_floor
 from autotrader.execution.protection import trailing_update
 from autotrader.execution.quality import ExecutionQualityEngine
 from autotrader.portfolio import Portfolio
-from autotrader.research.data import TIMEFRAMES, HistoricalBar
+from autotrader.research.data import TIMEFRAMES, HistoricalBar, canonical, digest
 from autotrader.research.panel import build_panel
 from autotrader.research.strategies import REGISTRY, StrategyParameters, V4StrategyEngine
 from autotrader.risk import RiskEngine, RiskLimits
@@ -68,12 +68,18 @@ class ResearchSimulation:
         self.seconds = TIMEFRAMES[self.timeframe]
         self.frames, self.features, self.feature_manifest = build_panel(bars)
         self.times = sorted(self.frames)
+        self._signal_cache: dict[str, dict[tuple[datetime, str], tuple[list[tuple[Decimal, str]], bool, str]]] = {}
 
     def run(self, *, start: datetime, end: datetime, strategy_ids: set[str],
             parameters: StrategyParameters | None = None, costs: Costs | None = None,
+            member_parameters: dict[str, StrategyParameters] | None = None,
             legacy: bool = False, ai_mode: str = "RULE_ONLY") -> dict[str, Any]:
         params, model = parameters or StrategyParameters(), costs or Costs()
-        strategy_engine = V4StrategyEngine(params, strategy_ids)
+        if member_parameters is not None and set(member_parameters) != strategy_ids:
+            raise ValueError("exact_frozen_parameters_required_for_every_member")
+        members = member_parameters if member_parameters is not None else {s: params for s in strategy_ids}
+        member_hashes = {s: digest(canonical(p.payload())) for s, p in members.items()}
+        engines = {digest(canonical(p.payload())): V4StrategyEngine(p) for p in members.values()}
         legacy_engine: Any = None
         if legacy:
             from autotrader.strategies import LegacyStrategyEngine
@@ -97,6 +103,10 @@ class ResearchSimulation:
         halted = False
         total_fees, turnover, exposure_sum = ZERO, ZERO, ZERO
         observation_count = 0
+        total_spread, total_slippage = ZERO, ZERO
+        asset_cashflows: dict[str, Decimal] = defaultdict(lambda: ZERO)
+        regime_cashflows: dict[str, Decimal] = defaultdict(lambda: ZERO)
+        observed_assets: set[str] = set()
         regime_observations: Counter[str] = Counter()
         risk = RiskEngine(RiskLimits())
         quality = ExecutionQualityEngine()
@@ -110,6 +120,7 @@ class ResearchSimulation:
             if not start <= timestamp < end:
                 continue
             frame = {c.symbol: c for c in self.frames[timestamp]}
+            observed_assets.update(frame)
             context = self.features.get(timestamp, {})  # only bars completed BEFORE this open
             used: dict[str, Decimal] = defaultdict(lambda: ZERO)
             previous_equity = equity()
@@ -126,9 +137,12 @@ class ResearchSimulation:
                 halted = True
 
             def book(symbol: str, price: Decimal, when: datetime,
-                     _frame: Any = frame, _used: Any = used) -> OrderBook | None:
-                candle = _frame[symbol]
-                available = max(candle.volume * model.liquidity_fraction - _used[symbol], ZERO)
+                     _context: Any = context, _used: Any = used) -> OrderBook | None:
+                # Current-bar volume is future information at its open. Only the
+                # previous completed candle may define the modeled depth budget.
+                known = _context.get(symbol)
+                volume = D(str(known.metadata.get("last_volume", 0))) if known else ZERO
+                available = max(volume * model.liquidity_fraction - _used[symbol], ZERO)
                 if available <= 0:
                     return None
                 half = price * model.spread_bps / 20000
@@ -137,7 +151,7 @@ class ResearchSimulation:
 
             def sell(symbol: str, price: Decimal, reason: str, when: datetime, target_number: int | None = None,
                      _used: Any = used) -> None:
-                nonlocal cash, total_fees, turnover
+                nonlocal cash, total_fees, turnover, total_spread, total_slippage
                 p = opened[symbol]
                 observation = book(symbol, price, when)
                 if observation is None:
@@ -154,6 +168,8 @@ class ResearchSimulation:
                 posting = closing_posting(p.position.quantity, p.position.cost_basis,
                     quote.fillable_quantity, quote.gross_notional, quote.fee)
                 cash += posting.cash_credit
+                asset_cashflows[symbol] += posting.cash_credit
+                regime_cashflows[p.regime] += posting.cash_credit
                 p.position.quantity = posting.remaining_quantity
                 p.position.cost_basis = posting.remaining_basis
                 p.position.realized_pnl += posting.realized_pnl
@@ -162,6 +178,8 @@ class ResearchSimulation:
                 _used[symbol] += quote.fillable_quantity
                 total_fees += quote.fee
                 turnover += quote.gross_notional
+                total_spread += quote.fillable_quantity * price * model.spread_bps / 20000
+                total_slippage += quote.fillable_quantity * price * (1 - model.spread_bps / 20000) * model.slippage_bps / 10000
                 if target_number is not None:
                     p.target_remaining[target_number] -= quote.fillable_quantity
                     if target_number == 0 and p.target_remaining[0] == 0:
@@ -170,6 +188,8 @@ class ResearchSimulation:
                     "side": "SELL", "quantity": str(quote.fillable_quantity), "price": str(quote.vwap),
                     "fee": str(quote.fee), "realized_pnl": str(posting.realized_pnl), "reason": reason,
                     "target_number": target_number + 1 if target_number is not None else None,
+                    "spread_cost":str(quote.fillable_quantity*price*model.spread_bps/20000),
+                    "slippage_cost":str(quote.fillable_quantity*price*(1-model.spread_bps/20000)*model.slippage_bps/10000),
                     "strategy": p.strategy, "regime": p.regime, "mfe": str(p.mfe), "mae": str(p.mae)})
                 if p.position.quantity == 0:
                     p.position.closed_at = when
@@ -215,25 +235,34 @@ class ResearchSimulation:
                     if f.data_quality is not DataQuality.GOOD or not f.metadata.get("history_contiguous", True):
                         rejections["data_quality_or_history"] += 1
                         continue
-                    signals = (legacy_engine.generate(f, context.get("BTC-EUR"), context.get("ETH-EUR")) if legacy else
-                               strategy_engine.generate(f, context.get("BTC-EUR"), context.get("ETH-EUR")))
-                    eligible = [s for s in signals if s.score > 0] if legacy else [s for s in signals if s.evidence["entry_eligible"]]
-                    veto = any(s.evidence.get("veto") for s in signals)
-                    regime = str(f.metadata.get("regime_assessment", {}).get("regime", "LEGACY"))
+                    eligible: list[tuple[Decimal, str]] = []
+                    veto = False
+                    if legacy:
+                        signals = legacy_engine.generate(f, context.get("BTC-EUR"), context.get("ETH-EUR"))
+                        eligible = [(s.score, s.strategy_id) for s in signals if s.score > 0]
+                        veto = any(s.evidence.get("veto") for s in signals)
+                        regime = "LEGACY"
+                    else:
+                        regime = "UNCERTAIN"
+                        for identity, engine in engines.items():
+                            cached = self._signal_cache.setdefault(identity, {})
+                            key = (timestamp, symbol)
+                            if key not in cached:
+                                signals = engine.generate(f, context.get("BTC-EUR"), context.get("ETH-EUR"))
+                                cached[key] = ([(s.score, s.strategy_id) for s in signals if s.evidence["entry_eligible"]],
+                                    any(s.evidence.get("veto") for s in signals), str(f.metadata["regime_assessment"]["regime"]))
+                            entries, blocked, regime = cached[key]
+                            eligible.extend((score, s) for score, s in entries
+                                if member_hashes.get(s) == identity)
+                            veto |= blocked
                     regime_observations[regime] += 1
-                    if veto or not eligible or (legacy and sum(s.score for s in signals) < D("1.2")):
+                    if veto or not eligible or (legacy and sum(score for score, _ in eligible) < D("1.2")):
                         rejections["regime_or_signal_ineligible"] += 1
                         continue
-                    if ai_mode == "RULE_PLUS_AI_MOCK":
-                        from autotrader.ai import mock_suggested_action
-                        from autotrader.domain import DecisionAction
-                        if mock_suggested_action(f, signals) is not DecisionAction.BUY:
-                            rejections["mock_ai_veto"] += 1
-                            continue
                     # Mock has no independent news or predictive evidence; identical
                     # qualified proposals give a matched integration comparison only.
-                    primary = max(eligible, key=lambda signal: (signal.score, signal.strategy_id)) if legacy else eligible[0]
-                    candidates.append((sum(s.score for s in eligible), symbol, primary.strategy_id, f, regime))
+                    primary = max(eligible) if legacy else min(eligible, key=lambda row: row[1])
+                    candidates.append((sum(score for score, _ in eligible), symbol, primary[1], f, regime))
                 for _, symbol, strategy, f, regime in sorted(candidates, key=lambda row: (-row[0], row[1])):
                     if halted:
                         rejections["persistent_equity_risk_halt"] += 1
@@ -249,10 +278,11 @@ class ResearchSimulation:
                         rejections["stale_open_position_valuation"] += 1
                         continue
                     price = frame[symbol].open
+                    selected_params = members.get(strategy, params)
                     atr = f.atr or price * D(".02")
-                    stop = price - atr * params.stop_atr
-                    targets = [price + atr * params.target_atr * i for i in (1, 2, 3)]
-                    quote_amount = min(D(75), max(cash - 150, ZERO), D(5) / (atr * params.stop_atr / price + D(".01")))
+                    stop = price - atr * selected_params.stop_atr
+                    targets = [price + atr * selected_params.target_atr * i for i in (1, 2, 3)]
+                    quote_amount = min(D(75), max(cash - 150, ZERO), D(5) / (atr * selected_params.stop_atr / price + D(".01")))
                     pair = TradingPair(symbol, symbol.split("-")[0], "EUR", min_order_quote=D(5))
                     quantity = quantize_down(quote_amount / (price * D("1.005")), pair.quantity_step)
                     portfolio = Portfolio(cash)
@@ -273,9 +303,13 @@ class ResearchSimulation:
                         continue
                     quote = feasibility.entry
                     cash += quote.net_cash_change
+                    asset_cashflows[symbol] += quote.net_cash_change
+                    regime_cashflows[regime] += quote.net_cash_change
                     used[symbol] += quote.fillable_quantity
                     total_fees += quote.fee
                     turnover += quote.gross_notional
+                    total_spread += quote.fillable_quantity * price * model.spread_bps / 20000
+                    total_slippage += quote.fillable_quantity * price * (1 + model.spread_bps / 20000) * model.slippage_bps / 10000
                     daily_entries += 1
                     position_id = f"research-{symbol}-{timestamp.isoformat()}"
                     position = Position(position_id, symbol, quote.fillable_quantity, quote.vwap, timestamp,
@@ -284,11 +318,14 @@ class ResearchSimulation:
                     quantities.append(quote.fillable_quantity - sum(quantities))
                     holding = specs[strategy].holding_bars if strategy in specs else 12
                     opened[symbol] = SimPosition(position, strategy, regime, targets, quantities,
-                        timestamp + timedelta(seconds=self.seconds * holding), atr * params.stop_atr)
+                        timestamp + timedelta(seconds=self.seconds * holding), atr * selected_params.stop_atr)
                     fills.append({"position_id": position_id, "symbol": symbol, "timestamp": timestamp.isoformat(),
                         "side": "BUY", "quantity": str(quote.fillable_quantity), "price": str(quote.vwap), "fee": str(quote.fee),
                         "strategy": strategy, "regime": regime, "source_feature_start": f.timestamp.isoformat(),
-                        "feature_available_at": f.metadata["available_at"], "parameters": params.payload(), "ai_mode": ai_mode})
+                        "feature_available_at": f.metadata["available_at"], "parameters": selected_params.payload(),
+                        "parameter_hash": digest(canonical(selected_params.payload())), "strategy_version": specs[strategy].version if strategy in specs else "3.4.0", "ai_mode": ai_mode})
+                    fills[-1].update(spread_cost=str(quote.fillable_quantity*price*model.spread_bps/20000),
+                        slippage_cost=str(quote.fillable_quantity*price*(1+model.spread_bps/20000)*model.slippage_bps/10000))
 
             close_time = timestamp + timedelta(seconds=self.seconds)
             for symbol in list(opened):
@@ -326,12 +363,16 @@ class ResearchSimulation:
             exposure_sum += sum((p.position.quantity * marks[s] for s, p in opened.items()), ZERO)
             observation_count += 1
             curve.append({"timestamp": close_time.isoformat(), "equity": str(current_equity), "cash": str(cash),
-                "open_positions": len(opened), "risk_halted": halted})
+                "open_positions": len(opened), "risk_halted": halted,
+                "asset_pnl_contributions":{s:str(asset_cashflows[s]+(opened[s].position.quantity*marks[s] if s in opened else ZERO)) for s in sorted(observed_assets)},
+                "regime_pnl_contributions":{r:str(regime_cashflows[r]+sum((p.position.quantity*marks[s] for s,p in opened.items() if p.regime==r),ZERO)) for r in sorted(regime_cashflows)}})
             if cash < 0 or len(opened) > 3:
                 raise AssertionError("research_hard_risk_invariant_breached")
         result = summarize(curve, closed, fills, total_fees, turnover, self.seconds,
             exposure_sum / observation_count if observation_count else ZERO)
         result.update({"parameters": params.payload(), "costs": {k: str(v) for k, v in asdict(model).items()},
+            "member_parameters": {s: p.payload() for s, p in sorted(members.items())},
+            "spread_cost": str(total_spread), "slippage_cost": str(total_slippage),
             "start": start.isoformat(), "end_exclusive": end.isoformat(), "timeframe": self.timeframe,
             "strategy_ids": sorted(strategy_ids), "legacy_signal_baseline": legacy, "ai_mode": ai_mode,
             "rejections": dict(rejections), "regime_observations": dict(regime_observations),
@@ -376,8 +417,36 @@ def summarize(curve: list[dict[str, Any]], closed: list[SimPosition], fills: lis
         if fill["side"] == "SELL":
             contribution[fill["strategy"]] += D(fill["realized_pnl"])
             by_regime[fill["regime"]] += D(fill["realized_pnl"])
+    grouped: dict[str, dict[str, Any]] = {}
+    for dimension in ("asset", "regime"):
+        groups: dict[str, list[float]] = defaultdict(list)
+        for position in closed:
+            key = position.position.symbol if dimension == "asset" else position.regime
+            groups[key].append(float(position.position.realized_pnl))
+        for row in curve:
+            for key in row.get(dimension+'_pnl_contributions',{}):
+                groups.setdefault(key,[])
+        grouped[dimension] = {key: {"closed_positions": len(rows), "net_realized_pnl": sum(rows),
+            "win_rate": sum(p > 0 for p in rows) / len(rows) if rows else 0,
+            "profit_factor": sum(max(p, 0) for p in rows) / -sum(min(p, 0) for p in rows) if any(p < 0 for p in rows) else None,
+            "expectancy": sum(rows) / len(rows) if rows else 0} for key, rows in groups.items()}
+        for key, metric in grouped[dimension].items():
+            contributions=[float(row.get(dimension+'_pnl_contributions',{}).get(key,0)) for row in curve]
+            peak, worst=500.0,0.0
+            for value in contributions:
+                peak=max(peak,500+value)
+                worst=max(worst,(peak-500-value)/peak)
+            relevant=[f for f in fills if f['symbol' if dimension=='asset' else 'regime']==key]
+            metric.update(net_profit=contributions[-1] if contributions else 0,
+                return_on_common_eur500=(contributions[-1]/500) if contributions else 0,max_drawdown_on_common_eur500=worst,
+                fees=str(sum((D(f['fee']) for f in relevant),ZERO)),
+                spread_cost=str(sum((D(f.get('spread_cost','0')) for f in relevant),ZERO)),
+                slippage_cost=str(sum((D(f.get('slippage_cost','0')) for f in relevant),ZERO)),
+                attribution_policy='Contribution to shared EUR500 portfolio, marked residual positions; not independent asset allocations or stand-alone returns.')
     return {"net_profit": values[-1] - 500, "total_return": values[-1] / 500 - 1, "max_drawdown": dd,
-        "trades": len(pnl), "fills_count": len(fills), "profit_factor": sum(wins) / sum(losses) if losses else None,
+        "trades": len(pnl), "fills_count": len(fills), "gross_profit": sum(wins), "gross_loss": -sum(losses),
+        "grouped_closed_position_statistics": grouped,
+        "profit_factor": sum(wins) / sum(losses) if losses else None,
         "win_rate": len(wins) / len(pnl) if pnl else 0, "average_gain": sum(wins) / len(wins) if wins else 0,
         "average_loss": -sum(losses) / len(losses) if losses else 0, "expectancy": expectancy,
         "expectancy_normal_95_interval": [expectancy - 1.96 * math.sqrt(variance / len(pnl)), expectancy + 1.96 * math.sqrt(variance / len(pnl))] if pnl else None,

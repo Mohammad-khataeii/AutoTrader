@@ -36,7 +36,10 @@ class AnalyticsMixin:
             total = Decimal(0)
             complete = True
             for p in positions:
-                row: dict[str, Any] = {"position_id": p.position_id, "symbol": p.symbol, "quantity": str(p.quantity)}
+                row: dict[str, Any] = {"position_id": p.position_id, "symbol": p.symbol, "quantity": str(p.quantity),
+                    'opened_at':aware(p.opened_at).isoformat(),'age_seconds':(utc_now()-aware(p.opened_at)).total_seconds(),
+                    'remaining_cost_basis':str(p.cost_basis),'average_entry_price':str(p.average_entry_price),
+                    'realized_pnl':str(p.realized_pnl),'protective_stop':str(p.protective_stop) if p.protective_stop else None}
                 observation = await session.get(SystemStateModel, "book:" + p.symbol)
                 try:
                     if observation is None:
@@ -49,6 +52,10 @@ class AnalyticsMixin:
                     consumed = {int(k): Decimal(v) for k, v in json.loads(used.payload_json)["SELL"].items()} if used else {}
                     quote = quote_execution(book, Side.SELL, p.quantity, fee_bps=fee_bps, slippage_bps=slippage_bps, consumed=consumed)
                     row.update(quote.payload())
+                    row.update(marked_value=str(p.quantity*quote.midpoint_mark),
+                        estimated_liquidation_value=str(quote.net_cash_change) if quote.fillable_quantity==p.quantity else None,
+                        unrealized_pnl=str(p.quantity*quote.midpoint_mark-p.cost_basis),
+                        current_risk_condition='FULL_OBSERVED_DEPTH' if quote.fillable_quantity==p.quantity else 'PARTIAL_DEPTH')
                     total += quote.net_cash_change
                     complete = complete and quote.fillable_quantity == p.quantity
                 except ValueError as exc:

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "revolutx-autotrader"
-version = "4.0.0"
+version = "4.1.0"
 description = "Autonomous Revolut X cryptocurrency research and paper-trading platform."
 requires-python = ">=3.12"
 dependencies = [
@@ -36,6 +36,7 @@ dev = [
 ]
 
 [project.scripts]
+autotrader-pilot = "autotrader.pilot:main"
 autotrader = "autotrader.research.cli:main"
 autotrader-research-worker = "autotrader.research.worker:run"
 autotrader-api = "autotrader.api.main:run"

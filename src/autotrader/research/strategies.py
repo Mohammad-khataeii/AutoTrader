@@ -55,12 +55,25 @@ class StrategyParameters:
 
 class V4StrategyEngine:
     def __init__(self, parameters: StrategyParameters | None = None,
-                 enabled: set[str] | None = None) -> None:
+                 enabled: set[str] | None = None,
+                 member_parameters: dict[str, StrategyParameters] | None = None) -> None:
         self.parameters = parameters or StrategyParameters()
         self.enabled = enabled if enabled is not None else {s.strategy_id for s in REGISTRY}
+        self.member_parameters = member_parameters
 
     def generate(self, f: MarketFeatures, btc_features: MarketFeatures | None = None,
                  eth_features: MarketFeatures | None = None) -> list[StrategySignal]:
+        if self.member_parameters:
+            generated = {strategy: V4StrategyEngine(params,{strategy}).generate(f,btc_features,eth_features)
+                for strategy,params in sorted(self.member_parameters.items())}
+            result=[]
+            for spec in REGISTRY:
+                choices=[signal for rows in generated.values() for signal in rows if signal.strategy_id==spec.strategy_id]
+                if spec.filter_only:
+                    result.append(next((s for s in choices if s.evidence.get('veto')),choices[0]))
+                elif spec.strategy_id in generated:
+                    result.append(next(s for s in generated[spec.strategy_id] if s.strategy_id==spec.strategy_id))
+            return result
         p = self.parameters
         assessment = classify(f, btc_features, eth_features)
         close = Decimal(str(f.metadata.get("last_close", 0)))

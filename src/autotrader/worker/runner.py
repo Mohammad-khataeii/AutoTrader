@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import signal
+import time
 from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
@@ -10,10 +11,12 @@ from pathlib import Path
 from autotrader.ai import make_ai_provider
 from autotrader.config import get_settings
 from autotrader.decision import DecisionEngine
+from autotrader.domain import new_id, utc_now
 from autotrader.execution_gateway import ExecutionResult, PaperExecutionGateway
 from autotrader.market_data.revolut import MarketDataError, RevolutXPublicClient
 from autotrader.market_data.service import MarketDataService
 from autotrader.persistence.database import create_schema, make_engine, make_session_factory
+from autotrader.persistence.pilot import pilot_configuration
 from autotrader.persistence.repository import PersistentTradingRepository
 from autotrader.position_manager import PositionManager
 from autotrader.risk import RiskEngine, RiskLimits
@@ -77,8 +80,13 @@ async def main() -> None:
     await create_schema(engine)
     repository = PersistentTradingRepository(make_session_factory(engine))
     await repository.initialize_portfolio(settings.initial_cash_eur)
+    owner=new_id('coordinator')
+    while not await repository.claim_coordinator(owner):
+        await asyncio.sleep(2)
+    await repository.operation_state('INITIALIZING','coordinator_acquired')
     await repository.configure_research_policy(Path(settings.research_root), test_environment=settings.environment == "test",
-        approved={s.strip() for s in settings.approved_strategy_ids.split(",") if s.strip()})
+        approved={s.strip() for s in settings.approved_strategy_ids.split(",") if s.strip()},
+        execution_costs={'fee_bps':str(settings.default_fee_bps),'slippage_bps':str(settings.default_slippage_bps),'spread_bps':'10','volume_participation':'.01'})
     market_client = RevolutXPublicClient(
         base_url=settings.revolut_x_base_url,
         region=settings.revolut_x_region,
@@ -114,7 +122,7 @@ async def main() -> None:
         allocation_profile=settings.allocation_profile,
         slippage_bps=settings.default_slippage_bps,
     )
-    strategy_engine = BreakoutStrategyEngine()
+    strategy_engine = BreakoutStrategyEngine(member_parameters=await repository.frozen_runtime_parameters())
     decision_engine = DecisionEngine(risk, default_quote_amount={"conservative":Decimal(50), "balanced":Decimal(75), "opportunistic":Decimal(100)}[settings.allocation_profile])
     ai_provider = make_ai_provider(settings, repository)
     scanner = MarketScanner(
@@ -141,8 +149,22 @@ async def main() -> None:
             loop.add_signal_handler(signum,stopping.set)
         except (NotImplementedError,RuntimeError):
             pass
+    async def renew_ownership()->None:
+        while not stopping.is_set():
+            try:
+                if not await repository.claim_coordinator(owner):
+                    stopping.set()
+                    return
+                await repository.worker_heartbeat(key='coordinator_heartbeat')
+            except Exception:
+                logger.exception('coordinator renewal unavailable; financial ownership checks remain authoritative')
+            try:
+                await asyncio.wait_for(stopping.wait(),timeout=5)
+            except TimeoutError:
+                pass
     async def protective_loop()->None:
         while not stopping.is_set():
+            monitor_started=time.monotonic()
             try:
                 await position_manager.monitor_once()
                 await repository.snapshot()
@@ -150,13 +172,22 @@ async def main() -> None:
             except Exception:
                 logger.exception("independent position monitoring cycle failed")
             try:
-                await asyncio.wait_for(stopping.wait(),timeout=settings.worker_position_interval_seconds)
+                await asyncio.wait_for(stopping.wait(),timeout=max(.1,settings.worker_position_interval_seconds-(time.monotonic()-monitor_started)))
             except TimeoutError:
                 pass
+    ownership_task=asyncio.create_task(renew_ownership())
     protective_task=asyncio.create_task(protective_loop()) if replay_client is None else None
+    failures=0
+    await repository.operation_state('DATA_SYNCING','waiting_for_completed_market_observations')
     try:
         while not stopping.is_set():
+            cycle_started=time.monotonic()
+            delay=float(settings.worker_scan_interval_seconds)
             try:
+                await repository.configure_research_policy(Path(settings.research_root),test_environment=settings.environment=='test',
+                    approved={s.strip() for s in settings.approved_strategy_ids.split(',') if s.strip()},
+                    execution_costs={'fee_bps':str(settings.default_fee_bps),'slippage_bps':str(settings.default_slippage_bps),'spread_bps':'10','volume_participation':'.01'})
+                strategy_engine.member_parameters=await repository.frozen_runtime_parameters()
                 frame_id = replay_client.refresh() if replay_client else None
                 if replay_client and frame_id == await repository.last_worker_frame():
                     await asyncio.sleep(settings.worker_scan_interval_seconds)
@@ -190,19 +221,59 @@ async def main() -> None:
                 await repository.snapshot()
                 await repository.refresh_opportunity_feedback()
                 await repository.worker_heartbeat(frame_id)
+                problems=await repository.reconcile_runtime_health(settings.initial_cash_eur)
+                snapshot=await repository.snapshot()
+                allowed=await repository.frozen_runtime_parameters()
+                state=('RECOVERY_REQUIRED' if problems else 'RISK_HALTED' if snapshot['risk_state']!='HEALTHY'
+                    else 'DATA_DEGRADED' if result.provider_errors or result.status=='DATA_UNAVAILABLE'
+                    else 'ENTRY_SUSPENDED' if snapshot['control']!='RUNNING'
+                    else 'RESEARCH_ONLY' if not allowed and settings.environment!='test'
+                    else 'PAPER_TRADING' if int(snapshot['positions']) else 'PAPER_READY')
+                duration=time.monotonic()-cycle_started
+                await repository.operation_state(state,'scan_cycle_completed',{
+                    'last_completed_scan':utc_now().isoformat(),'scan_duration_seconds':duration,
+                    'schedule_overrun_seconds':max(0,duration-settings.worker_scan_interval_seconds),
+                    'markets_scanned':result.scanned,'successful_observations':len(result.candidates),
+                    'data_failures':len(result.provider_errors),'strategies_evaluated':sum(len(c.signals) for c in result.candidates),
+                    'qualified_signals':sum(bool(sig.evidence.get('entry_eligible')) for c in result.candidates for sig in c.signals),
+                    'rejected_signals':sum(not c.decision.accepted for c in result.candidates),
+                    'paper_entries_filled':sum(e.accepted for e in executions),
+                    'execution_outcomes':[e.__dict__ for e in executions],
+                    'next_scan_at':(utc_now()+__import__('datetime').timedelta(seconds=max(0,settings.worker_scan_interval_seconds-duration))).isoformat()})
+                if hasattr(repository,'capture_pilot_snapshot'):
+                    await repository.capture_pilot_snapshot(test_environment=settings.environment=="test",current_config=pilot_configuration(settings))
+                failures=0
+                delay=max(.1,settings.worker_scan_interval_seconds-duration)
             except MarketDataError as exc:
                 logger.warning("market data unavailable; skipping worker cycle", extra={"error": str(exc)})
-            problems = await repository.reconcile_runtime_health(settings.initial_cash_eur)
-            if problems:
-                logger.error("reconciliation failed", extra={"problems": problems})
+                failures+=1
+                try:
+                    await repository.operation_state('DATA_DEGRADED',type(exc).__name__)
+                except Exception:
+                    logger.exception('incident persistence unavailable')
+                delay=min(60,2**min(failures,6))
+            except Exception as exc:
+                failures+=1
+                logger.exception('worker cycle failed; durable state preserved')
+                try:
+                    await repository.operation_state('SYSTEM_ERROR',type(exc).__name__)
+                except Exception:
+                    logger.exception('incident persistence unavailable')
+                delay=min(60,2**min(failures,6))
             try:
-                await asyncio.wait_for(stopping.wait(),timeout=settings.worker_scan_interval_seconds)
+                await asyncio.wait_for(stopping.wait(),timeout=delay)
             except TimeoutError:
                 pass
     finally:
+        ownership_task.cancel()
+        await asyncio.gather(ownership_task,return_exceptions=True)
         if protective_task:
             protective_task.cancel()
             await asyncio.gather(protective_task,return_exceptions=True)
+        try:
+            await repository.release_coordinator(owner)
+        except Exception:
+            logger.exception('lease release unavailable; bounded expiry applies')
         await market_data.close()
         await engine.dispose()
 

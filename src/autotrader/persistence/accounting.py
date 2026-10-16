@@ -217,10 +217,27 @@ class AccountingRepositoryMixin:
         realized = await session.scalar(select(func.sum(JournalEventModel.realized_pnl_delta))) or ZERO
         pending_count = await session.scalar(select(func.count()).select_from(OrderModel).where(OrderModel.status.in_(["PENDING", "ACCEPTED"]))) or 0
         orders = await session.scalar(select(func.count()).select_from(OrderModel)) or 0
+        peak_row=await session.get(SystemStateModel,'equity_high_water')
+        if peak_row:
+            peak=Decimal(json.loads(peak_row.payload_json)['equity'])
+        else:
+            historical_peak=await session.scalar(select(func.max(EquitySnapshotModel.equity)).where(EquitySnapshotModel.account_id==self.account_id,EquitySnapshotModel.degraded.is_(False)))
+            peak=max(Decimal(500),historical_peak or Decimal(500))
+        if not missing:
+            peak=max(peak,equity)
+            if persist:
+                if peak_row:
+                    peak_row.payload_json=json.dumps({'equity':str(peak)})
+                else:
+                    session.add(SystemStateModel(key='equity_high_water',state='OBSERVED',reason='fresh_paper_equity',payload_json=json.dumps({'equity':str(peak)})))
         return {"initial_cash": "500", "cash": str(cash), "available_cash": str(balance.available),
             "reserved_cash": str(balance.reserved), "open_exposure": str(exact(exposure)) if not missing else "",
             "equity": str(exact(equity)) if not missing else "", "realized_pnl": str(realized),
             "unrealized_pnl": str(exact(exposure - basis)) if not missing else "",
+            "total_net_pnl":str(exact(equity-500)) if not missing else "",
+            "current_drawdown":str((peak-equity)/peak) if not missing else "",
+            "daily_risk_status":"UNAVAILABLE" if missing else "HALTED" if daily<=-15 else "WITHIN_LIMIT",
+            "weekly_risk_status":"UNAVAILABLE" if missing else "HALTED" if weekly<=-35 else "WITHIN_LIMIT",
             "daily_equity_change": str(daily) if not missing else "", "weekly_equity_change": str(weekly) if not missing else "",
             "valuation_degraded": str(bool(missing)).lower(), "missing_marks": ",".join(sorted(missing)),
             "positions": str(len(positions)), "orders": str(orders), "pending_orders": str(pending_count)}
@@ -252,9 +269,12 @@ class AccountingRepositoryMixin:
             promotion = await session.get(SystemStateModel, "research_entry_policy")
             if promotion:
                 policy = json.loads(promotion.payload_json)
-                strategy_id = json.loads(own_order.execution_json).get("strategy_id")
-                if policy.get("require_validation") and strategy_id not in policy["allowed_strategy_ids"]:
-                    return "strategy_not_approved_and_validated"
+                execution = json.loads(own_order.execution_json)
+                from autotrader.persistence.research_policy import promotion_error
+                error = promotion_error(policy, execution.get('strategy_id',''), execution.get('strategy_evidence',{}),
+                    execution.get('fee_bps','10'), execution.get('slippage_bps','8'))
+                if error:
+                    return error
         if stop is None:
             return "missing_protective_stop"
         cooldown = await session.get(CooldownModel, pair.symbol)
@@ -302,6 +322,8 @@ class AccountingRepositoryMixin:
         failpoint("before_capital_reservation")
         async with self.session_factory() as session, session.begin():
             await self._lock_account(session)
+            from autotrader.persistence.operations import verify_worker_lease
+            await verify_worker_lease(session, getattr(self,"worker_owner_id",None))
             existing = await session.scalar(select(OrderModel).where(OrderModel.client_order_id == idempotency_key))
             if existing:
                 if existing.account_id!=self.account_id:
@@ -368,6 +390,7 @@ class AccountingRepositoryMixin:
                         "asks": [[str(l.price), str(l.quantity)] for l in order_book.asks]}}
                 primary_strategy="ensemble-v3.4"
                 holding_seconds = None
+                evidence: dict[str, Any] = {}
                 if admission_quality is not None:
                     payload["admission_quality"] = admission_quality.payload()
                 if decision_id:
@@ -389,14 +412,17 @@ class AccountingRepositoryMixin:
                     promotion = await session.get(SystemStateModel, "research_entry_policy")
                     if promotion:
                         policy = json.loads(promotion.payload_json)
-                        if policy.get("require_validation") and primary_strategy not in policy["allowed_strategy_ids"]:
-                            error = "strategy_not_approved_and_validated"
+                        from autotrader.persistence.research_policy import promotion_error
+                        promotion_failure = promotion_error(policy, primary_strategy, evidence, fee_bps, slippage_bps)
+                        if promotion_failure:
+                            error = promotion_failure
                             payload["rejection_reason"] = error
                     strategy_cooldown=await session.get(CooldownModel,self.strategy_cooldown_key(primary_strategy))
                     if strategy_cooldown and aware(strategy_cooldown.expires_at)>utc_now():
                         error='strategy_cooldown'
                         payload['rejection_reason']=error
-                payload.update(strategy_id=primary_strategy,holding_hours=hours,holding_seconds=holding_seconds)
+                payload.update(strategy_id=primary_strategy,holding_hours=hours,holding_seconds=holding_seconds,
+                    strategy_evidence=evidence,fee_bps=str(fee_bps),slippage_bps=str(slippage_bps))
                 if side is Side.BUY and not error:
                     position_id = new_id("pos")
                     position = PositionModel(position_id=position_id, account_id=self.account_id, symbol=pair.symbol,
@@ -469,6 +495,8 @@ class AccountingRepositoryMixin:
     async def dispatch_order(self, order_id: str, order_book: OrderBook | None = None) -> Order:
         async with self.session_factory() as session, session.begin():
             await self._lock_account(session)
+            from autotrader.persistence.operations import verify_worker_lease
+            await verify_worker_lease(session, getattr(self,"worker_owner_id",None))
             row = await session.get(OrderModel, order_id, with_for_update=True)
             if row is None:
                 raise ValueError("Unknown order.")

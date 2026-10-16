@@ -150,7 +150,7 @@ def calculate_features(candles: Sequence[Candle], order_book_imbalance: Decimal 
         timeframe=latest.timeframe,
         data_quality=quality,
         metadata={"source": latest.source, "observations": len(ordered), "missing": missing,
-            "last_high":latest.high,"last_low":latest.low,"last_close":latest.close,
+            "last_high":latest.high,"last_low":latest.low,"last_close":latest.close,"last_volume":latest.volume,
             "previous_close":previous_close,
             "return_20": latest.close / closes[-21] - 1 if len(closes) > 20 else Decimal(0),
             "return_history_20": [str(current / previous - 1) for previous, current in zip(closes[-21:-1], closes[-20:], strict=False)] if len(closes) > 20 else [],

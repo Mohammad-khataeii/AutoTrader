@@ -1,4 +1,5 @@
 x-runtime: &runtime
+  image: ${COMPOSE_PROJECT_NAME:-autotrader-v41}-app:${AUTOTRADER_IMAGE_TAG:-4.1.0}
   build:
     context: .
     dockerfile: Dockerfile.backend
@@ -15,10 +16,19 @@ x-runtime: &runtime
     AI_CACHED_INPUT_PRICE_PER_MILLION: ${AI_CACHED_INPUT_PRICE_PER_MILLION:-}
     AI_CACHE_WRITE_PRICE_PER_MILLION: ${AI_CACHE_WRITE_PRICE_PER_MILLION:-}
     AI_OUTPUT_PRICE_PER_MILLION: ${AI_OUTPUT_PRICE_PER_MILLION:-}
+    AI_MAX_ANALYSES_PER_DAY: ${AI_MAX_ANALYSES_PER_DAY:-30}
+    AI_MAX_ANALYSES_PER_HOUR: ${AI_MAX_ANALYSES_PER_HOUR:-6}
+    AI_MONTHLY_BUDGET_USD: ${AI_MONTHLY_BUDGET_USD:-10}
+    AI_TIMEOUT_SECONDS: ${AI_TIMEOUT_SECONDS:-12}
+    AI_REQUIRE_PERSISTENT_QUOTA: "true"
+    AI_PRICING_VERIFIED_AT: ${AI_PRICING_VERIFIED_AT:-}
+    PAPER_TRADING_ENABLED: "true"
+    LIVE_TRADING_ENABLED: "false"
+    INITIAL_CASH_EUR: "500"
     RESEARCH_ROOT: /app/research
     ALLOCATION_PROFILE: ${ALLOCATION_PROFILE:-balanced}
     APPROVED_STRATEGY_IDS: ${APPROVED_STRATEGY_IDS:-}
-  volumes: [./.data/research:/app/research:ro]
+  volumes: [research-data:/app/research:ro, reports:/app/reports]
   restart: unless-stopped
   networks: [app, data]
   security_opt: [no-new-privileges:true]
@@ -32,11 +42,19 @@ x-runtime: &runtime
     options: {max-size: 10m, max-file: "3"}
 
 services:
+  research-init:
+    <<: *runtime
+    profiles: [bootstrap]
+    user: "0"
+    restart: "no"
+    command: [python, -m, autotrader.research.seed]
+    volumes: [./.data/research:/seed:ro, research-data:/app/research, reports:/app/reports]
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER]
   research-worker:
     <<: *runtime
     profiles: [research]
     command: [autotrader-research-worker]
-    volumes: [./.data/research:/app/research]
+    volumes: [research-data:/app/research, reports:/app/reports]
     mem_limit: 1536m
     depends_on:
       migrate: {condition: service_completed_successfully}
@@ -64,6 +82,7 @@ services:
     environment:
       <<: *environment
       WORKER_SCAN_INTERVAL_SECONDS: ${WORKER_SCAN_INTERVAL_SECONDS:-60}
+      WORKER_POSITION_INTERVAL_SECONDS: ${WORKER_POSITION_INTERVAL_SECONDS:-5}
       SCANNER_MAX_PAIRS: ${SCANNER_MAX_PAIRS:-8}
     depends_on:
       backend: {condition: service_healthy}
@@ -75,6 +94,7 @@ services:
       start_period: 120s
     stop_grace_period: 30s
   frontend:
+    image: ${COMPOSE_PROJECT_NAME:-autotrader-v41}-frontend:${AUTOTRADER_IMAGE_TAG:-4.1.0}
     build: {context: ./frontend}
     depends_on:
       backend: {condition: service_healthy}
@@ -90,7 +110,7 @@ services:
       timeout: 5s
       retries: 3
   postgres:
-    image: autotrader-v34-postgres:16-alpine
+    image: autotrader-v41-postgres:16-patched
     build: {context: ., dockerfile: Dockerfile.postgres}
     environment:
       POSTGRES_USER: autotrader
@@ -107,7 +127,7 @@ services:
       timeout: 5s
       retries: 10
   redis:
-    image: autotrader-v34-redis:7-alpine
+    image: autotrader-v41-redis:7-patched
     build: {context: ., dockerfile: Dockerfile.redis}
     command: [redis-server, --appendonly, "yes", --maxmemory, 128mb, --maxmemory-policy, noeviction]
     volumes: [redis-data:/data]
@@ -132,7 +152,7 @@ services:
   grafana:
     image: autotrader-v34-grafana:13.2.4
     build: {context: ., dockerfile: Dockerfile.grafana}
-    profiles: [monitoring]
+    profiles: [quarantined-monitoring]
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD must be set}
       GF_USERS_ALLOW_SIGN_UP: "false"
@@ -150,6 +170,8 @@ volumes:
   postgres-data: {}
   redis-data: {}
   grafana-data: {}
+  research-data: {}
+  reports: {}
 secrets:
   dashboard_password:
     file: ${PROM_PASSWORD_FILE:-.secrets/dashboard_password}

@@ -39,7 +39,9 @@ class DecisionEngine:
 
         atr = features.atr or (entry_price * Decimal("0.02"))
         v4_signals = [signal for signal in signals if signal.evidence.get("strategy_version") == "4.0.0"]
-        parameters = v4_signals[0].evidence.get("parameters", {}) if v4_signals else {}
+        eligible_v4 = [s for s in v4_signals if s.evidence.get('entry_eligible')]
+        primary = min(eligible_v4,key=lambda s:(-s.score,s.strategy_id)) if eligible_v4 else (v4_signals[0] if v4_signals else None)
+        parameters = primary.evidence.get("parameters", {}) if primary else {}
         stop_atr = Decimal(parameters.get("stop_atr", "1.5"))
         target_atr = Decimal(parameters.get("target_atr", "1"))
         stop_loss = quantize_down(max(entry_price - (atr * stop_atr), Decimal("0")), pair.price_step)

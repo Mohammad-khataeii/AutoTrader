@@ -22,6 +22,13 @@ class AIEventMixin:
             if expires:
                 from datetime import datetime
                 if aware(datetime.fromisoformat(expires)) > utc_now():
+                    if row.state == 'READY':
+                        metrics=await session.get(SystemStateModel,'ai_cache_metrics')
+                        hits=json.loads(metrics.payload_json).get('hits',0)+1 if metrics else 1
+                        if metrics:
+                            metrics.payload_json=json.dumps({'hits':hits})
+                        else:
+                            session.add(SystemStateModel(key='ai_cache_metrics',state='ACTIVE',reason='cache_reuse',payload_json=json.dumps({'hits':hits})))
                     return None, payload.get("assessment") if row.state == "READY" else None
             claim = new_id("aie")
             encoded = json.dumps({"claim": claim, "expires_at": (utc_now() + timedelta(seconds=60)).isoformat()})

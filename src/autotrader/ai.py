@@ -83,6 +83,15 @@ class OpenAIProvider:
             raise ValueError("Configure an official model ID and verify account availability.")
         if repository is None:
             raise ValueError("Paid AI requires durable PostgreSQL budget accounting.")
+        if settings.environment != 'test':
+            from datetime import datetime
+            try:
+                verified=datetime.fromisoformat(settings.ai_pricing_verified_at)
+                age=(utc_now()-verified).total_seconds()
+            except (ValueError,TypeError):
+                raise ValueError('Verify and date model pricing before enabling paid AI.') from None
+            if not 0<=age<=31*86400:
+                raise ValueError('Paid model pricing verification is stale or in the future.')
         prices = (settings.ai_input_price_per_million, settings.ai_cached_input_price_per_million,
                   settings.ai_output_price_per_million,settings.ai_cache_write_price_per_million)
         if any(p is None or not p.is_finite() or p < 0 for p in prices):
@@ -123,10 +132,15 @@ class OpenAIProvider:
                     raise ValueError("Configured model identity could not be verified.")
                 request_id = await self.repository.reserve_ai_budget(bound,self.settings.ai_model,features.symbol,
                     {"input_per_million":str(input_price),"cached_per_million":str(cached_price),"write_per_million":str(write_price),"output_per_million":str(output_price),"prompt_bytes":str(prompt_bytes),"max_output_tokens":str(self.settings.ai_max_output_tokens)},
-                    min(self.settings.ai_monthly_budget_usd,Decimal(10)))
+                    min(self.settings.ai_monthly_budget_usd,Decimal(10)),
+                    max_per_day=self.settings.ai_max_analyses_per_day,max_per_hour=self.settings.ai_max_analyses_per_hour,
+                    event_fingerprint=str(features.metadata.get('_ai_event_fingerprint') or sha256(prompt.encode()).hexdigest()),
+                    estimated_input_tokens=prompt_bytes+1024,reserved_output_tokens=self.settings.ai_max_output_tokens,
+                    portfolio_reserve_daily=self.settings.ai_portfolio_daily_reserve,portfolio_reserve_hourly=self.settings.ai_portfolio_hourly_reserve)
                 if request_id is None:
                     return _failed_assessment(features,self.settings.ai_model,"AI monthly budget exhausted or reserved.")
-                await self.repository.ai_request_sent(request_id)
+                await self.repository.ai_request_sent(request_id,max_per_day=self.settings.ai_max_analyses_per_day,
+                    max_per_hour=self.settings.ai_max_analyses_per_hour)
                 response = await client.responses.create(model=self.settings.ai_model,input=prompt,
                     max_output_tokens=self.settings.ai_max_output_tokens,
                     text={"format":{"type":"json_schema", "name":"crypto_assessment", "strict":True, "schema":schema}},store=False,service_tier="default",
@@ -141,9 +155,9 @@ class OpenAIProvider:
             try:
                 parsed = AIResponseSchema.model_validate_json(response.output_text)
             except ValidationError:
-                await self.repository.finish_ai_request(request_id,input_tokens=inputs,output_tokens=outputs,cached_tokens=cached,cache_write_tokens=writes,cost=estimated_cost,error="invalid_structured_response")
+                await self.repository.finish_ai_request(request_id,input_tokens=inputs,output_tokens=outputs,cached_tokens=cached,cache_write_tokens=writes,cost=estimated_cost,error="invalid_structured_response",provider_response_id=getattr(response,'id',None))
                 return _failed_assessment(features,self.settings.ai_model,"AI response failed schema validation.")
-            await self.repository.finish_ai_request(request_id,input_tokens=inputs,output_tokens=outputs,cached_tokens=cached,cache_write_tokens=writes,cost=estimated_cost)
+            await self.repository.finish_ai_request(request_id,input_tokens=inputs,output_tokens=outputs,cached_tokens=cached,cache_write_tokens=writes,cost=estimated_cost,provider_response_id=getattr(response,'id',None))
             return AIAssessment(
                 assessment_id=new_id("ai"),
                 symbol=features.symbol,
@@ -184,7 +198,7 @@ class EventDrivenAIProvider:
         qualified = any(s.evidence.get("entry_eligible") for s in signals)
         legacy_value = sum((s.score for s in signals), Decimal(0)) >= Decimal("1.2")
         news = await self.repository.news_context(features.symbol)
-        if features.data_quality.value != "GOOD" or not (qualified or legacy_value or news):
+        if features.data_quality.value != "GOOD" or not (qualified or legacy_value or any(n.get('verification')=='verified' for n in news)):
             return replace(_failed_assessment(features, self.model, "No high-value or material-change AI event."),
                 provider="event-gate", failed=False)
         price = Decimal(str(features.metadata.get("last_close", 0)))
@@ -206,9 +220,12 @@ class EventDrivenAIProvider:
         if claim is None:
             return _failed_assessment(features, self.model, "Equivalent AI event is already in progress; deterministic policy applies.")
         try:
+            features.metadata['_ai_event_fingerprint']=key
             result = await self.provider.assess(features, signals)
         except Exception as exc:
             result = _failed_assessment(features, self.model, "AI event failed: " + type(exc).__name__)
+        finally:
+            features.metadata.pop('_ai_event_fingerprint',None)
         await self.repository.finish_ai_event(key, claim, json.loads(_json(result)), ttl=30 if result.failed else 900)
         return result
 

@@ -36,10 +36,11 @@ def test_api_scanner_serializes_domain_objects(monkeypatch: pytest.MonkeyPatch, 
     assert "decision" in payload
 
 
-def test_api_paper_order_rejects_when_no_real_candidate() -> None:
+def test_api_paper_order_rejects_when_no_real_candidate(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setenv('DATABASE_URL',f'sqlite+aiosqlite:///{tmp_path / "order-api.db"}')
     app=create_app()
     app.state.scanner = UnavailableScanner()
-    client = TestClient(app)
-    response = client.post("/api/paper/orders", auth=("admin", "change-me"))
+    with TestClient(app) as client:
+        response = client.post("/api/paper/orders", auth=("admin", "change-me"))
     assert response.status_code == 409
     assert response.json()["detail"]["status"] == "DATA_UNAVAILABLE"
