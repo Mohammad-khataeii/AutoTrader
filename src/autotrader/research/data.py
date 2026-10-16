@@ -4,9 +4,12 @@ import asyncio
 import gzip
 import hashlib
 import json
+import os
+import tempfile
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
@@ -30,9 +33,16 @@ def digest(value: bytes) -> str:
 
 def atomic_write(path: Path, data: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_bytes(data)
-    temporary.replace(path)
+    # Concurrent readers see either complete version; writers never share a temp.
+    descriptor, name = tempfile.mkstemp(prefix=path.name + ".", suffix=".tmp", dir=path.parent)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(name, path)
+    finally:
+        Path(name).unlink(missing_ok=True)
 
 
 @dataclass(frozen=True)
@@ -63,7 +73,8 @@ def validate_bar(bar: HistoricalBar) -> None:
         raise ValueError("historical_currency_or_symbol_mismatch")
     seconds = TIMEFRAMES[bar.timeframe]
     start = datetime.fromisoformat(bar.start)
-    if start.tzinfo is None or int(start.timestamp()) % seconds or start.microsecond:
+    offset = start.utcoffset()
+    if offset is None or offset.total_seconds() != 0 or int(start.timestamp()) % seconds or start.microsecond:
         raise ValueError("unaligned_or_naive_historical_timestamp")
     if start.timestamp() + seconds > utc_now().timestamp():
         raise ValueError("incomplete_or_future_historical_bar")
@@ -123,7 +134,7 @@ def save_dataset(root: Path, bars: list[HistoricalBar], *, requested_start: date
         seen[bar.start] = bar
     ordered = list(seen.values())
     # Stable content identity excludes ingestion wall time, retains all market values.
-    identity = digest(canonical([{k: v for k, v in asdict(b).items() if k != "ingested_at"} for b in ordered]))
+    identity = digest(canonical([{k: v for k, v in asdict(b).items() if k not in {"ingested_at", "dataset_version"}} for b in ordered]))
     ordered = [HistoricalBar(**{**asdict(b), "dataset_version": identity}) for b in ordered]
     seconds = TIMEFRAMES[timeframe]
     actual = {int(datetime.fromisoformat(b.start).timestamp()) for b in ordered}
@@ -139,7 +150,16 @@ def save_dataset(root: Path, bars: list[HistoricalBar], *, requested_start: date
     payload = b"\n".join(canonical(asdict(b)) for b in ordered) + (b"\n" if ordered else b"")
     relative = Path("datasets") / f"{symbol}-{timeframe}-{identity[:16]}.jsonl.gz"
     compressed = gzip.compress(payload, mtime=0)
-    atomic_write(root / relative, compressed)
+    if (root / relative).exists():
+        existing = (root / relative).read_bytes()
+        raw_rows = [json.loads(line) for line in gzip.decompress(existing).splitlines()]
+        existing_identity = digest(canonical([{k: v for k, v in row.items()
+            if k not in {"ingested_at", "dataset_version"}} for row in raw_rows]))
+        if existing_identity != identity:
+            raise ValueError("existing_content_addressed_dataset_corrupted")
+        compressed = existing  # Never rewrite an immutable version's ingestion time.
+    else:
+        atomic_write(root / relative, compressed)
     manifest = {"schema": SCHEMA, "dataset_version": identity, "source": sorted({b.source for b in ordered}),
         "symbol": symbol, "base": symbol.split("-")[0], "quote": "EUR", "timeframe": timeframe,
         "requested_start": requested_start.isoformat(), "requested_end_exclusive": requested_end.isoformat(),
@@ -171,7 +191,49 @@ def load_dataset(root: Path, manifest: dict[str, Any]) -> list[HistoricalBar]:
         result.append(bar)
     if len(result) != manifest["observations"]:
         raise ValueError("dataset_count_mismatch")
+    if any(b.symbol != manifest["symbol"] or b.timeframe != manifest["timeframe"] for b in result):
+        raise ValueError("dataset_identity_mismatch")
+    if any(a.start >= b.start for a, b in pairwise(result)):
+        raise ValueError("dataset_timestamp_order_or_duplicate")
     return result
+
+
+async def ingest_incremental(provider: CoinbaseHistory, symbol: str, timeframe: str,
+                             start: datetime, end: datetime) -> dict[str, Any]:
+    """Resume verified coverage, including recorded no-tick gaps, without filling it.
+
+    The per-dataset pointer is published last. A failed download leaves the previous
+    version readable and completed raw pages reusable. Old immutable versions stay.
+    """
+    root = provider.root
+    pointer = root / "coverage" / f"{symbol}-{timeframe}.json"
+    previous = json.loads(pointer.read_bytes()) if pointer.exists() else None
+    bars: list[HistoricalBar] = []
+    intervals = [(start, end)]
+    parents = []
+    if previous:
+        bars = load_dataset(root, previous)
+        left = datetime.fromisoformat(previous["requested_start"])
+        right = datetime.fromisoformat(previous["requested_end_exclusive"])
+        if start <= right and end >= left:
+            intervals = [(a, b) for a, b in ((start, min(end, left)), (max(start, right), end)) if a < b]
+            start, end = min(start, left), max(end, right)
+            parents = [previous["dataset_version"]]
+        else:
+            bars = []  # Do not misrepresent an unrequested interval as acquired.
+    acquisitions = []
+    for left, right in intervals:
+        new, provenance = await provider.fetch(symbol, timeframe, left, right)
+        bars.extend(new)
+        acquisitions.append({"start": left.isoformat(), "end_exclusive": right.isoformat(), **provenance})
+    if not acquisitions and previous:
+        return dict(previous)
+    manifest = save_dataset(root, bars, requested_start=start, requested_end=end,
+        symbol=symbol, timeframe=timeframe, provenance={"parent_versions": parents,
+            "acquisitions": acquisitions, "gap_policy": "unobserved intervals retained; no synthetic candles",
+            "retention": "keep immutable versions/raw pages while referenced by research; no automatic deletion"})
+    atomic_write(pointer, canonical(manifest))
+    return manifest
 
 
 class CoinbaseHistory:
@@ -192,9 +254,19 @@ class CoinbaseHistory:
             stored = json.loads(cache.read_text(encoding="utf-8"))
             if digest(stored["body"].encode("utf-8")) != stored["body_sha256"]:
                 raise ValueError("raw_history_cache_hash_mismatch")
+            # Product listing is current-universe metadata, not immutable history.
+            stale_products = path == "/products" and (utc_now() - datetime.fromisoformat(stored["ingested_at"])).total_seconds() > 86400
         else:
+            stale_products = True
+        if not cache.exists() or stale_products:
             for attempt in range(5):
-                response = await self.client.get(path, params=params)
+                try:
+                    response = await self.client.get(path, params=params)
+                except httpx.TransportError:
+                    if attempt == 4:
+                        raise
+                    await asyncio.sleep(min(2 ** attempt, 16))
+                    continue
                 if response.status_code in {429, 500, 502, 503, 504} and attempt < 4:
                     try:
                         delay = float(response.headers.get("Retry-After", 2 ** attempt))
@@ -227,7 +299,8 @@ class CoinbaseHistory:
         pages = []
         cursor = int(start.timestamp())
         while cursor < int(end.timestamp()):
-            stop = min(cursor + 300 * seconds, int(end.timestamp()))
+            # UTC page boundaries remain stable when the requested start moves.
+            stop = min((cursor // (300 * seconds) + 1) * 300 * seconds, int(end.timestamp()))
             params = {"granularity": str(seconds), "start": datetime.fromtimestamp(cursor, UTC).isoformat(),
                       "end": datetime.fromtimestamp(stop - 1, UTC).isoformat()}
             rows, provenance = await self._get(f"/products/{symbol}/candles", params)
@@ -238,6 +311,8 @@ class CoinbaseHistory:
                 if not isinstance(raw, list) or len(raw) != 6:
                     raise ValueError("invalid_provider_candle_shape")
                 timestamp, low, high, opening, closing, volume = raw
+                if not isinstance(timestamp, (int, float)) or timestamp != int(timestamp) or timestamp < 0 or timestamp > 100000000000:
+                    raise ValueError("invalid_provider_timestamp_units")
                 if not cursor <= timestamp < stop:
                     continue
                 flags = []

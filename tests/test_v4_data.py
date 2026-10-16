@@ -102,3 +102,41 @@ def test_report_pointer_portable_between_windows_and_linux(tmp_path: Path) -> No
     (tmp_path / "latest-run.json").write_bytes(canonical({"summary":"../outside.json", "summary_sha256":digest(body)}))
     with pytest.raises(ValueError, match="outside_store"):
         load_latest(tmp_path)
+
+
+async def test_incremental_extension_reuses_verified_coverage_and_crash_pages(tmp_path: Path) -> None:
+    from autotrader.research.data import ingest_incremental
+    requested = []
+    def boundary(request: httpx.Request) -> httpx.Response:
+        if request.url.path == '/products':
+            return httpx.Response(200, json=[{'id':'BTC-EUR','base_currency':'BTC','quote_currency':'EUR','status':'online'}])
+        requested.append(request.url)
+        left = datetime.fromisoformat(request.url.params['start'])
+        right = datetime.fromisoformat(request.url.params['end'])
+        return httpx.Response(200, json=[[int((left+timedelta(hours=i)).timestamp()),99,102,100,101,3]
+            for i in range(int((right-left).total_seconds()//3600)+1)])
+    provider = CoinbaseHistory(tmp_path, httpx.AsyncClient(base_url='https://api.exchange.coinbase.com',transport=httpx.MockTransport(boundary)))
+    try:
+        first = await ingest_incremental(provider,'BTC-EUR','1h',START,START+timedelta(hours=4))
+        second = await ingest_incremental(provider,'BTC-EUR','1h',START,START+timedelta(hours=6))
+        repeated = await ingest_incremental(provider,'BTC-EUR','1h',START,START+timedelta(hours=6))
+        assert len(requested)==2 and datetime.fromisoformat(requested[1].params['start'])==START+timedelta(hours=4)
+        assert len(load_dataset(tmp_path,first))==4 and len(load_dataset(tmp_path,second))==6
+        assert repeated==second
+        # Saving loaded bars must retain identity and preserve old manifest readability.
+        replay = save_dataset(tmp_path,load_dataset(tmp_path,first),requested_start=START,
+            requested_end=START+timedelta(hours=4),symbol='BTC-EUR',timeframe='1h',provenance={})
+        assert replay['dataset_version']==first['dataset_version']
+        assert replay['file_sha256']==first['file_sha256']
+        assert len(load_dataset(tmp_path,first))==4
+        (tmp_path/second['file']).write_bytes(b'corrupted')
+        with pytest.raises(ValueError,match='hash_mismatch'):
+            await ingest_incremental(provider,'BTC-EUR','1h',START,START+timedelta(hours=7))
+        assert len(requested)==2  # Corruption is detected before further acquisition.
+    finally:
+        await provider.close()
+
+
+def test_millisecond_and_non_utc_timestamps_cannot_be_saved() -> None:
+    with pytest.raises(ValueError,match='timestamp'):
+        validate_bar(replace(bar(),start='2024-01-01T01:00:00+01:00'))
