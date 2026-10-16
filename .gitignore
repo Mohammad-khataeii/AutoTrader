@@ -17,3 +17,7 @@ playwright-report/
 docs/evidence/*.log
 *.egg-info/
 .data/
+
+.env.local
+.env.*
+!.env.example

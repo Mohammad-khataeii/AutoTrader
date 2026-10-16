@@ -70,7 +70,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Versioned genuine EUR history and reproducible paper research")
     sub = parser.add_subparsers(dest="command", required=True)
     research = sub.add_parser("research")
-    research.add_argument("action", choices=["download", "full", "evaluate", "availability"])
+    research.add_argument("action", choices=["download", "full", "evaluate", "availability", "diagnose"])
     research.add_argument("--root", type=Path, default=Path(".data/research"))
     research.add_argument("--start", default="2020-01-01")
     research.add_argument("--end", default=utc_now().date().isoformat())
@@ -81,7 +81,17 @@ def main() -> None:
     research.add_argument("--other-five-minute-days", type=int, default=90)
     research.add_argument("--context-days", type=int, default=90)
     research.add_argument("--timeframes", nargs="+", choices=TIMEFRAMES, default=["5m", "15m"])
+    research.add_argument("--experimental", action="store_true", help="Run bounded unvalidated V4.2 hypotheses; original report pointer is preserved")
+    research.add_argument("--run", type=Path, help="Frozen run directory for trade diagnostics")
+    research.add_argument("--output", type=Path, default=Path(".data/research/diagnostics/v42-original-trades.json"))
     args = parser.parse_args()
+    if args.action == "diagnose":
+        if args.run is None:
+            parser.error("diagnose requires --run pointing to a frozen research run")
+        from autotrader.research.diagnostics import analyze_run
+        report = analyze_run(args.root, args.run, args.output)
+        print(json.dumps({"output": str(args.output), "coverage": report["coverage"], "classification_counts": report["classification_counts"]}))
+        return
     start = datetime.fromisoformat(args.start).replace(tzinfo=UTC)
     end = datetime.fromisoformat(args.end).replace(tzinfo=UTC)
     if min(args.hourly_days, args.intraday_days, args.five_minute_days, args.other_five_minute_days, args.context_days) < 0:
@@ -99,7 +109,7 @@ def main() -> None:
         print(json.dumps(catalog, indent=2))
     if args.action in {"full", "evaluate"}:
         from autotrader.research.workflow import run_full
-        report = run_full(args.root, catalog, timeframes=tuple(args.timeframes), assets=tuple(args.assets))
+        report = run_full(args.root, catalog, timeframes=tuple(args.timeframes), assets=tuple(args.assets),experimental=args.experimental)
         print(json.dumps({"run_id": report["run_id"], "verdict": report["verdict"],
                           "passed_strategies": report["passed_strategies"]}), flush=True)
     if catalog["failures"]:

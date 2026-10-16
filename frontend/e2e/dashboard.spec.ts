@@ -44,7 +44,7 @@ test("authenticated runtime data, all pages, and persistent paper controls", asy
     return body.jobs.find((row: any) => row.job_id === job.job_id)?.status;
   }, { timeout: 120000, intervals: [2000] }).toBe("COMPLETED");
   await expect(page.getByText("COMPLETED", { exact: true }).first()).toBeVisible({ timeout: 15000 });
-  await page.screenshot({ path: "../docs/evidence/strategy-lab-v4_1.png", fullPage: true });
+  await page.screenshot({ path: `../docs/evidence/strategy-lab-${process.env.AUTOTRADER_EVIDENCE_VERSION ?? "v4_1"}.png`, fullPage: true });
   await page.getByRole("button", { name: "Backtesting Lab", exact: true }).click();
   await page.getByLabel("Replay entry policy").selectOption("LIMIT");
   const replayResponse = page.waitForResponse(response => response.url().endsWith("/api/backtests") && response.request().method() === "POST", { timeout: 150000 });
@@ -74,7 +74,7 @@ test("authenticated runtime data, all pages, and persistent paper controls", asy
     await expect(page.locator(".recharts-area-area")).toBeVisible();
     await expect(page.locator(".recharts-area-curve")).toHaveAttribute("d", /[ML]/);
   }
-  await page.screenshot({ path: "../docs/evidence/dashboard-v4_1.png", fullPage: true });
+  await page.screenshot({ path: `../docs/evidence/dashboard-${process.env.AUTOTRADER_EVIDENCE_VERSION ?? "v4_1"}.png`, fullPage: true });
   await page.getByRole("button", { name: "AI Intelligence", exact: true }).click();
   await expect(page.getByText("Rolling 60 minutes", { exact: true })).toBeVisible();
   const ai = await (await request.get("/api/ai", { headers })).json();
@@ -83,18 +83,22 @@ test("authenticated runtime data, all pages, and persistent paper controls", asy
   expect(ai.budget.rolling_hour_used).toBe(0);
   await page.getByRole("button", { name: "Paper Pilot", exact: true }).click();
   const pilotList = await (await request.get("/api/pilots", { headers })).json();
-  if (!pilotList.length) await page.getByRole("button", { name: "Start 30-day paper pilot", exact: true }).click();
+  if (!pilotList.some((p: any) => p.state === "ACTIVE")) await page.getByRole("button", { name: "Start 30-day paper pilot", exact: true }).click();
   await expect(page.getByRole("heading", { name: "RESEARCH_ONLY · ACTIVE" })).toBeVisible();
   await expect.poll(async () => {
     const pilots = await (await request.get("/api/pilots", { headers })).json();
-    if (!pilots.length) return 0;
-    const report = await (await request.get(`/api/pilots/${pilots[0].pilot_id}/report`, { headers })).json();
+    const activePilot = pilots.find((p: any) => p.state === "ACTIVE");
+    if (!activePilot) return 0;
+    const report = await (await request.get(`/api/pilots/${activePilot.pilot_id}/report`, { headers })).json();
     expect(report.thirty_days_elapsed).toBe(false);
     expect(report.mode).toBe("RESEARCH_ONLY");
     return report.observations;
   }, { timeout: 90000, intervals: [3000] }).toBeGreaterThan(0);
   const pilots = await (await request.get("/api/pilots", { headers })).json();
-  const csv = await request.get(`/api/pilots/${pilots[0].pilot_id}/report?format=csv`, { headers });
+  expect(pilots.length).toBeGreaterThanOrEqual(pilotList.length);
+  const activePilot = pilots.find((p: any) => p.state === "ACTIVE");
+  expect(activePilot).toBeTruthy();
+  const csv = await request.get(`/api/pilots/${activePilot.pilot_id}/report?format=csv`, { headers });
   expect(csv.ok()).toBeTruthy();
   expect(csv.headers()["content-type"]).toContain("text/csv");
   expect(errors).toEqual([]);

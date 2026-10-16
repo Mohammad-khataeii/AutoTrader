@@ -11,12 +11,12 @@ from pathlib import Path
 from typing import Any, Literal
 
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException, Request, status
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from prometheus_client import CONTENT_TYPE_LATEST, Gauge, generate_latest
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
 from sqlalchemy import select
-from starlette.responses import Response
+from starlette.responses import Response, StreamingResponse
 
 from autotrader.ai import make_ai_provider
 from autotrader.api.security import AuthenticationThrottle
@@ -25,6 +25,7 @@ from autotrader.decision import DecisionEngine
 from autotrader.domain import Candle, OrderType, new_id, utc_now
 from autotrader.execution_gateway import PaperExecutionGateway
 from autotrader.market_data.revolut import RevolutXPublicClient
+from autotrader.market_data.scheduling import request_priority
 from autotrader.market_data.service import MarketDataService
 from autotrader.persistence.database import (
     check_schema,
@@ -48,6 +49,13 @@ equity_metric=Gauge('autotrader_equity_eur','Validated paper account equity')
 cash_metric=Gauge('autotrader_available_cash_eur','Available paper cash')
 risk_metric=Gauge('autotrader_risk_halted','Persistent non-healthy runtime state')
 reconciliation_metric=Gauge('autotrader_reconciliation_errors','Financial replay mismatches')
+
+
+class ShadowCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    request_id: str = Field(min_length=1,max_length=64,pattern=r"^[A-Za-z0-9_-]+$")
+    name: str = Field(min_length=1,max_length=128)
+    strategy_id: str = Field(min_length=1,max_length=64)
 
 
 class BacktestRequest(BaseModel):
@@ -154,9 +162,11 @@ def create_app() -> FastAPI:
         base_url=settings.revolut_x_base_url,
         region=settings.revolut_x_region,
         timeout=float(settings.market_data_timeout_seconds),
-        rate_reserver=repository.reserve_public_request,
+        rate_reserver=lambda family:repository.reserve_public_request(family,priority=request_priority.get()),
+        cooldown_publisher=repository.defer_public_requests,
+        event_recorder=repository.market_metric,
     )
-    market_data = MarketDataService(market_client, max_staleness_seconds=settings.market_data_max_staleness_seconds)
+    market_data = MarketDataService(market_client, max_staleness_seconds=settings.market_data_max_staleness_seconds,state_store=repository,candle_lookback=720 if settings.shadow_enabled else 240)
     gateway = PaperExecutionGateway(
         repository,
         market_data=market_data,
@@ -175,20 +185,25 @@ def create_app() -> FastAPI:
         initial_cash=settings.initial_cash_eur,
     )
 
+    from autotrader.shadow.lab import ShadowLab
+    shadow_lab = ShadowLab(repository, settings)
+
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         await create_schema(engine)
         await repository.initialize_portfolio(settings.initial_cash_eur)
-        await repository.configure_research_policy(Path(settings.research_root), test_environment=settings.environment == "test",
+        await repository.configure_research_policy(Path(settings.research_root), test_environment=settings.environment == "test" and not settings.shadow_enabled,
             approved={s.strip() for s in settings.approved_strategy_ids.split(",") if s.strip()},
             execution_costs={'fee_bps':str(settings.default_fee_bps),'slippage_bps':str(settings.default_slippage_bps),'spread_bps':'10','volume_participation':'.01'})
         strategy_engine.member_parameters=await repository.frozen_runtime_parameters()
         yield
+        await shadow_lab.close()
         await market_data.close()
         await engine.dispose()
 
-    app = FastAPI(title=settings.app_name, version="4.1.0", lifespan=lifespan)
+    app = FastAPI(title=settings.app_name, version="4.2.0", lifespan=lifespan)
     app.state.auth_throttle = AuthenticationThrottle()
+    app.state.shadow_lab = shadow_lab
     app.state.repository = repository
     app.state.engine = engine
     app.state.market_data = market_data
@@ -197,7 +212,7 @@ def create_app() -> FastAPI:
 
     @app.get("/healthz")
     async def healthz() -> dict[str, str]:
-        return {"status": "ok", "mode": "paper", "version":"4.1.0"}
+        return {"status": "ok", "mode": "paper", "version":"4.2.0"}
 
     @app.get("/readyz")
     async def readyz() -> dict[str, str | bool]:
@@ -223,7 +238,7 @@ def create_app() -> FastAPI:
     async def overview() -> dict[str, object]:
         snapshot = await repository.snapshot()
         return {
-            "application_version":"4.1.0",
+            "application_version":"4.2.0",
             "portfolio": snapshot,
             "health": {
                 "api": "ok",
@@ -299,7 +314,7 @@ def create_app() -> FastAPI:
     async def promotion_decision(candidate_id: str, request: PromotionRequest, actor: str = Depends(require_user)) -> Any:
         try:
             await repository.decide_promotion(candidate_id,approve=request.approve,actor=actor,reason=request.reason)
-            await repository.configure_research_policy(Path(settings.research_root),test_environment=settings.environment=='test',approved=set(),
+            await repository.configure_research_policy(Path(settings.research_root),test_environment=settings.environment=='test' and not settings.shadow_enabled,approved=set(),
                 execution_costs={'fee_bps':str(settings.default_fee_bps),'slippage_bps':str(settings.default_slippage_bps),'spread_bps':'10','volume_participation':'.01'})
             strategy_engine.member_parameters=await repository.frozen_runtime_parameters()
             return await repository.promotion_candidates()
@@ -313,7 +328,7 @@ def create_app() -> FastAPI:
     @app.post('/api/pilots',dependencies=[Depends(require_user)],status_code=201)
     async def start_pilot(request: PilotRequest) -> Any:
         try:
-            return await repository.start_pilot(request.request_id,pilot_configuration(settings),test_environment=settings.environment=='test')
+            return await repository.start_pilot(request.request_id,pilot_configuration(settings),test_environment=settings.environment=='test' and not settings.shadow_enabled)
         except ValueError as exc:
             raise HTTPException(status_code=409,detail=str(exc)) from None
 
@@ -353,6 +368,8 @@ def create_app() -> FastAPI:
     @app.get("/api/research", dependencies=[Depends(require_user)])
     async def research_catalog() -> dict[str, Any]:
         from dataclasses import asdict
+
+        from autotrader.research.experimental import EXPERIMENTAL_REGISTRY
         root = Path(settings.research_root)
         try:
             latest = load_latest(root)
@@ -363,7 +380,9 @@ def create_app() -> FastAPI:
             "runs":[{"run_id":path.parent.name, "verdict":json.loads(path.read_text(encoding="utf-8")).get("verdict")} for path in sorted(root.glob("runs/*/summary.json"), reverse=True)][:30],
             "jobs":await repository.research_jobs(),
             "datasets":[{k:v for k,v in m.items() if k not in {"provenance", "gaps"}} for m in catalog.get("manifests", [])],
-            "registry":[asdict(spec) for spec in REGISTRY], "acquisition_failures":catalog.get("failures", []),
+            "registry":[asdict(spec) for spec in REGISTRY],
+            "experimental_registry":[asdict(spec) for spec in EXPERIMENTAL_REGISTRY],
+            "experimental_latest":load_latest(root,pointer_name="latest-experimental-run.json"), "acquisition_failures":catalog.get("failures", []),
             "promotions":await repository.promotion_candidates()}
 
     @app.post("/api/research/jobs", dependencies=[Depends(require_user)], status_code=202)
@@ -386,6 +405,97 @@ def create_app() -> FastAPI:
         if not path.is_relative_to(root) or not path.is_file():
             raise HTTPException(status_code=404, detail="Research artifact not found")
         return dict(json.loads(path.read_text(encoding="utf-8")))
+
+    @app.get("/api/market-data/health", dependencies=[Depends(require_user)])
+    async def market_data_health() -> dict[str, Any]:
+        return await repository.market_data_health()
+
+    @app.get("/api/shadow", dependencies=[Depends(require_user)])
+    async def shadow_overview() -> dict[str, Any]:
+        from autotrader.shadow.lab import MAX_EXPERIMENTS, PRESETS
+        records=[]
+        for record in await shadow_lab.records():
+            if record['state']=='CREATING':
+                records.append(record)
+            else:
+                records.append(await shadow_lab.detail(record['experiment_id']))
+        return {'enabled':settings.shadow_enabled,'official':await repository.snapshot(),
+                'experiments':records,'presets':[{'strategy_id':s.strategy_id,'version':s.version,'hypothesis':s.hypothesis} for s in PRESETS.values()],
+                'maximum_experiments':MAX_EXPERIMENTS,'warning':'SHADOW_ACTIVE is UNVALIDATED and never PAPER_APPROVED; equity is never combined'}
+
+    @app.post("/api/shadow", dependencies=[Depends(require_user)], status_code=201)
+    async def shadow_create(request: ShadowCreateRequest) -> dict[str, Any]:
+        try:
+            return await shadow_lab.create(request.request_id,request.name,request.strategy_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=409,detail=str(exc)) from None
+
+    @app.get("/api/shadow/{experiment_id}", dependencies=[Depends(require_user)])
+    async def shadow_detail(experiment_id: str) -> dict[str, Any]:
+        try:
+            return await shadow_lab.detail(experiment_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=404,detail=str(exc)) from None
+
+    @app.get("/api/shadow/{experiment_id}/export", dependencies=[Depends(require_user)])
+    async def shadow_export(experiment_id: str) -> Response:
+        report=await shadow_detail(experiment_id)
+        return Response(_json(report),media_type='application/json',headers={'Content-Disposition':'attachment; filename="shadow-report.json"','Cache-Control':'no-store'})
+
+    @app.get("/api/shadow/{experiment_id}/history/{kind}", dependencies=[Depends(require_user)])
+    async def shadow_history_export(experiment_id: str, kind: Literal['journal','orders','fills','equity']) -> StreamingResponse:
+        from autotrader.persistence.models import (
+            EquitySnapshotModel,
+            FillModel,
+            JournalEventModel,
+            OrderModel,
+        )
+        try:
+            scoped = await shadow_lab.repository(experiment_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=404,detail=str(exc)) from None
+        models: dict[str, tuple[Any, str]] = {'journal':(JournalEventModel,'ledger_event_id'),
+            'orders':(OrderModel,'order_id'),'fills':(FillModel,'fill_id'),
+            'equity':(EquitySnapshotModel,'snapshot_id')}
+        model, identity = models[kind]
+        async def stream() -> AsyncIterator[str]:
+            async with scoped.session_factory() as session:
+                await scoped._assert_scope(session)
+                result=await session.stream_scalars(select(model).order_by(model.created_at,getattr(model,identity))
+                    .execution_options(yield_per=500))
+                async for row in result:
+                    yield _json({c.name:getattr(row,c.name) for c in model.__table__.columns})+'\n'
+        filename='shadow-'+scoped.scope.manifest['experiment_id']+'-'+kind+'.ndjson'
+        return StreamingResponse(stream(),media_type='application/x-ndjson',
+            headers={'Content-Disposition':'attachment; filename="'+filename+'"','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'})
+
+    @app.post("/api/shadow/{experiment_id}/{action}", dependencies=[Depends(require_user)])
+    async def shadow_control(experiment_id: str, action: str) -> dict[str, Any]:
+        try:
+            return await shadow_lab.control(experiment_id,action)
+        except ValueError as exc:
+            raise HTTPException(status_code=409,detail=str(exc)) from None
+
+    @app.get("/api/research/trade-failures", dependencies=[Depends(require_user)])
+    async def trade_failures(strategy: str | None=None,asset: str | None=None,regime: str | None=None,
+        classification: str | None=None,exit_type: str | None=None,timeframe: str | None=None,
+        start_date: date | None=None,end_date: date | None=None,outcome: Literal['ALL','PROFIT','LOSS']='ALL',
+        offset: int=Query(0,ge=0),limit: int=Query(100,ge=1,le=500)) -> dict[str,Any]:
+        path=Path(settings.research_root)/'diagnostics'/'v42-original-trades.json'
+        if not path.is_file():
+            return {'status':'NO_DIAGNOSTICS','positions':[],'matched':0,'total':0}
+        report=json.loads(path.read_bytes())
+        rows=[r for r in report['positions'] if (not strategy or r['strategy']==strategy)
+            and (not asset or r['asset']==asset) and (not regime or r['regime']==regime)
+            and (not timeframe or r['timeframe']==timeframe)
+            and (not classification or classification in r['classifications'])
+            and (not exit_type or any(e['reason']==exit_type for e in r['exits']))
+            and (not start_date or r['entry_timestamp'][:10]>=start_date.isoformat())
+            and (not end_date or r['entry_timestamp'][:10]<=end_date.isoformat())
+            and (outcome=='ALL' or (Decimal(r['net_pnl'])>0 if outcome=='PROFIT' else Decimal(r['net_pnl'])<0))]
+        return {'status':'AVAILABLE','positions':rows[offset:offset+limit],'matched':len(rows),'total':len(report['positions']),
+            'offset':offset,'limit':limit,'run_id':report['run_id'],'data_kind':report['data_kind'],
+            'classification_counts':report['classification_counts'],'limitations':report['limitations']}
 
     @app.get("/api/backtests", dependencies=[Depends(require_user)])
     async def backtest_runs() -> dict[str,object]:

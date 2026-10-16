@@ -122,11 +122,15 @@ def passive_benchmarks(sim: ResearchSimulation, start: datetime, end: datetime, 
 
 def run_full(root: Path, catalog: dict[str, Any], *, timeframes: tuple[str, ...] = ("1d", "4h"),
              strategy_ids: tuple[str, ...] | None = None, grid: tuple[StrategyParameters, ...] = GRID,
-             assets: tuple[str, ...] | None = None) -> dict[str, Any]:
-    strategies = list(dict.fromkeys(strategy_ids if strategy_ids is not None else STRATEGIES))
+             assets: tuple[str, ...] | None = None, experimental: bool = False) -> dict[str, Any]:
+    from autotrader.research.experimental import EXPERIMENTAL_REGISTRY
+    from autotrader.research.experimental import VERSION as EXPERIMENTAL_VERSION
+    allowed = [s.strategy_id for s in EXPERIMENTAL_REGISTRY if not s.filter_only] if experimental else STRATEGIES
+    algorithm_version = EXPERIMENTAL_VERSION if experimental else VERSION
+    strategies = list(dict.fromkeys(strategy_ids if strategy_ids is not None else allowed))
     timeframes = tuple(dict.fromkeys(timeframes))
     grid = tuple({digest(canonical(p.payload())):p for p in grid}.values())
-    if not strategies or any(s not in STRATEGIES for s in strategies) or not grid:
+    if not strategies or any(s not in allowed for s in strategies) or not grid:
         raise ValueError("invalid_research_search_space")
     run_id = "research-" + utc_now().strftime("%Y%m%dT%H%M%S")
     output = root / "runs" / run_id
@@ -138,7 +142,8 @@ def run_full(root: Path, catalog: dict[str, Any], *, timeframes: tuple[str, ...]
         "optimization": "training only; no validation/test retuning; failed candidates remain failed",
         "source_fingerprint": source_hash, "source_files": source_files,
         "purge_bars": 12, "embargo_bars": 1, "fixed_split_fractions": [.6, .2, .2],
-        "comparisons": len(strategies) * len(grid) * len(timeframes) * 5,
+        "comparisons": max(300,len(strategies) * len(grid) * len(timeframes) * 5) if experimental else len(strategies) * len(grid) * len(timeframes) * 5,
+        "strategy_version":algorithm_version,"experimental":experimental,
         "costs": {"fee_bps": "10", "slippage_bps": "8", "spread_bps": "10", "volume_participation": ".01"}}
     manifest["holdout_disclosure"] = "Historical intervals can overlap V4 engineering studies. No untouched prospective holdout is claimed; frozen future pilot is separate."
     atomic_write(output / "manifest.json", canonical(manifest))
@@ -147,7 +152,7 @@ def run_full(root: Path, catalog: dict[str, Any], *, timeframes: tuple[str, ...]
     try:
         for timeframe in timeframes:
             bars = [bar for m in manifests if m["timeframe"] == timeframe for bar in load_dataset(root, m)]
-            sim = ResearchSimulation(bars)
+            sim = ResearchSimulation(bars,experimental=experimental)
             times = sim.times
             if len(times) < 300:
                 raise ValueError("insufficient_chronological_research_observations:" + timeframe)
@@ -197,7 +202,7 @@ def run_full(root: Path, catalog: dict[str, Any], *, timeframes: tuple[str, ...]
                 result: dict[str, Any] = {"validation": compact(validation), "out_of_sample": compact(test), "walk_forward": wf,
                     "sensitivity": [compact(r) for r in sensitivity], "training_grid": trained[strategy],
                     "gates": gates, "frozen_parameters_sha256": frozen_hash}
-                identity: dict[str, Any] = {"strategy_id": strategy, "strategy_version": VERSION,
+                identity: dict[str, Any] = {"strategy_id": strategy, "strategy_version": algorithm_version,
                     "frozen_parameters": params.payload(), "parameter_hash": digest(canonical(params.payload())),
                     "source_fingerprint": source_hash, "dataset_fingerprint": digest(canonical([m["dataset_version"] for m in manifests if m["timeframe"] == timeframe])),
                     "research_run_id": run_id, "research_timeframe": timeframe,
@@ -225,7 +230,7 @@ def run_full(root: Path, catalog: dict[str, Any], *, timeframes: tuple[str, ...]
             summary["timeframes"][timeframe] = {"frozen_parameters": frozen, "strategies": results,
                 "benchmarks": {**passive_benchmarks(sim, test_start, end, Costs()),
                     "V3_4_SIGNALS_COMMON_EXECUTION": compact(legacy), "VALIDATED_ENSEMBLE": compact(ensemble),
-                    "V4_RUNTIME_DEFAULT_PARAMETERS": compact(default_compare), "V4_1_INDEPENDENTLY_FROZEN_PARAMETERS": compact(rules_compare)},
+                    ("EXPERIMENTAL_COMMON_PARAMETERS" if experimental else "V4_RUNTIME_DEFAULT_PARAMETERS"): compact(default_compare), ("EXPERIMENTAL_INDEPENDENTLY_FROZEN_PARAMETERS" if experimental else "V4_1_INDEPENDENTLY_FROZEN_PARAMETERS"): compact(rules_compare)},
                 "mock_ai_comparison": {"RULE_ONLY": compact(rules_compare), "RULE_PLUS_AI_MOCK": compact(ai_compare),
                     "conclusion": "Matched deterministic mock integration only; no predictive AI edge is established"}}
         common_passed = set.intersection(*[{s for s, r in result["strategies"].items() if r["gates"]["passed"]} for result in summary["timeframes"].values()])
@@ -236,7 +241,7 @@ def run_full(root: Path, catalog: dict[str, Any], *, timeframes: tuple[str, ...]
             local_passed = {s for s, r in result["strategies"].items() if r["gates"]["passed"]}
             if local_passed != common_passed:
                 bars = [bar for m in manifests if m["timeframe"] == timeframe for bar in load_dataset(root, m)]
-                sim = ResearchSimulation(bars)
+                sim = ResearchSimulation(bars,experimental=experimental)
                 frozen = result["frozen_parameters"]
                 ensemble = sim.run(start=datetime.fromisoformat(frozen["test_start"]),
                     end=datetime.fromisoformat(frozen["test_end_exclusive"]), strategy_ids=common_passed,
@@ -249,7 +254,12 @@ def run_full(root: Path, catalog: dict[str, Any], *, timeframes: tuple[str, ...]
         summary["verdict"] = "RESEARCH_FAILED"
         atomic_write(output / "summary.json", canonical(summary))
         raise
+    if source_fingerprint()[0] != source_hash:
+        summary["verdict"] = "RESEARCH_SOURCE_CHANGED"
+        summary["failures"].append({"type":"SourceChanged","error":"Source changed during study; no pointer published"})
+        atomic_write(output / "summary.json", canonical(summary))
+        raise RuntimeError("research_source_changed_during_study")
     atomic_write(output / "summary.json", canonical(summary))
-    atomic_write(root / "latest-run.json", canonical({"run_id": run_id, "summary": (output / "summary.json").relative_to(root).as_posix(),
+    atomic_write(root / ("latest-experimental-run.json" if experimental else "latest-run.json"), canonical({"run_id": run_id, "summary": (output / "summary.json").relative_to(root).as_posix(),
         "summary_sha256": digest(canonical(summary)), "verdict": summary["verdict"]}))
     return summary

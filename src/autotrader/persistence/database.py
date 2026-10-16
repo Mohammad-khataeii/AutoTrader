@@ -54,5 +54,5 @@ async def create_schema(engine: AsyncEngine) -> None:
 async def check_schema(engine: AsyncEngine) -> None:
     async with engine.connect() as connection:
         revision = await connection.scalar(text("SELECT version_num FROM alembic_version"))
-        if revision != "0010_v41_ai_quotas":
+        if revision != "0011_v42_shadow_isolation":
             raise RuntimeError("Incompatible database schema; run alembic upgrade head.")

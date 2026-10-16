@@ -38,7 +38,7 @@ class DecisionEngine:
             return self._reject(pair.symbol, signals, ai_assessment, "No valid entry price.", DecisionAction.WAIT)
 
         atr = features.atr or (entry_price * Decimal("0.02"))
-        v4_signals = [signal for signal in signals if signal.evidence.get("strategy_version") == "4.0.0"]
+        v4_signals = [signal for signal in signals if signal.evidence.get("strategy_version") in {"4.0.0", "4.2.0-experimental.1"}]
         eligible_v4 = [s for s in v4_signals if s.evidence.get('entry_eligible')]
         primary = min(eligible_v4,key=lambda s:(-s.score,s.strategy_id)) if eligible_v4 else (v4_signals[0] if v4_signals else None)
         parameters = primary.evidence.get("parameters", {}) if primary else {}

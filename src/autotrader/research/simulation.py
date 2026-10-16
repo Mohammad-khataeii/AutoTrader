@@ -61,12 +61,13 @@ class SimPosition:
 
 
 class ResearchSimulation:
-    def __init__(self, bars: list[HistoricalBar]) -> None:
+    def __init__(self, bars: list[HistoricalBar], *, experimental: bool = False) -> None:
         if not bars or len({b.timeframe for b in bars}) != 1:
             raise ValueError("one_nonempty_research_timeframe_required")
         self.timeframe = bars[0].timeframe
         self.seconds = TIMEFRAMES[self.timeframe]
-        self.frames, self.features, self.feature_manifest = build_panel(bars)
+        self.experimental = experimental
+        self.frames, self.features, self.feature_manifest = build_panel(bars, experimental_context=experimental)
         self.times = sorted(self.frames)
         self._signal_cache: dict[str, dict[tuple[datetime, str], tuple[list[tuple[Decimal, str]], bool, str]]] = {}
 
@@ -79,7 +80,12 @@ class ResearchSimulation:
             raise ValueError("exact_frozen_parameters_required_for_every_member")
         members = member_parameters if member_parameters is not None else {s: params for s in strategy_ids}
         member_hashes = {s: digest(canonical(p.payload())) for s, p in members.items()}
-        engines = {digest(canonical(p.payload())): V4StrategyEngine(p) for p in members.values()}
+        from autotrader.research.experimental import (
+            EXPERIMENTAL_REGISTRY,
+            ExperimentalStrategyEngine,
+        )
+        engine_type = ExperimentalStrategyEngine if self.experimental else V4StrategyEngine
+        engines = {digest(canonical(p.payload())): engine_type(p) for p in members.values()}
         legacy_engine: Any = None
         if legacy:
             from autotrader.strategies import LegacyStrategyEngine
@@ -110,7 +116,7 @@ class ResearchSimulation:
         regime_observations: Counter[str] = Counter()
         risk = RiskEngine(RiskLimits())
         quality = ExecutionQualityEngine()
-        specs = {s.strategy_id: s for s in REGISTRY}
+        specs = {s.strategy_id: s for s in (EXPERIMENTAL_REGISTRY if self.experimental else REGISTRY)}
 
         def equity() -> Decimal:
             return cash + sum((p.position.quantity * marks.get(symbol, p.position.average_entry_price)

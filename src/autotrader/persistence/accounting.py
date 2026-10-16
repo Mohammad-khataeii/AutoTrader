@@ -87,6 +87,13 @@ class AccountingRepositoryMixin:
     def strategy_cooldown_key(strategy_id:str)->str:
         return 'strategy:'+sha256(strategy_id.encode()).hexdigest()[:16]
 
+    async def _entry_policy_error(self, session: Any, strategy: str, evidence: dict[str, Any], fee: Any, slip: Any) -> str | None:
+        promotion = await session.get(SystemStateModel, "research_entry_policy")
+        if promotion:
+            from autotrader.persistence.research_policy import promotion_error
+            return promotion_error(json.loads(promotion.payload_json), strategy, evidence, fee, slip)
+        return None
+
     async def _lock_account(self, session: Any) -> AccountModel:
         account = await session.get(AccountModel, self.account_id, with_for_update=True)
         if account is None:
@@ -109,6 +116,11 @@ class AccountingRepositoryMixin:
         async with self.session_factory() as session, session.begin():
             if session.bind.dialect.name == "postgresql":
                 await session.execute(text("SELECT pg_advisory_xact_lock(3400001)"))
+            from autotrader.persistence.models import ShadowIdentityModel
+            marker_exists = await session.scalar(text("SELECT to_regclass('public.shadow_identity')")) if session.bind.dialect.name == "postgresql" else None
+            marker = await session.get(ShadowIdentityModel, 1) if marker_exists else None
+            if self.account_id == "paper-eur" and marker is not None:
+                raise ValueError("official_repository_cannot_initialize_shadow_database")
             account = await session.get(AccountModel, self.account_id, with_for_update=True)
             if account is not None:
                 return
@@ -266,15 +278,11 @@ class AccountingRepositoryMixin:
         if health and health.state != "HEALTHY":
             return "runtime_not_healthy:" + str(health.state)
         if own_order is not None:
-            promotion = await session.get(SystemStateModel, "research_entry_policy")
-            if promotion:
-                policy = json.loads(promotion.payload_json)
-                execution = json.loads(own_order.execution_json)
-                from autotrader.persistence.research_policy import promotion_error
-                error = promotion_error(policy, execution.get('strategy_id',''), execution.get('strategy_evidence',{}),
-                    execution.get('fee_bps','10'), execution.get('slippage_bps','8'))
-                if error:
-                    return error
+            execution = json.loads(own_order.execution_json)
+            error = await self._entry_policy_error(session, execution.get('strategy_id',''), execution.get('strategy_evidence',{}),
+                execution.get('fee_bps','10'), execution.get('slippage_bps','8'))
+            if error:
+                return error
         if stop is None:
             return "missing_protective_stop"
         cooldown = await session.get(CooldownModel, pair.symbol)
@@ -405,18 +413,14 @@ class AccountingRepositoryMixin:
                         if strongest:
                             primary_strategy=strongest.strategy_id
                             evidence = json.loads(strongest.payload_json).get("evidence", {})
-                            if evidence.get("strategy_version") == "4.0.0":
+                            if evidence.get("strategy_version") in {"4.0.0", "4.2.0-experimental.1"}:
                                 holding_seconds = int(evidence.get("holding_bars", 12)) * timeframe_seconds(str(evidence.get("timeframe", "5m")))
                 hours={"A_VOLUME_ACCUMULATION":12,"B_VOLATILITY_COMPRESSION":24,"C_BREAKOUT_RETEST":8,"D_MOMENTUM_ACCELERATION":6,"G_RELATIVE_STRENGTH":8,"H_LIQUIDITY_ORDER_BOOK":4}.get(primary_strategy,24)
                 if side is Side.BUY and not error:
-                    promotion = await session.get(SystemStateModel, "research_entry_policy")
-                    if promotion:
-                        policy = json.loads(promotion.payload_json)
-                        from autotrader.persistence.research_policy import promotion_error
-                        promotion_failure = promotion_error(policy, primary_strategy, evidence, fee_bps, slippage_bps)
-                        if promotion_failure:
-                            error = promotion_failure
-                            payload["rejection_reason"] = error
+                    promotion_failure = await self._entry_policy_error(session, primary_strategy, evidence, fee_bps, slippage_bps)
+                    if promotion_failure:
+                        error = promotion_failure
+                        payload["rejection_reason"] = error
                     strategy_cooldown=await session.get(CooldownModel,self.strategy_cooldown_key(primary_strategy))
                     if strategy_cooldown and aware(strategy_cooldown.expires_at)>utc_now():
                         error='strategy_cooldown'
@@ -442,7 +446,11 @@ class AccountingRepositoryMixin:
                     if target:
                         target.reserved_quantity += quantity
                     await session.flush()
-                row = OrderModel(order_id=order_id, account_id=self.account_id, position_id=position_id,
+                # Rejected foreign/unknown identities must never become financial
+                # foreign keys in this database, including the audit-only order.
+                owned_position_id = (position.position_id if position is not None
+                    and position.account_id == self.account_id and position.symbol == pair.symbol else None)
+                row = OrderModel(order_id=order_id, account_id=self.account_id, position_id=owned_position_id,
                     exit_intent_id=intent.exit_intent_id if intent else None, exit_target_id=exit_target_id if intent else None,
                     decision_id=decision_id, client_order_id=idempotency_key, symbol=pair.symbol, side=side.value,
                     order_type=order_type.value, status="REJECTED" if error else "PENDING", quantity=quantity,

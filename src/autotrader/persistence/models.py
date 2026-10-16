@@ -401,3 +401,20 @@ class AIUsageModel(Base, AuditMixin):
     provider_response_id: Mapped[str | None] = mapped_column(String(256))
     actual_reported_cost: Mapped[Decimal | None] = mapped_column(Numeric(18, 8))
     cache_status: Mapped[str] = mapped_column(String(32), default="MISS", server_default="MISS")
+
+
+class ShadowExperimentModel(Base, AuditMixin):
+    __tablename__ = 'shadow_experiments'
+    experiment_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    request_id: Mapped[str] = mapped_column(String(64), unique=True)
+    name: Mapped[str] = mapped_column(String(128))
+    state: Mapped[str] = mapped_column(String(32))
+    database_name: Mapped[str] = mapped_column(String(63), unique=True)
+    manifest_json: Mapped[str] = mapped_column(Text)
+
+
+class ShadowIdentityModel(Base):
+    __tablename__ = 'shadow_identity'
+    singleton: Mapped[int] = mapped_column(primary_key=True)
+    manifest_hash: Mapped[str] = mapped_column(String(64))
+    manifest_json: Mapped[str] = mapped_column(Text)

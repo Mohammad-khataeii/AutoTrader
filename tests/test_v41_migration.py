@@ -19,7 +19,7 @@ async def test_v4_to_v41_preserves_existing_ai_holds_and_financial_history(pg_re
     async with pg_repo.session_factory() as session,session.begin():
         await session.execute(text("INSERT INTO ai_budgets(month,spent,reserved) VALUES ('2026-10',0,0.03)"))
         await session.execute(text("INSERT INTO ai_usage(request_id,month,model,status,reserved_cost,input_tokens,output_tokens,provider,candidate_symbol,cached_input_tokens,cache_write_tokens,pricing_json) VALUES ('legacy-unit-hold','2026-10','fixture-model','UNKNOWN',0.03,0,0,'openai','BTC-EUR',0,0,'{}')"))
-    result=await migrate(pg_repo,'head')
+    result=await migrate(pg_repo,'0010_v41_ai_quotas')
     assert result.returncode==0,result.stderr
     async with pg_repo.session_factory() as session:
         row=(await session.execute(text("SELECT status,reserved_cost,quota_timestamp=created_at FROM ai_usage WHERE request_id='legacy-unit-hold'"))).one()

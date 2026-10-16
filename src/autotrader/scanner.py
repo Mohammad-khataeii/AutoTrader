@@ -86,8 +86,8 @@ class MarketScanner:
             if not market.usable_for_entry:
                 rejected.append({"symbol": pair.symbol, "reasons": market.rejected_reasons})
                 continue
-            features = calculate_features(market.candles, market.metrics.imbalance, market.metrics.spread_bps)
-            features.metadata['higher_timeframe_confirmation']=higher_timeframe_context(market.candles)
+            features = calculate_features(market.candles[-240:], market.metrics.imbalance, market.metrics.spread_bps)
+            features.metadata['higher_timeframe_confirmation']=higher_timeframe_context(market.candles[-240:])
             features.metadata.update(
                 {
                     "last_price": market.metrics.mid,

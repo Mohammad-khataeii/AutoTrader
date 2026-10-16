@@ -1,5 +1,5 @@
 x-runtime: &runtime
-  image: ${COMPOSE_PROJECT_NAME:-autotrader-v41}-app:${AUTOTRADER_IMAGE_TAG:-4.1.0}
+  image: ${COMPOSE_PROJECT_NAME:-autotrader-v41}-app:${AUTOTRADER_IMAGE_TAG:-4.2.0}
   build:
     context: .
     dockerfile: Dockerfile.backend
@@ -27,6 +27,7 @@ x-runtime: &runtime
     INITIAL_CASH_EUR: "500"
     RESEARCH_ROOT: /app/research
     ALLOCATION_PROFILE: ${ALLOCATION_PROFILE:-balanced}
+    SHADOW_ENABLED: ${SHADOW_ENABLED:-true}
     APPROVED_STRATEGY_IDS: ${APPROVED_STRATEGY_IDS:-}
   volumes: [research-data:/app/research:ro, reports:/app/reports]
   restart: unless-stopped
@@ -83,7 +84,7 @@ services:
       <<: *environment
       WORKER_SCAN_INTERVAL_SECONDS: ${WORKER_SCAN_INTERVAL_SECONDS:-60}
       WORKER_POSITION_INTERVAL_SECONDS: ${WORKER_POSITION_INTERVAL_SECONDS:-5}
-      SCANNER_MAX_PAIRS: ${SCANNER_MAX_PAIRS:-8}
+      SCANNER_MAX_PAIRS: ${SCANNER_MAX_PAIRS:-3}
     depends_on:
       backend: {condition: service_healthy}
     healthcheck:
@@ -94,7 +95,7 @@ services:
       start_period: 120s
     stop_grace_period: 30s
   frontend:
-    image: ${COMPOSE_PROJECT_NAME:-autotrader-v41}-frontend:${AUTOTRADER_IMAGE_TAG:-4.1.0}
+    image: ${COMPOSE_PROJECT_NAME:-autotrader-v41}-frontend:${AUTOTRADER_IMAGE_TAG:-4.2.0}
     build: {context: ./frontend}
     depends_on:
       backend: {condition: service_healthy}

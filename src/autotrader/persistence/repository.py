@@ -6,7 +6,7 @@ from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 from hashlib import sha256
-from typing import Any
+from typing import Any, cast
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import async_sessionmaker
@@ -29,6 +29,7 @@ from autotrader.persistence.accounting import AccountingRepositoryMixin
 from autotrader.persistence.ai_budget import AIBudgetRepositoryMixin
 from autotrader.persistence.ai_events import AIEventMixin
 from autotrader.persistence.analytics import AnalyticsMixin
+from autotrader.persistence.market_state import MarketStateMixin
 from autotrader.persistence.models import (
     AccountModel,
     AIAssessmentModel,
@@ -101,7 +102,7 @@ def _default_target_quantities(original_quantity: Decimal, quantity_step: Decima
     return [*quantities, final_quantity]
 
 
-class PersistentTradingRepository(PilotMixin, OperationsMixin, AccountingRepositoryMixin, AIBudgetRepositoryMixin, AIEventMixin, ResearchPolicyMixin, AnalyticsMixin, ResearchJobsMixin):
+class PersistentTradingRepository(MarketStateMixin, PilotMixin, OperationsMixin, AccountingRepositoryMixin, AIBudgetRepositoryMixin, AIEventMixin, ResearchPolicyMixin, AnalyticsMixin, ResearchJobsMixin):
     RUNTIME_STATE_KEY = "runtime_health"
 
     def __init__(self, session_factory: async_sessionmaker[Any], quote_asset: str = "EUR") -> None:
@@ -126,7 +127,7 @@ class PersistentTradingRepository(PilotMixin, OperationsMixin, AccountingReposit
             row = await session.get(SystemStateModel, "worker")
             return json.loads(row.payload_json).get("frame_id") if row else None
 
-    async def reserve_public_request(self,family:str)->float:
+    async def reserve_public_request(self,family:str,*,priority:int=10)->float:
         from datetime import timedelta
 
         from autotrader.persistence.accounting import aware
@@ -136,9 +137,15 @@ class PersistentTradingRepository(PilotMixin, OperationsMixin, AccountingReposit
             row=await session.get(SystemStateModel,key)
             now=utc_now()
             if row:
-                next_at=aware(datetime.fromisoformat(json.loads(row.payload_json)['next_at']))
+                payload=json.loads(row.payload_json)
+                next_at=aware(datetime.fromisoformat(payload['next_at']))
+                if priority>0 and payload.get('protective_until'):
+                    next_at=max(next_at,aware(datetime.fromisoformat(payload['protective_until'])))
                 delay=(next_at-now).total_seconds()
                 if delay>0:
+                    if priority==0:
+                        payload['protective_until']=(now+timedelta(seconds=min(delay+1,5))).isoformat()
+                        row.payload_json=_json(payload)
                     return delay
                 row.payload_json=_json({'next_at':(now+timedelta(seconds=1)).isoformat()})
             else:
@@ -238,7 +245,7 @@ class PersistentTradingRepository(PilotMixin, OperationsMixin, AccountingReposit
             marks=(await session.scalars(select(MarketMarkModel))).all()
             freshness=[{'symbol':m.symbol,'source':m.source,'timestamp':m.timestamp.isoformat(),
                 'age_seconds':(utc_now()-aware(m.timestamp)).total_seconds()} for m in marks]
-            dialect=session.bind.dialect.name
+            dialect=cast(Any, session.bind).dialect.name
         problems = await self.verify_invariants(Decimal("500"))
         return {"operational_state":operation.state if operation else "INITIALIZING",
             "operation":json.loads(operation.payload_json) if operation else {},
@@ -283,6 +290,9 @@ class PersistentTradingRepository(PilotMixin, OperationsMixin, AccountingReposit
         risk_evaluation: RiskEvaluation | None = None,
     ) -> None:
         async with self.session_factory() as session, session.begin():
+            if cast(Any, session.bind).dialect.name == "postgresql":
+                from sqlalchemy import text
+                await session.execute(text("SELECT pg_advisory_xact_lock(3400003)"))
             for signal in signals:
                 version = str(signal.evidence.get("strategy_version", "3.4.0"))
                 version_id=signal.strategy_id+':'+version

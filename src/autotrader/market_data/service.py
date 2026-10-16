@@ -1,13 +1,18 @@
 from __future__ import annotations
 
+import asyncio
 import time
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime, timedelta
 from decimal import Decimal
 from itertools import pairwise
+from typing import Any
 
 from autotrader.domain import Candle, DataQuality, OrderBook, TradingPair, utc_now
 from autotrader.market_data.revolut import MarketDataError, RevolutXPublicClient
+from autotrader.market_data.scheduling import protective_priority
 
 
 @dataclass(frozen=True)
@@ -47,11 +52,76 @@ class MarketDataService:
         max_staleness_seconds: int = 90,
         candle_interval_minutes: int = 5,
         candle_lookback: int = 240,
+        state_store: Any = None,
+        cache_enabled: bool | None = None,
     ) -> None:
         self.client = client
         self.max_staleness_seconds = max_staleness_seconds
         self.candle_interval_minutes = candle_interval_minutes
         self.candle_lookback = candle_lookback
+        self.state_store=state_store
+        self.cache_enabled=isinstance(client,RevolutXPublicClient) if cache_enabled is None else cache_enabled
+        self._candles:dict[str,tuple[int,list[Candle]]]={}
+        self._candle_locks:dict[str,asyncio.Lock]={}
+        self._protective_books:dict[str,OrderBook]|None=None
+
+    @asynccontextmanager
+    async def protective_cycle(self) -> AsyncIterator[None]:
+        self._protective_books={}
+        try:
+            async with protective_priority():
+                yield
+        finally:
+            self._protective_books=None
+
+    async def _metric(self,event:str,value:float=1) -> None:
+        if self.state_store:
+            await self.state_store.market_metric(event,value)
+
+    @staticmethod
+    def _decode_candles(raw:list[dict[str,Any]])->list[Candle]:
+        return [Candle(r['symbol'],datetime.fromisoformat(r['timestamp']),
+            open=Decimal(r['open']),high=Decimal(r['high']),low=Decimal(r['low']),close=Decimal(r['close']),volume=Decimal(r['volume']),timeframe=r['timeframe'],source=r['source']) for r in raw]
+
+    async def completed_candles(self,pair:TradingPair)->list[Candle]:
+        until=utc_now()
+        seconds=self.candle_interval_minutes*60
+        bucket=int(until.timestamp())//seconds
+        key=f'{pair.symbol}:{self.candle_interval_minutes}:{self.candle_lookback}'
+        async with self._candle_locks.setdefault(key,asyncio.Lock()):
+            old=self._candles.get(key)
+            token=None
+            if self.cache_enabled and old and old[0]>=bucket:
+                await self._metric('candle_cache_hit')
+                return list(old[1])
+            if self.cache_enabled and self.state_store:
+                token,stored=await self.state_store.reserve_market_cache(key,bucket)
+                if stored.get('candles'):
+                    old=(stored.get('bucket',-1),self._decode_candles(stored['candles']))
+                if token is None:
+                    if old and old[0]>=bucket:
+                        self._candles[key]=old
+                        await self._metric('candle_cache_hit')
+                        return list(old[1])
+                    raise MarketDataError('shared_candle_refresh_in_progress')
+            since=until-timedelta(seconds=seconds*self.candle_lookback)
+            if self.cache_enabled and old and old[1]:
+                since=max(since,old[1][-1].timestamp-timedelta(seconds=seconds))
+            fresh=await self.client.get_candles(pair.symbol,self.candle_interval_minutes,int(since.timestamp()*1000),int(until.timestamp()*1000))
+            merged={c.timestamp:c for c in (old[1] if self.cache_enabled and old else [])}
+            merged.update({c.timestamp:c for c in fresh if c.timestamp+timedelta(seconds=seconds)<=until})
+            candles=sorted(merged.values(),key=lambda c:c.timestamp)[-self.candle_lookback:]
+            if self.validate_candles(candles,self.candle_interval_minutes) or len(candles)<50:
+                # Never promote a bad refresh to the completed cache.
+                return candles
+            if self.cache_enabled:
+                self._candles[key]=(bucket,candles)
+                if self.state_store and token:
+                    raw=[{'symbol':c.symbol,'timestamp':c.timestamp.isoformat(),**{k:str(getattr(c,k)) for k in ('open','high','low','close','volume')},'timeframe':c.timeframe,'source':c.source} for c in candles]
+                    await self.state_store.publish_market_cache(key,token,bucket,raw)
+            await self._metric('candle_refresh')
+            await self._metric('candles_downloaded',len(fresh))
+            return list(candles)
 
     async def close(self) -> None:
         await self.client.close()
@@ -67,24 +137,23 @@ class MarketDataService:
         return next((pair for pair in pairs if pair.symbol == symbol), None)
 
     async def get_position_book(self, pair: TradingPair) -> OrderBook:
-        book = await self.client.get_order_book(pair.symbol, limit=50)
+        if self._protective_books is not None and pair.symbol in self._protective_books:
+            book=self._protective_books[pair.symbol]
+        else:
+            async with protective_priority():
+                book = await self.client.get_order_book(pair.symbol, limit=50)
+            if self._protective_books is not None:
+                self._protective_books[pair.symbol]=book
         reasons, _ = self.validate_order_book(book)
         if reasons:
             raise MarketDataError(",".join(reasons))
         return book
 
     async def get_validated_market(self, pair: TradingPair) -> ValidatedMarket:
-        until = utc_now()
-        since = until - timedelta(minutes=self.candle_interval_minutes * self.candle_lookback)
         started = time.perf_counter()
         order_book = await self.client.get_order_book(pair.symbol, limit=50)
         provider_latency_ms = Decimal(str(round((time.perf_counter() - started) * 1000, 3)))
-        candles = await self.client.get_candles(
-            pair.symbol,
-            self.candle_interval_minutes,
-            int(since.timestamp() * 1000),
-            int(until.timestamp() * 1000),
-        )
+        candles = await self.completed_candles(pair)
         book_reasons, metrics = self.validate_order_book(order_book, provider_latency_ms)
         candle_reasons = self.validate_candles(candles, self.candle_interval_minutes)
         pair_reasons = self.validate_pair(pair)

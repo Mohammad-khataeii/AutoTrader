@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import random
+import time
 from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
@@ -10,6 +11,7 @@ from typing import Any, cast
 import httpx
 
 from autotrader.domain import Candle, OrderBook, OrderBookLevel, TradingPair, utc_now
+from autotrader.market_data.scheduling import PriorityGate
 
 
 class MarketDataError(RuntimeError):
@@ -77,10 +79,16 @@ class RevolutXPublicClient:
         region: str = "EEA",
         timeout: float = 8.0,
         rate_reserver:Callable[[str],Awaitable[float]]|None=None,
+        cooldown_publisher:Callable[[str,float],Awaitable[None]]|None=None,
+        event_recorder:Callable[[str,float],Awaitable[None]]|None=None,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.region = region
         self.rate_reserver=rate_reserver
+        self.cooldown_publisher=cooldown_publisher
+        self.event_recorder=event_recorder
+        self._gate=PriorityGate()
+        self._cooldowns:dict[str,float]={}
         self._client = httpx.AsyncClient(base_url=self.base_url, timeout=timeout)
         self._limiters: dict[str, TokenBucket] = {
             "/1.0/public/configuration/pairs": TokenBucket(Decimal("1"), Decimal("1")),
@@ -88,48 +96,84 @@ class RevolutXPublicClient:
             "/1.0/public/candles": TokenBucket(Decimal("1"), Decimal("1")),
             "/2.0/public/order-book": TokenBucket(Decimal("1"), Decimal("1")),
         }
-        self._breaker = CircuitBreaker()
+        self._breakers = {family:CircuitBreaker() for family in self._limiters}
+        # Retain the private candles handle for existing diagnostics/tests.
+        self._breaker = self._breakers['/1.0/public/candles']
         self._pairs_cache: tuple[datetime, list[TradingPair]] | None = None
 
     async def close(self) -> None:
         await self._client.aclose()
 
+    def _family(self,path:str)->str:
+        return next((prefix for prefix in self._limiters if path.startswith(prefix)),path)
+
+    async def _event(self,event:str,value:float=1)->None:
+        if self.event_recorder:
+            await self.event_recorder(event,value)
+
+    async def _paced_get(self,path:str,params:dict[str,Any])->httpx.Response:
+        family=self._family(path)
+        while True:
+            local_delay=self._cooldowns.get(family,0)-time.monotonic()
+            if local_delay>30:
+                raise RateLimitDeferred("Shared provider cooldown is not ready; defer this cycle.")
+            if local_delay>0:
+                await asyncio.sleep(min(local_delay,1))
+                continue
+            async with self._gate.slot():
+                await self._limiter_for(path).acquire()
+                delay=await self.rate_reserver(family) if self.rate_reserver else 0
+                if delay<=0:
+                    return await self._client.get(path,params=params)
+            # Release the gate during shared cooldown so protection on another
+            # endpoint family can run. Recheck ownership before every request.
+            if delay>30:
+                raise RateLimitDeferred("Shared provider cooldown is not ready; defer this cycle.")
+            await asyncio.sleep(min(delay,1))
+
     async def _request(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         if not path.startswith(('/1.0/public/','/2.0/public/')):
             raise MarketDataError('Only public read-only exchange paths are allowed.')
-        if not self._breaker.allow():
-            raise MarketDataError("Revolut X circuit breaker is open.")
         params = {"region": self.region, **(params or {})}
+        breaker=self._breakers.setdefault(self._family(path),CircuitBreaker())
         for attempt in range(4):
-            await self._limiter_for(path).acquire()
-            if self.rate_reserver:
-                family=next((prefix for prefix in self._limiters if path.startswith(prefix)),path)
-                while (delay:=await self.rate_reserver(family))>0:
-                    await asyncio.sleep(delay)
+            if not breaker.allow():
+                raise MarketDataError("Revolut X circuit breaker is open.")
             try:
-                response = await self._client.get(path, params=params)
+                started=time.perf_counter()
+                try:
+                    response=await self._paced_get(path,params)
+                finally:
+                    await self._event('request_latency_ms',(time.perf_counter()-started)*1000)
                 if response.status_code == 429:
-                    retry_after = _retry_after_seconds(response.headers.get("Retry-After"))
-                    if retry_after > 30:
-                        raise RateLimitDeferred("Provider requested deferred retry; rate limit respected.")
-                    await asyncio.sleep(float(retry_after))
+                    breaker.failure()
+                    await self._event('request_429')
+                    retry_after=float(_retry_after_seconds(response.headers.get("Retry-After")))
+                    delay=max(retry_after,0.25*(2**attempt)+random.uniform(0,.1))
+                    family=self._family(path)
+                    self._cooldowns[family]=time.monotonic()+delay
+                    if self.cooldown_publisher:
+                        await self.cooldown_publisher(family,delay)
+                    if delay>30 or attempt==3:
+                        raise RateLimitDeferred("Provider cooldown recorded; bounded 429 retries exhausted or deferred.")
+                    await asyncio.sleep(delay)
                     continue
                 response.raise_for_status()
-                payload = cast(dict[str, Any], response.json())
+                payload=cast(dict[str,Any],response.json())
                 if not isinstance(payload,dict):
                     raise MarketDataError("Expected JSON object from provider.")
-                self._breaker.success()
+                breaker.success()
+                await self._event('request_success')
                 return payload
             except RateLimitDeferred:
-                self._breaker.failure()
                 raise
-            except (httpx.HTTPError, ValueError, MarketDataError) as exc:
-                self._breaker.failure()
-                if attempt == 3:
+            except (httpx.HTTPError,ValueError,MarketDataError) as exc:
+                breaker.failure()
+                await self._event('request_failure')
+                if attempt==3:
                     raise MarketDataError(str(exc)) from exc
-                jitter = random.uniform(0, 0.1)
-                await asyncio.sleep((0.25 * (2**attempt)) + jitter)
-        raise MarketDataError("Unreachable retry branch.")
+                await asyncio.sleep(.25*(2**attempt)+random.uniform(0,.1))
+        raise RateLimitDeferred("Bounded public request retries exhausted.")
 
     def _limiter_for(self, path: str) -> TokenBucket:
         for prefix, limiter in self._limiters.items():

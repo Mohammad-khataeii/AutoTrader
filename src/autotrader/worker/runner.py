@@ -14,6 +14,7 @@ from autotrader.decision import DecisionEngine
 from autotrader.domain import new_id, utc_now
 from autotrader.execution_gateway import ExecutionResult, PaperExecutionGateway
 from autotrader.market_data.revolut import MarketDataError, RevolutXPublicClient
+from autotrader.market_data.scheduling import request_priority
 from autotrader.market_data.service import MarketDataService
 from autotrader.persistence.database import create_schema, make_engine, make_session_factory
 from autotrader.persistence.pilot import pilot_configuration
@@ -84,14 +85,16 @@ async def main() -> None:
     while not await repository.claim_coordinator(owner):
         await asyncio.sleep(2)
     await repository.operation_state('INITIALIZING','coordinator_acquired')
-    await repository.configure_research_policy(Path(settings.research_root), test_environment=settings.environment == "test",
+    await repository.configure_research_policy(Path(settings.research_root), test_environment=settings.environment == "test" and not settings.shadow_enabled,
         approved={s.strip() for s in settings.approved_strategy_ids.split(",") if s.strip()},
         execution_costs={'fee_bps':str(settings.default_fee_bps),'slippage_bps':str(settings.default_slippage_bps),'spread_bps':'10','volume_participation':'.01'})
     market_client = RevolutXPublicClient(
         base_url=settings.revolut_x_base_url,
         region=settings.revolut_x_region,
         timeout=float(settings.market_data_timeout_seconds),
-        rate_reserver=repository.reserve_public_request,
+        rate_reserver=lambda family:repository.reserve_public_request(family,priority=request_priority.get()),
+        cooldown_publisher=repository.defer_public_requests,
+        event_recorder=repository.market_metric,
     )
     replay_client = None
     if settings.market_data_replay_file:
@@ -99,7 +102,7 @@ async def main() -> None:
         await market_client.close()
         replay_client = FileReplayClient(settings.market_data_replay_file)
         market_client = replay_client  # type: ignore[assignment]
-    market_data = MarketDataService(market_client, max_staleness_seconds=settings.market_data_max_staleness_seconds)
+    market_data = MarketDataService(market_client, max_staleness_seconds=settings.market_data_max_staleness_seconds, candle_lookback=720 if settings.shadow_enabled else 240,state_store=repository)
     risk = RiskEngine(
         RiskLimits(
             max_allocated_capital=settings.max_allocated_capital_eur,
@@ -138,6 +141,10 @@ async def main() -> None:
         market_data=market_data,
         execution_gateway=execution_gateway,
     )
+    from autotrader.shadow.lab import ShadowLab
+    from autotrader.shadow.runtime import ShadowRuntime
+    shadow_lab = ShadowLab(repository, settings)
+    shadow_runtime = ShadowRuntime(shadow_lab, market_data, risk, owner) if settings.shadow_enabled else None
     await repository.recover_pending_orders()
     await repository.reconcile_runtime_health(settings.initial_cash_eur)
     await repository.worker_heartbeat(key='worker_instance')
@@ -156,6 +163,8 @@ async def main() -> None:
                     stopping.set()
                     return
                 await repository.worker_heartbeat(key='coordinator_heartbeat')
+                if shadow_runtime:
+                    await shadow_runtime.renew()
             except Exception:
                 logger.exception('coordinator renewal unavailable; financial ownership checks remain authoritative')
             try:
@@ -166,7 +175,10 @@ async def main() -> None:
         while not stopping.is_set():
             monitor_started=time.monotonic()
             try:
-                await position_manager.monitor_once()
+                async with market_data.protective_cycle():
+                    await position_manager.monitor_once()
+                    if shadow_runtime:
+                        await shadow_runtime.monitor()
                 await repository.snapshot()
                 await repository.worker_heartbeat(key="position_monitor")
             except Exception:
@@ -184,16 +196,30 @@ async def main() -> None:
             cycle_started=time.monotonic()
             delay=float(settings.worker_scan_interval_seconds)
             try:
-                await repository.configure_research_policy(Path(settings.research_root),test_environment=settings.environment=='test',
+                await repository.configure_research_policy(Path(settings.research_root),test_environment=settings.environment=='test' and not settings.shadow_enabled,
                     approved={s.strip() for s in settings.approved_strategy_ids.split(',') if s.strip()},
                     execution_costs={'fee_bps':str(settings.default_fee_bps),'slippage_bps':str(settings.default_slippage_bps),'spread_bps':'10','volume_participation':'.01'})
                 strategy_engine.member_parameters=await repository.frozen_runtime_parameters()
                 frame_id = replay_client.refresh() if replay_client else None
                 if replay_client and frame_id == await repository.last_worker_frame():
+                    # Financial ownership leases can expire at slightly different
+                    # instants after SIGKILL. An unchanged replay frame must not
+                    # suppress protection while a shadow lease becomes available.
+                    # Durable observation consumption still prevents repeat fills.
+                    async with market_data.protective_cycle():
+                        await position_manager.monitor_once()
+                        if shadow_runtime:
+                            await shadow_runtime.monitor()
+                    await repository.worker_heartbeat(key="position_monitor")
                     await asyncio.sleep(settings.worker_scan_interval_seconds)
                     continue
                 await repository.recover_pending_orders()
-                position_actions = await position_manager.monitor_once() if replay_client else []
+                position_actions=[]
+                if replay_client:
+                    async with market_data.protective_cycle():
+                        position_actions=await position_manager.monitor_once()
+                        if shadow_runtime:
+                            await shadow_runtime.monitor()
                 if position_actions:
                     logger.info(
                         "position manager actions",
@@ -201,6 +227,8 @@ async def main() -> None:
                     )
                 result = await scanner.scan_once(settings.scanner_max_pairs)
                 await repository.store_scan(result)
+                if shadow_runtime:
+                    await shadow_runtime.scan(result.candidates)
                 executions = await execute_ranked_candidates(
                     result.candidates,
                     execution_gateway,
@@ -227,7 +255,7 @@ async def main() -> None:
                 state=('RECOVERY_REQUIRED' if problems else 'RISK_HALTED' if snapshot['risk_state']!='HEALTHY'
                     else 'DATA_DEGRADED' if result.provider_errors or result.status=='DATA_UNAVAILABLE'
                     else 'ENTRY_SUSPENDED' if snapshot['control']!='RUNNING'
-                    else 'RESEARCH_ONLY' if not allowed and settings.environment!='test'
+                    else 'RESEARCH_ONLY' if not allowed and (settings.environment!='test' or settings.shadow_enabled)
                     else 'PAPER_TRADING' if int(snapshot['positions']) else 'PAPER_READY')
                 duration=time.monotonic()-cycle_started
                 await repository.operation_state(state,'scan_cycle_completed',{
@@ -274,6 +302,7 @@ async def main() -> None:
             await repository.release_coordinator(owner)
         except Exception:
             logger.exception('lease release unavailable; bounded expiry applies')
+        await shadow_lab.close()
         await market_data.close()
         await engine.dispose()
 

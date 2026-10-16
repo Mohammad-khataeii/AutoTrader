@@ -12,7 +12,7 @@ from autotrader.indicators import calculate_features, higher_timeframe_context
 from autotrader.research.data import TIMEFRAMES, HistoricalBar
 
 
-def build_panel(bars: list[HistoricalBar]) -> tuple[dict[datetime, list[Candle]], dict[datetime, dict[str, MarketFeatures]], dict[str, Any]]:
+def build_panel(bars: list[HistoricalBar], *, experimental_context: bool = False) -> tuple[dict[datetime, list[Candle]], dict[datetime, dict[str, MarketFeatures]], dict[str, Any]]:
     frames: dict[datetime, list[Candle]] = defaultdict(list)
     flags = {(bar.symbol, bar.start): bar.quality_flags for bar in bars}
     for bar in bars:
@@ -27,11 +27,11 @@ def build_panel(bars: list[HistoricalBar]) -> tuple[dict[datetime, list[Candle]]
         for candle in sorted(frame, key=lambda c: c.symbol):
             history = histories[candle.symbol]
             history.append(candle)
-            if len(history) > 240:
+            if len(history) > (720 if experimental_context else 240):
                 history.pop(0)
             if len(history) < 50:
                 continue
-            f = calculate_features(history, Decimal(0), Decimal(10))
+            f = calculate_features(history[-240:], Decimal(0), Decimal(10))
             # Full-range quality is knowable only at this candle's close. Never
             # remove the current open/execution event using its later high/low.
             if "SUSPICIOUS_RANGE" in flags[(candle.symbol, candle.timestamp.isoformat())]:
@@ -44,9 +44,12 @@ def build_panel(bars: list[HistoricalBar]) -> tuple[dict[datetime, list[Candle]]
             # Existing confirmation expects a minute label; preserve values and
             # actual UTC duration while normalizing only that parser boundary.
             normalized = [Candle(c.symbol, c.timestamp, c.open, c.high, c.low, c.close, c.volume,
-                timeframe=f"{seconds // 60}m", source=c.source) for c in history]
+                timeframe=f"{seconds // 60}m", source=c.source) for c in history[-240:]]
             with at(available_at):
                 f.metadata["higher_timeframe_confirmation"] = higher_timeframe_context(normalized)
+            if experimental_context:
+                from autotrader.research.context import completed_context
+                f.metadata["experimental_context"] = completed_context(history, available_at)
             current[candle.symbol] = f
         features[available_at] = current
     return dict(frames), features, {"feature_version": "v4-completed-240", "history_window": 240,

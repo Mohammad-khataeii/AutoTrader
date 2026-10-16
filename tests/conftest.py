@@ -56,3 +56,33 @@ async def pg_repo(request: pytest.FixtureRequest) -> AsyncIterator[PersistentTra
             with psycopg.connect(admin, autocommit=True) as conn:
                 conn.execute(sql.SQL("DROP DATABASE {} WITH (FORCE)").format(sql.Identifier(name)))
         await asyncio.to_thread(drop)
+
+
+@pytest.fixture
+async def lab(pg_repo):
+    from decimal import Decimal as D
+
+    from autotrader.config import Settings
+    from autotrader.shadow.lab import ShadowLab
+    await pg_repo.initialize_portfolio(D(500))
+    settings = Settings(
+        database_url=pg_repo.test_database_url,
+        environment="test",
+        shadow_enabled=True,
+        _env_file=None,
+    )
+    service = ShadowLab(pg_repo, settings)
+    yield service
+    records = await service.records()
+    await service.close()
+
+    def cleanup():
+        with psycopg.connect(os.environ["AUTOTRADER_TEST_PG_ADMIN_URL"], autocommit=True) as conn:
+            for record in records:
+                conn.execute(
+                    sql.SQL("DROP DATABASE IF EXISTS {} WITH (FORCE)").format(
+                        sql.Identifier(record["manifest"]["database_name"])
+                    )
+                )
+
+    await asyncio.to_thread(cleanup)

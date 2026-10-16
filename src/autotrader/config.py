@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     market_data_replay_file: str | None = None
     research_root: str = ".data/research"
     approved_strategy_ids: str = ""
+    shadow_enabled: bool = False
     allocation_profile: Literal["conservative", "balanced", "opportunistic"] = "balanced"
 
     paper_trading_enabled: bool = True

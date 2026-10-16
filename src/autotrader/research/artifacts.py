@@ -13,8 +13,10 @@ def source_fingerprint() -> tuple[str, dict[str, str]]:
     return digest(canonical(files)), files
 
 
-def load_latest(root: Path) -> dict[str, Any] | None:
-    pointer = root / "latest-run.json"
+def load_latest(root: Path, *, pointer_name: str = "latest-run.json") -> dict[str, Any] | None:
+    if pointer_name not in {"latest-run.json", "latest-experimental-run.json"}:
+        raise ValueError("unsupported_research_pointer")
+    pointer = root / pointer_name
     if not pointer.exists():
         return None
     latest = json.loads(pointer.read_text(encoding="utf-8"))
