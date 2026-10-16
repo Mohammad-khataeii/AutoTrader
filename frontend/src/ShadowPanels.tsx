@@ -1,30 +1,167 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-type Row = Record<string, any>;
-async function query(path: string, auth: string, method="GET", body?: Row) {
-  const response=await fetch(path,{method,headers:{Authorization:auth,"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined,cache:"no-store"});
-  const value=await response.json(); if(!response.ok) throw new Error(JSON.stringify(value.detail??value)); return value;
+import React, { useEffect, useState } from "react";
+import { useResource, type Row } from "./api";
+import { date, humanize, money } from "./model";
+import { CompactTable, Panel, ResourceState, Technical } from "./ui";
+export function TradeFailureExplorer({ auth: _auth }: { auth: string }) {
+  const [filters, setFilters] = useState<Row>({});
+  const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState<Row | null>(null);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const params = new URLSearchParams(
+        Object.entries(filters).filter(([, v]) => v),
+      );
+      params.set("limit", "100");
+      setQuery(params.toString());
+      setSelected(null);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filters]);
+  const data = useResource(`/api/research/trade-failures?${query}`, {
+    enabled: Boolean(query),
+    ttl: 300000,
+  });
+  return (
+    <div className="page-stack">
+      <Panel>
+        <h2>Trade failure diagnostics</h2>
+        <p className="muted">
+          Previously examined historical OHLCV proxies. Diagnostic labels are
+          observations; counterfactuals are hypotheses.
+        </p>
+        <div className="form-grid">
+          {[
+            "strategy",
+            "asset",
+            "regime",
+            "classification",
+            "exit_type",
+            "timeframe",
+            "start_date",
+            "end_date",
+          ].map((f) => (
+            <label key={f}>
+              {humanize(f)}
+              <input
+                aria-label={`Failure ${f}`}
+                type={f.endsWith("date") ? "date" : "text"}
+                value={filters[f] ?? ""}
+                onChange={(e) =>
+                  setFilters({ ...filters, [f]: e.target.value })
+                }
+              />
+            </label>
+          ))}
+          <label>
+            Outcome
+            <select
+              aria-label="Failure outcome"
+              value={filters.outcome ?? "ALL"}
+              onChange={(e) =>
+                setFilters({ ...filters, outcome: e.target.value })
+              }
+            >
+              <option>ALL</option>
+              <option>LOSS</option>
+              <option>PROFIT</option>
+            </select>
+          </label>
+        </div>
+        <p className="small muted">
+          {data.data?.matched ?? 0} matching / {data.data?.total ?? 0}{" "}
+          positions. Showing up to 100.
+        </p>
+        <ResourceState resource={data} label="Trade diagnostics" />
+      </Panel>
+      <Panel>
+        <CompactTable
+          label="Historical trade failures"
+          rows={data.data?.positions ?? []}
+          columns={[
+            {
+              label: "Coin",
+              render: (r) => (
+                <button className="table-link" onClick={() => setSelected(r)}>
+                  {r.asset}
+                </button>
+              ),
+            },
+            { label: "Strategy", render: (r) => r.strategy },
+            { label: "Entry", render: (r) => date(r.entry_timestamp, true) },
+            { label: "Net P&L", render: (r) => money(r.net_pnl) },
+            { label: "Regime", render: (r) => humanize(r.regime) },
+          ]}
+        />
+        <label>
+          Inspect recorded position
+          <select
+            aria-label="Inspect failure position"
+            value={
+              selected
+                ? `${selected.source_artifact}:${selected.position_id}`
+                : ""
+            }
+            onChange={(e) =>
+              setSelected(
+                data.data?.positions?.find(
+                  (r: Row) =>
+                    `${r.source_artifact}:${r.position_id}` === e.target.value,
+                ) ?? null,
+              )
+            }
+          >
+            <option value="">Choose position</option>
+            {(data.data?.positions ?? []).map((r: Row) => (
+              <option
+                key={`${r.source_artifact}:${r.position_id}`}
+                value={`${r.source_artifact}:${r.position_id}`}
+              >
+                {r.timeframe} · {r.strategy} · {r.position_id}
+              </option>
+            ))}
+          </select>
+        </label>
+        {selected && (
+          <Technical
+            value={selected}
+            label="View causal features, signal evidence and counterfactuals"
+          />
+        )}
+      </Panel>
+      <p className="muted small">{data.data?.limitations?.join(". ")}</p>
+    </div>
+  );
 }
-function Records({rows,fields}:{rows:Row[];fields:string[]}) {
-  return <div className="panel table-wrap shadow-records"><table style={{ minWidth: Math.max(720, fields.length * 120) }}><thead><tr>{fields.map(f=><th key={f}>{f.replace(/_/g," ")}</th>)}</tr></thead><tbody>{rows.map((r,i)=><tr key={i}>{fields.map(f=><td key={f}>{r[f]==null?"Unavailable":typeof r[f]==="object"?JSON.stringify(r[f]):String(r[f])}</td>)}</tr>)}</tbody></table>{!rows.length&&<p>No recorded observations.</p>}</div>;
-}
-export function ShadowLab({auth}:{auth:string}) {
-  const [data,setData]=useState<Row|null>(null),[error,setError]=useState(""),[selected,setSelected]=useState(""),[strategy,setStrategy]=useState("B2_CONFIRMED_COMPRESSION"),[name,setName]=useState("Compression confirmation"),[busy,setBusy]=useState(false);
-  const refresh=useCallback(async()=>{try{setData(await query("/api/shadow",auth));setError("");}catch(e){setError(String(e));}},[auth]);
-  useEffect(()=>{void refresh();const timer=setInterval(()=>void refresh(),10000);return()=>clearInterval(timer);},[refresh]);
-  const experiment=data?.experiments.find((e:Row)=>e.experiment_id===selected);
-  const curve=[...(experiment?.history?.equity??[])].reverse().filter((r:Row)=>!r.degraded).map((r:Row)=>({...r,equity:Number(r.equity)}));
-  let peak=500;const drawdown=curve.map((r:Row)=>{peak=Math.max(peak,r.equity);return {...r,drawdown:(peak-r.equity)/peak};});
-  const run=async(action:()=>Promise<unknown>)=>{setBusy(true);try{await action();await refresh();}catch(e){setError(String(e));}finally{setBusy(false);}};
-  return <><section className="panel"><h2>OFFICIAL PAPER ACCOUNT</h2><p>Official equity EUR {data?.official?.equity==null?"Unavailable":Number(data.official.equity).toFixed(2)} · Cash EUR {data?.official?.available_cash==null?"Unavailable":Number(data.official.available_cash).toFixed(2)} · P&L EUR {data?.official?.total_net_pnl==null?"Unavailable":Number(data.official.total_net_pnl).toFixed(2)} · Risk {data?.official?.risk_state??"Unavailable"} · {data?.official?.control??"Unavailable"}</p><p>Existing research approval remains authoritative. Shadow equity is separate.</p></section><section className="panel"><h2>SHADOW EXPERIMENTS — UNVALIDATED</h2><p>{data?.warning}</p><p>Each experiment receives EUR500 virtual capital once. Record at least 30 prospective days after freeze; losses never reset.</p><label>Experiment name <input aria-label="Experiment name" value={name} onChange={e=>setName(e.target.value)}/></label><label>Shadow strategy <select aria-label="Shadow strategy" value={strategy} onChange={e=>setStrategy(e.target.value)}>{(data?.presets??[]).map((s:Row)=><option key={s.strategy_id} value={s.strategy_id}>{s.strategy_id} · {s.version}</option>)}</select></label><button disabled={busy||!data?.enabled||!name} onClick={()=>void run(async()=>{const r=await query("/api/shadow",auth,"POST",{request_id:crypto.randomUUID(),name,strategy_id:strategy});setSelected(r.experiment_id);})}>Start isolated shadow experiment</button>{!data?.enabled&&<p>Shadow lab disabled by server configuration.</p>}</section>{error&&<p role="alert" className="panel danger">{error}</p>}<Records rows={(data?.experiments??[]).map((e:Row)=>({...e,...e.performance,equity:e.portfolio?.equity,active_positions:e.portfolio?.positions,strategy:e.manifest.strategy_id,version:e.manifest.strategy_version,data_kind:e.manifest.data_kind}))} fields={["name","strategy","version","data_kind","state","equity","net_pnl","closed_trades","win_rate","profit_factor","max_drawdown","fees","active_positions","source_matches"]}/><section className="panel"><label>Experiment detail <select aria-label="Experiment detail" value={selected} onChange={e=>setSelected(e.target.value)}><option value="">Select experiment</option>{(data?.experiments??[]).map((e:Row)=><option key={e.experiment_id} value={e.experiment_id}>{e.name}</option>)}</select></label>{experiment&&<><p>{experiment.warning}</p><p>State {experiment.state} · Frozen source {experiment.manifest.source_fingerprint} · Parameters {experiment.manifest.parameter_hash} · Frozen {experiment.manifest.frozen_at}</p><pre>{JSON.stringify(experiment.manifest.parameters,null,2)}</pre><div className="shadow-controls">{["pause","resume","stop"].map(action=><button key={action} disabled={busy||experiment.state==="STOPPED"} onClick={()=>void run(()=>query(`/api/shadow/${selected}/${action}`,auth,"POST"))}>{action} experiment</button>)}<button onClick={()=>void run(async()=>{const r=await query(`/api/shadow/${selected}/export`,auth);const url=URL.createObjectURL(new Blob([JSON.stringify(r,null,2)],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download=`shadow-${selected}.json`;a.click();URL.revokeObjectURL(url);})}>Export financial report</button>{["journal","orders","fills","equity"].map(kind=><button key={kind} disabled={busy} onClick={()=>void run(async()=>{const response=await fetch(`/api/shadow/${selected}/history/${kind}`,{headers:{Authorization:auth},cache:"no-store"});if(!response.ok)throw new Error(String(response.status));const url=URL.createObjectURL(await response.blob());const a=document.createElement("a");a.href=url;a.download=`shadow-${selected}-${kind}.ndjson`;a.click();URL.revokeObjectURL(url);})}>Export complete {kind}</button>)}</div><p>Reconciliation: {JSON.stringify(experiment.reconciliation)}. Dashboard history window: {experiment.history_window_limit} records; complete exports are untruncated. Drawdown chart uses this window; headline maximum uses full history.</p></>}</section>{experiment&&<>{[[curve,"equity","Equity"],[drawdown,"drawdown","Recent drawdown"]].map(([rows,field,label]:any)=><section className="panel" key={field}><h2>{label}</h2><ResponsiveContainer width="100%" height={220}><AreaChart data={rows}><XAxis dataKey="timestamp" hide/><YAxis domain={["auto","auto"]}/><Tooltip/><Area dataKey={field} stroke="#0f766e" fill="#99f6e4" isAnimationActive={false}/></AreaChart></ResponsiveContainer></section>)}<h2>Positions and exits</h2><Records rows={experiment.positions??[]} fields={["position_id","symbol","quantity","cost_basis","realized_pnl","initial_stop","protective_stop","take_profit_targets","closed_at"]}/><h2>Order execution</h2><Records rows={experiment.orders??[]} fields={["order_id","symbol","side","status","quantity","filled_quantity","execution_json"]}/><h2>Confirmed fills</h2><Records rows={experiment.fills??[]} fields={["fill_id","position_id","side","quantity","price","fee","exit_target_id"]}/><h2>Entry reasoning</h2><Records rows={experiment.history?.signals??[]} fields={["strategy_id","timestamp","score","payload_json"]}/><h2>Decision history</h2><Records rows={experiment.history?.decisions??[]} fields={["created_at","symbol","accepted","payload_json"]}/></>}</>;
-}
-export function TradeFailureExplorer({auth}:{auth:string}) {
-  const [filters,setFilters]=useState<Row>({}),[data,setData]=useState<Row|null>(null),[selected,setSelected]=useState<Row|null>(null),[error,setError]=useState("");
-  useEffect(()=>{const p=new URLSearchParams(Object.entries(filters).filter(([,v])=>v));p.set("limit","100");query(`/api/research/trade-failures?${p}`,auth).then(setData).catch(e=>setError(String(e)));},[auth,filters]);
-  return <><section className="panel"><h2>Original V4.1 Trade Failure Explorer</h2><p>Previously examined historical OHLCV proxy results. Classifications are measurable diagnostics; counterfactuals are hypotheses. No profitable strategy is implied.</p>{["strategy","asset","regime","classification","exit_type","timeframe","start_date","end_date"].map(f=><label key={f}>{f.replace(/_/g," ")} <input aria-label={`Failure ${f}`} type={f.endsWith("date")?"date":"text"} value={filters[f]??""} onChange={e=>setFilters({...filters,[f]:e.target.value})}/></label>)}<label>Outcome <select aria-label="Failure outcome" value={filters.outcome??"ALL"} onChange={e=>setFilters({...filters,outcome:e.target.value})}><option>ALL</option><option>LOSS</option><option>PROFIT</option></select></label><p>{data?.status} · {data?.matched??0} matching / {data?.total??0} positions · Showing up to 100</p>{error&&<p role="alert">{error}</p>}</section><Records rows={data?.positions??[]} fields={["timeframe","strategy","asset","regime","entry_timestamp","entry_price","initial_stop","initial_targets","net_pnl","costs","classifications"]}/><section className="panel"><label>Inspect position <select aria-label="Inspect failure position" onChange={e=>setSelected(data?.positions.find((r:Row)=>`${r.source_artifact}:${r.position_id}`===e.target.value)??null)}><option value="">Select recorded position</option>{(data?.positions??[]).map((r:Row)=><option key={`${r.source_artifact}:${r.position_id}`} value={`${r.source_artifact}:${r.position_id}`}>{r.timeframe} {r.strategy} {r.position_id}</option>)}</select></label>{selected&&<pre>{JSON.stringify(selected,null,2)}</pre>}<p>{data?.limitations?.join(". ")}</p></section></>;
-}
-export function MarketDataHealth({auth}:{auth:string}) {
-  const [data,setData]=useState<Row|null>(null),[error,setError]=useState("");
-  useEffect(()=>{let live=true;const load=()=>query("/api/market-data/health",auth).then(r=>{if(live)setData(r);}).catch(e=>{if(live)setError(String(e));});void load();const timer=setInterval(()=>void load(),10000);return()=>{live=false;clearInterval(timer);};},[auth]);
-  return <section className="panel"><h2>Public market-data health</h2><p>{data?.policy}</p><p>Requests {data?.requests??"Unavailable"} · HTTP 429 {data?.request_429??0} · Mean request time including pacing {data?.mean_request_latency_ms??"Unavailable"} ms · Cache hits {data?.candle_cache_hit??0} · Candle refreshes {data?.candle_refresh??0} · Candles downloaded {data?.candles_downloaded??0}</p><p>Last successful refresh {data?.last_successful_refresh??"No measured success yet"}</p>{error&&<p role="alert">{error}</p>}<Records rows={data?.caches??[]} fields={["key","observations","refreshed_at","age_seconds"]}/></section>;
+export function MarketDataHealth({ auth: _auth }: { auth: string }) {
+  const resource = useResource("/api/market-data/health", { poll: 20000 });
+  const d = resource.data;
+  return (
+    <Panel>
+      <h2>Public market-data health</h2>
+      <ResourceState resource={resource} label="Market-data health" />
+      <dl className="facts">
+        {[
+          ["Requests", d?.requests],
+          ["Recorded HTTP 429 responses", d?.request_429],
+          ["Cache hits", d?.candle_cache_hit],
+          ["Completed-candle refreshes", d?.candle_refresh],
+          ["Candles downloaded", d?.candles_downloaded],
+          ["Last successful refresh", date(d?.last_successful_refresh, true)],
+        ].map(([label, value]) => (
+          <div key={label}>
+            <dt>{label}</dt>
+            <dd>{value ?? "Unavailable"}</dd>
+          </div>
+        ))}
+      </dl>
+      <p className="small muted">
+        Rate-limit counts are cumulative observations, not proof of a current
+        outage.
+      </p>
+      <Technical
+        value={d}
+        label="Cache freshness, latency and acquisition policy"
+      />
+    </Panel>
+  );
 }

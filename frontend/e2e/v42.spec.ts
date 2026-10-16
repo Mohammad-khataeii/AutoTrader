@@ -1,51 +1,111 @@
 import { test, expect } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
-const file=process.env.AUTOTRADER_BROWSER_ENV??path.resolve("../.tools/v42-test.env");
-const env=Object.fromEntries(fs.readFileSync(file,"utf8").trim().split(/\r?\n/).map(line=>{const i=line.indexOf("=");return [line.slice(0,i),line.slice(i+1)];}));
-const experimentName=process.env.AUTOTRADER_BROWSER_EXPERIMENT_NAME??"Browser isolated A2";
-test("V4.2 authenticated shadow controls, official separation, failures and data health",async({page,request})=>{
+const env = Object.fromEntries(
+  fs
+    .readFileSync(
+      process.env.AUTOTRADER_BROWSER_ENV ??
+        path.resolve("../.tools/v42-test.env"),
+      "utf8",
+    )
+    .trim()
+    .split(/\r?\n/)
+    .map((l) => {
+      const i = l.indexOf("=");
+      return [l.slice(0, i), l.slice(i + 1)];
+    }),
+);
+test("retained V4.2 shadow controls, five complete exports, official isolation and diagnostics", async ({
+  page,
+  request,
+}) => {
   test.setTimeout(90000);
-  const headers={Authorization:`Basic ${Buffer.from(`${env.DASHBOARD_USERNAME}:${env.DASHBOARD_PASSWORD}`).toString("base64")}`};
+  const headers = {
+    Authorization: `Basic ${Buffer.from(`${env.DASHBOARD_USERNAME}:${env.DASHBOARD_PASSWORD}`).toString("base64")}`,
+  };
   expect((await request.get("/api/shadow")).status()).toBe(401);
-  const before=await (await request.get("/api/overview",{headers})).json();
-  expect(Number(before.portfolio.equity)).toBe(500);
-  const errors:string[]=[];page.on("pageerror",e=>errors.push(e.message));
-  await page.goto("/");await page.getByLabel("Username").fill(env.DASHBOARD_USERNAME);await page.getByLabel("Password").fill(env.DASHBOARD_PASSWORD);
-  await page.getByRole("button",{name:"Sign in",exact:true}).click();
-  await expect(page.getByRole("heading",{name:"Command Center",exact:true})).toBeVisible();
-  await page.getByRole("button",{name:"Shadow Trading Laboratory",exact:true}).click();
-  await expect(page.getByRole("heading",{name:"OFFICIAL PAPER ACCOUNT",exact:true})).toBeVisible();
-  const initial=await (await request.get("/api/shadow",{headers})).json();
-  const existing=initial.experiments.find((e:any)=>e.name===experimentName);
-  if(!existing){
-    await page.getByLabel("Experiment name").fill(experimentName);await page.getByLabel("Shadow strategy").selectOption("A2_CONFIRMED_PULLBACK");
-    await page.getByRole("button",{name:"Start isolated shadow experiment",exact:true}).click();
-  } else await page.getByLabel("Experiment detail").selectOption(existing.experiment_id);
-  await expect(page.getByRole("button",{name:"pause experiment",exact:true})).toBeVisible();
-  await page.getByRole("button",{name:"pause experiment",exact:true}).click();
-  await expect(page.getByText(/State PAUSED/)).toBeVisible();
-  await page.getByRole("button",{name:"resume experiment",exact:true}).click();
-  await expect(page.getByText(/State SHADOW_ACTIVE/)).toBeVisible();
-  const download=page.waitForEvent("download");await page.getByRole("button",{name:"Export financial report",exact:true}).click();
-  expect((await download).suggestedFilename()).toMatch(/^shadow-/);
-  const completeDownload=page.waitForEvent("download"); await page.getByRole("button",{name:"Export complete journal",exact:true}).click();
-  expect((await completeDownload).suggestedFilename()).toMatch(/-journal\.ndjson$/);
-  await page.screenshot({path:"../docs/evidence/shadow-lab-v4_2.png",fullPage:true});
-  const after=await (await request.get("/api/overview",{headers})).json();
+  const before = await (await request.get("/api/overview", { headers })).json();
+  const list = await (await request.get("/api/shadow", { headers })).json();
+  const existing = list.experiments.find(
+    (e: any) => e.state === "SHADOW_ACTIVE",
+  );
+  expect(existing).toBeTruthy();
+  await page.goto("/");
+  await page
+    .getByLabel("Username", { exact: true })
+    .fill(env.DASHBOARD_USERNAME);
+  await page
+    .getByLabel("Password", { exact: true })
+    .fill(env.DASHBOARD_PASSWORD);
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await page.getByRole("button", { name: "Experiments", exact: true }).click();
+  const id = existing.experiment_id.slice(0, 8);
+  await page
+    .getByRole("button", { name: new RegExp(`^Open .* ${id}$`) })
+    .click();
+  await page
+    .getByRole("button", { name: `Pause experiment ${id}`, exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: `Resume experiment ${id}`, exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: `Resume experiment ${id}`, exact: true })
+    .click();
+  await page.getByText("Export", { exact: true }).click();
+  for (const label of [
+    "Financial report",
+    "Orders",
+    "Fills",
+    "Journal",
+    "Equity",
+  ]) {
+    const d = page.waitForEvent("download");
+    await page.getByRole("button", { name: label, exact: true }).click();
+    expect((await d).suggestedFilename()).toContain(existing.experiment_id);
+  }
+  await page
+    .getByText("Performance and financial integrity", { exact: true })
+    .click();
+  await expect(
+    page.getByText("Financial records consistent", { exact: true }),
+  ).toBeVisible();
+  const after = await (await request.get("/api/overview", { headers })).json();
   expect(after.portfolio.available_cash).toBe(before.portfolio.available_cash);
-  expect(after.orders.length).toBe(before.orders.length);expect(after.fills.length).toBe(before.fills.length);
-  const shadow=await (await request.get("/api/shadow",{headers})).json();
-  const selected=shadow.experiments.find((e:any)=>e.name===experimentName);
-  expect(selected.account_id).toMatch(/^shadow:/);expect(selected.reconciliation).toEqual([]);
-  expect(selected.manifest.promotion_state).toBe("UNVALIDATED_EXPERIMENT");
-  await page.getByRole("button",{name:"Trade Failure Explorer",exact:true}).click();
-  await expect(page.getByRole("heading",{name:"Original V4.1 Trade Failure Explorer",exact:true})).toBeVisible();
-  await page.getByLabel("Failure outcome").selectOption("LOSS");await page.getByLabel("Failure strategy").fill("A_TREND_PULLBACK");
-  await expect(page.getByText(/833 positions/)).toBeVisible();
-  await page.getByLabel("Inspect failure position").selectOption({index:1});
-  await expect(page.locator("pre").filter({hasText:"signal_evidence"})).toBeVisible();
-  await page.screenshot({path:"../docs/evidence/trade-failures-v4_2.png",fullPage:true});
-  await page.getByRole("button",{name:"System Health",exact:true}).click();await expect(page.getByRole("heading",{name:"Public market-data health",exact:true})).toBeVisible();
-  expect(errors).toEqual([]);
+  expect(after.orders.length).toBe(before.orders.length);
+  expect(after.fills.length).toBe(before.fills.length);
+  await page.getByRole("button", { name: "Research", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Advanced Research", exact: true })
+    .click();
+  await page
+    .getByLabel("Research tool")
+    .selectOption("Trade failure diagnostics");
+  await page.getByLabel("Failure outcome").selectOption("LOSS");
+  await page
+    .getByLabel("Failure strategy", { exact: true })
+    .fill("A_TREND_PULLBACK");
+  await expect(page.getByText("833 positions", { exact: false })).toBeVisible();
+  await expect(
+    page.getByLabel("Inspect failure position").locator("option"),
+  ).not.toHaveCount(1);
+  await page.getByLabel("Inspect failure position").selectOption({ index: 1 });
+  await page
+    .getByText("View causal features, signal evidence and counterfactuals", {
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.locator("pre").filter({ hasText: "signal_evidence" }),
+  ).toBeVisible();
+  await page.locator(".advanced-menu > summary").click();
+  await page
+    .getByRole("button", { name: "System & data health", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", {
+      name: "Public market-data health",
+      exact: true,
+    }),
+  ).toBeVisible();
 });

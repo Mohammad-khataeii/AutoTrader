@@ -1,107 +1,206 @@
 import { test, expect } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
-
-const file = process.env.AUTOTRADER_BROWSER_ENV ?? path.resolve("../.tools/v41-test.env");
-const env = Object.fromEntries(fs.readFileSync(file, "utf8").trim().split(/\r?\n/).map(line => { const i = line.indexOf("="); return [line.slice(0, i), line.slice(i + 1)]; }));
-
-test("authenticated runtime data, all pages, and persistent paper controls", async ({ page, request }) => {
-  test.setTimeout(180000);
+const file =
+  process.env.AUTOTRADER_BROWSER_ENV ?? path.resolve("../.tools/v42-test.env");
+const env = Object.fromEntries(
+  fs
+    .readFileSync(file, "utf8")
+    .trim()
+    .split(/\r?\n/)
+    .map((line) => {
+      const i = line.indexOf("=");
+      return [line.slice(0, i), line.slice(i + 1)];
+    }),
+);
+async function advanced(page: any, name: string) {
+  await page.locator(".advanced-menu > summary").click();
+  await page.getByRole("button", { name, exact: true }).click();
+  await expect(page.getByRole("heading", { name, level: 1 })).toBeVisible();
+}
+test("authenticated runtime data, retained advanced research, paper controls and pilot exports", async ({
+  page,
+  request,
+}) => {
+  test.setTimeout(240000);
   const errors: string[] = [];
-  page.on("pageerror", error => errors.push(error.message));
+  page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Revolut X AutoTrader" })).toBeVisible();
-  await page.getByLabel("Username").fill(env.DASHBOARD_USERNAME);
-  await page.getByLabel("Password").fill(env.DASHBOARD_PASSWORD);
+  await page
+    .getByLabel("Username", { exact: true })
+    .fill(env.DASHBOARD_USERNAME);
+  await page
+    .getByLabel("Password", { exact: true })
+    .fill(env.DASHBOARD_PASSWORD);
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Command Center", exact: true })).toBeVisible();
-  await expect(page.getByText("Starting virtual capital", { exact: true })).toBeVisible();
-  await expect(page.getByText("NO VALIDATED STRATEGY", { exact: true })).toBeVisible();
-  const headers = { Authorization: `Basic ${Buffer.from(`${env.DASHBOARD_USERNAME}:${env.DASHBOARD_PASSWORD}`).toString("base64")}` };
-  const api = await request.get("/api/overview", { headers });
-  expect(api.ok()).toBeTruthy();
-  const overview = await api.json();
-  const expected = `EUR ${Number(overview.portfolio.available_cash).toFixed(2)}`;
-  await expect(page.locator(".metric").filter({ hasText: "Available cash" }).locator("strong")).toHaveText(expected);
-  for (const tab of ["Market Scanner", "Opportunities", "Autonomous Decisions", "Portfolio", "Position Management", "Order History", "Backtesting Lab", "Execution Quality", "Strategy Lab", "Opportunity Intelligence", "AI Intelligence", "Risk Center", "System Health", "Paper Pilot", "Settings"]) {
+  await expect(
+    page.getByRole("heading", { name: "Overview", level: 1 }),
+  ).toBeVisible();
+  const headers = {
+    Authorization: `Basic ${Buffer.from(`${env.DASHBOARD_USERNAME}:${env.DASHBOARD_PASSWORD}`).toString("base64")}`,
+  };
+  const before = await (await request.get("/api/overview", { headers })).json();
+  await expect(page.locator(".kpi").first().locator("strong")).toHaveText(
+    `€${Number(before.portfolio.equity).toFixed(2)}`,
+  );
+  await expect(
+    page.getByText("The official portfolio is in research mode.", {
+      exact: false,
+    }),
+  ).toBeVisible();
+  for (const tab of ["Experiments", "Trades", "Research", "Overview"]) {
     await page.getByRole("button", { name: tab, exact: true }).click();
-    await expect(page.getByRole("heading", { name: tab, exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: tab, level: 1 }),
+    ).toBeVisible();
+    await expect(page.locator("pre:visible")).toHaveCount(0);
   }
-  await page.getByRole("button", { name: "Strategy Lab", exact: true }).click();
+  for (const name of [
+    "Market monitor",
+    "Decision journal",
+    "Execution diagnostics",
+    "AI & budgets",
+    "Risk & recovery",
+    "System & data health",
+    "Settings",
+  ]) {
+    await advanced(page, name);
+  }
+  await page.getByRole("button", { name: "Research", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Advanced Research", exact: true })
+    .click();
+  await page.getByLabel("Research tool").selectOption("Historical lab");
+  await page.getByLabel("Run history").selectOption("research-20261016T044934");
   await page.getByLabel("Dataset asset").selectOption("BTC-EUR");
   await page.getByLabel("Research timeframe").selectOption("5m");
-  await page.getByLabel("Research strategy").selectOption("B_COMPRESSION_BREAKOUT");
-  await page.getByRole("button", { name: "Load trade and equity evidence", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Out-of-sample marked equity", exact: true })).toBeVisible();
+  await page
+    .getByLabel("Research strategy")
+    .selectOption("B_COMPRESSION_BREAKOUT");
+  await page
+    .getByRole("button", {
+      name: "Load trade and equity evidence",
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.getByRole("heading", {
+      name: "Out-of-sample marked equity",
+      exact: true,
+    }),
+  ).toBeVisible();
   await page.getByLabel("Research timeframe").selectOption("1h");
-  const queuedResponse = page.waitForResponse(response => response.url().endsWith("/api/research/jobs") && response.request().method() === "POST");
-  await page.getByRole("button", { name: "Run selected research", exact: true }).click();
+  const queuedResponse = page.waitForResponse(
+    (r) =>
+      r.url().endsWith("/api/research/jobs") && r.request().method() === "POST",
+  );
+  await page
+    .getByRole("button", { name: "Run selected research", exact: true })
+    .click();
   const queued = await queuedResponse;
   expect(queued.status()).toBe(202);
   const job = await queued.json();
-  await expect.poll(async () => {
-    const body = await (await request.get("/api/research", { headers })).json();
-    return body.jobs.find((row: any) => row.job_id === job.job_id)?.status;
-  }, { timeout: 120000, intervals: [2000] }).toBe("COMPLETED");
-  await expect(page.getByText("COMPLETED", { exact: true }).first()).toBeVisible({ timeout: 15000 });
-  await page.screenshot({ path: `../docs/evidence/strategy-lab-${process.env.AUTOTRADER_EVIDENCE_VERSION ?? "v4_1"}.png`, fullPage: true });
-  await page.getByRole("button", { name: "Backtesting Lab", exact: true }).click();
+  await expect
+    .poll(
+      async () => {
+        const body = await (
+          await request.get("/api/research", { headers })
+        ).json();
+        return body.jobs.find((r: any) => r.job_id === job.job_id)?.status;
+      },
+      { timeout: 120000, intervals: [2000] },
+    )
+    .toBe("COMPLETED");
+  await expect(page.getByLabel("Research timeframe")).toHaveValue("1h");
+  await page.getByLabel("Research tool").selectOption("Historical replay");
   await page.getByLabel("Replay entry policy").selectOption("LIMIT");
-  const replayResponse = page.waitForResponse(response => response.url().endsWith("/api/backtests") && response.request().method() === "POST", { timeout: 150000 });
-  await page.getByRole("button", { name: "Run BTC-EUR historical replay", exact: true }).click();
-  const completed = await replayResponse;
+  const completedResponse = page.waitForResponse(
+    (r) =>
+      r.url().endsWith("/api/backtests") && r.request().method() === "POST",
+    { timeout: 150000 },
+  );
+  await page
+    .getByRole("button", { name: "Run BTC-EUR historical replay", exact: true })
+    .click();
+  const completed = await completedResponse;
   expect(completed.ok()).toBeTruthy();
   const replay = await completed.json();
   expect(replay.status).toBe("COMPLETED");
   expect(replay.report.assumptions.entry_order_type).toBe("LIMIT");
   await expect(page.getByText(replay.run_id, { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "PAUSE NEW ENTRIES", exact: true }).click();
-  await expect(page.getByText(/Controls: PAUSED/)).toBeVisible();
-  expect((await (await request.get("/api/overview", { headers })).json()).portfolio.control).toBe("PAUSED");
-  await page.getByRole("button", { name: "RESUME PAPER TRADING", exact: true }).click();
-  await expect(page.getByText(/Controls: RUNNING/)).toBeVisible();
-  await page.getByRole("button", { name: "STOP PAPER TRADING", exact: true }).click();
-  await expect(page.getByText(/Controls: STOPPED/)).toBeVisible();
-  await page.getByRole("button", { name: "START PAPER TRADING", exact: true }).click();
-  await expect(page.getByText(/Controls: RUNNING/)).toBeVisible();
-  await page.getByRole("button", { name: "EMERGENCY PAPER HALT", exact: true }).click();
-  await expect(page.getByText(/Controls: EMERGENCY/)).toBeVisible();
-  await page.getByRole("button", { name: "RESUME PAPER TRADING", exact: true }).click();
-  await expect(page.getByText(/Controls: RUNNING/)).toBeVisible();
-  await page.getByRole("button", { name: "Command Center", exact: true }).click();
-  if ((await (await request.get("/api/history", { headers })).json()).equity.length > 1) {
-    // A flat equity curve has zero geometric height despite its visible stroke.
-    await expect(page.locator(".recharts-area-area")).toBeVisible();
-    await expect(page.locator(".recharts-area-curve")).toHaveAttribute("d", /[ML]/);
+  await advanced(page, "Official Account Controls");
+  for (const [action, label, state] of [
+    ["pause", "Pause new entries", "PAUSED"],
+    ["resume", "Resume paper trading", "RUNNING"],
+    ["stop", "Stop paper trading", "STOPPED"],
+    ["start", "Start paper trading", "RUNNING"],
+    ["emergency", "Emergency halt", "EMERGENCY"],
+    ["resume", "Resume paper trading", "RUNNING"],
+  ]) {
+    await page.getByRole("button", { name: label, exact: true }).click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: label, exact: true })
+      .click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    expect(
+      (await (await request.get("/api/overview", { headers })).json()).portfolio
+        .control,
+    ).toBe(state);
   }
-  await page.screenshot({ path: `../docs/evidence/dashboard-${process.env.AUTOTRADER_EVIDENCE_VERSION ?? "v4_1"}.png`, fullPage: true });
-  await page.getByRole("button", { name: "AI Intelligence", exact: true }).click();
-  await expect(page.getByText("Rolling 60 minutes", { exact: true })).toBeVisible();
+  await advanced(page, "AI & budgets");
+  await expect(
+    page.getByText("Rolling 60 minutes", { exact: true }),
+  ).toBeVisible();
   const ai = await (await request.get("/api/ai", { headers })).json();
   expect(ai.provider).toBe("mock");
   expect(ai.budget.daily_used).toBe(0);
   expect(ai.budget.rolling_hour_used).toBe(0);
-  await page.getByRole("button", { name: "Paper Pilot", exact: true }).click();
-  const pilotList = await (await request.get("/api/pilots", { headers })).json();
-  if (!pilotList.some((p: any) => p.state === "ACTIVE")) await page.getByRole("button", { name: "Start 30-day paper pilot", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "RESEARCH_ONLY · ACTIVE" })).toBeVisible();
-  await expect.poll(async () => {
-    const pilots = await (await request.get("/api/pilots", { headers })).json();
-    const activePilot = pilots.find((p: any) => p.state === "ACTIVE");
-    if (!activePilot) return 0;
-    const report = await (await request.get(`/api/pilots/${activePilot.pilot_id}/report`, { headers })).json();
-    expect(report.thirty_days_elapsed).toBe(false);
-    expect(report.mode).toBe("RESEARCH_ONLY");
-    return report.observations;
-  }, { timeout: 90000, intervals: [3000] }).toBeGreaterThan(0);
-  const pilots = await (await request.get("/api/pilots", { headers })).json();
-  expect(pilots.length).toBeGreaterThanOrEqual(pilotList.length);
-  const activePilot = pilots.find((p: any) => p.state === "ACTIVE");
-  expect(activePilot).toBeTruthy();
-  const csv = await request.get(`/api/pilots/${activePilot.pilot_id}/report?format=csv`, { headers });
-  expect(csv.ok()).toBeTruthy();
-  expect(csv.headers()["content-type"]).toContain("text/csv");
+  await advanced(page, "Paper pilot");
+  let pilots = await (await request.get("/api/pilots", { headers })).json();
+  if (!pilots.some((p: any) => p.state === "ACTIVE")) {
+    await page
+      .getByRole("button", { name: "Start 30-day paper pilot", exact: true })
+      .click();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Start pilot", exact: true })
+      .click();
+  }
+  await expect(
+    page.getByText("Research mode · Active", { exact: true }),
+  ).toBeVisible();
+  await expect
+    .poll(
+      async () => {
+        pilots = await (await request.get("/api/pilots", { headers })).json();
+        const active = pilots.find((p: any) => p.state === "ACTIVE");
+        if (!active) return 0;
+        const r = await (
+          await request.get(`/api/pilots/${active.pilot_id}/report`, {
+            headers,
+          })
+        ).json();
+        expect(r.mode).toBe("RESEARCH_ONLY");
+        expect(r.thirty_days_elapsed).toBe(false);
+        return r.observations;
+      },
+      { timeout: 90000, intervals: [3000] },
+    )
+    .toBeGreaterThan(0);
+  const firstExport = page
+    .getByRole("button", { name: "Export CSV report", exact: true })
+    .first();
+  const download = page.waitForEvent("download");
+  await firstExport.click();
+  expect((await download).suggestedFilename()).toMatch(/\.csv$/);
+  const after = await (await request.get("/api/overview", { headers })).json();
+  expect(after.portfolio.equity).toBe(before.portfolio.equity);
+  expect(after.orders.length).toBe(before.orders.length);
   expect(errors).toEqual([]);
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Sign in", exact: true }),
+  ).toBeVisible();
 });

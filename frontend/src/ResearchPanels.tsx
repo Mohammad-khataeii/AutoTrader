@@ -1,25 +1,210 @@
+import { ResourceState, Technical } from "./ui";
+import { useResource } from "./api";
 import React, { useState } from "react";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 type Row = Record<string, any>;
 function Table({ rows, fields }: { rows: Row[]; fields: string[] }) {
-  if (!rows.length) return <p className="panel">No observations recorded yet.</p>;
-  return <div className="panel table-wrap"><table><thead><tr>{fields.map(f => <th key={f}>{f.replace(/_/g, " ")}</th>)}</tr></thead><tbody>{rows.map((r, i) => <tr key={i}>{fields.map(f => <td key={f}>{typeof r[f] === "object" ? JSON.stringify(r[f]) : String(r[f] ?? "Unavailable")}</td>)}</tr>)}</tbody></table></div>;
+  if (!rows.length)
+    return <p className="panel">No observations recorded yet.</p>;
+  return (
+    <div className="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            {fields.map((f) => (
+              <th key={f}>{f.replace(/_/g, " ")}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={i}>
+              {fields.map((f) => (
+                <td key={f}>
+                  {typeof r[f] === "object" ? (
+                    <Technical value={r[f]} label="View evidence" />
+                  ) : (
+                    String(r[f] ?? "Unavailable")
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
-function Chart({ rows, field, label }: { rows: Row[]; field: string; label: string }) {
+function Chart({
+  rows,
+  field,
+  label,
+}: {
+  rows: Row[];
+  field: string;
+  label: string;
+}) {
   if (!rows.length) return null;
-  return <section className="panel"><h2>{label}</h2><ResponsiveContainer width="100%" height={240}><AreaChart data={rows.map(r => ({ ...r, [field]: Number(r[field]) }))}><XAxis dataKey="timestamp" hide /><YAxis domain={["auto", "auto"]} /><Tooltip /><Area dataKey={field} stroke="#0f766e" fill="#99f6e4" isAnimationActive={false} /></AreaChart></ResponsiveContainer></section>;
+  return (
+    <section className="panel">
+      <h2>{label}</h2>
+      <ResponsiveContainer width="100%" height={240}>
+        <AreaChart
+          data={rows.map((r) => ({ ...r, [field]: Number(r[field]) }))}
+        >
+          <XAxis dataKey="timestamp" hide />
+          <YAxis domain={["auto", "auto"]} />
+          <Tooltip />
+          <Area
+            dataKey={field}
+            stroke="#0f766e"
+            fill="#99f6e4"
+            isAnimationActive={false}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </section>
+  );
 }
 
 export function ExecutionQuality({ data }: { data: Row }) {
-  return <><section className="panel"><h2>Executable valuation</h2><p>Midpoint equity: EUR {data.mark_equity || "Unavailable"}. Net bid liquidation estimate: {data.executable_bid_equity_after_exit_costs == null ? "Unavailable: stale or insufficient depth" : `EUR ${data.executable_bid_equity_after_exit_costs}`}.</p><p>{data.quote_policy}</p><p>Entry policy: {data.entry_policy?.mode ?? "Not configured"}. Research: {data.entry_policy?.research_verdict ?? "Unavailable"}.</p></section><Table rows={data.positions ?? []} fields={["symbol", "quantity", "best_bid", "best_ask", "midpoint_mark", "spread_bps", "fillable_quantity", "unfilled_quantity", "vwap", "fee", "net_cash_change", "book_age_seconds", "opened_at", "age_seconds", "remaining_cost_basis", "marked_value", "estimated_liquidation_value", "protective_stop", "realized_pnl", "unrealized_pnl", "current_risk_condition", "unavailable_reason"]} /><h2>Order execution evidence</h2><Table rows={(data.orders ?? []).map((r: Row) => ({ ...r, ...r.execution_quality }))} fields={["created_at", "symbol", "side", "status", "fillable_quantity", "unfilled_quantity", "vwap", "fee", "depth_impact_bps", "slippage_bps", "rejection_reason", "admission_quality"]} /><h2>Protection watches</h2><Table rows={data.protection_watches ?? []} fields={["position_id", "symbol", "state", "reason", "quantity", "protective_stop", "observed_at"]} /></>;
+  return (
+    <>
+      <section className="panel">
+        <h2>Executable valuation</h2>
+        <p>
+          Midpoint equity: EUR {data.mark_equity || "Unavailable"}. Net bid
+          liquidation estimate:{" "}
+          {data.executable_bid_equity_after_exit_costs == null
+            ? "Unavailable: stale or insufficient depth"
+            : `EUR ${data.executable_bid_equity_after_exit_costs}`}
+          .
+        </p>
+        <p>{data.quote_policy}</p>
+        <p>
+          Entry policy: {data.entry_policy?.mode ?? "Not configured"}. Research:{" "}
+          {data.entry_policy?.research_verdict ?? "Unavailable"}.
+        </p>
+      </section>
+      <Table
+        rows={data.positions ?? []}
+        fields={[
+          "symbol",
+          "quantity",
+          "best_bid",
+          "best_ask",
+          "midpoint_mark",
+          "spread_bps",
+          "fillable_quantity",
+          "unfilled_quantity",
+          "vwap",
+          "fee",
+          "net_cash_change",
+          "book_age_seconds",
+          "opened_at",
+          "age_seconds",
+          "remaining_cost_basis",
+          "marked_value",
+          "estimated_liquidation_value",
+          "protective_stop",
+          "realized_pnl",
+          "unrealized_pnl",
+          "current_risk_condition",
+          "unavailable_reason",
+        ]}
+      />
+      <h2>Order execution evidence</h2>
+      <Table
+        rows={(data.orders ?? []).map((r: Row) => ({
+          ...r,
+          ...r.execution_quality,
+        }))}
+        fields={[
+          "created_at",
+          "symbol",
+          "side",
+          "status",
+          "fillable_quantity",
+          "unfilled_quantity",
+          "vwap",
+          "fee",
+          "depth_impact_bps",
+          "slippage_bps",
+          "rejection_reason",
+          "admission_quality",
+        ]}
+      />
+      <h2>Protection watches</h2>
+      <Table
+        rows={data.protection_watches ?? []}
+        fields={[
+          "position_id",
+          "symbol",
+          "state",
+          "reason",
+          "quantity",
+          "protective_stop",
+          "observed_at",
+        ]}
+      />
+    </>
+  );
 }
 
 export function OpportunityIntelligence({ data }: { data: Row }) {
-  return <><p className="panel">{data.policy} Mature outcome backlog: {data.mature_feedback_backlog ?? "Unavailable"}.</p><h2>Observed outcomes</h2><Table rows={data.feedback ?? []} fields={["created_at", "symbol", "category", "accepted_decision", "rejection_reason", "subsequent_completed_bars", "observed_mfe", "observed_mae", "signal_evidence"]} /><h2>Allocation decisions</h2><Table rows={data.allocation_decisions ?? []} fields={["profile", "accepted", "quote_cap", "maximum_observed_correlation", "reasons"]} /></>;
+  return (
+    <>
+      <p className="panel">
+        {data.policy} Mature outcome backlog:{" "}
+        {data.mature_feedback_backlog ?? "Unavailable"}.
+      </p>
+      <h2>Observed outcomes</h2>
+      <Table
+        rows={data.feedback ?? []}
+        fields={[
+          "created_at",
+          "symbol",
+          "category",
+          "accepted_decision",
+          "rejection_reason",
+          "subsequent_completed_bars",
+          "observed_mfe",
+          "observed_mae",
+          "signal_evidence",
+        ]}
+      />
+      <h2>Allocation decisions</h2>
+      <Table
+        rows={data.allocation_decisions ?? []}
+        fields={[
+          "profile",
+          "accepted",
+          "quote_cap",
+          "maximum_observed_correlation",
+          "reasons",
+        ]}
+      />
+    </>
+  );
 }
 
-export function StrategyLab({ data, auth, refresh }: { data: Row; auth: string; refresh: () => Promise<void> }) {
+export function StrategyLab({
+  data,
+  auth,
+  refresh,
+}: {
+  data: Row;
+  auth: string;
+  refresh: () => Promise<void>;
+}) {
   const [timeframe, setTimeframe] = useState("5m");
   const [strategy, setStrategy] = useState("A_TREND_PULLBACK");
   const [asset, setAsset] = useState("ALL");
@@ -30,10 +215,456 @@ export function StrategyLab({ data, auth, refresh }: { data: Row; auth: string; 
   const [targetAtr, setTargetAtr] = useState(1.5);
   const [volume, setVolume] = useState(1.5);
   const [message, setMessage] = useState("");
-  const [selectedSummary, setSelectedSummary] = useState<Row | null>(null);
-  const latest = selectedSummary ?? data.latest;
-  const visibleArtifact = artifact?._run_id === latest?.run_id && artifact?._timeframe === timeframe && artifact?._strategy === strategy ? artifact : null;
+  const [selectedRun, setSelectedRun] = useState("");
+  const summary = useResource(
+    `/api/research/runs/${selectedRun}/summary.json`,
+    {
+      enabled: Boolean(selectedRun),
+      ttl: 300000,
+    },
+  );
+  const latest = selectedRun ? summary.data : data.latest;
+  const visibleArtifact =
+    artifact?._run_id === latest?.run_id &&
+    artifact?._timeframe === timeframe &&
+    artifact?._strategy === strategy
+      ? artifact
+      : null;
   const result = latest?.timeframes?.[timeframe]?.strategies?.[strategy];
-  const rows = Object.entries(latest?.timeframes ?? {}).flatMap(([tf, value]: [string, any]) => Object.entries(value.strategies ?? {}).map(([name, r]: [string, any]) => ({ timeframe: tf, strategy: name, ...r.out_of_sample, passed: r.gates.passed, failures: r.gates.failure_reasons })));
-  return <><section className="panel"><h2>{latest?.verdict ?? data.status ?? "No research run"}</h2><p>Run: {latest?.run_id ?? "Unavailable"}. Parameters are selected on training data and frozen before validation and test. Passing software checks does not establish trading edge.</p>{data.error && <p role="alert">{data.error}</p>}<label>Dataset asset <select aria-label="Dataset asset" value={asset} onChange={e => setAsset(e.target.value)}><option value="ALL">All assets</option>{Array.from(new Set((data.datasets ?? []).map((r: Row) => r.symbol))).map((symbol: any) => <option key={symbol}>{symbol}</option>)}</select></label></section><Table rows={(data.datasets ?? []).filter((r: Row) => asset === "ALL" || r.symbol === asset)} fields={["symbol", "timeframe", "observations", "actual_start", "actual_last_start", "missing_observations", "quality_counts", "dataset_version"]} /><h2>Historical out-of-sample results</h2><Table rows={rows} fields={["timeframe", "strategy", "net_profit", "trades", "expectancy", "profit_factor", "max_drawdown", "passed", "failures"]} /><section className="panel"><h2>Research configuration</h2><p>Run the selected asset, timeframe and strategy against cached genuine history. Three neighboring parameter choices are fixed before training; validation and test remain separate.</p><label>ATR stop multiplier <input aria-label="ATR stop multiplier" type="number" min="1" max="4" step="0.5" value={stopAtr} onChange={e => setStopAtr(Number(e.target.value))} /></label><label>ATR target multiplier <input aria-label="ATR target multiplier" type="number" min="1" max="6" step="0.5" value={targetAtr} onChange={e => setTargetAtr(Number(e.target.value))} /></label><label>Relative volume threshold <input aria-label="Relative volume threshold" type="number" min="1" max="4" step="0.1" value={volume} onChange={e => setVolume(Number(e.target.value))} /></label><button disabled={busy || !(data.datasets ?? []).length} onClick={async () => { setBusy(true); setError(""); try { const grid = [-0.5, 0, 0.5].map(offset => ({ relative_volume: String(volume), compression_width: "0.06", breakout_buffer: "0.001", relative_return: "0.02", stop_atr: String(Math.min(4, Math.max(1, stopAtr + offset))), target_atr: String(Math.min(6, Math.max(1, targetAtr + offset))) })); const assets = asset === "ALL" ? Array.from(new Set((data.datasets ?? []).map((row: Row) => row.base))) : [asset.split("-")[0]]; const response = await fetch("/api/research/jobs", { method: "POST", headers: { Authorization: auth, "Content-Type": "application/json" }, body: JSON.stringify({ strategies: [strategy], timeframes: [timeframe], assets, grid }) }); const body = await response.json(); if (!response.ok) throw new Error(JSON.stringify(body.detail ?? body)); setMessage(`Research job ${body.job_id}: ${body.status}`); await refresh(); } catch (e) { setError(String(e)); } finally { setBusy(false); } }}>Run selected research</button>{message && <p role="status">{message}</p>}<label>Run history <select aria-label="Run history" defaultValue="" onChange={async e => { if (!e.target.value) { setSelectedSummary(null); return; } try { const response = await fetch(`/api/research/runs/${e.target.value}/summary.json`, { headers: { Authorization: auth } }); if (!response.ok) throw new Error(String(response.status)); setSelectedSummary(await response.json()); } catch (e) { setError(String(e)); } }}><option value="">Latest completed run</option>{(data.runs ?? []).map((r: Row) => <option value={r.run_id} key={r.run_id}>{r.run_id}: {r.verdict}</option>)}</select></label></section><Table rows={data.jobs ?? []} fields={["job_id", "status", "created_at", "completed_at", "request", "result"]} /><section className="panel"><h2>Strategy evidence</h2><label>Research timeframe <select aria-label="Research timeframe" value={timeframe} onChange={e => { setTimeframe(e.target.value); setArtifact(null); }}><option value="1d">Daily</option><option value="4h">Four hours</option><option value="1h">One hour</option><option value="15m">Fifteen minutes</option><option value="5m">Five minutes</option><option value="1m">One minute</option></select></label><label>Strategy <select aria-label="Research strategy" value={strategy} onChange={e => { setStrategy(e.target.value); setArtifact(null); }}>{(data.registry ?? []).filter((r: Row) => !r.filter_only).map((r: Row) => <option key={r.strategy_id}>{r.strategy_id}</option>)}</select></label><p>Frozen parameters: {JSON.stringify(result?.out_of_sample?.parameters ?? {})}</p><p>Validation: {latest?.timeframes?.[timeframe]?.frozen_parameters?.validation_start ?? "Unavailable"} to {latest?.timeframes?.[timeframe]?.frozen_parameters?.validation_end_exclusive ?? "Unavailable"}. Test: {latest?.timeframes?.[timeframe]?.frozen_parameters?.test_start ?? "Unavailable"} to {latest?.timeframes?.[timeframe]?.frozen_parameters?.test_end_exclusive ?? "Unavailable"}. UTC; interval ends are exclusive.</p><button disabled={busy || !latest} onClick={async () => { setBusy(true); setError(""); try { const response = await fetch(`/api/research/runs/${latest.run_id}/${timeframe}-${strategy}-test.json`, { headers: { Authorization: auth }, cache: "no-store" }); const body = await response.json(); if (!response.ok) throw new Error(body.detail ?? response.status); setArtifact({ ...body, _run_id: latest.run_id, _timeframe: timeframe, _strategy: strategy }); } catch (e) { setError(String(e)); } finally { setBusy(false); } }}>{busy ? "Loading evidence…" : "Load trade and equity evidence"}</button>{error && <p role="alert">{error}</p>}</section><Chart rows={visibleArtifact?.curve ?? []} field="equity" label="Out-of-sample marked equity" /><Chart rows={visibleArtifact?.drawdown_curve ?? []} field="drawdown" label="Out-of-sample drawdown" /><Table rows={visibleArtifact?.fills ?? []} fields={["timestamp", "symbol", "side", "quantity", "price", "fee", "strategy", "regime", "reason", "realized_pnl"]} /><h2>Walk-forward windows</h2><Table rows={result?.walk_forward ?? []} fields={["training_start", "training_end_exclusive", "start", "end_exclusive", "frozen_grid_index", "net_profit", "trades", "max_drawdown"]} /><h2>Cost sensitivity</h2><Table rows={result?.sensitivity ?? []} fields={["costs", "net_profit", "trades", "expectancy", "max_drawdown"]} /><h2>Mock AI comparison</h2><p className="panel">{latest?.timeframes?.[timeframe]?.mock_ai_comparison?.conclusion ?? "No matched comparison available"}</p><Table rows={Object.entries(latest?.timeframes?.[timeframe]?.mock_ai_comparison ?? {}).filter(([name]) => name !== "conclusion").map(([name, row]: [string, any]) => ({ name, ...row }))} fields={["name", "net_profit", "trades", "max_drawdown", "fees", "ai_mode"]} /><h2>Benchmarks</h2><Table rows={Object.entries(latest?.timeframes?.[timeframe]?.benchmarks ?? {}).map(([name, r]: [string, any]) => ({ name, ...r }))} fields={["name", "net_profit", "total_return", "max_drawdown", "assumption", "open_positions_at_end"]} /><h2>Durable research approval states</h2><Table rows={data.promotions ?? []} fields={["strategy_id", "strategy_version", "research_timeframe", "state", "reason", "parameter_hash", "approving_authority", "approved_at"]} /><h2>Unvalidated experimental hypotheses</h2><Table rows={(data.experimental_registry ?? []).map((s: Row) => ({ ...s, promotion_state: "UNVALIDATED_EXPERIMENT", source_fingerprint: data.experimental_latest?.source_fingerprint, parameter_hash: data.experimental_latest?.timeframes?.["5m"]?.strategies?.[s.strategy_id]?.candidate?.parameter_hash, closed_trades: data.experimental_latest?.timeframes?.["5m"]?.strategies?.[s.strategy_id]?.out_of_sample?.trades, net_pnl: data.experimental_latest?.timeframes?.["5m"]?.strategies?.[s.strategy_id]?.out_of_sample?.net_profit, cost_stress: data.experimental_latest?.timeframes?.["5m"]?.strategies?.[s.strategy_id]?.sensitivity?.map((r: Row) => r.net_profit), research: data.experimental_latest?.timeframes?.["5m"]?.strategies?.[s.strategy_id]?.gates ?? (s.filter_only ? "Filter only; no independent portfolio" : "Research pending") }))} fields={["strategy_id", "version", "hypothesis", "filter_only", "promotion_state", "closed_trades", "net_pnl", "cost_stress", "source_fingerprint", "parameter_hash", "research"]} /><h2>Versioned hypotheses</h2><Table rows={data.registry ?? []} fields={["strategy_id", "version", "hypothesis", "entry", "invalidation", "exit", "holding_bars", "regimes", "results"]} /></>;
+  const rows = Object.entries(latest?.timeframes ?? {}).flatMap(
+    ([tf, value]: [string, any]) =>
+      Object.entries(value.strategies ?? {}).map(
+        ([name, r]: [string, any]) => ({
+          timeframe: tf,
+          strategy: name,
+          ...r.out_of_sample,
+          passed: r.gates.passed,
+          failures: r.gates.failure_reasons,
+        }),
+      ),
+  );
+  return (
+    <>
+      <section className="panel">
+        <h2>{latest?.verdict ?? data.status ?? "No research run"}</h2>
+        <p>
+          Run: {latest?.run_id ?? "Unavailable"}. Parameters are selected on
+          training data and frozen before validation and test. Passing software
+          checks does not establish trading edge.
+        </p>
+        {data.error && <p role="alert">{data.error}</p>}
+        <label>
+          Dataset asset{" "}
+          <select
+            aria-label="Dataset asset"
+            value={asset}
+            onChange={(e) => setAsset(e.target.value)}
+          >
+            <option value="ALL">All assets</option>
+            {Array.from(
+              new Set((data.datasets ?? []).map((r: Row) => r.symbol)),
+            ).map((symbol: any) => (
+              <option key={symbol}>{symbol}</option>
+            ))}
+          </select>
+        </label>
+      </section>
+      <Table
+        rows={(data.datasets ?? []).filter(
+          (r: Row) => asset === "ALL" || r.symbol === asset,
+        )}
+        fields={[
+          "symbol",
+          "timeframe",
+          "observations",
+          "actual_start",
+          "actual_last_start",
+          "missing_observations",
+          "quality_counts",
+          "dataset_version",
+        ]}
+      />
+      <h2>Historical out-of-sample results</h2>
+      <Table
+        rows={rows}
+        fields={[
+          "timeframe",
+          "strategy",
+          "net_profit",
+          "trades",
+          "expectancy",
+          "profit_factor",
+          "max_drawdown",
+          "passed",
+          "failures",
+        ]}
+      />
+      <section className="panel">
+        <h2>Research configuration</h2>
+        <p>
+          Run the selected asset, timeframe and strategy against cached genuine
+          history. Three neighboring parameter choices are fixed before
+          training; validation and test remain separate.
+        </p>
+        <label>
+          ATR stop multiplier{" "}
+          <input
+            aria-label="ATR stop multiplier"
+            type="number"
+            min="1"
+            max="4"
+            step="0.5"
+            value={stopAtr}
+            onChange={(e) => setStopAtr(Number(e.target.value))}
+          />
+        </label>
+        <label>
+          ATR target multiplier{" "}
+          <input
+            aria-label="ATR target multiplier"
+            type="number"
+            min="1"
+            max="6"
+            step="0.5"
+            value={targetAtr}
+            onChange={(e) => setTargetAtr(Number(e.target.value))}
+          />
+        </label>
+        <label>
+          Relative volume threshold{" "}
+          <input
+            aria-label="Relative volume threshold"
+            type="number"
+            min="1"
+            max="4"
+            step="0.1"
+            value={volume}
+            onChange={(e) => setVolume(Number(e.target.value))}
+          />
+        </label>
+        <button
+          disabled={busy || !(data.datasets ?? []).length}
+          onClick={async () => {
+            setBusy(true);
+            setError("");
+            try {
+              const grid = [-0.5, 0, 0.5].map((offset) => ({
+                relative_volume: String(volume),
+                compression_width: "0.06",
+                breakout_buffer: "0.001",
+                relative_return: "0.02",
+                stop_atr: String(Math.min(4, Math.max(1, stopAtr + offset))),
+                target_atr: String(
+                  Math.min(6, Math.max(1, targetAtr + offset)),
+                ),
+              }));
+              const assets =
+                asset === "ALL"
+                  ? Array.from(
+                      new Set(
+                        (data.datasets ?? []).map((row: Row) => row.base),
+                      ),
+                    )
+                  : [asset.split("-")[0]];
+              const response = await fetch("/api/research/jobs", {
+                method: "POST",
+                headers: {
+                  Authorization: auth,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  strategies: [strategy],
+                  timeframes: [timeframe],
+                  assets,
+                  grid,
+                }),
+              });
+              const body = await response.json();
+              if (!response.ok)
+                throw new Error(JSON.stringify(body.detail ?? body));
+              setMessage(`Research job ${body.job_id}: ${body.status}`);
+              await refresh();
+            } catch (e) {
+              setError(String(e));
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          Run selected research
+        </button>
+        {message && <p role="status">{message}</p>}
+        <label>
+          Run history{" "}
+          <select
+            aria-label="Run history"
+            value={selectedRun}
+            onChange={(e) => {
+              setSelectedRun(e.target.value);
+              setArtifact(null);
+              setError("");
+            }}
+          >
+            <option value="">Latest completed run</option>
+            {(data.runs ?? []).map((r: Row) => (
+              <option value={r.run_id} key={r.run_id}>
+                {r.run_id}: {r.verdict}
+              </option>
+            ))}
+          </select>
+        </label>
+        {selectedRun && (
+          <ResourceState resource={summary} label="Selected research run" />
+        )}
+      </section>
+      <Table
+        rows={data.jobs ?? []}
+        fields={[
+          "job_id",
+          "status",
+          "created_at",
+          "completed_at",
+          "request",
+          "result",
+        ]}
+      />
+      <section className="panel">
+        <h2>Strategy evidence</h2>
+        <label>
+          Research timeframe{" "}
+          <select
+            aria-label="Research timeframe"
+            value={timeframe}
+            onChange={(e) => {
+              setTimeframe(e.target.value);
+              setArtifact(null);
+            }}
+          >
+            <option value="1d">Daily</option>
+            <option value="4h">Four hours</option>
+            <option value="1h">One hour</option>
+            <option value="15m">Fifteen minutes</option>
+            <option value="5m">Five minutes</option>
+            <option value="1m">One minute</option>
+          </select>
+        </label>
+        <label>
+          Strategy{" "}
+          <select
+            aria-label="Research strategy"
+            value={strategy}
+            onChange={(e) => {
+              setStrategy(e.target.value);
+              setArtifact(null);
+            }}
+          >
+            {(data.registry ?? [])
+              .filter((r: Row) => !r.filter_only)
+              .map((r: Row) => (
+                <option key={r.strategy_id}>{r.strategy_id}</option>
+              ))}
+          </select>
+        </label>
+        <Technical
+          value={result?.out_of_sample?.parameters ?? {}}
+          label="Frozen parameters"
+        />
+        <p>
+          Validation:{" "}
+          {latest?.timeframes?.[timeframe]?.frozen_parameters
+            ?.validation_start ?? "Unavailable"}{" "}
+          to{" "}
+          {latest?.timeframes?.[timeframe]?.frozen_parameters
+            ?.validation_end_exclusive ?? "Unavailable"}
+          . Test:{" "}
+          {latest?.timeframes?.[timeframe]?.frozen_parameters?.test_start ??
+            "Unavailable"}{" "}
+          to{" "}
+          {latest?.timeframes?.[timeframe]?.frozen_parameters
+            ?.test_end_exclusive ?? "Unavailable"}
+          . UTC; interval ends are exclusive.
+        </p>
+        <button
+          disabled={busy || !latest}
+          onClick={async () => {
+            setBusy(true);
+            setError("");
+            try {
+              const response = await fetch(
+                `/api/research/runs/${latest.run_id}/${timeframe}-${strategy}-test.json`,
+                { headers: { Authorization: auth }, cache: "no-store" },
+              );
+              const body = await response.json();
+              if (!response.ok) throw new Error(body.detail ?? response.status);
+              setArtifact({
+                ...body,
+                _run_id: latest.run_id,
+                _timeframe: timeframe,
+                _strategy: strategy,
+              });
+            } catch (e) {
+              setError(String(e));
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          {busy ? "Loading evidence…" : "Load trade and equity evidence"}
+        </button>
+        {error && <p role="alert">{error}</p>}
+      </section>
+      <Chart
+        rows={visibleArtifact?.curve ?? []}
+        field="equity"
+        label="Out-of-sample marked equity"
+      />
+      <Chart
+        rows={visibleArtifact?.drawdown_curve ?? []}
+        field="drawdown"
+        label="Out-of-sample drawdown"
+      />
+      <Table
+        rows={visibleArtifact?.fills ?? []}
+        fields={[
+          "timestamp",
+          "symbol",
+          "side",
+          "quantity",
+          "price",
+          "fee",
+          "strategy",
+          "regime",
+          "reason",
+          "realized_pnl",
+        ]}
+      />
+      <h2>Walk-forward windows</h2>
+      <Table
+        rows={result?.walk_forward ?? []}
+        fields={[
+          "training_start",
+          "training_end_exclusive",
+          "start",
+          "end_exclusive",
+          "frozen_grid_index",
+          "net_profit",
+          "trades",
+          "max_drawdown",
+        ]}
+      />
+      <h2>Cost sensitivity</h2>
+      <Table
+        rows={result?.sensitivity ?? []}
+        fields={["costs", "net_profit", "trades", "expectancy", "max_drawdown"]}
+      />
+      <h2>Mock AI comparison</h2>
+      <p className="panel">
+        {latest?.timeframes?.[timeframe]?.mock_ai_comparison?.conclusion ??
+          "No matched comparison available"}
+      </p>
+      <Table
+        rows={Object.entries(
+          latest?.timeframes?.[timeframe]?.mock_ai_comparison ?? {},
+        )
+          .filter(([name]) => name !== "conclusion")
+          .map(([name, row]: [string, any]) => ({ name, ...row }))}
+        fields={[
+          "name",
+          "net_profit",
+          "trades",
+          "max_drawdown",
+          "fees",
+          "ai_mode",
+        ]}
+      />
+      <h2>Benchmarks</h2>
+      <Table
+        rows={Object.entries(
+          latest?.timeframes?.[timeframe]?.benchmarks ?? {},
+        ).map(([name, r]: [string, any]) => ({ name, ...r }))}
+        fields={[
+          "name",
+          "net_profit",
+          "total_return",
+          "max_drawdown",
+          "assumption",
+          "open_positions_at_end",
+        ]}
+      />
+      <h2>Durable research approval states</h2>
+      <Table
+        rows={data.promotions ?? []}
+        fields={[
+          "strategy_id",
+          "strategy_version",
+          "research_timeframe",
+          "state",
+          "reason",
+          "parameter_hash",
+          "approving_authority",
+          "approved_at",
+        ]}
+      />
+      <h2>Unvalidated experimental hypotheses</h2>
+      <Table
+        rows={(data.experimental_registry ?? []).map((s: Row) => ({
+          ...s,
+          promotion_state: "UNVALIDATED_EXPERIMENT",
+          source_fingerprint: data.experimental_latest?.source_fingerprint,
+          parameter_hash:
+            data.experimental_latest?.timeframes?.["5m"]?.strategies?.[
+              s.strategy_id
+            ]?.candidate?.parameter_hash,
+          closed_trades:
+            data.experimental_latest?.timeframes?.["5m"]?.strategies?.[
+              s.strategy_id
+            ]?.out_of_sample?.trades,
+          net_pnl:
+            data.experimental_latest?.timeframes?.["5m"]?.strategies?.[
+              s.strategy_id
+            ]?.out_of_sample?.net_profit,
+          cost_stress: data.experimental_latest?.timeframes?.[
+            "5m"
+          ]?.strategies?.[s.strategy_id]?.sensitivity?.map(
+            (r: Row) => r.net_profit,
+          ),
+          research:
+            data.experimental_latest?.timeframes?.["5m"]?.strategies?.[
+              s.strategy_id
+            ]?.gates ??
+            (s.filter_only
+              ? "Filter only; no independent portfolio"
+              : "Research pending"),
+        }))}
+        fields={[
+          "strategy_id",
+          "version",
+          "hypothesis",
+          "filter_only",
+          "promotion_state",
+          "closed_trades",
+          "net_pnl",
+          "cost_stress",
+          "source_fingerprint",
+          "parameter_hash",
+          "research",
+        ]}
+      />
+      <h2>Versioned hypotheses</h2>
+      <Table
+        rows={data.registry ?? []}
+        fields={[
+          "strategy_id",
+          "version",
+          "hypothesis",
+          "entry",
+          "invalidation",
+          "exit",
+          "holding_bars",
+          "regimes",
+          "results",
+        ]}
+      />
+    </>
+  );
 }

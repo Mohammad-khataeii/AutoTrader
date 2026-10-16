@@ -1,0 +1,66 @@
+[
+  {
+    "width": 1440,
+    "screen": "overview",
+    "horizontal_page_overflow_px": 0,
+    "page_errors": [],
+    "source": "ACTUAL_LOCAL_API",
+    "synthetic_four_account_fixture": false
+  },
+  {
+    "width": 1440,
+    "screen": "experiments",
+    "horizontal_page_overflow_px": 0,
+    "page_errors": [],
+    "source": "ACTUAL_LOCAL_API",
+    "synthetic_four_account_fixture": false
+  },
+  {
+    "width": 1024,
+    "screen": "overview",
+    "horizontal_page_overflow_px": 0,
+    "page_errors": [],
+    "source": "ACTUAL_LOCAL_API",
+    "synthetic_four_account_fixture": false
+  },
+  {
+    "width": 1024,
+    "screen": "experiments",
+    "horizontal_page_overflow_px": 0,
+    "page_errors": [],
+    "source": "ACTUAL_LOCAL_API",
+    "synthetic_four_account_fixture": false
+  },
+  {
+    "width": 768,
+    "screen": "overview",
+    "horizontal_page_overflow_px": 0,
+    "page_errors": [],
+    "source": "ACTUAL_LOCAL_API",
+    "synthetic_four_account_fixture": false
+  },
+  {
+    "width": 768,
+    "screen": "experiments",
+    "horizontal_page_overflow_px": 0,
+    "page_errors": [],
+    "source": "ACTUAL_LOCAL_API",
+    "synthetic_four_account_fixture": false
+  },
+  {
+    "width": 375,
+    "screen": "overview",
+    "horizontal_page_overflow_px": 0,
+    "page_errors": [],
+    "source": "ACTUAL_LOCAL_API",
+    "synthetic_four_account_fixture": false
+  },
+  {
+    "width": 375,
+    "screen": "experiments",
+    "horizontal_page_overflow_px": 0,
+    "page_errors": [],
+    "source": "ACTUAL_LOCAL_API",
+    "synthetic_four_account_fixture": false
+  }
+]

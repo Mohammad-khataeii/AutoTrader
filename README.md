@@ -1,4 +1,6 @@
-# Revolut X AutoTrader4.2
+# Revolut X AutoTrader — Interface 4.3 / Engine 4.2
+
+V4.3 simplifies the dashboard to **Overview, Experiments, Trades and Research**, with advanced controls and diagnostics available on demand. The trading engine and API remain V4.2. See the [redesign report, screenshots and test evidence](docs/V4_3_UI_REDESIGN.md). This interface release is developed and tested locally; production deployment requires separate authorization.
 
 An autonomous EUR500 **paper-trading research platform** using public Revolut X observations, FastAPI, React and authoritative PostgreSQL accounting. The existing journal, realistic bid/ask execution, partial targets, protective stops, reservations and recovery remain intact. Real-money trading stays disabled. AI defaults to mock with persistent30/day,6/rolling-hour and USD10/month paid-mode limits.
 

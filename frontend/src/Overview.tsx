@@ -1,0 +1,227 @@
+import React, { useState } from "react";
+import { ArrowUpRight, Radar } from "lucide-react";
+import { type Row, type Snapshot, useResource } from "./api";
+import {
+  date,
+  money,
+  number,
+  rejection,
+  shortId,
+  stateName,
+  strategyName,
+  systemStatus,
+} from "./model";
+import { Badge, EquityChart, Panel, Pnl, ResourceState } from "./ui";
+export function Overview({
+  system,
+  onExperiments,
+}: {
+  system: Snapshot;
+  onExperiments: () => void;
+}) {
+  const overview = useResource("/api/overview", { poll: 30000 });
+  const shadows = useResource("/api/shadow", { ttl: 60000 });
+  const [account, setAccount] = useState("official");
+  const history = useResource("/api/history", {
+    enabled: account === "official",
+    ttl: 60000,
+  });
+  const p = overview.data?.portfolio;
+  const experiments: Row[] = shadows.data?.experiments ?? [];
+  const active = experiments.filter((e) => e.state === "SHADOW_ACTIVE");
+  const selected = experiments.find((e) => e.experiment_id === account);
+  const op = system.data?.operation;
+  const status = systemStatus(
+    system.data,
+    p?.control,
+    Boolean(system.error || overview.error),
+  );
+  const open =
+    p &&
+    shadows.data &&
+    experiments.every((e) => e.portfolio?.positions != null)
+      ? Number(p.positions) +
+        experiments.reduce((sum, e) => sum + Number(e.portfolio.positions), 0)
+      : undefined;
+  const problem =
+    system.data?.reconciliation?.problems?.length ||
+    (p?.risk_state && p.risk_state !== "HEALTHY");
+  const outcomes: Row[] = op?.execution_outcomes ?? [];
+  const rejected = outcomes.find((r) => r.accepted === false);
+  const errors = (system.data?.incidents ?? []).filter(
+    (r: Row) => r.severity === "ERROR" && r.status !== "RESOLVED",
+  );
+  const nowText =
+    status === "Degraded"
+      ? "Monitoring needs attention."
+      : p?.control && p.control !== "RUNNING"
+        ? `Official entries are ${stateName(p.control).toLowerCase()}.`
+        : op?.markets_scanned != null
+          ? `Monitoring ${op.markets_scanned} markets. ${Number(op.paper_entries_filled) > 0 ? "A simulated entry was filled in the latest scan." : "Waiting for a qualifying entry."}`
+          : "Waiting for the first completed market scan.";
+  return (
+    <div className="page-stack">
+      <ResourceState resource={overview} label="Official account" />
+      {system.error && (
+        <ResourceState resource={system} label="System status" />
+      )}
+      <div className="kpi-grid">
+        <div className="kpi">
+          <span>Official equity</span>
+          <strong>{money(p?.equity)}</strong>
+          <small>
+            Paper account ·{" "}
+            {system.data?.operational_state === "RESEARCH_ONLY"
+              ? "Research mode"
+              : "Simulation"}
+          </small>
+        </div>
+        <div className="kpi">
+          <span>Shadow experiments</span>
+          <strong>
+            {shadows.data ? `${active.length} active` : "Unavailable"}
+          </strong>
+          <small>
+            {shadows.data
+              ? `${experiments.length} retained accounts · separate balances`
+              : "Loading virtual accounts"}
+          </small>
+        </div>
+        <div className="kpi">
+          <span>Open positions</span>
+          <strong>{open ?? "Unavailable"}</strong>
+          <small>Across identified virtual accounts</small>
+        </div>
+        <div className="kpi">
+          <span>System status</span>
+          <strong className="status-value">
+            <span
+              className={`status-dot ${status === "Running" ? "positive-dot" : "warning-dot"}`}
+            />
+            {status}
+          </strong>
+          <small>
+            {system.data?.worker === "ok"
+              ? "Worker connected"
+              : "Worker status unavailable"}
+          </small>
+        </div>
+      </div>
+      <Panel className="happening">
+        <div className="section-heading">
+          <h2>What’s happening now?</h2>
+          <Radar size={18} className="muted" />
+        </div>
+        <h3>{nowText}</h3>
+        <p>
+          {system.data?.operational_state === "RESEARCH_ONLY"
+            ? "The official portfolio is in research mode. No strategy is approved to trade in this account."
+            : "Official-account entries remain subject to the existing research and risk checks."}
+        </p>
+        {rejected && (
+          <p className="activity-reason">
+            <span className="subtle-dot" />
+            {rejected.symbol}: {rejection(rejected.reason)}
+          </p>
+        )}
+        {problem && (
+          <p role="alert" className="notice warning">
+            {system.data?.reconciliation?.problems?.length
+              ? "Financial records need review."
+              : `Account risk state: ${stateName(p?.risk_state)}.`}{" "}
+            Open Advanced → Risk & recovery for the recorded evidence.
+          </p>
+        )}
+        {errors.length > 0 && (
+          <p role="alert" className="notice warning">
+            Latest recorded error:{" "}
+            {rejection(errors[0].message ?? errors[0].status)}
+          </p>
+        )}
+        <div className="section-footer">
+          <span className="muted small">
+            Last updated {date(system.updatedAt, true)}
+          </span>
+          <Badge>Simulated trading only</Badge>
+        </div>
+      </Panel>
+      <div className="section-heading">
+        <h2>Active experiments</h2>
+        <button className="text-button" onClick={onExperiments}>
+          View all <ArrowUpRight size={15} />
+        </button>
+      </div>
+      <ResourceState resource={shadows} label="Experiment snapshot" />
+      <div className="overview-experiments">
+        {active.slice(0, 4).map((e) => (
+          <button
+            className="mini-experiment"
+            key={e.experiment_id}
+            onClick={onExperiments}
+          >
+            <span className="strategy-letter">
+              {e.manifest?.strategy_id?.split("_")[0] ?? "?"}
+            </span>
+            <div>
+              <strong>{strategyName(e.manifest?.strategy_id)}</strong>
+              <span className="muted small">
+                Instance {shortId(e.experiment_id)} ·{" "}
+                {e.performance?.closed_trades ?? "Unavailable"} closed trades ·{" "}
+                {e.source_matches === false ? "New entries blocked" : "Active"}
+              </span>
+            </div>
+            <div className="mini-pnl">
+              <Pnl value={e.performance?.net_pnl} />
+              <span className="muted small">Virtual P&L</span>
+            </div>
+          </button>
+        ))}
+        {shadows.data && !active.length && (
+          <p className="muted">
+            No active experiments. Existing histories remain available in
+            Experiments.
+          </p>
+        )}
+      </div>
+      {shadows.updatedAt && (
+        <p className="small muted snapshot-note">
+          Experiment snapshot {date(shadows.updatedAt, true)}. Refresh to
+          update.
+        </p>
+      )}
+      <div className="section-heading">
+        <h2>Account performance</h2>
+        <label className="inline-label">
+          Account
+          <select
+            aria-label="Equity chart account"
+            value={account}
+            onChange={(e) => setAccount(e.target.value)}
+          >
+            <option value="official">Official paper account</option>
+            {experiments
+              .filter((e) => e.history)
+              .map((e) => (
+                <option value={e.experiment_id} key={e.experiment_id}>
+                  {strategyName(e.manifest?.strategy_id)} ·{" "}
+                  {shortId(e.experiment_id)}
+                </option>
+              ))}
+          </select>
+        </label>
+      </div>
+      {account === "official" && (
+        <ResourceState resource={history} label="Equity history" />
+      )}
+      <EquityChart
+        rows={
+          account === "official"
+            ? (history.data?.equity ?? [])
+            : (selected?.history?.equity ?? [])
+        }
+        title={account === "official" ? "Official equity" : "Experiment equity"}
+        caption="Accounts are never combined"
+      />
+    </div>
+  );
+}

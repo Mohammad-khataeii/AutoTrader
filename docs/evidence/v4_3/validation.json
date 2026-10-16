@@ -1,0 +1,178 @@
+{
+  "verified_at_utc": "2026-10-16T14:05:56.678586+00:00",
+  "base_commit": "4df605687aeb54d24f70e511f6d8e8dc5ff9dcec",
+  "branch": "feature/autotrader-ui-simplification",
+  "frontend_version": "4.3.0",
+  "backend_version_unchanged": "4.2",
+  "backend_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+  "backend_or_migration_changes": [],
+  "v4_2_0_tag_commit_unchanged": "4df605687aeb54d24f70e511f6d8e8dc5ff9dcec",
+  "checks": {
+    "typescript": "passed",
+    "production_build": "passed",
+    "unit_tests": {
+      "passed": 9,
+      "files": 3
+    },
+    "browser_tests": {
+      "startTime": "2026-10-16T14:04:14.415Z",
+      "duration": 31658.18,
+      "expected": 16,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "financial_lifecycle": {
+      "passed": 1,
+      "data_kind": "SYNTHETIC_ACCEPTANCE",
+      "persisted_fills": 5,
+      "closed_positions": 1,
+      "worker_partial_exit_restart": true,
+      "official_equity": 500,
+      "reconciliation": []
+    },
+    "manual_screenshot_widths": [
+      1440,
+      1024,
+      768,
+      375
+    ],
+    "local_viewports": [
+      {
+        "width": 1440,
+        "screen": "overview",
+        "horizontal_page_overflow_px": 0,
+        "page_errors": [],
+        "source": "ACTUAL_LOCAL_API",
+        "synthetic_four_account_fixture": false
+      },
+      {
+        "width": 1440,
+        "screen": "experiments",
+        "horizontal_page_overflow_px": 0,
+        "page_errors": [],
+        "source": "ACTUAL_LOCAL_API",
+        "synthetic_four_account_fixture": false
+      },
+      {
+        "width": 1024,
+        "screen": "overview",
+        "horizontal_page_overflow_px": 0,
+        "page_errors": [],
+        "source": "ACTUAL_LOCAL_API",
+        "synthetic_four_account_fixture": false
+      },
+      {
+        "width": 1024,
+        "screen": "experiments",
+        "horizontal_page_overflow_px": 0,
+        "page_errors": [],
+        "source": "ACTUAL_LOCAL_API",
+        "synthetic_four_account_fixture": false
+      },
+      {
+        "width": 768,
+        "screen": "overview",
+        "horizontal_page_overflow_px": 0,
+        "page_errors": [],
+        "source": "ACTUAL_LOCAL_API",
+        "synthetic_four_account_fixture": false
+      },
+      {
+        "width": 768,
+        "screen": "experiments",
+        "horizontal_page_overflow_px": 0,
+        "page_errors": [],
+        "source": "ACTUAL_LOCAL_API",
+        "synthetic_four_account_fixture": false
+      },
+      {
+        "width": 375,
+        "screen": "overview",
+        "horizontal_page_overflow_px": 0,
+        "page_errors": [],
+        "source": "ACTUAL_LOCAL_API",
+        "synthetic_four_account_fixture": false
+      },
+      {
+        "width": 375,
+        "screen": "experiments",
+        "horizontal_page_overflow_px": 0,
+        "page_errors": [],
+        "source": "ACTUAL_LOCAL_API",
+        "synthetic_four_account_fixture": false
+      }
+    ]
+  },
+  "post_test_local_api": {
+    "origin": "http://127.0.0.1:18042",
+    "official_equity": 500,
+    "official_control": "RUNNING",
+    "official_orders": 0,
+    "official_fills": 0,
+    "retained_shadow_accounts": 2,
+    "all_shadow_reconciliation_consistent": true,
+    "live_trading_enabled": false
+  },
+  "four_account_acceptance": {
+    "uses_user_supplied_production_ids": true,
+    "api_and_values": "SYNTHETIC_ACCEPTANCE_FIXTURES_ONLY",
+    "authenticated_production_data_fetched": false,
+    "production_accounts_modified": false
+  },
+  "request_comparison": {
+    "kind": "CONTROLLED_BROWSER_REAL_FRONTEND_CODE_MOCK_API",
+    "window_seconds": 65,
+    "before_url": "loopback old V4.2 build",
+    "after_url": "loopback V4.3 dev build",
+    "rows": [
+      {
+        "version": "V4.2",
+        "requests": 25,
+        "resources": {
+          "overview": 4,
+          "scanner": 3,
+          "history": 3,
+          "ai": 3,
+          "system": 2,
+          "settings": 2,
+          "backtests": 2,
+          "execution": 2,
+          "research": 2,
+          "intelligence": 2
+        },
+        "mutations": 0
+      },
+      {
+        "version": "V4.3",
+        "requests": 5,
+        "resources": {
+          "overview": 1,
+          "shadow": 1,
+          "history": 1,
+          "system": 2
+        },
+        "mutations": 0
+      }
+    ],
+    "reduction": 0.8
+  },
+  "security": {
+    "changed_files_secret_scan": "passed",
+    "ssh_private_keys_accessed": false
+  },
+  "production": {
+    "public_login_inspected": true,
+    "authenticated_session_used": false,
+    "ssh_used": false,
+    "deployment_performed": false,
+    "production_containers_or_configuration_changed": false
+  },
+  "limitations": [
+    "No timestamped per-position shadow marks in existing API; current shadow prices/open P&L remain unavailable.",
+    "Existing shadow list response includes full details; no lightweight registry endpoint added.",
+    "Single JavaScript production chunk is about 592 kB (167 kB gzip); non-fatal Vite size warning.",
+    "Authenticated production and Linux deployment build not tested; no deployment authorized.",
+    "Full backend suite not rerun because backend source is unchanged; existing financial lifecycle test passed."
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "kind": "CONTROLLED_BROWSER_REAL_FRONTEND_CODE_MOCK_API",
+  "window_seconds": 65,
+  "before_url": "loopback old V4.2 build",
+  "after_url": "loopback V4.3 dev build",
+  "rows": [
+    {
+      "version": "V4.2",
+      "requests": 25,
+      "resources": {
+        "overview": 4,
+        "scanner": 3,
+        "history": 3,
+        "ai": 3,
+        "system": 2,
+        "settings": 2,
+        "backtests": 2,
+        "execution": 2,
+        "research": 2,
+        "intelligence": 2
+      },
+      "mutations": 0
+    },
+    {
+      "version": "V4.3",
+      "requests": 5,
+      "resources": {
+        "overview": 1,
+        "shadow": 1,
+        "history": 1,
+        "system": 2
+      },
+      "mutations": 0
+    }
+  ],
+  "reduction": 0.8
+}

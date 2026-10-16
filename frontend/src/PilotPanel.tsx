@@ -1,23 +1,105 @@
-import React, { useEffect, useState } from "react";
-
-type Row = Record<string, any>;
-export function PilotPanel({ auth }: { auth: string }) {
-  const [pilots, setPilots] = useState<Row[]>([]);
-  const [report, setReport] = useState<Row | null>(null);
+import React, { useState } from "react";
+import { useApi, useResource, errorMessage } from "./api";
+import { date, stateName } from "./model";
+import { Badge, Confirm, Panel, ResourceState, Technical } from "./ui";
+export function PilotPanel({ auth: _auth }: { auth: string }) {
+  const api = useApi();
+  const data = useResource("/api/pilots", { poll: 15000 });
+  const [start, setStart] = useState(false);
+  const [requestId, setRequestId] = useState("");
+  const [report, setReport] = useState<any>(null);
   const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
-  async function load() {
-    const response = await fetch("/api/pilots", { headers: { Authorization: auth } });
-    if (!response.ok) throw new Error(`Pilot status: ${response.status}`);
-    setPilots(await response.json());
-  }
-  useEffect(() => { void load().catch(e => setError(String(e))); }, [auth]);
-  async function exportReport(id: string, format: "json" | "csv") {
-    const response = await fetch(`/api/pilots/${id}/report?format=${format}`, { headers: { Authorization: auth } });
-    if (!response.ok) throw new Error(`Report unavailable: ${response.status}`);
-    if (format === "json") { setReport(await response.json()); return; }
-    const url = URL.createObjectURL(await response.blob());
-    const link = document.createElement("a"); link.href = url; link.download = `${id}.csv`; link.click(); URL.revokeObjectURL(url);
-  }
-  return <section className="panel"><h2>30-day prospective paper pilot</h2><p>Starting a pilot freezes its configuration and records new observations. With no approved strategy it runs in RESEARCH_ONLY mode. Engineering simulations have a separate label and database. A pilot is complete only after its actual observation window has elapsed.</p><button disabled={busy || pilots.some(p => p.state === "ACTIVE")} onClick={async () => { setBusy(true); setError(""); try { const response = await fetch("/api/pilots", { method: "POST", headers: { Authorization: auth, "Content-Type": "application/json" }, body: JSON.stringify({ request_id: crypto.randomUUID() }) }); if (!response.ok) throw new Error(JSON.stringify(await response.json())); await load(); } catch (e) { setError(String(e)); } finally { setBusy(false); } }}>Start 30-day paper pilot</button>{error && <p role="alert">{error}</p>}{pilots.map(p => <article key={p.pilot_id}><h3>{p.mode} · {p.state}</h3><p>{p.pilot_id} · {p.started_at} to {p.planned_end_at}</p><p>{p.performance_label}</p><p>Frozen configuration: {p.config_fingerprint}</p><button onClick={() => void exportReport(p.pilot_id, "json").catch(e => setError(String(e)))}>View JSON report</button><button onClick={() => void exportReport(p.pilot_id, "csv").catch(e => setError(String(e)))}>Export CSV report</button></article>)}{!pilots.length && <p>No pilot has been started.</p>}{report && <pre>{JSON.stringify(report, null, 2)}</pre>}</section>;
+  return (
+    <div className="page-stack">
+      <Panel>
+        <div className="section-heading">
+          <h2>30-day prospective paper pilot</h2>
+          <button
+            disabled={
+              !data.data || data.data.some((p: any) => p.state === "ACTIVE")
+            }
+            onClick={() => {
+              setRequestId(crypto.randomUUID());
+              setStart(true);
+            }}
+          >
+            Start 30-day paper pilot
+          </button>
+        </div>
+        <p className="muted">
+          Starting freezes a configuration for new observations. A pilot is only
+          complete after its actual observation window has elapsed.
+        </p>
+        <ResourceState resource={data} label="Paper pilots" />
+        {error && (
+          <p role="alert" className="notice warning">
+            {error}
+          </p>
+        )}
+      </Panel>
+      {(data.data ?? []).map((p: any) => (
+        <Panel key={p.pilot_id}>
+          <Badge>
+            {stateName(p.mode)} · {stateName(p.state)}
+          </Badge>
+          <p>
+            {date(p.started_at, true)} to {date(p.planned_end_at, true)}
+          </p>
+          <p className="small muted">{p.performance_label}</p>
+          <div className="toolbar">
+            <button
+              onClick={async () => {
+                try {
+                  setReport(
+                    await api.request(`/api/pilots/${p.pilot_id}/report`),
+                  );
+                  setError("");
+                } catch (e) {
+                  setError(errorMessage(e));
+                }
+              }}
+            >
+              View JSON report
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  await api.download(
+                    `/api/pilots/${p.pilot_id}/report?format=csv`,
+                    `${p.pilot_id}.csv`,
+                  );
+                  setError("");
+                } catch (e) {
+                  setError(errorMessage(e));
+                }
+              }}
+            >
+              Export CSV report
+            </button>
+          </div>
+          <Technical value={p} label="Frozen pilot configuration" />
+        </Panel>
+      ))}
+      {report && (
+        <Technical value={report} label="View requested pilot report" />
+      )}
+      {start && (
+        <Confirm
+          title="Start a new 30-day observation?"
+          action="Start pilot"
+          onCancel={() => setStart(false)}
+          onConfirm={async () => {
+            await api.request("/api/pilots", "POST", { request_id: requestId });
+            await api.refresh("/api/pilots");
+          }}
+        >
+          <p>
+            This freezes the current configuration and starts a durable
+            observation period. It does not approve a strategy, reset financial
+            history or enable real trading.
+          </p>
+        </Confirm>
+      )}
+    </div>
+  );
 }
