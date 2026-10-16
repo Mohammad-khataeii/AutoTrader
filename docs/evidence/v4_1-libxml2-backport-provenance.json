@@ -1,0 +1,26 @@
+{
+  "alpine_aports_commit": "f1bd5b6767a0e7fdda380c95138a1c938eb6e102",
+  "upstream_fix": "d1686f91dbda141a752200419d35639fd6b38340",
+  "files": {
+    "APKBUILD": {
+      "url": "https://raw.githubusercontent.com/alpinelinux/aports/f1bd5b6767a0e7fdda380c95138a1c938eb6e102/main/libxml2/APKBUILD",
+      "sha256": "843a8013c86b73c9873735bfe5f155f4b9b6b4cbfbf9794a6c98b57d141a52ab"
+    },
+    "CVE-2026-6732.patch": {
+      "url": "https://raw.githubusercontent.com/alpinelinux/aports/f1bd5b6767a0e7fdda380c95138a1c938eb6e102/main/libxml2/CVE-2026-6732.patch",
+      "sha256": "42d45b35f36bf29229e39a9e5349d7347e51d92099573b5a509f448dbf0e34d7"
+    },
+    "CVE-2026-6732-test.patch": {
+      "url": "https://raw.githubusercontent.com/alpinelinux/aports/f1bd5b6767a0e7fdda380c95138a1c938eb6e102/main/libxml2/CVE-2026-6732-test.patch",
+      "sha256": "7c93e102dfdeaaf5d7adeda70c0dec6bfc492dbe9a14a29d42512a6c3f39a6c2"
+    },
+    "CVE-2026-86140.patch": {
+      "url": "https://github.com/GNOME/libxml2/commit/d1686f91dbda141a752200419d35639fd6b38340.diff",
+      "sha256": "482e22abaf6ed454608e69f16e82553f0b2c12074e4d054f460974da00b01266"
+    }
+  },
+  "local_APKBUILD_sha256": "95e2b36c2e37bf41fa98ca2c6a9f87778bec4b79b7fe6771c6de2b25ecba62e3",
+  "bounds_regression_sha256": "adaf7bd8556b2a8c1bd70a19a2f5e02994201bd1a1d96d36ee45e1265a885935",
+  "built_APKBUILD_sha256": "c2696ffbc5e82f018e3910d6aee3f19831e767949b78f09191bb1ae790e9a2e5",
+  "post_build_normalization": "Removed one trailing tab only; all shell commands, sources and checksums unchanged."
+}

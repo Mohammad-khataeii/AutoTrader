@@ -124,7 +124,7 @@ asyncio.run(main())
         return result
     if args.action=='sync-research':
         code="""from pathlib import Path
-import json
+import json,os
 from autotrader.research.seed import main
 from autotrader.research.artifacts import load_latest,source_fingerprint
 from autotrader.research.data import atomic_write,canonical,load_dataset
@@ -135,6 +135,7 @@ catalog=json.loads(Path('/seed/catalog.json').read_bytes())
 for manifest in catalog['manifests']: load_dataset(Path('/app/research'),manifest)
 atomic_write(Path('/app/research/catalog.json'),canonical(catalog))
 atomic_write(Path('/app/research/latest-run.json'),Path('/seed/latest-run.json').read_bytes())
+for name in ('catalog.json','latest-run.json'): os.chown(Path('/app/research')/name,10001,10001)
 print('Published verified matching-source research catalog and report pointer.')
 """
         print(dc('--profile','bootstrap','run','--rm','--no-deps','research-init','python','-c',code).decode())

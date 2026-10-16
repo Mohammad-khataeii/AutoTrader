@@ -110,7 +110,7 @@ services:
       timeout: 5s
       retries: 3
   postgres:
-    image: autotrader-v41-postgres:16-patched
+    image: autotrader-v41-postgres:16-backported
     build: {context: ., dockerfile: Dockerfile.postgres}
     environment:
       POSTGRES_USER: autotrader

@@ -1,4 +1,4 @@
-ARG RUNTIME_IMAGE=autotrader-v34-acceptance-backend
+ARG RUNTIME_IMAGE=autotrader-v41-app:4.1.0
 FROM ${RUNTIME_IMAGE}
 # Verification only: the deployed image does not contain test/install tools.
 USER root

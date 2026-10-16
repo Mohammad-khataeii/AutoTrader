@@ -252,6 +252,8 @@ async def test_marked_exposure_and_pending_dispatch_are_risk_checked(pg_repo:Per
     worker.kill()
     # Existing assets appreciate after the intention commits, before execution.
     await repo.record_mark(book('25'))
+    from dataclasses import replace
+    await repo.record_mark(replace(book('10'),symbol='ETH-EUR'))
     worker=WorkerProcess(repo.test_database_url,replay)  # type: ignore[attr-defined]
     try:
         async def processed()->bool:
@@ -260,6 +262,10 @@ async def test_marked_exposure_and_pending_dispatch_are_risk_checked(pg_repo:Per
         assert len(await repo.list_fills())==2
         assert D((await repo.snapshot())['reserved_cash'])==0
         assert await repo.verify_invariants(D(500))==[]
+        # This assertion isolates exposure risk. Refresh the external marks after
+        # process/lease waits so a slower host cannot turn it into a stale-data test.
+        await repo.record_mark(book('25'))
+        await repo.record_mark(replace(book('10'),symbol='ETH-EUR'))
         denied=await buy(repo,'new-sol',symbol='SOL-EUR')
         assert not denied.accepted and 'total_exposure' in denied.reason
     finally:

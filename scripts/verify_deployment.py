@@ -18,6 +18,7 @@ def main()->None:
     parser.add_argument('--env-file',required=True,type=Path)
     parser.add_argument('--project',required=True)
     parser.add_argument('--restart',action='store_true')
+    parser.add_argument('--output',type=Path,default=Path('docs/evidence/deployment-verification.json'))
     args=parser.parse_args()
     values=dict(line.split('=',1) for line in args.env_file.read_text(encoding='utf-8').splitlines() if '=' in line and not line.startswith('#'))
     url=f"http://127.0.0.1:{values.get('API_PORT','8000')}"
@@ -74,7 +75,7 @@ def main()->None:
         'journal_events_preserved':len(before_ids),'postgresql':final['postgresql'],'redis':final['redis'],
         'scanner':client.get('/api/scanner').json()['status'],'reconciliation':final['reconciliation'],
         'authentication':'PASSED','persistent_controls':'PASSED'}
-    Path('docs/evidence/deployment-verification.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
+    args.output.write_text(json.dumps(result,indent=2),encoding='utf-8')
     print(json.dumps(result,indent=2))
 
 

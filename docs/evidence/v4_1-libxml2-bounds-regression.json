@@ -1,0 +1,9 @@
+{
+  "status": "PASSED",
+  "test": "actual static xmlSnprintfElements extracted from built valid.c; buffer sizes64..256, every nonempty prefix, glob0/1,32byte guard",
+  "patched_function": "bounds and canaries preserved",
+  "unpatched_negative_control": "reverse upstream patch then same test; assertion fails, exit134",
+  "upstream_api_function_checks": 324154,
+  "additional_suite_tests": 1471,
+  "limitations": "Optional external XML conformance/XSTC corpora not downloaded; three suite metadata errors are expected by upstream harness."
+}

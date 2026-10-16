@@ -1,8 +1,25 @@
+FROM postgres:16-alpine AS libxml-builder
+# Build the existing distro ABI with the upstream CVE fix and both existing
+# Alpine patches. APKBUILD pins source checksums and executes upstream tests.
+RUN apk add --no-cache alpine-sdk
+COPY deploy/libxml2 /build/libxml2
+WORKDIR /build/libxml2
+RUN abuild-keygen -a -n \
+    && cp /root/.abuild/*.pub /etc/apk/keys/ \
+    && apk update \
+    && BOOTSTRAP=1 abuild -F -r \
+    && mkdir /verified \
+    && find /root/packages -name 'libxml2-2.13.9-r3.apk' -exec cp '{}' /verified/ ';'
+
 FROM postgres:16-alpine AS patched
 # Keep PostgreSQL 16/data compatibility; replace the old Go privilege helper
 # with Alpine's small C helper implementing the same user/command interface.
+COPY --from=libxml-builder /verified/libxml2-2.13.9-r3.apk /tmp/
 RUN apk add --no-cache su-exec \
     && apk upgrade --no-cache \
+    && apk info --exists 'libxml2=2.13.9-r2' \
+    && apk add --allow-untrusted /tmp/libxml2-2.13.9-r3.apk \
+    && rm /tmp/libxml2-2.13.9-r3.apk \
     && cp /sbin/su-exec /usr/local/bin/gosu
 
 # Copy the patched final filesystem so removed/replaced helper binaries are
