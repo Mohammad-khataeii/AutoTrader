@@ -19,8 +19,8 @@ import {
 } from "./ui";
 import { AdvancedResearch } from "./advanced";
 export function Research({ auth }: { auth: string }) {
-  const data = useResource("/api/research", { ttl: 300000 });
-  const shadow = useResource("/api/shadow", { ttl: 60000 });
+  const data = useResource("/api/research/summary", { ttl: 300000 });
+  const shadow = useResource("/api/shadow/summary", { ttl: 60000 });
   const [selected, setSelected] = useState<Row | null>(null);
   const [advanced, setAdvanced] = useState(false);
   const reports = [
@@ -65,7 +65,16 @@ export function Research({ auth }: { auth: string }) {
     );
     const running = matching(selected.strategy_id);
     const reasons = running.flatMap((e: Row) =>
-      (e.history?.decisions ?? [])
+      (e.latest_decision
+        ? [
+            {
+              payload_json: JSON.stringify({
+                rejected_reason: e.latest_decision.reason,
+              }),
+            },
+          ]
+        : (e.history?.decisions ?? [])
+      )
         .map(
           (d: Row) =>
             parse(d.payload_json).rejected_reason ?? d.rejected_reason,

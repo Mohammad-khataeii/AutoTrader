@@ -1,0 +1,358 @@
+{
+  "as_of": "2026-10-16T17:15:48.139082+00:00",
+  "service": {
+    "api": "ok",
+    "worker": "ok",
+    "worker_heartbeat": "2026-10-16T17:15:45.062589+00:00",
+    "worker_age_seconds": 3.076377,
+    "postgresql": "ok"
+  },
+  "market_data": {
+    "state": "OK",
+    "fresh": true,
+    "last_scan_at": "2026-10-16T17:15:44.892498+00:00"
+  },
+  "official": {
+    "control": "STOPPED",
+    "approval": {
+      "allowed_strategy_ids": [],
+      "execution_assumptions_hash": "c6e57b1c1ff868aff39bbd2cc238a8e99a37f1f54378141f2f1b61a3863e5c48",
+      "execution_costs": {
+        "fee_bps": "10",
+        "slippage_bps": "8",
+        "spread_bps": "10",
+        "volume_participation": ".01"
+      },
+      "failure": null,
+      "live_timeframe": "5m",
+      "members": {},
+      "mode": "VALIDATED_ONLY",
+      "policy_version": "4.1.0",
+      "promotion_requirement": "Matching timeframe, frozen per-member parameters, source, dataset, costs, validation and durable explicit approval",
+      "require_validation": true,
+      "required_parameters": {
+        "breakout_buffer": "0.001",
+        "compression_width": "0.06",
+        "relative_return": "0.02",
+        "relative_volume": "1.5",
+        "stop_atr": "1.5",
+        "target_atr": "1.5"
+      },
+      "research_run_id": "research-20261016T171104",
+      "research_verdict": "NO STRATEGY PASSED VALIDATION",
+      "source_fingerprint": "157c2aed6163e955e72174bb22886c9ec50a0cb5d136aa733d695e05d76600c2",
+      "source_matches": false,
+      "status": "NO VALIDATED STRATEGY",
+      "research_only": true
+    }
+  },
+  "shadows": [
+    {
+      "experiment_id": "501fc2f97ab34d24b939fc3eda17e4e0",
+      "strategy_id": "B2_CONFIRMED_COMPRESSION",
+      "state": "SHADOW_ACTIVE",
+      "last_evaluation_at": "2026-10-16T17:15:05.233279+00:00",
+      "latest_decision": {
+        "allowed_regimes": [
+          "STRONG_BULL",
+          "MODERATE_BULL",
+          "COMPRESSION",
+          "EXPANSION"
+        ],
+        "completed_candle_at": "2026-10-16T17:10:00+00:00",
+        "context": {
+          "15m": {
+            "available_at": "2026-10-16T17:15:00+00:00",
+            "bear": false,
+            "bull": false,
+            "complete_bars": 240,
+            "ready": true
+          },
+          "60m": {
+            "available_at": "2026-10-16T17:00:00+00:00",
+            "bear": false,
+            "bull": false,
+            "complete_bars": 59,
+            "ready": true
+          },
+          "ready": true
+        },
+        "data_quality": "GOOD",
+        "decision_accepted": false,
+        "decision_id": "dec_40dc0b3895964f3c86c3602367d01424",
+        "entry_conditions": {
+          "breakout_volume": false,
+          "context_ready": true,
+          "higher_timeframe_bullish": false,
+          "no_close_reversal": true,
+          "prebreak_compression": true,
+          "previous_breakout": false,
+          "range_held": false,
+          "retest_available": true
+        },
+        "evaluated_at": "2026-10-16T17:15:05.233279+00:00",
+        "execution": {
+          "quality": {
+            "reached": false,
+            "rejection": null
+          },
+          "reached": false,
+          "reason": null
+        },
+        "execution_fingerprint": null,
+        "final_state": "REJECTED",
+        "independently_failed": [
+          "higher_timeframe_bullish",
+          "previous_breakout",
+          "range_held",
+          "breakout_volume"
+        ],
+        "momentum_veto": false,
+        "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached.",
+        "reason": "Entry conditions not met.",
+        "reason_code": "RECORDED_DECISION_REJECTION",
+        "regime": "COMPRESSION",
+        "regime_eligible": true,
+        "regime_veto": false,
+        "risk": {
+          "reached": false,
+          "rejection": null
+        },
+        "runner": "verified-v42",
+        "schema": "shadow-decision-explanation/1",
+        "signal_entry_eligible": false,
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1",
+        "symbol": "SOL-EUR",
+        "unknown_conditions": [],
+        "volume_confirmation": false
+      },
+      "runtime_compatibility": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      }
+    },
+    {
+      "experiment_id": "4de5c4c4d50a4924bf9a3b36219b26b1",
+      "strategy_id": "A2_CONFIRMED_PULLBACK",
+      "state": "SHADOW_ACTIVE",
+      "last_evaluation_at": "2026-10-16T17:15:05.429082+00:00",
+      "latest_decision": {
+        "allowed_regimes": [
+          "STRONG_BULL",
+          "MODERATE_BULL",
+          "COMPRESSION",
+          "EXPANSION"
+        ],
+        "completed_candle_at": "2026-10-16T17:10:00+00:00",
+        "context": {
+          "15m": {
+            "available_at": "2026-10-16T17:15:00+00:00",
+            "bear": false,
+            "bull": false,
+            "complete_bars": 240,
+            "ready": true
+          },
+          "60m": {
+            "available_at": "2026-10-16T17:00:00+00:00",
+            "bear": false,
+            "bull": false,
+            "complete_bars": 59,
+            "ready": true
+          },
+          "ready": true
+        },
+        "data_quality": "GOOD",
+        "decision_accepted": false,
+        "decision_id": "dec_a3c4e16a608540fdb463020655ea978a",
+        "entry_conditions": {
+          "close_recovery": false,
+          "context_ready": true,
+          "ema9_recovery": true,
+          "higher_timeframe_bullish": false,
+          "previous_high_reclaimed": false
+        },
+        "evaluated_at": "2026-10-16T17:15:05.429082+00:00",
+        "execution": {
+          "quality": {
+            "reached": false,
+            "rejection": null
+          },
+          "reached": false,
+          "reason": null
+        },
+        "execution_fingerprint": null,
+        "final_state": "REJECTED",
+        "independently_failed": [
+          "higher_timeframe_bullish",
+          "close_recovery",
+          "previous_high_reclaimed"
+        ],
+        "momentum_veto": false,
+        "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached.",
+        "reason": "Entry conditions not met.",
+        "reason_code": "RECORDED_DECISION_REJECTION",
+        "regime": "COMPRESSION",
+        "regime_eligible": true,
+        "regime_veto": false,
+        "risk": {
+          "reached": false,
+          "rejection": null
+        },
+        "runner": "verified-v42",
+        "schema": "shadow-decision-explanation/1",
+        "signal_entry_eligible": false,
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "A2_CONFIRMED_PULLBACK",
+        "strategy_version": "4.2.0-experimental.1",
+        "symbol": "SOL-EUR",
+        "unknown_conditions": [],
+        "volume_confirmation": null
+      },
+      "runtime_compatibility": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      }
+    },
+    {
+      "experiment_id": "8b763d82c52a49f39c143021e45480b2",
+      "strategy_id": "B2_CONFIRMED_COMPRESSION",
+      "state": "STOPPED",
+      "last_evaluation_at": null,
+      "latest_decision": null,
+      "runtime_compatibility": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      }
+    },
+    {
+      "experiment_id": "d99c3c0999b4490cb370d7d3f3343bcc",
+      "strategy_id": "B2_CONFIRMED_COMPRESSION",
+      "state": "STOPPED",
+      "last_evaluation_at": null,
+      "latest_decision": null,
+      "runtime_compatibility": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      }
+    }
+  ],
+  "protective_monitoring": {
+    "heartbeat": "2026-10-16T17:15:48.126051+00:00"
+  },
+  "research_jobs": [
+    {
+      "job_id": "rjob_d1a274308c414a4e848e88992c146be3",
+      "status": "COMPLETED",
+      "updated_at": "2026-10-16T17:11:11.143652+00:00"
+    },
+    {
+      "job_id": "rjob_55136f171f4b40e39b8cf14ceae01ce3",
+      "status": "COMPLETED",
+      "updated_at": "2026-10-16T17:03:17.035255+00:00"
+    },
+    {
+      "job_id": "rjob_de8e10c80b894abeae230f5b577244bd",
+      "status": "COMPLETED",
+      "updated_at": "2026-10-16T17:01:00.969507+00:00"
+    },
+    {
+      "job_id": "rjob_500214420d1446fcb9f0dd465e96b802",
+      "status": "COMPLETED",
+      "updated_at": "2026-10-16T17:00:49.649169+00:00"
+    },
+    {
+      "job_id": "rjob_7a959fda28da44cf9359810635755aa9",
+      "status": "COMPLETED",
+      "updated_at": "2026-10-16T16:56:07.665762+00:00"
+    },
+    {
+      "job_id": "rjob_2bb4ff0a18ac48bbab8fb4316c696b12",
+      "status": "COMPLETED",
+      "updated_at": "2026-10-16T16:47:56.278788+00:00"
+    },
+    {
+      "job_id": "rjob_3c9caf2cf0a341e0b1fee1deadc2beb5",
+      "status": "COMPLETED",
+      "updated_at": "2026-10-16T15:20:23.074343+00:00"
+    }
+  ],
+  "last_scan": {
+    "status": "OK",
+    "markets": [
+      "ETH-EUR",
+      "SOL-EUR",
+      "BTC-EUR"
+    ],
+    "completed_at": "2026-10-16T17:15:44.892498+00:00",
+    "operation": {
+      "observed_at": "2026-10-16T17:15:45.080391+00:00",
+      "last_completed_scan": "2026-10-16T17:15:45.078888+00:00",
+      "scan_duration_seconds": 0.4686394169984851,
+      "schedule_overrun_seconds": 0,
+      "markets_scanned": 3,
+      "successful_observations": 3,
+      "data_failures": 0,
+      "strategies_evaluated": 24,
+      "qualified_signals": 0,
+      "rejected_signals": 3,
+      "paper_entries_filled": 0,
+      "execution_outcomes": [
+        {
+          "symbol": "ETH-EUR",
+          "accepted": false,
+          "reason": "decision_not_accepted",
+          "order_id": null
+        },
+        {
+          "symbol": "SOL-EUR",
+          "accepted": false,
+          "reason": "decision_not_accepted",
+          "order_id": null
+        },
+        {
+          "symbol": "BTC-EUR",
+          "accepted": false,
+          "reason": "decision_not_accepted",
+          "order_id": null
+        }
+      ],
+      "next_scan_at": "2026-10-16T17:15:45.610264+00:00"
+    }
+  },
+  "historical_operator_actions": [
+    {
+      "message": "operator_stop",
+      "severity": "ERROR",
+      "state": "STOPPED",
+      "created_at": "2026-10-16T17:14:58.444052+00:00"
+    },
+    {
+      "message": "operator_emergency",
+      "severity": "ERROR",
+      "state": "STOPPED",
+      "created_at": "2026-10-16T17:11:19.249375+00:00"
+    },
+    {
+      "message": "operator_stop",
+      "severity": "ERROR",
+      "state": "STOPPED",
+      "created_at": "2026-10-16T17:11:18.912178+00:00"
+    }
+  ],
+  "current_system_errors": [],
+  "risk_state": "STOPPED",
+  "official_reconciliation": {
+    "status": "CONSISTENT",
+    "observed": {
+      "checked_at": "2026-10-16T17:15:44.900156+00:00",
+      "problems": []
+    },
+    "stale": false
+  }
+}

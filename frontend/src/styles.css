@@ -1332,3 +1332,8 @@ dialog h2 {
   margin: -7px 0 0;
   font-size: 10px;
 }
+
+.decision-item { padding: 16px 0; border-top: 1px solid var(--border, #e5eae6); }
+.decision-item p { overflow-wrap: anywhere; }
+.historical-experiment { padding: 12px 0; border-top: 1px solid var(--border, #e5eae6); }
+.historical-experiment > div { min-width: 0; overflow-wrap: anywhere; }

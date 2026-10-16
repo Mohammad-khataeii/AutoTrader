@@ -129,6 +129,15 @@ test("authenticated runtime data, retained advanced research, paper controls and
   expect(replay.report.assumptions.entry_order_type).toBe("LIMIT");
   await expect(page.getByText(replay.run_id, { exact: true })).toBeVisible();
   await advanced(page, "Official Account Controls");
+  // Acceptance runs may begin with an intentionally stopped local paper account.
+  // Exercise its state-valid action before the full control sequence.
+  const initialControl = (await (await request.get("/api/overview", { headers })).json()).portfolio.control;
+  if (initialControl !== "RUNNING") {
+    const initialLabel = initialControl === "STOPPED" ? "Start paper trading" : "Resume paper trading";
+    await page.getByRole("button", { name: initialLabel, exact: true }).click();
+    await page.getByRole("dialog").getByRole("button", { name: initialLabel, exact: true }).click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+  }
   for (const [action, label, state] of [
     ["pause", "Pause new entries", "PAUSED"],
     ["resume", "Resume paper trading", "RUNNING"],
@@ -169,7 +178,7 @@ test("authenticated runtime data, retained advanced research, paper controls and
       .click();
   }
   await expect(
-    page.getByText("Research mode · Active", { exact: true }),
+    page.getByText(env.ENVIRONMENT === "test" ? "Test simulation · Active" : "Research mode · Active", { exact: true }),
   ).toBeVisible();
   await expect
     .poll(
@@ -182,7 +191,7 @@ test("authenticated runtime data, retained advanced research, paper controls and
             headers,
           })
         ).json();
-        expect(r.mode).toBe("RESEARCH_ONLY");
+        expect(r.mode).toBe(env.ENVIRONMENT === "test" ? "SYNTHETIC_ACCEPTANCE" : "RESEARCH_ONLY");
         expect(r.thirty_days_elapsed).toBe(false);
         return r.observations;
       },

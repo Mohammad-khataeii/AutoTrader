@@ -1,0 +1,13 @@
+{
+  "observations": 6,
+  "independent_failure_counts": {
+    "higher_timeframe_bullish": 6,
+    "previous_breakout": 3,
+    "range_held": 3,
+    "breakout_volume": 3,
+    "close_recovery": 3,
+    "previous_high_reclaimed": 3
+  },
+  "single_observed_blocker_counts": {},
+  "limitation": "Offline eligibility diagnostic only; not an executed counterfactual, profitability estimate, parameter change or promotion. Omitted/unknown conditions prevent causal attribution."
+}

@@ -18,8 +18,10 @@ from autotrader.persistence.database import create_schema, make_engine, make_ses
 from autotrader.persistence.models import (
     AccountModel,
     FillModel,
+    OrderModel,
     ShadowExperimentModel,
     ShadowIdentityModel,
+    SystemStateModel,
 )
 from autotrader.persistence.repository import PersistentTradingRepository, _json
 from autotrader.research.artifacts import source_fingerprint
@@ -27,6 +29,7 @@ from autotrader.research.data import canonical, digest
 from autotrader.research.experimental import EXPERIMENTAL_REGISTRY
 from autotrader.research.strategies import REGISTRY, StrategyParameters
 from autotrader.shadow.repository import ShadowScope, ShadowTradingRepository
+from autotrader.shadow.versions import compatibility, execution_fingerprint
 
 log = logging.getLogger(__name__)
 D = Decimal
@@ -41,6 +44,7 @@ class ShadowLab:
         self.official, self.settings = official, settings
         self._opened: dict[str, tuple[Any, ShadowTradingRepository]] = {}
         self._provision_lock = asyncio.Lock()
+        self._legacy_runner: Any = None
 
     async def records(self) -> list[dict[str, Any]]:
         async with self.official.session_factory() as session:
@@ -49,6 +53,16 @@ class ShadowLab:
                     select(ShadowExperimentModel).order_by(ShadowExperimentModel.created_at)
                 )
             ).all()
+            archives = {
+                r.key.removeprefix("shadow_archive:"): json.loads(r.payload_json)
+                for r in (
+                    await session.scalars(
+                        select(SystemStateModel).where(
+                            SystemStateModel.key.like("shadow_archive:%")
+                        )
+                    )
+                ).all()
+            }
             return [
                 {
                     "experiment_id": r.experiment_id,
@@ -56,6 +70,7 @@ class ShadowLab:
                     "state": r.state,
                     "created_at": r.created_at.isoformat(),
                     "manifest": json.loads(r.manifest_json),
+                    "archived_at": archives.get(r.experiment_id, {}).get("archived_at"),
                 }
                 for r in rows
             ]
@@ -68,7 +83,9 @@ class ShadowLab:
             manifest = json.loads(row.manifest_json)
             actual_official = self.official.session_factory.kw["bind"].url.database
             if manifest["official_database"] != actual_official:
-                raise ValueError("restored_shadow_registry_requires_isolated_cluster_or_reviewed_mapping")
+                raise ValueError(
+                    "restored_shadow_registry_requires_isolated_cluster_or_reviewed_mapping"
+                )
             return ShadowScope(row.database_name, row.manifest_json)
 
     async def repository(self, experiment_id: str) -> ShadowTradingRepository:
@@ -122,7 +139,16 @@ class ShadowLab:
                     identity = existing.experiment_id
                 else:
                     count = await session.scalar(
-                        select(func.count()).select_from(ShadowExperimentModel)
+                        select(func.count())
+                        .select_from(ShadowExperimentModel)
+                        .where(
+                            ~select(SystemStateModel.key)
+                            .where(
+                                SystemStateModel.key
+                                == "shadow_archive:" + ShadowExperimentModel.experiment_id
+                            )
+                            .exists()
+                        )
                     )
                     if (count or 0) >= MAX_EXPERIMENTS:
                         raise ValueError(
@@ -146,6 +172,8 @@ class ShadowLab:
                         "parameters": params.payload(),
                         "parameter_hash": digest(canonical(params.payload())),
                         "source_fingerprint": source_fingerprint()[0],
+                        "execution_fingerprint": execution_fingerprint(),
+                        "execution_runtime": "native-v44",
                         "fee_bps": str(self.settings.default_fee_bps),
                         "slippage_bps": str(self.settings.default_slippage_bps),
                         "initial_cash_eur": "500",
@@ -225,7 +253,9 @@ class ShadowLab:
                 await engine.dispose()
             async with self.official.session_factory() as session, session.begin():
                 await self.official._lock_account(session)
-                row = cast(ShadowExperimentModel, await session.get(ShadowExperimentModel, identity))
+                row = cast(
+                    ShadowExperimentModel, await session.get(ShadowExperimentModel, identity)
+                )
                 if row.state == "CREATING":
                     row.state = "SHADOW_ACTIVE"
             return await self.detail(identity)
@@ -237,11 +267,69 @@ class ShadowLab:
         async with self.official.session_factory() as session, session.begin():
             await self.official._lock_account(session)
             row = cast(ShadowExperimentModel, await session.get(ShadowExperimentModel, identity))
+            if await session.get(SystemStateModel, "shadow_archive:" + identity):
+                raise ValueError("archived_experiment_cannot_resume")
             if row.state in {"CREATING", "STOPPED"}:
                 raise ValueError("shadow_state_cannot_transition")
             await repo.set_control(action)
             row.state = {"resume": "SHADOW_ACTIVE", "pause": "PAUSED", "stop": "STOPPED"}[action]
         return await self.detail(identity)
+
+    async def archive(self, identity: str) -> dict[str, Any]:
+        repo = await self.repository(identity)
+        async with self.official.session_factory() as session, session.begin():
+            await self.official._lock_account(session)
+            marker = await session.get(SystemStateModel, "shadow_archive:" + identity)
+            if marker:
+                return dict(json.loads(marker.payload_json))
+            row = cast(ShadowExperimentModel, await session.get(ShadowExperimentModel, identity))
+            if row.state not in {"PAUSED", "STOPPED"}:
+                raise ValueError("pause_or_stop_before_deleting_experiment")
+            async with repo.session_factory() as scoped, scoped.begin():
+                await repo._lock_account(scoped)
+                from autotrader.persistence.models import ExitIntentModel, PositionModel
+
+                if (
+                    await scoped.scalar(
+                        select(func.count())
+                        .select_from(PositionModel)
+                        .where(PositionModel.quantity > 0)
+                    )
+                    or await scoped.scalar(
+                        select(func.count())
+                        .select_from(OrderModel)
+                        .where(OrderModel.status.in_(["PENDING", "ACCEPTED"]))
+                    )
+                    or await scoped.scalar(
+                        select(func.count())
+                        .select_from(ExitIntentModel)
+                        .where(
+                            ExitIntentModel.status == "OPEN", ExitIntentModel.reserved_quantity > 0
+                        )
+                    )
+                ):
+                    raise ValueError("cannot_archive_open_positions_or_unsettled_orders")
+            if await repo.verify_invariants(D(500)):
+                raise ValueError("cannot_archive_inconsistent_financial_records")
+            # Stop is durable before releasing the registry slot. If registry
+            # commit fails, retry safely; no database, manifest or ledger is deleted.
+            await repo.set_control("stop")
+            row.state = "STOPPED"
+            result = {
+                "experiment_id": identity,
+                "archived_at": utc_now().isoformat(),
+                "history_preserved": True,
+                "slot_released": True,
+            }
+            session.add(
+                SystemStateModel(
+                    key="shadow_archive:" + identity,
+                    state="ARCHIVED",
+                    reason="user_confirmed_delete_from_workspace",
+                    payload_json=_json(result),
+                )
+            )
+        return result
 
     async def detail(self, identity: str) -> dict[str, Any]:
         record = next(r for r in await self.records() if r["experiment_id"] == identity)
@@ -277,6 +365,7 @@ class ShadowLab:
             "reconciliation": await repo.verify_invariants(D(500)),
             "account_id": repo.account_id,
             "source_matches": record["manifest"]["source_fingerprint"] == source_fingerprint()[0],
+            "runtime_compatibility": compatibility(record["manifest"]),
             "positions": [asdict(p) for p in positions],
             "orders": await repo.list_orders(),
             "fills": await repo.list_fills(),
@@ -287,6 +376,9 @@ class ShadowLab:
         }
 
     async def close(self) -> None:
+        if self._legacy_runner is not None:
+            await self._legacy_runner.close()
+            self._legacy_runner = None
         for engine, _ in self._opened.values():
             await engine.dispose()
         self._opened.clear()

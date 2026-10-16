@@ -100,6 +100,19 @@ class MarketStateMixin:
             payload = json.loads(row.payload_json) if row else {}
             payload[event] = payload.get(event, 0) + value
             payload["observed_at"] = utc_now().isoformat()
+            # A separate identifiable measurement window; old cumulative
+            # counters are never relabeled as measurements since deployment.
+            now = utc_now()
+            bucket = int(now.timestamp()) // 900
+            window_key = "market_window:" + str(bucket)
+            window_row = await session.get(SystemStateModel, window_key)
+            window: dict[str, Any] = json.loads(window_row.payload_json) if window_row else {"started_at": now.isoformat(), "bucket_seconds": 900}
+            window[event] = window.get(event, 0) + value
+            window["observed_until"] = now.isoformat()
+            if window_row:
+                window_row.payload_json = json.dumps(window)
+            else:
+                session.add(SystemStateModel(key=window_key,state="MEASURED",reason="bounded_public_data_measurement_window",payload_json=json.dumps(window)))
             if event == "request_success":
                 payload["last_successful_refresh"] = utc_now().isoformat()
             if row:
@@ -123,6 +136,7 @@ class MarketStateMixin:
                 )
             ).all()
             payload = json.loads(metrics.payload_json) if metrics else {}
+            windows = (await session.scalars(select(SystemStateModel).where(SystemStateModel.key.like("market_window:%")).order_by(SystemStateModel.created_at.desc()).limit(4))).all()
             cache_health = []
             for cache in caches:
                 data = json.loads(cache.payload_json)
@@ -151,5 +165,6 @@ class MarketStateMixin:
                 if requests
                 else None,
                 "caches": cache_health,
+                "measurement_windows": [json.loads(row.payload_json) for row in windows],
                 "policy": "public REST, one request/second/family; provider Retry-After milliseconds; completed-candle incremental cache; protective book priority",
             }

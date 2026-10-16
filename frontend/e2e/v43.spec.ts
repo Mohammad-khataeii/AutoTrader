@@ -47,15 +47,15 @@ test("all four retained accounts are distinct, duplicates preserved and creation
   const api = await mockApi(page);
   await signIn(page);
   await page.getByRole("button", { name: "Experiments", exact: true }).click();
-  await expect(page.locator(".experiment-card")).toHaveCount(4);
+  await expect(page.locator(".experiment-card")).toHaveCount(3);
   for (const id of ids)
     await expect(
-      page
-        .locator(".experiment-card")
-        .getByText(`Instance ${id.slice(0, 8)}`, { exact: false }),
+      page.getByRole("button", {
+        name: new RegExp(`Open .* ${id.slice(0, 8)}`),
+      }),
     ).toBeVisible();
   await expect(
-    page.getByText("B2 Confirmed Compression", { exact: true }),
+    page.getByRole("button", { name: /^Open B2 Confirmed Compression/ }),
   ).toHaveCount(3);
   await expect(
     page.getByRole("button", { name: "New experiment", exact: true }),
@@ -311,13 +311,13 @@ for (const width of [1440, 1024, 768, 375])
       ),
     ).toBe(true);
     await page.screenshot({
-      path: `../docs/evidence/v4_3/acceptance-overview-${width}.png`,
+      path: `../docs/evidence/v4_4/acceptance-overview-${width}.png`,
       fullPage: true,
     });
     await page
       .getByRole("button", { name: "Experiments", exact: true })
       .click();
-    await expect(page.locator(".experiment-card")).toHaveCount(4);
+    await expect(page.locator(".experiment-card")).toHaveCount(3);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -325,7 +325,7 @@ for (const width of [1440, 1024, 768, 375])
     ).toBe(true);
     await expect(page.locator("pre:visible")).toHaveCount(0);
     await page.screenshot({
-      path: `../docs/evidence/v4_3/acceptance-experiments-${width}.png`,
+      path: `../docs/evidence/v4_4/acceptance-experiments-${width}.png`,
       fullPage: true,
     });
     await page.getByRole("button", { name: "Research", exact: true }).focus();
@@ -353,7 +353,7 @@ test("creating an experiment requires explicit slot-use review and cancellation 
     .getByRole("button", { name: "Review experiment", exact: true })
     .click();
   await expect(page.getByRole("dialog")).toContainText(
-    "permanently uses one of 4 retained slots",
+    "using one of 4 workspace slots",
   );
   await page
     .getByRole("dialog")

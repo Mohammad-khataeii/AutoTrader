@@ -3,7 +3,7 @@
 import logging
 from dataclasses import replace
 from decimal import Decimal
-from typing import Any
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +18,7 @@ from autotrader.research.strategies import StrategyParameters, V4StrategyEngine
 from autotrader.scanner import ScanCandidate
 from autotrader.shadow.lab import ShadowLab
 from autotrader.shadow.repository import ShadowTradingRepository
+from autotrader.shadow.versions import LEGACY_SOURCE
 
 
 class ShadowExecutionGateway(PaperExecutionGateway):
@@ -33,9 +34,22 @@ class ShadowExecutionGateway(PaperExecutionGateway):
 class ShadowRuntime:
     def __init__(self, lab: ShadowLab, market_data: Any, risk: Any, owner: str):
         self.lab, self.market_data, self.risk, self.owner = lab, market_data, risk, owner
+        self._legacy: Any = None
+
+    def legacy(self) -> Any:
+        if self._legacy is None:
+            from autotrader.shadow.legacy import LegacyRunner
+            self._legacy = LegacyRunner(self.lab, self.market_data, self.risk, self.owner)
+            self.lab._legacy_runner = self._legacy
+        return self._legacy
+
+    @staticmethod
+    def pinned_legacy(record: dict[str, Any]) -> bool:
+        return not record["manifest"].get("execution_fingerprint") and record["manifest"]["source_fingerprint"] == LEGACY_SOURCE
 
     def gateway(self, repo: ShadowTradingRepository) -> ShadowExecutionGateway:
-        return ShadowExecutionGateway(
+        from autotrader.shadow.diagnostics import observe_gateway
+        return cast(ShadowExecutionGateway, observe_gateway(ShadowExecutionGateway(
             repo,
             market_data=self.market_data,
             risk_engine=self.risk,
@@ -43,11 +57,13 @@ class ShadowRuntime:
             fee_bps=Decimal(repo.scope.manifest["fee_bps"]),
             slippage_bps=Decimal(repo.scope.manifest["slippage_bps"]),
             allocation_profile=self.lab.settings.allocation_profile,
-        )
+        ), repo))
 
     async def renew(self) -> None:
+        if any(self.pinned_legacy(r) and not r.get("archived_at") for r in await self.lab.records()):
+            await self.legacy().renew()
         for record in await self.lab.records():
-            if record["state"] == "CREATING":
+            if record["state"] == "CREATING" or record.get("archived_at") or self.pinned_legacy(record):
                 continue
             try:
                 repo = await self.lab.repository(record["experiment_id"])
@@ -58,8 +74,10 @@ class ShadowRuntime:
                 )
 
     async def monitor(self) -> None:
+        if any(self.pinned_legacy(r) and not r.get("archived_at") for r in await self.lab.records()):
+            await self.legacy().monitor()
         for record in await self.lab.records():
-            if record["state"] == "CREATING":
+            if record["state"] == "CREATING" or record.get("archived_at") or self.pinned_legacy(record):
                 continue
             try:
                 repo = await self.lab.repository(record["experiment_id"])
@@ -80,12 +98,23 @@ class ShadowRuntime:
                 )
 
     async def scan(self, candidates: list[ScanCandidate]) -> None:
+        from autotrader.shadow.views import record_reconciliation
+        await record_reconciliation(self.lab.official)
+        for record in await self.lab.records():
+            if record["state"] != "CREATING" and not record.get("archived_at"):
+                try:
+                    await record_reconciliation(await self.lab.repository(record["experiment_id"]))
+                except Exception:
+                    logger.exception("shadow_reconciliation_observation_failed")
         context = {c.features.symbol: c.features for c in candidates}
         for record in await self.lab.records():
-            if record["state"] != "SHADOW_ACTIVE":
+            if record["state"] != "SHADOW_ACTIVE" or record.get("archived_at"):
                 continue
             try:
-                await self._scan_experiment(record, candidates, context)
+                if self.pinned_legacy(record):
+                    await self.legacy().scan(record, candidates)
+                else:
+                    await self._scan_experiment(record, candidates, context)
             except Exception:
                 logger.exception(
                     "shadow_scan_unavailable", extra={"experiment_id": record["experiment_id"]}
@@ -93,6 +122,8 @@ class ShadowRuntime:
 
     async def _scan_experiment(self, record: dict[str, Any], candidates: list[ScanCandidate], context: dict[str, Any]) -> None:
         repo = await self.lab.repository(record["experiment_id"])
+        from autotrader.shadow.diagnostics import observe_repository
+        observe_repository(repo, "native-v44")
         if not await repo.claim_coordinator(self.owner):
             return
         m = record["manifest"]

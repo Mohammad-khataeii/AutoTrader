@@ -210,7 +210,7 @@ export function EquityChart({
         <h2>{title}</h2>
         {caption && <span className="muted small">{caption}</span>}
       </div>
-      {data.length > 1 ? (
+      {data.length > 1 && data.some((r) => r.equity !== data[0].equity) ? (
         <div
           className="equity-chart"
           role="img"
@@ -245,7 +245,9 @@ export function EquityChart({
         </div>
       ) : (
         <div className="chart-empty">
-          Equity history will appear after two valid recorded observations.
+          {data.length > 1
+            ? `Equity unchanged across ${data.length} recorded observations.`
+            : "Equity history will appear after two valid recorded observations."}
         </div>
       )}
     </Panel>

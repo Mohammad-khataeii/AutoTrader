@@ -73,3 +73,26 @@ describe("honest financial presentation", () => {
     expect(systemStatus({ worker: "unavailable" }, "RUNNING")).toBe("Degraded");
   });
 });
+
+it("separates worker and market health from stopped official entries", () => {
+  const system = {
+    service: { worker: "ok", postgresql: "ok" },
+    market_data: { state: "OK", fresh: true },
+    official: { control: "STOPPED" },
+    risk_state: "STOPPED",
+    current_system_errors: [],
+  };
+  expect(systemStatus(system, "STOPPED")).toBe("Running");
+  expect(
+    systemStatus(
+      { ...system, market_data: { state: "OK", fresh: false } },
+      "STOPPED",
+    ),
+  ).toBe("Degraded");
+  expect(
+    systemStatus(
+      { ...system, service: { worker: "stale_or_absent" } },
+      "STOPPED",
+    ),
+  ).toBe("Offline");
+});

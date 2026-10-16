@@ -1,0 +1,101 @@
+{
+  "stage": "A_LOCAL_VERIFIED",
+  "completed_at": "2026-10-16T17:18:31.515703+00:00",
+  "base_commit": "738abcb24bb58e395cd1a6caa395deb21f4e01cb",
+  "branch": "feature/autotrader-v44-engine-and-ux",
+  "release_version": "4.4.0",
+  "exact_release_sha": "Commit containing this file; full SHA recorded in generated immutable release manifest and tag",
+  "backend_full": {
+    "tests": "201",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "498.497"
+  },
+  "browser": {
+    "startTime": "2026-10-16T17:11:01.402Z",
+    "duration": 31262.943,
+    "expected": 21,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "frontend_unit": {
+    "tests": 12,
+    "failed": 0
+  },
+  "frontend_financial_lifecycle": {
+    "tests": "2",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "50.725"
+  },
+  "diagnostic_regressions": {
+    "tests": "6",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "1.779"
+  },
+  "archive_api_checks": {
+    "tests": "6",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "15.527"
+  },
+  "static": {
+    "ruff": "src tests scripts alembic deploy: passed",
+    "mypy": "76 source files: passed; immutable frozen bytes verified separately",
+    "typescript": "passed"
+  },
+  "builds": {
+    "frontend": "passed",
+    "docker": [
+      {
+        "tags": [
+          "autotrader-v44-backend:local"
+        ],
+        "image_id": "sha256:17ec08aa0856455742bd501ca5c860e5edb1731dfcac0d7960bedd5c61839109",
+        "platform": "linux/arm64"
+      },
+      {
+        "tags": [
+          "autotrader-v44-frontend:local"
+        ],
+        "image_id": "sha256:d5f8f7a5f61e612c929279bf7e28dba740025a031c2d8f3a5a70ef0de0b1441b",
+        "platform": "linux/arm64"
+      }
+    ],
+    "installed_legacy_snapshot": {
+      "version": "4.4.0",
+      "verified_legacy_files": 71,
+      "legacy_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a"
+    }
+  },
+  "financial_compatibility": {
+    "accounts": 4,
+    "immutable_manifests_unchanged": true,
+    "legacy_runner": "verified-v42",
+    "reconciliation": [],
+    "production_accounts_inspected": false
+  },
+  "real_money_enabled": false,
+  "production_accessed": false,
+  "deployment_authorized": false,
+  "warnings": [
+    "Original extra EOF blank lines retained only inside byte-preserved frozen snapshot; changing them invalidates its fingerprint",
+    "Nonfatal Starlette/AnyIO deprecation",
+    "Existing frontend chunk-size advisory above 500KB",
+    "Local Docker builds are ARM64; production AMD64 build and approved backup/clone checks remain"
+  ],
+  "reproduction": [
+    "python3 -m pytest -q (private disposable local AUTOTRADER_TEST_PG_ADMIN_URL required)",
+    "python3 -m ruff check src tests scripts alembic deploy",
+    "python3 -m mypy src/autotrader",
+    "npm run typecheck; npm test; npm run build (frontend)",
+    "AUTOTRADER_BROWSER_ENV=<private-local-env> npx playwright test (frontend; real local API on 18044, V44 UI 13044 and immutable V43 baseline UI 13045)",
+    "AUTOTRADER_BROWSER_ACCEPTANCE=1 python3 -m pytest tests/test_v42_lifecycle.py tests/test_v44_legacy_lifecycle.py -q -s"
+  ]
+}

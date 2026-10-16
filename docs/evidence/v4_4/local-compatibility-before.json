@@ -1,0 +1,65 @@
+{
+  "status": "COMPATIBLE",
+  "legacy_snapshot_verified": true,
+  "application_source_fingerprint": "9bcd17ab03e177c050a505f0429f6e762b1454f68ee3085e982dda2423c954bd",
+  "native_execution_fingerprint": "6d4d5645e3ad033b1c72868212218b599ef06adc249b2276fe786d89f15cf22e",
+  "accounts": [
+    {
+      "experiment_id": "501fc2f97ab34d24b939fc3eda17e4e0",
+      "state": "SHADOW_ACTIVE",
+      "archived_at": null,
+      "manifest_hash": "aed017052103569a22e98f78559c9f0d72c8cb4a1db7790093f45009b2f12331",
+      "original_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "4de5c4c4d50a4924bf9a3b36219b26b1",
+      "state": "SHADOW_ACTIVE",
+      "archived_at": null,
+      "manifest_hash": "b84e3b9bf65a0c0751dcca866259b3b248b30f9104affaebc2952484c59ce651",
+      "original_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "8b763d82c52a49f39c143021e45480b2",
+      "state": "STOPPED",
+      "archived_at": null,
+      "manifest_hash": "4b96b15fd3efddaa2160e79b7fad8720c1ac34b1e8b6cbc28c193e723f91935f",
+      "original_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "d99c3c0999b4490cb370d7d3f3343bcc",
+      "state": "STOPPED",
+      "archived_at": null,
+      "manifest_hash": "d1127eaaf45c42c7576bee684e1e0cb3fa814f110611221622520a3dc622852d",
+      "original_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      },
+      "reconciliation": []
+    }
+  ],
+  "occupied_slots": 4,
+  "registry_records_preserved": 4,
+  "financial_databases_deleted": false,
+  "migration_required": false,
+  "real_money_enabled": false
+}

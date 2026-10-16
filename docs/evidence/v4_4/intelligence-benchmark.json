@@ -1,0 +1,15 @@
+{
+  "data_kind": "SYNTHETIC_ACCEPTANCE_LOCAL_PG",
+  "feedback_records": 240,
+  "unmatched_to_production": true,
+  "complete": {
+    "bytes": 3023387,
+    "elapsed_ms": 27.86
+  },
+  "bounded": {
+    "bytes": 8528,
+    "elapsed_ms": 21.95
+  },
+  "legacy_endpoint_history_limit": 200,
+  "summary_page_limit": 30
+}

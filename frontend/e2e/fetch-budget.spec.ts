@@ -1,17 +1,17 @@
 import { test, expect } from "@playwright/test";
 import fs from "node:fs";
 import { mockApi, signIn } from "./fixtures/v43";
-test("same-fixture V4.2 versus V4.3 overview request budget over 65 seconds", async ({
+test("V4.4 uses bounded APIs without increasing the V4.3 polling cadence over 65 seconds", async ({
   browser,
 }) => {
   const rows = [];
-  for (const version of ["V4.2", "V4.3"]) {
+  for (const version of ["V4.3", "V4.4"]) {
     const page = await browser.newPage();
     const api = await mockApi(page);
     await page.clock.install();
-    if (version === "V4.2") {
+    if (version === "V4.3") {
       await page.goto(
-        process.env.AUTOTRADER_BEFORE_URL ?? "http://127.0.0.1:13042",
+        process.env.AUTOTRADER_BEFORE_URL ?? "http://127.0.0.1:13045",
       );
       await page.getByLabel("Username", { exact: true }).fill("admin");
       await page
@@ -19,18 +19,15 @@ test("same-fixture V4.2 versus V4.3 overview request budget over 65 seconds", as
         .fill("fixture-password");
       await page.getByRole("button", { name: "Sign in", exact: true }).click();
       await expect(
-        page
-          .locator(".metric")
-          .filter({ hasText: "Available cash" })
-          .locator("strong"),
-      ).toHaveText("EUR 500.00");
+        page.locator(".kpi").first().getByText("€500.00"),
+      ).toBeVisible();
     } else {
       await signIn(page);
       await expect(
-        page.getByText("Monitoring 3 markets.", { exact: false }),
+        page.getByText("System running.", { exact: false }),
       ).toBeVisible();
     }
-    await page.clock.runFor(65000);
+    for(let second=0;second<65;second++){await page.clock.runFor(1000);await page.evaluate(()=>Promise.resolve());}
     rows.push({
       version,
       requests: api.requests.length,
@@ -40,22 +37,26 @@ test("same-fixture V4.2 versus V4.3 overview request budget over 65 seconds", as
           api.requests.filter((r) => r.path === p).length,
         ]),
       ),
+      broad_history_requests: api.requests.filter(r=>["shadow","history","research","intelligence"].includes(r.wirePath)).length,
       mutations: api.requests.filter((r) => r.method !== "GET").length,
     });
     await page.close();
   }
-  expect(rows[1].requests).toBeLessThan(rows[0].requests / 2);
+  expect(rows[1].requests).toBeLessThanOrEqual(rows[0].requests + 1);
+  expect(rows[1].broad_history_requests).toBe(0);
+  expect(rows[0].broad_history_requests).toBeGreaterThan(0);
   expect(rows.every((r) => r.mutations === 0)).toBe(true);
   fs.writeFileSync(
-    "../docs/evidence/v4_3/request-comparison.json",
+    "../docs/evidence/v4_4/request-comparison.json",
     JSON.stringify(
       {
         kind: "CONTROLLED_BROWSER_REAL_FRONTEND_CODE_MOCK_API",
         window_seconds: 65,
-        before_url: "loopback old V4.2 build",
-        after_url: "loopback V4.3 dev build",
+        before_url: "loopback V4.3 baseline",
+        after_url: "loopback V4.4 build",
         rows,
-        reduction: 1 - rows[1].requests / rows[0].requests,
+        request_delta: rows[1].requests - rows[0].requests,
+        interpretation: "Cadence retained; full-history polling replaced with bounded summaries/pages. Byte reduction is measured separately against real local PostgreSQL.",
       },
       null,
       2,

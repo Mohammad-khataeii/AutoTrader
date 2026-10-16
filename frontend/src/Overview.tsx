@@ -6,6 +6,7 @@ import {
   money,
   number,
   rejection,
+  decisionSummary,
   shortId,
   stateName,
   strategyName,
@@ -19,18 +20,22 @@ export function Overview({
   system: Snapshot;
   onExperiments: () => void;
 }) {
-  const overview = useResource("/api/overview", { poll: 30000 });
-  const shadows = useResource("/api/shadow", { ttl: 60000 });
+  const overview = useResource("/api/overview/summary", { poll: 30000 });
+  const shadows = useResource("/api/shadow/summary", { ttl: 60000 });
   const [account, setAccount] = useState("official");
-  const history = useResource("/api/history", {
+  const history = useResource("/api/history/page/equity?limit=60", {
     enabled: account === "official",
     ttl: 60000,
   });
   const p = overview.data?.portfolio;
   const experiments: Row[] = shadows.data?.experiments ?? [];
   const active = experiments.filter((e) => e.state === "SHADOW_ACTIVE");
-  const selected = experiments.find((e) => e.experiment_id === account);
-  const op = system.data?.operation;
+
+  const shadowEquity = useResource(
+    `/api/shadow/${account}/pages/equity?limit=60`,
+    { enabled: account !== "official", ttl: 60000 },
+  );
+  const op = system.data?.last_scan?.operation ?? system.data?.operation;
   const status = systemStatus(
     system.data,
     p?.control,
@@ -48,11 +53,18 @@ export function Overview({
     (p?.risk_state && p.risk_state !== "HEALTHY");
   const outcomes: Row[] = op?.execution_outcomes ?? [];
   const rejected = outcomes.find((r) => r.accepted === false);
-  const errors = (system.data?.incidents ?? []).filter(
-    (r: Row) => r.severity === "ERROR" && r.status !== "RESOLVED",
-  );
-  const nowText =
-    status === "Degraded"
+  const errors = (
+    system.data?.current_system_errors ??
+    system.data?.incidents ??
+    []
+  ).filter((r: Row) => r.severity === "ERROR" && r.status !== "RESOLVED");
+  const nowText = system.data?.service
+    ? status === "Running"
+      ? "System running."
+      : status === "Offline"
+        ? "Worker heartbeat is unavailable."
+        : "Monitoring needs attention."
+    : status === "Degraded"
       ? "Monitoring needs attention."
       : p?.control && p.control !== "RUNNING"
         ? `Official entries are ${stateName(p.control).toLowerCase()}.`
@@ -71,7 +83,8 @@ export function Overview({
           <strong>{money(p?.equity)}</strong>
           <small>
             Paper account ·{" "}
-            {system.data?.operational_state === "RESEARCH_ONLY"
+            {system.data?.official?.approval?.research_only === true ||
+            system.data?.operational_state === "RESEARCH_ONLY"
               ? "Research mode"
               : "Simulation"}
           </small>
@@ -101,7 +114,7 @@ export function Overview({
             {status}
           </strong>
           <small>
-            {system.data?.worker === "ok"
+            {(system.data?.service?.worker ?? system.data?.worker) === "ok"
               ? "Worker connected"
               : "Worker status unavailable"}
           </small>
@@ -114,10 +127,43 @@ export function Overview({
         </div>
         <h3>{nowText}</h3>
         <p>
-          {system.data?.operational_state === "RESEARCH_ONLY"
+          {system.data?.official?.approval?.research_only === true ||
+          system.data?.operational_state === "RESEARCH_ONLY"
             ? "The official portfolio is in research mode. No strategy is approved to trade in this account."
             : "Official-account entries remain subject to the existing research and risk checks."}
         </p>
+        {system.data?.service && (
+          <>
+            <p>
+              {active.length} experimental strategies active. Official account
+              entries {String(p?.control ?? "unavailable").toLowerCase()}.
+            </p>
+            <p>
+              {system.data.last_scan?.markets?.length
+                ? `Latest completed scan: ${system.data.last_scan.markets.join(", ")}.`
+                : "Waiting for a confirmed completed scan."}
+            </p>
+            {system.data.last_scan?.completed_at && (
+              <p className="small muted">
+                Scan completed {date(system.data.last_scan.completed_at, true)}.
+              </p>
+            )}
+            {(system.data.shadows ?? [])
+              .filter((e: Row) => e.state === "SHADOW_ACTIVE")
+              .map((e: Row) => (
+                <p key={e.experiment_id} className="activity-reason">
+                  Latest {e.strategy_id?.split("_")[0]} ·{" "}
+                  {shortId(e.experiment_id)}:{" "}
+                  {e.latest_decision
+                    ? decisionSummary(e.latest_decision)
+                    : "No recorded evaluation yet"}
+                  {e.last_evaluation_at
+                    ? ` · ${date(e.last_evaluation_at, true)}`
+                    : ""}
+                </p>
+              ))}
+          </>
+        )}
         {rejected && (
           <p className="activity-reason">
             <span className="subtle-dot" />
@@ -199,14 +245,12 @@ export function Overview({
             onChange={(e) => setAccount(e.target.value)}
           >
             <option value="official">Official paper account</option>
-            {experiments
-              .filter((e) => e.history)
-              .map((e) => (
-                <option value={e.experiment_id} key={e.experiment_id}>
-                  {strategyName(e.manifest?.strategy_id)} ·{" "}
-                  {shortId(e.experiment_id)}
-                </option>
-              ))}
+            {experiments.map((e) => (
+              <option value={e.experiment_id} key={e.experiment_id}>
+                {strategyName(e.manifest?.strategy_id)} ·{" "}
+                {shortId(e.experiment_id)}
+              </option>
+            ))}
           </select>
         </label>
       </div>
@@ -216,8 +260,8 @@ export function Overview({
       <EquityChart
         rows={
           account === "official"
-            ? (history.data?.equity ?? [])
-            : (selected?.history?.equity ?? [])
+            ? (history.data?.items ?? [])
+            : (shadowEquity.data?.items ?? [])
         }
         title={account === "official" ? "Official equity" : "Experiment equity"}
         caption="Accounts are never combined"

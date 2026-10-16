@@ -1,5 +1,5 @@
-"""Revolut X AutoTrader V1.0."""
+"""Revolut X AutoTrader V4.4."""
 
 __all__ = ["__version__"]
-__version__ = "1.0.0"
+__version__ = "4.4.0"
 

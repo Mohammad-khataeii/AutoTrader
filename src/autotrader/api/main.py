@@ -201,7 +201,7 @@ def create_app() -> FastAPI:
         await market_data.close()
         await engine.dispose()
 
-    app = FastAPI(title=settings.app_name, version="4.2.0", lifespan=lifespan)
+    app = FastAPI(title=settings.app_name, version="4.4.0", lifespan=lifespan)
     app.state.auth_throttle = AuthenticationThrottle()
     app.state.shadow_lab = shadow_lab
     app.state.repository = repository
@@ -212,7 +212,7 @@ def create_app() -> FastAPI:
 
     @app.get("/healthz")
     async def healthz() -> dict[str, str]:
-        return {"status": "ok", "mode": "paper", "version":"4.2.0"}
+        return {"status": "ok", "mode": "paper", "version":"4.4.0"}
 
     @app.get("/readyz")
     async def readyz() -> dict[str, str | bool]:
@@ -238,7 +238,7 @@ def create_app() -> FastAPI:
     async def overview() -> dict[str, object]:
         snapshot = await repository.snapshot()
         return {
-            "application_version":"4.2.0",
+            "application_version":"4.4.0",
             "portfolio": snapshot,
             "health": {
                 "api": "ok",
@@ -328,7 +328,7 @@ def create_app() -> FastAPI:
     @app.post('/api/pilots',dependencies=[Depends(require_user)],status_code=201)
     async def start_pilot(request: PilotRequest) -> Any:
         try:
-            return await repository.start_pilot(request.request_id,pilot_configuration(settings),test_environment=settings.environment=='test' and not settings.shadow_enabled)
+            return await repository.start_pilot(request.request_id,pilot_configuration(settings),test_environment=settings.environment=='test')
         except ValueError as exc:
             raise HTTPException(status_code=409,detail=str(exc)) from None
 
@@ -409,6 +409,9 @@ def create_app() -> FastAPI:
     @app.get("/api/market-data/health", dependencies=[Depends(require_user)])
     async def market_data_health() -> dict[str, Any]:
         return await repository.market_data_health()
+
+    from autotrader.api.v44 import install
+    install(app, repository, shadow_lab, settings, require_user)
 
     @app.get("/api/shadow", dependencies=[Depends(require_user)])
     async def shadow_overview() -> dict[str, Any]:

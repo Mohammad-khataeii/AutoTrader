@@ -1,6 +1,6 @@
-# Revolut X AutoTrader — Interface 4.3 / Engine 4.2
+# Revolut X AutoTrader — V4.4
 
-V4.3 simplifies the dashboard to **Overview, Experiments, Trades and Research**, with advanced controls and diagnostics available on demand. The trading engine and API remain V4.2. See the [redesign report, screenshots and test evidence](docs/V4_3_UI_REDESIGN.md). This interface release is developed and tested locally; production deployment requires separate authorization.
+V4.4 preserves source-pinned V4.2 experiments through a verified legacy runner, adds structured decision explanations and bounded APIs, and keeps the four-page dashboard. Paused or stopped flat experiments can be archived to free a workspace slot while preserving all financial history. See the [release report and evidence](docs/V4_4_RELEASE_REPORT.md) and [approval-gated deployment/rollback plan](docs/V4_4_DEPLOYMENT_AND_ROLLBACK.md). This release is developed and verified locally; production deployment requires approval of its exact commit.
 
 An autonomous EUR500 **paper-trading research platform** using public Revolut X observations, FastAPI, React and authoritative PostgreSQL accounting. The existing journal, realistic bid/ask execution, partial targets, protective stops, reservations and recovery remain intact. Real-money trading stays disabled. AI defaults to mock with persistent30/day,6/rolling-hour and USD10/month paid-mode limits.
 
@@ -48,10 +48,10 @@ The financial lifecycle uses real PostgreSQL/API/worker/broker components with d
 
 ```sh
 # Only after tests, clean commits, push and immutable tag verification:
-python deploy/release.py prepare --ref v4.2.0 --output .tools/releases/v4.2.0
+python deploy/release.py prepare --ref v4.4.0 --output .tools/releases/v4.4.0
 ```
 
-The archive/manifest identify the exact Git commit and every released source hash, excluding secrets and runtime data. Production source operations require that manifest plus the approved full commit. **Stop after Stage A and obtain explicit approval.** Then follow [controlled deployment](docs/V4_2_VPS_DEPLOYMENT.md) and [rollback](docs/V4_2_ROLLBACK.md). Keep Compose project `autotrader-v41`; preserve Nginx/TLS, all financial volumes/backups and unrelated apps. ARM64 local tests do not replace verification of the LinuxAMD64 deployment build.
+The archive/manifest identify the exact Git commit and every released source hash, excluding secrets and runtime data. Production source operations require that manifest plus the approved full commit. **Stop after Stage A and obtain explicit approval.** Then follow the [V4.4 deployment and rollback plan](docs/V4_4_DEPLOYMENT_AND_ROLLBACK.md). Keep Compose project `autotrader-v41`; preserve Nginx/TLS, all financial volumes/backups and unrelated apps. ARM64 local tests do not replace verification of the LinuxAMD64 deployment build.
 
 An earlier authorized rollout completed while the later local-first instruction arrived. Its actual state and remaining verification are recorded candidly in [executed upgrade](docs/V4_2_VPS_UPGRADE.md). It preceded the final Git release and must not be described as deployment of that final commit. Further deployment, data publication, shadow activation and cleanup are approval-gated.
 

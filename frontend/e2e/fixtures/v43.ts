@@ -139,19 +139,181 @@ export function fixture() {
   };
 }
 export async function mockApi(page: Page, data: any = fixture()) {
-  const requests: { path: string; method: string }[] = [];
+  const requests: { path: string; method: string; wirePath: string }[] = [];
   let failOverview = false;
   await page.route("**/readyz", (route) =>
     route.fulfill({ json: { ready: true, live_trading_enabled: false } }),
   );
   await page.route("**/api/**", async (route) => {
     const req = route.request(),
-      path = new URL(req.url()).pathname.replace("/api/", "");
-    requests.push({ path, method: req.method() });
+      wirePath = new URL(req.url()).pathname.replace("/api/", "");
+    const url = new URL(req.url());
+    const path =
+      (
+        {
+          "overview/summary": "overview",
+          "shadow/summary": "shadow",
+          "research/summary": "research",
+          "monitoring/summary": "system",
+          "intelligence/summary": "intelligence",
+          "history/page/equity": "history",
+        } as Record<string, string>
+      )[wirePath] ?? wirePath;
+    requests.push({ path, method: req.method(), wirePath });
+    if (wirePath === "shadow/summary")
+      return route.fulfill({
+        json: {
+          ...data.shadow,
+          experiments: data.shadow.experiments.filter(
+            (e: any) =>
+              Boolean(e.archived_at) ===
+              (url.searchParams.get("archived") === "true"),
+          ),
+          occupied_slots: data.shadow.experiments.filter(
+            (e: any) => !e.archived_at,
+          ).length,
+          archived_count: data.shadow.experiments.filter(
+            (e: any) => e.archived_at,
+          ).length,
+        },
+      });
+    if (wirePath === "monitoring/summary")
+      return route.fulfill({
+        json: {
+          ...data.system,
+          service: {
+            worker: data.system.worker,
+            postgresql: data.system.postgresql,
+          },
+          market_data: { state: data.system.exchange_data, fresh: true },
+          official: {
+            control: data.overview.portfolio.control,
+            approval: { research_only: true },
+          },
+          last_scan: {
+            markets: ["BTC-EUR", "ETH-EUR", "SOL-EUR"],
+            completed_at: new Date().toISOString(),
+            operation: data.system.operation,
+          },
+          shadows: data.shadow.experiments
+            .filter((e: any) => !e.archived_at)
+            .map((e: any) => ({
+              ...e,
+              strategy_id: e.manifest.strategy_id,
+              latest_decision: e.latest_decision ?? null,
+              last_evaluation_at: e.last_evaluation_at ?? null,
+            })),
+          current_system_errors: [],
+        },
+      });
+    if (wirePath.startsWith("history/page/"))
+      return route.fulfill({
+        json: {
+          items: data.history[wirePath.split("/").pop()!] ?? [],
+          next_cursor: null,
+          limit: 30,
+        },
+      });
+    if (wirePath.startsWith("shadow/") && wirePath.endsWith("/view")) {
+      const e = data.shadow.experiments.find(
+        (e: any) => e.experiment_id === wirePath.split("/")[1],
+      );
+      return route.fulfill({ json: e ?? {} });
+    }
+    if (wirePath.startsWith("shadow/") && wirePath.includes("/pages/")) {
+      const parts = wirePath.split("/");
+      const e = data.shadow.experiments.find(
+        (e: any) => e.experiment_id === parts[1],
+      );
+      return route.fulfill({
+        json: {
+          items: e?.history?.[parts[3]] ?? e?.[parts[3]] ?? [],
+          next_cursor: null,
+          limit: 10,
+        },
+      });
+    }
+    if (wirePath.startsWith("shadow/") && req.method() === "DELETE") {
+      const e = data.shadow.experiments.find(
+        (e: any) => e.experiment_id === wirePath.split("/")[1],
+      );
+      if (
+        !e ||
+        !["PAUSED", "STOPPED"].includes(e.state) ||
+        (e.positions ?? []).some((p: any) => Number(p.quantity) > 0)
+      )
+        return route.fulfill({
+          status: 409,
+          json: { detail: "cannot_archive_active_or_open_positions" },
+        });
+      e.state = "STOPPED";
+      e.archived_at ??= new Date().toISOString();
+      return route.fulfill({
+        json: {
+          experiment_id: e.experiment_id,
+          archived_at: e.archived_at,
+          history_preserved: true,
+          slot_released: true,
+        },
+      });
+    }
+    if (wirePath === "trades") {
+      const kind =
+          url.searchParams.get("kind") === "orders" ? "orders" : "positions",
+        view = url.searchParams.get("view"),
+        account = url.searchParams.get("account");
+      const accounts = [
+        { id: "official", name: "Official", data: data.overview },
+        ...data.shadow.experiments
+          .filter((e: any) => !e.archived_at)
+          .map((e: any) => ({ id: e.experiment_id, name: e.name, data: e })),
+      ];
+      const items = accounts
+        .filter((a: any) => account === "all" || a.id === account)
+        .flatMap((a: any) =>
+          (a.data[kind] ?? [])
+            .filter(
+              (r: any) =>
+                kind === "orders" ||
+                (view === "open"
+                  ? Number(r.quantity) > 0 && !r.closed_at
+                  : Boolean(r.closed_at)),
+            )
+            .map((r: any) => ({
+              account: a.id,
+              accountName: a.name,
+              symbol: r.symbol,
+              kind: kind === "orders" ? "order" : "position",
+              key: a.id + ":" + (r.position_id ?? r.order_id),
+              record: r,
+            })),
+        );
+      return route.fulfill({ json: { items, next_cursor: null, limit: 30 } });
+    }
+    if (wirePath.startsWith("trades/")) {
+      const [, id, kind, identity] = wirePath.split("/");
+      const account =
+        id === "official"
+          ? data.overview
+          : data.shadow.experiments.find((e: any) => e.experiment_id === id);
+      return route.fulfill({
+        json: {
+          ...account,
+          history: id === "official" ? data.history : account?.history,
+          record: account?.[kind === "position" ? "positions" : "orders"]?.find(
+            (r: any) => (r.position_id ?? r.order_id) === identity,
+          ),
+        },
+      });
+    }
+
     if (failOverview && path === "overview")
       return route.fulfill({ status: 503, body: "Gateway unavailable" });
     if (path === "shadow" && req.method() === "POST") {
-      if (data.shadow.experiments.length >= data.shadow.maximum_experiments)
+      if (
+        data.shadow.experiments.filter((e: any) => !e.archived_at).length >=
+        data.shadow.maximum_experiments
+      )
         return route.fulfill({
           status: 409,
           json: { detail: "bounded shadow limit reached" },

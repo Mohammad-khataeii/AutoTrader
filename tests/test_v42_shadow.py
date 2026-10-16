@@ -227,7 +227,7 @@ async def test_restored_foreign_registry_and_changed_source_fail_closed(lab, mon
         )
     with pytest.raises(ValueError, match="restored_shadow_registry"):
         await lab.repository(identity)
-    monkeypatch.setattr("autotrader.shadow.repository.source_fingerprint", lambda: ("changed", {}))
+    monkeypatch.setattr("autotrader.shadow.repository.execution_fingerprint", lambda: "changed")
     result, _ = await enter(repo, "changed-source")
     assert not result.accepted and result.reason == "shadow_frozen_source_changed"
     assert D((await repo.snapshot())["equity"]) == 500

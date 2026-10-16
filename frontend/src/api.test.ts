@@ -70,3 +70,33 @@ describe("shared authenticated resources", () => {
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("readiness and mounted resource refresh", () => {
+  it("rejects HTML and incomplete readiness JSON without inferring disabled trading", async () => {
+    const html = new ApiClient(
+      "Basic local",
+      async () =>
+        new Response("<html>App</html>", {
+          headers: { "content-type": "text/html" },
+        }),
+    );
+    await expect(html.request("/readyz")).rejects.toThrow("JSON was expected");
+    const incomplete = new ApiClient("Basic local", async () =>
+      Response.json({ ready: true }),
+    );
+    await expect(incomplete.request("/readyz")).rejects.toThrow(
+      "Trading mode could not be verified",
+    );
+  });
+  it("manual refresh includes only enabled mounted resources", async () => {
+    const transport = vi.fn(async (_path: any, _options: any) =>
+      Response.json({ ok: true }),
+    );
+    const api = new ApiClient("Basic local", transport as typeof fetch);
+    api.entry("/visible").active = 1;
+    api.entry("/hidden").active = 0;
+    await api.refreshVisible();
+    expect(transport).toHaveBeenCalledTimes(1);
+    expect(transport.mock.calls[0][0]).toBe("/visible");
+  });
+});

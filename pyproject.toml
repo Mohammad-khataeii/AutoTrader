@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "revolutx-autotrader"
-version = "4.2.0"
+version = "4.4.0"
 description = "Autonomous Revolut X cryptocurrency research and paper-trading platform."
 requires-python = ">=3.12"
 dependencies = [
@@ -53,6 +53,7 @@ asyncio_mode = "auto"
 markers = ["legacy_schema: initialize an isolated PostgreSQL database at revision 0004 for upgrade testing"]
 
 [tool.ruff]
+extend-exclude = ["src/autotrader/_frozen"]
 target-version = "py312"
 line-length = 100
 src = ["src", "tests"]
@@ -61,6 +62,10 @@ src = ["src", "tests"]
 ignore = ["B008", "BLE001", "FURB157"]
 
 [tool.mypy]
+exclude = ["src/autotrader/_frozen"]
 python_version = "3.12"
 strict = true
 packages = ["autotrader"]
+
+[tool.setuptools.package-data]
+"autotrader._frozen" = ["v42-manifest.json"]

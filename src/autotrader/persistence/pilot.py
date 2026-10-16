@@ -31,7 +31,7 @@ def pilot_configuration(settings: Any) -> dict[str, Any]:
     catalog=Path(settings.research_root)/'catalog.json'
     datasets=json.loads(catalog.read_bytes()).get('manifests',[]) if catalog.exists() else []
     return {'application_version':'4.1.0','source_fingerprint':source_fingerprint()[0],
-        'market_data_source':'revolut-x-public','signal_timeframe':'5m','initial_cash_eur':'500',
+        'market_data_source':'synthetic-acceptance-replay' if settings.market_data_replay_file else 'revolut-x-public','signal_timeframe':'5m','initial_cash_eur':'500',
         'historical_datasets':sorted(m['dataset_version'] for m in datasets),
         'ai_provider':settings.ai_provider.value,'ai_model':settings.ai_model,
         'scan_seconds':settings.worker_scan_interval_seconds,'position_seconds':settings.worker_position_interval_seconds,

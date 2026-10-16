@@ -1,0 +1,183 @@
+{
+  "data_kind": "LOCAL_SYNTHETIC_ACCEPTANCE",
+  "same_backend": true,
+  "baseline_commit": "738abcb24bb58e395cd1a6caa395deb21f4e01cb",
+  "records": [
+    {
+      "version": "before",
+      "page": "Overview",
+      "width": 1440,
+      "geometry": {
+        "scroll": 1440,
+        "viewport": 1440
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "before",
+      "page": "Experiments",
+      "width": 1440,
+      "geometry": {
+        "scroll": 1440,
+        "viewport": 1440
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "after",
+      "page": "Overview",
+      "width": 1440,
+      "geometry": {
+        "scroll": 1440,
+        "viewport": 1440
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "after",
+      "page": "Experiments",
+      "width": 1440,
+      "geometry": {
+        "scroll": 1440,
+        "viewport": 1440
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "before",
+      "page": "Overview",
+      "width": 1024,
+      "geometry": {
+        "scroll": 1024,
+        "viewport": 1024
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "before",
+      "page": "Experiments",
+      "width": 1024,
+      "geometry": {
+        "scroll": 1024,
+        "viewport": 1024
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "after",
+      "page": "Overview",
+      "width": 1024,
+      "geometry": {
+        "scroll": 1024,
+        "viewport": 1024
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "after",
+      "page": "Experiments",
+      "width": 1024,
+      "geometry": {
+        "scroll": 1024,
+        "viewport": 1024
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "before",
+      "page": "Overview",
+      "width": 768,
+      "geometry": {
+        "scroll": 768,
+        "viewport": 768
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "before",
+      "page": "Experiments",
+      "width": 768,
+      "geometry": {
+        "scroll": 768,
+        "viewport": 768
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "after",
+      "page": "Overview",
+      "width": 768,
+      "geometry": {
+        "scroll": 768,
+        "viewport": 768
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "after",
+      "page": "Experiments",
+      "width": 768,
+      "geometry": {
+        "scroll": 768,
+        "viewport": 768
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "before",
+      "page": "Overview",
+      "width": 375,
+      "geometry": {
+        "scroll": 375,
+        "viewport": 375
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "before",
+      "page": "Experiments",
+      "width": 375,
+      "geometry": {
+        "scroll": 375,
+        "viewport": 375
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "after",
+      "page": "Overview",
+      "width": 375,
+      "geometry": {
+        "scroll": 375,
+        "viewport": 375
+      },
+      "visible_json": false,
+      "page_errors": []
+    },
+    {
+      "version": "after",
+      "page": "Experiments",
+      "width": 375,
+      "geometry": {
+        "scroll": 375,
+        "viewport": 375
+      },
+      "visible_json": false,
+      "page_errors": []
+    }
+  ]
+}

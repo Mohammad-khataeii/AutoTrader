@@ -17,6 +17,7 @@ type Entry = {
   listeners: Set<() => void>;
   pending?: Promise<any>;
   controller?: AbortController;
+  active: number;
 };
 export function errorMessage(error: unknown): string {
   return error instanceof Error
@@ -35,6 +36,7 @@ export class ApiClient {
       this.entries.set(path, {
         snapshot: { loading: false },
         listeners: new Set(),
+        active: 0,
       });
     return this.entries.get(path)!;
   }
@@ -84,7 +86,16 @@ export class ApiClient {
           : "The server could not complete this action.";
       throw new Error(`${reason} (${response.status})`);
     }
-    return response.json();
+    if (!response.headers.get("content-type")?.includes("application/json"))
+      throw new Error(
+        "The server returned an invalid response. JSON was expected; status is unverified.",
+      );
+    const data = await response.json();
+    if (path === "/readyz" && typeof data.live_trading_enabled !== "boolean")
+      throw new Error(
+        "Trading mode could not be verified from the readiness response.",
+      );
+    return data;
   }
   load(path: string, force = false, ttl = 30000): Promise<any> {
     const entry = this.entry(path);
@@ -124,6 +135,13 @@ export class ApiClient {
         this.update(entry, { loading: false });
       });
     return entry.pending;
+  }
+  async refreshVisible() {
+    await this.refresh(
+      ...[...this.entries]
+        .filter(([, entry]) => entry.active > 0)
+        .map(([path]) => path),
+    );
   }
   async refresh(...paths: string[]) {
     await Promise.all(paths.map((path) => this.load(path, true)));
@@ -173,6 +191,8 @@ export function useResource(
   );
   useEffect(() => {
     if (!enabled) return;
+    const entry = api.entry(path);
+    entry.active += 1;
     let stopped = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let running = false;
@@ -193,6 +213,7 @@ export function useResource(
     document.addEventListener("visibilitychange", visibility);
     return () => {
       stopped = true;
+      entry.active = Math.max(0, entry.active - 1);
       clearTimeout(timer);
       document.removeEventListener("visibilitychange", visibility);
     };

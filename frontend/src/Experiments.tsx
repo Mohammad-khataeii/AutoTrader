@@ -18,6 +18,8 @@ import {
   number,
   percent,
   shortId,
+  rejection,
+  decisionSummary,
   stateName,
   strategyName,
 } from "./model";
@@ -32,6 +34,7 @@ import {
   ResourceState,
   Technical,
 } from "./ui";
+import { DecisionTimeline } from "./DecisionTimeline";
 export function Exports({ experiment }: { experiment: Row }) {
   const api = useApi();
   const [error, setError] = useState("");
@@ -125,8 +128,14 @@ export function ExperimentAction({
 }
 export function Experiments() {
   const api = useApi();
-  const resource = useResource("/api/shadow", { poll: 20000 });
+  const resource = useResource("/api/shadow/summary", { poll: 20000 });
   const data = resource.data;
+  const [showArchive, setShowArchive] = useState(false);
+  const archive = useResource("/api/shadow/summary?archived=true", {
+    enabled: showArchive,
+    ttl: 30000,
+  });
+  const [deleting, setDeleting] = useState(false);
   const [selected, setSelected] = useState("");
   const [create, setCreate] = useState(false);
   const [stop, setStop] = useState(false);
@@ -136,18 +145,33 @@ export function Experiments() {
   const [requestId, setRequestId] = useState("");
   const experiments: Row[] = data?.experiments ?? [];
   const maximum = number(data?.maximum_experiments);
-  const full = maximum != null && experiments.length >= maximum;
-  const experiment = experiments.find((e) => e.experiment_id === selected);
-  const refresh = () => api.refresh("/api/shadow", "/api/overview");
+  const occupied = data?.occupied_slots ?? experiments.length;
+  const full = maximum != null && occupied >= maximum;
+  const detail = useResource(`/api/shadow/${selected}/view`, {
+    enabled: Boolean(selected),
+    poll: selected ? 30000 : 0,
+  });
+  const experiment = selected ? detail.data : undefined;
+  const refresh = () => api.refreshVisible();
   const beginCreate = () => {
     setCreate(true);
     setName("");
     setRequestId(crypto.randomUUID());
   };
+  if (selected && !experiment)
+    return (
+      <div className="page-stack">
+        <button onClick={() => setSelected("")}>All experiments</button>
+        <ResourceState resource={detail} label="Experiment details" />
+      </div>
+    );
   if (experiment)
     return (
       <div className="page-stack">
         <ResourceState resource={resource} label="Experiments" />
+        {selected && (
+          <ResourceState resource={detail} label="Experiment details" />
+        )}
         <div className="section-heading">
           <button className="text-button" onClick={() => setSelected("")}>
             <ChevronLeft size={16} /> All experiments
@@ -179,21 +203,68 @@ export function Experiments() {
           </div>
         )}
         <div className="toolbar">
-          <ExperimentAction experiment={experiment} onChanged={refresh} />
+          {!experiment.archived_at && (
+            <ExperimentAction experiment={experiment} onChanged={refresh} />
+          )}
           <Exports experiment={experiment} />
-          {["SHADOW_ACTIVE", "PAUSED"].includes(experiment.state) && (
+          {!experiment.archived_at &&
+            ["SHADOW_ACTIVE", "PAUSED"].includes(experiment.state) && (
+              <details className="action-menu">
+                <summary aria-label="More experiment actions">
+                  <MoreHorizontal size={18} />
+                </summary>
+                <div className="menu-options">
+                  <button className="loss" onClick={() => setStop(true)}>
+                    Stop permanently
+                  </button>
+                </div>
+              </details>
+            )}
+        </div>
+        {experiment.archived_at && (
+          <p className="notice">
+            Archived {date(experiment.archived_at, true)}. The original account
+            and complete exports are preserved; this account cannot resume.
+          </p>
+        )}
+        {!experiment.archived_at &&
+          ["PAUSED", "STOPPED"].includes(experiment.state) && (
             <details className="action-menu">
-              <summary aria-label="More experiment actions">
-                <MoreHorizontal size={18} />
-              </summary>
-              <div className="menu-options">
-                <button className="loss" onClick={() => setStop(true)}>
-                  Stop permanently
-                </button>
-              </div>
+              <summary>Manage experiment</summary>
+              <button className="loss" onClick={() => setDeleting(true)}>
+                Delete experiment
+              </button>
             </details>
           )}
-        </div>
+        {deleting && (
+          <Confirm
+            title="Delete this experiment from the workspace?"
+            action="Archive and free slot"
+            danger
+            onCancel={() => setDeleting(false)}
+            onConfirm={async () => {
+              await api.request(
+                `/api/shadow/${selected}?confirm=${encodeURIComponent(selected)}`,
+                "DELETE",
+              );
+              setSelected("");
+              setDeleting(false);
+              await refresh();
+            }}
+          >
+            <p>
+              This permanently stops this instance, archives its complete
+              financial history, and frees one slot for a new independent
+              account. Its identity, balance and history are never reset or
+              reused.
+            </p>
+            <p>
+              Open positions or unsettled orders prevent deletion. Archived
+              accounts cannot resume; their records and exports remain
+              accessible.
+            </p>
+          </Confirm>
+        )}
         <div className="detail-metrics">
           <div>
             <span>Virtual equity</span>
@@ -220,6 +291,7 @@ export function Experiments() {
           rows={experiment.history?.equity ?? []}
           caption="This experiment only"
         />
+        <DecisionTimeline key={selected} identity={selected} />
         <Panel>
           <h2>Strategy approach</h2>
           <p>
@@ -389,6 +461,8 @@ export function Experiments() {
         <div className="slot-note">
           {experiments.length} of {maximum} experiment slots used. Existing
           experiment histories are preserved, including stopped experiments.
+          Delete a paused or stopped flat account to archive its history and
+          free a slot.
         </div>
       )}
       {data && !data.enabled && (
@@ -397,76 +471,150 @@ export function Experiments() {
         </div>
       )}
       <div className="experiment-grid">
-        {experiments.map((e) => (
-          <article className="experiment-card" key={e.experiment_id}>
-            <button
-              className="card-open"
-              aria-label={`Open ${strategyName(e.manifest?.strategy_id)} ${shortId(e.experiment_id)}`}
-              onClick={() => setSelected(e.experiment_id)}
-            >
-              <div className="section-heading">
-                <span className="strategy-letter">
-                  {(e.manifest?.strategy_id ?? "?").split("_")[0]}
-                </span>
-                <Badge
-                  tone={e.state === "SHADOW_ACTIVE" ? "positive" : "neutral"}
-                >
-                  {stateName(e.state)}
-                </Badge>
-              </div>
-              <h3>{strategyName(e.manifest?.strategy_id)}</h3>
-              <p className="muted small">
-                {e.manifest?.strategy_id?.split("_")[0]} · Instance{" "}
-                {shortId(e.experiment_id)}
-              </p>
-              <div className="card-equity">
-                <span>Virtual equity</span>
-                <strong>{money(e.portfolio?.equity)}</strong>
-              </div>
-              <div className="card-stats">
-                <div>
-                  <span>Net P&L</span>
-                  <strong>
-                    <Pnl value={e.performance?.net_pnl} />
-                  </strong>
+        {experiments
+          .filter((e) => e.state !== "STOPPED")
+          .map((e) => (
+            <article className="experiment-card" key={e.experiment_id}>
+              <button
+                className="card-open"
+                aria-label={`Open ${strategyName(e.manifest?.strategy_id)} ${shortId(e.experiment_id)}`}
+                onClick={() => setSelected(e.experiment_id)}
+              >
+                <div className="section-heading">
+                  <span className="strategy-letter">
+                    {(e.manifest?.strategy_id ?? "?").split("_")[0]}
+                  </span>
+                  <Badge
+                    tone={e.state === "SHADOW_ACTIVE" ? "positive" : "neutral"}
+                  >
+                    {stateName(e.state)}
+                  </Badge>
                 </div>
-                <div>
-                  <span>Closed trades</span>
-                  <strong>
-                    {e.performance?.closed_trades ?? "Unavailable"}
-                  </strong>
-                </div>
-                <div>
-                  <span>Open positions</span>
-                  <strong>{e.portfolio?.positions ?? "Unavailable"}</strong>
-                </div>
-              </div>
-              <p className="muted small">Started {date(e.created_at, true)}</p>
-              {lastEvaluation(e) && (
+                <h3>{strategyName(e.manifest?.strategy_id)}</h3>
                 <p className="muted small">
-                  Last evaluated {date(lastEvaluation(e), true)}
+                  {e.manifest?.strategy_id?.split("_")[0]} · Instance{" "}
+                  {shortId(e.experiment_id)}
                 </p>
-              )}
-              {e.source_matches === false && (
-                <p className="warning-text">
-                  Configuration changed · new entries blocked
+                <div className="card-equity">
+                  <span>Virtual equity</span>
+                  <strong>{money(e.portfolio?.equity)}</strong>
+                </div>
+                <div className="card-stats">
+                  <div>
+                    <span>Net P&L</span>
+                    <strong>
+                      <Pnl value={e.performance?.net_pnl} />
+                    </strong>
+                  </div>
+                  <div>
+                    <span>Closed trades</span>
+                    <strong>
+                      {e.performance?.closed_trades ?? "Unavailable"}
+                    </strong>
+                  </div>
+                  <div>
+                    <span>Open positions</span>
+                    <strong>{e.portfolio?.positions ?? "Unavailable"}</strong>
+                  </div>
+                </div>
+                <p className="muted small">
+                  Started {date(e.created_at, true)}
                 </p>
-              )}
-            </button>
-            <div className="card-footer">
-              <span className="muted small">
-                {dataKind(e.manifest?.data_kind)}
-              </span>
-              <ExperimentAction experiment={e} onChanged={refresh} />
-            </div>
-          </article>
-        ))}
+                {lastEvaluation(e) && (
+                  <p className="muted small">
+                    Last evaluated {date(lastEvaluation(e), true)}
+                  </p>
+                )}
+                {e.latest_decision && (
+                  <p className="small muted">
+                    Latest:{" "}
+                    {decisionSummary(e.latest_decision)}
+                  </p>
+                )}
+                {e.source_matches === false && (
+                  <p className="warning-text">
+                    Configuration changed · new entries blocked
+                  </p>
+                )}
+              </button>
+              <div className="card-footer">
+                <span className="muted small">
+                  {dataKind(e.manifest?.data_kind)}
+                </span>
+                <ExperimentAction experiment={e} onChanged={refresh} />
+              </div>
+            </article>
+          ))}
       </div>
+      {experiments.some((e) => e.state === "STOPPED") && (
+        <Panel>
+          <h2>Stopped experiments</h2>
+          <p className="muted small">
+            History is retained. Stopping alone does not free a slot.
+          </p>
+          {experiments
+            .filter((e) => e.state === "STOPPED")
+            .map((e) => (
+              <div
+                className="section-heading historical-experiment"
+                key={e.experiment_id}
+              >
+                <div>
+                  <strong>
+                    {strategyName(e.manifest?.strategy_id)} ·{" "}
+                    {shortId(e.experiment_id)}
+                  </strong>
+                  <p className="small muted">
+                    Stopped · Started {date(e.created_at, true)} · Net P&amp;L{" "}
+                    <Pnl value={e.performance?.net_pnl} />
+                  </p>
+                </div>
+                <button
+                  aria-label={`Open ${strategyName(e.manifest?.strategy_id)} ${shortId(e.experiment_id)}`}
+                  onClick={() => setSelected(e.experiment_id)}
+                >
+                  View history
+                </button>
+              </div>
+            ))}
+        </Panel>
+      )}
+      <details
+        className="panel disclosure"
+        onToggle={(e) => setShowArchive(e.currentTarget.open)}
+      >
+        <summary>Archived experiments ({data?.archived_count ?? 0})</summary>
+        {showArchive && (
+          <>
+            <ResourceState resource={archive} label="Archived experiments" />
+            {(archive.data?.experiments ?? []).map((e: Row) => (
+              <div
+                className="section-heading historical-experiment"
+                key={e.experiment_id}
+              >
+                <div>
+                  <strong>
+                    {strategyName(e.manifest?.strategy_id)} ·{" "}
+                    {shortId(e.experiment_id)}
+                  </strong>
+                  <p className="small muted">
+                    Archived {date(e.archived_at, true)}
+                  </p>
+                </div>
+                <button onClick={() => setSelected(e.experiment_id)}>
+                  View archived history
+                </button>
+              </div>
+            ))}
+          </>
+        )}
+      </details>
       {data && !experiments.length && (
         <Panel>
           <Empty title="No experiments yet.">
             Create an explicitly unvalidated virtual account when you are ready.
-            Each retained experiment uses one permanent slot.
+            Each workspace account uses one slot. Archive a paused or stopped
+            flat account to free it while retaining its history.
           </Empty>
         </Panel>
       )}
@@ -534,9 +682,10 @@ export function Experiments() {
             {strategyName(strategy)} · {name}
           </p>
           <p>
-            This creates an unvalidated €500 simulation and permanently uses one
-            of {maximum} retained slots. Stopping it later will not free the
-            slot.
+            This creates an unvalidated €500 simulation using one of {maximum}{" "}
+            workspace slots. Stopping alone does not free the slot; explicitly
+            deleting a paused or stopped flat account archives its history and
+            frees it.
           </p>
         </Confirm>
       )}

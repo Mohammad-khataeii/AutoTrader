@@ -148,10 +148,11 @@ class RevolutXPublicClient:
                 if response.status_code == 429:
                     breaker.failure()
                     await self._event('request_429')
+                    await self._event('request_429:' + self._family(path).rsplit('/',1)[-1] + ':' + path.rsplit('/',1)[-1])
                     retry_after=float(_retry_after_seconds(response.headers.get("Retry-After")))
                     delay=max(retry_after,0.25*(2**attempt)+random.uniform(0,.1))
                     family=self._family(path)
-                    self._cooldowns[family]=time.monotonic()+delay
+                    self._cooldowns[family]=max(self._cooldowns.get(family,0),time.monotonic()+delay)
                     if self.cooldown_publisher:
                         await self.cooldown_publisher(family,delay)
                     if delay>30 or attempt==3:

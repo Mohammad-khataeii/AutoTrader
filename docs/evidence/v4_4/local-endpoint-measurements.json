@@ -1,0 +1,55 @@
+{
+  "data_kind": "LOCAL_SYNTHETIC_AND_HISTORICAL_RESEARCH",
+  "comparable_to_production_latency": false,
+  "sample": "one sequential request per endpoint; mutable replay continues; no empty/large payload equivalence assumed",
+  "measurements": [
+    {
+      "complete": {
+        "path": "/api/shadow",
+        "bytes": 1230509,
+        "elapsed_ms": 307.53
+      },
+      "bounded": {
+        "path": "/api/shadow/summary",
+        "bytes": 8712,
+        "elapsed_ms": 53.56
+      }
+    },
+    {
+      "complete": {
+        "path": "/api/history",
+        "bytes": 1177743,
+        "elapsed_ms": 43.15
+      },
+      "bounded": {
+        "path": "/api/history/page/decisions?limit=30",
+        "bytes": 35388,
+        "elapsed_ms": 8.56
+      }
+    },
+    {
+      "complete": {
+        "path": "/api/intelligence",
+        "bytes": 188,
+        "elapsed_ms": 7.51
+      },
+      "bounded": {
+        "path": "/api/intelligence/summary",
+        "bytes": 275,
+        "elapsed_ms": 8.33
+      }
+    },
+    {
+      "complete": {
+        "path": "/api/research",
+        "bytes": 537534,
+        "elapsed_ms": 42.12
+      },
+      "bounded": {
+        "path": "/api/research/summary",
+        "bytes": 19389,
+        "elapsed_ms": 6.88
+      }
+    }
+  ]
+}

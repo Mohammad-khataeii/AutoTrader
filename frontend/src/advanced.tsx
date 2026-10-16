@@ -24,6 +24,7 @@ import {
 } from "./ResearchPanels";
 import { MarketDataHealth, TradeFailureExplorer } from "./ShadowPanels";
 import { PilotPanel } from "./PilotPanel";
+import { HistoryExplorer } from "./HistoryExplorer";
 export const advancedItems = [
   "Official Account Controls",
   "Market monitor",
@@ -101,6 +102,11 @@ function Replay() {
 }
 export function AdvancedResearch({ auth }: { auth: string }) {
   const [tool, setTool] = useState("Historical lab");
+  const [fullOutcomes, setFullOutcomes] = useState(false);
+  const completeOutcomes = useResource("/api/intelligence", {
+    enabled: tool === "Opportunity outcomes" && fullOutcomes,
+    ttl: 60000,
+  });
   const api = useApi();
   const research = useResource("/api/research", {
     enabled: tool === "Historical lab",
@@ -112,7 +118,7 @@ export function AdvancedResearch({ auth }: { auth: string }) {
       ["QUEUED", "RUNNING"].includes(j.status),
     );
   useResource("/api/research", { enabled: running, poll: 5000, ttl: 300000 });
-  const outcomes = useResource("/api/intelligence", {
+  const outcomes = useResource("/api/intelligence/summary", {
     enabled: tool === "Opportunity outcomes",
     ttl: 60000,
   });
@@ -158,7 +164,20 @@ export function AdvancedResearch({ auth }: { auth: string }) {
       {tool === "Opportunity outcomes" && (
         <>
           <ResourceState resource={outcomes} label="Opportunity outcomes" />
-          {outcomes.data && <OpportunityIntelligence data={outcomes.data} />}
+          <button onClick={() => setFullOutcomes(true)}>
+            Load complete opportunity and allocation evidence
+          </button>
+          {fullOutcomes && (
+            <ResourceState
+              resource={completeOutcomes}
+              label="Complete opportunity evidence"
+            />
+          )}
+          {outcomes.data && (
+            <OpportunityIntelligence
+              data={completeOutcomes.data ?? outcomes.data}
+            />
+          )}
         </>
       )}
       {tool === "Paper pilot" && <PilotPanel auth={auth} />}
@@ -175,8 +194,8 @@ export function AdvancedScreen({ page, auth }: { page: string; auth: string }) {
     enabled: page === "Market monitor" || page === "AI & budgets",
     poll: page === "Market monitor" ? 30000 : 0,
   });
-  const history = useResource("/api/history", {
-    enabled: page === "Decision journal" || page === "Risk & recovery",
+  const history = useResource("/api/history/page/incidents?limit=30", {
+    enabled: page === "Risk & recovery",
     ttl: 60000,
   });
   const execution = useResource("/api/execution", {
@@ -315,37 +334,7 @@ export function AdvancedScreen({ page, auth }: { page: string; auth: string }) {
           </Panel>
         </>
       )}
-      {page === "Decision journal" && (
-        <>
-          <ResourceState resource={history} label="Decision journal" />
-          <Panel>
-            <CompactTable
-              label="Official decision history"
-              rows={history.data?.decisions ?? []}
-              columns={[
-                { label: "Time", render: (r) => date(r.created_at, true) },
-                { label: "Coin", render: (r) => r.symbol },
-                {
-                  label: "Action",
-                  render: (r) =>
-                    humanize(r.action ?? parse(r.payload_json).action),
-                },
-                {
-                  label: "Reason",
-                  render: (r) =>
-                    rejection(
-                      r.rejected_reason ?? parse(r.payload_json).explanation,
-                    ),
-                },
-              ]}
-            />
-            <Technical
-              value={history.data}
-              label="Decision payloads, transitions and exit intentions"
-            />
-          </Panel>
-        </>
-      )}
+      {page === "Decision journal" && <HistoryExplorer />}
       {page === "Execution diagnostics" && (
         <>
           <ResourceState resource={execution} label="Execution diagnostics" />
@@ -433,7 +422,7 @@ export function AdvancedScreen({ page, auth }: { page: string; auth: string }) {
             <Technical
               value={{
                 risk_limits: settings.data?.risk_limits,
-                incidents: history.data?.incidents,
+                incidents: history.data?.items,
                 reconciliation: system.data?.reconciliation,
               }}
               label="Risk limits, incidents and reconciliation evidence"

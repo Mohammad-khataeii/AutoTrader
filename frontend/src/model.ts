@@ -63,6 +63,7 @@ export const stateName = (value: unknown) =>
   ({
     SHADOW_ACTIVE: "Active",
     ACTIVE: "Active",
+    SYNTHETIC_ACCEPTANCE: "Test simulation",
     PAUSED: "Paused",
     STOPPED: "Stopped",
     CREATING: "Initializing",
@@ -88,6 +89,11 @@ export function parse(value: any): Row {
   }
 }
 export function lastEvaluation(experiment: Row) {
+  if (
+    experiment.last_evaluation_at &&
+    Number.isFinite(new Date(experiment.last_evaluation_at).getTime())
+  )
+    return experiment.last_evaluation_at;
   return (experiment.history?.decisions ?? [])
     .map((r: Row) => r.created_at)
     .filter((v: string) => Number.isFinite(new Date(v).getTime()))
@@ -118,6 +124,17 @@ export function rejection(reason: unknown): string {
 }
 export function systemStatus(system?: Row, control?: string, failed = false) {
   if (failed) return "Degraded";
+  if (system?.service) {
+    if (system.service.worker !== "ok") return "Offline";
+    if (
+      system.service.postgresql !== "ok" ||
+      system.market_data?.state !== "OK" ||
+      system.market_data?.fresh === false ||
+      system.current_system_errors?.length
+    )
+      return "Degraded";
+    return "Running";
+  }
   if (!system) return "Checking";
   if (
     system.worker !== "ok" ||
@@ -160,4 +177,27 @@ export function currentMark(
   )
     return undefined;
   return { price: mid, pnl: number(row.unrealized_pnl) };
+}
+
+export const conditionName = (code: string) =>
+  ({
+    context_ready: "completed context unavailable",
+    higher_timeframe_bullish: "15m/1h trend not bullish",
+    ema9_recovery: "EMA9 recovery not confirmed",
+    close_recovery: "close recovery not confirmed",
+    previous_high_reclaimed: "previous high not reclaimed",
+    retest_available: "retest level unavailable",
+    prebreak_compression: "pre-breakout range not compressed",
+    previous_breakout: "previous close did not confirm breakout",
+    range_held: "breakout range not held",
+    no_close_reversal: "close weakened",
+    breakout_volume: "breakout volume below frozen threshold",
+  } as Record<string, string>)[code] ?? rejection(code);
+export function decisionSummary(e: Row | undefined) {
+  if (!e) return "No recorded evaluation yet";
+  if (e.final_state === "ACCEPTED") return "Simulated entry accepted";
+  const failures: string[] = e.independently_failed ?? [];
+  return failures.length
+    ? `No qualifying entry. Unmet: ${failures.slice(0, 2).map(conditionName).join("; ")}${failures.length > 2 ? `; ${failures.length - 2} other conditions` : ""}.`
+    : rejection(e.reason);
 }

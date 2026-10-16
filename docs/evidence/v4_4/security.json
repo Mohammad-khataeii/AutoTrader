@@ -1,0 +1,8 @@
+{
+  "checked_tracked_and_new_files": 667,
+  "private_key_files_opened": false,
+  "known_generated_local_secrets_leaked": false,
+  "violating_paths": [],
+  "production_env_accessed": false,
+  "ssh_used": false
+}

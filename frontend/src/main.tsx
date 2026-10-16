@@ -19,7 +19,7 @@ import {
   useResource,
 } from "./api";
 import { systemStatus } from "./model";
-import { Badge } from "./ui";
+import { Badge, ResourceState } from "./ui";
 import { Overview } from "./Overview";
 import { Experiments } from "./Experiments";
 import { Trades } from "./Trades";
@@ -43,8 +43,8 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
   const [active, setActive] = useState("Overview");
   const [advanced, setAdvanced] = useState("Official Account Controls");
   const menu = useRef<HTMLDetailsElement>(null);
-  const overview = useResource("/api/overview");
-  const system = useResource("/api/system", { poll: 15000 });
+  const overview = useResource("/api/overview/summary");
+  const system = useResource("/api/monitoring/summary", { poll: 15000 });
   const readiness = useResource("/readyz", { ttl: 60000 });
   const [refreshing, setRefreshing] = useState(false);
   const status = systemStatus(
@@ -100,7 +100,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
               ))}
             </div>
           </details>
-          <p className="build-label">Interface 4.3 · Paper trading</p>
+          <p className="build-label">Interface 4.4 · Paper trading</p>
         </div>
       </aside>
       <main id="workspace" className="workspace">
@@ -132,32 +132,8 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
               disabled={refreshing}
               onClick={async () => {
                 setRefreshing(true);
-                const paths = [
-                  "/api/system",
-                  "/api/overview",
-                  "/readyz",
-                  ...(active === "Overview" ||
-                  active === "Experiments" ||
-                  active === "Trades"
-                    ? ["/api/shadow"]
-                    : []),
-                  ...(active === "Research" ? ["/api/research"] : []),
-                  ...(active === "Advanced"
-                    ? ({
-                        "Official Account Controls": [],
-                        "Market monitor": ["/api/scanner"],
-                        "Decision journal": ["/api/history"],
-                        "Execution diagnostics": ["/api/execution"],
-                        "AI & budgets": ["/api/ai", "/api/scanner"],
-                        "Risk & recovery": ["/api/settings", "/api/history"],
-                        "System & data health": ["/api/market-data/health"],
-                        "Paper pilot": ["/api/pilots"],
-                        Settings: ["/api/settings"],
-                      }[advanced] ?? [])
-                    : []),
-                ];
                 try {
-                  await api.refresh(...paths);
+                  await api.refreshVisible();
                 } finally {
                   setRefreshing(false);
                 }
@@ -175,6 +151,12 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
             </button>
           </div>
         </header>
+        {readiness.error && (
+          <ResourceState
+            resource={readiness}
+            label="Trading-mode verification"
+          />
+        )}
         {readiness.data?.live_trading_enabled === true && (
           <div role="alert" className="notice warning">
             Unexpected real-money configuration. Stop and review the server
@@ -256,10 +238,10 @@ function App() {
             const credential = `Basic ${btoa(String.fromCharCode(...new TextEncoder().encode(`${username}:${password}`)))}`;
             const api = new ApiClient(credential);
             try {
-              const data = await api.load("/api/overview", true);
+              const data = await api.load("/api/overview/summary", true);
               if (!data?.portfolio)
                 throw new Error(
-                  api.entry("/api/overview").snapshot.error ??
+                  api.entry("/api/overview/summary").snapshot.error ??
                     "Account data is unavailable.",
                 );
               setSession({ api, auth: credential });

@@ -64,6 +64,7 @@ class MarketDataService:
         self._candles:dict[str,tuple[int,list[Candle]]]={}
         self._candle_locks:dict[str,asyncio.Lock]={}
         self._protective_books:dict[str,OrderBook]|None=None
+        self._discovery_rotation = 0
 
     @asynccontextmanager
     async def protective_cycle(self) -> AsyncIterator[None]:
@@ -130,7 +131,12 @@ class MarketDataService:
         pairs = await self.client.get_pairs()
         eligible = [pair for pair in pairs if pair.quote_asset in quote_assets]
         eligible.sort(key=lambda pair: (quote_assets.index(pair.quote_asset), _asset_priority(pair.base_asset), pair.symbol))
-        return eligible[:limit]
+        selected = eligible[:limit]
+        if selected:
+            offset = self._discovery_rotation % len(selected)
+            self._discovery_rotation += 1
+            selected = selected[offset:] + selected[:offset]
+        return selected
 
     async def resolve_pair(self, symbol: str) -> TradingPair | None:
         pairs = await self.client.get_pairs()

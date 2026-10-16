@@ -23,59 +23,48 @@ import {
   Technical,
 } from "./ui";
 export function Trades() {
-  const official = useResource("/api/overview", { poll: 20000 });
-  const shadow = useResource("/api/shadow", { poll: 20000 });
+  const shadow = useResource("/api/shadow/summary", { ttl: 30000 });
   const [tab, setTab] = useState("Open positions");
   const [account, setAccount] = useState("all");
   const [selected, setSelected] = useState<Row | null>(null);
+  const [cursors, setCursors] = useState<string[]>([]);
+  const [showOrders, setShowOrders] = useState(false);
+  const [orderCursors, setOrderCursors] = useState<string[]>([]);
+  const orderCursor = orderCursors[orderCursors.length - 1] ?? "";
+  const cursor = cursors[cursors.length - 1] ?? "";
+  const feed = useResource(
+    `/api/trades?account=${account}&view=${tab === "Open positions" ? "open" : "history"}&limit=30${cursor ? "&cursor=" + encodeURIComponent(cursor) : ""}`,
+    { poll: cursor ? 0 : 20000 },
+  );
+  const orderFeed = useResource(
+    `/api/trades?account=${account}&kind=orders&view=history&limit=30${orderCursor ? "&cursor=" + encodeURIComponent(orderCursor) : ""}`,
+    { enabled: tab === "Trade history" && showOrders, ttl: 30000 },
+  );
+  const detail = useResource(
+    `/api/trades/${selected?.account}/${selected?.kind}/${selected?.record?.[selected?.kind === "order" ? "order_id" : "position_id"]}`,
+    { enabled: Boolean(selected), poll: selected ? 15000 : 0 },
+  );
   const execution = useResource("/api/execution", {
     enabled: selected?.account === "official" && selected?.kind === "position",
-    poll:
-      selected?.account === "official" && isOpen(selected?.record ?? {})
-        ? 15000
-        : 0,
-  });
-  const history = useResource("/api/history", {
-    enabled: selected?.account === "official",
-    ttl: 60000,
+    poll: selected?.account === "official" ? 15000 : 0,
   });
   const accounts = [
-    { id: "official", name: "Official", data: official.data },
+    { id: "official", name: "Official", data: undefined as any },
     ...(shadow.data?.experiments ?? []).map((e: Row) => ({
       id: e.experiment_id,
       name: `${strategyName(e.manifest?.strategy_id)} · ${shortId(e.experiment_id)}`,
-      data: e,
+      data: undefined as any,
     })),
   ];
-  const rows: Row[] = accounts.flatMap((a) =>
-    (a.data?.positions ?? []).map((r: Row) => ({
-      key: `${a.id}:${r.position_id}`,
-      account: a.id,
-      accountName: a.name,
-      kind: "position",
-      record: r,
-      symbol: r.symbol,
-    })),
-  );
-  const visible = rows.filter(
-    (r) =>
-      (account === "all" || r.account === account) &&
-      (tab === "Open positions" ? isOpen(r.record) : !isOpen(r.record)),
-  );
-  const allOrders: Row[] = accounts
-    .flatMap((a) =>
-      (a.data?.orders ?? []).map((r: Row) => ({
-        key: `${a.id}:${r.order_id}`,
-        account: a.id,
-        accountName: a.name,
-        kind: "order",
-        record: r,
-        symbol: r.symbol,
-      })),
-    )
-    .filter((r) => account === "all" || r.account === account);
-  const chosenAccount = accounts.find((a) => a.id === selected?.account);
-  const data = chosenAccount?.data;
+  const normalize = (r: Row) => ({
+    ...r,
+    accountName:
+      accounts.find((a) => a.id === r.account)?.name ?? r.accountName,
+  });
+  const visible: Row[] = (feed.data?.items ?? []).map(normalize);
+  const allOrders: Row[] = (orderFeed.data?.items ?? []).map(normalize);
+
+  const data = detail.data;
   const currentRecord = (
     data?.[selected?.kind === "order" ? "orders" : "positions"] ?? []
   ).find((r: Row) =>
@@ -95,8 +84,7 @@ export function Trades() {
       ? o.order_id === chosen?.order_id
       : chosen?.position_id && o.position_id === chosen.position_id,
   );
-  const historyData =
-    selected?.account === "official" ? history.data : data?.history;
+  const historyData = data?.history;
   const linkedIds = new Set(
     orders.map((o: Row) => o.decision_id).filter(Boolean),
   );
@@ -141,6 +129,7 @@ export function Trades() {
             the previously loaded record; current valuation is unavailable.
           </p>
         )}
+        <ResourceState resource={detail} label="Trade details" />
         <Panel>
           <dl className="facts">
             <div>
@@ -208,7 +197,9 @@ export function Trades() {
               depth can change the final result.
             </p>
           )}
-          <ResourceState resource={execution} label="Execution quote" />
+          {selected.account === "official" && selected.kind === "position" && (
+            <ResourceState resource={execution} label="Execution quote" />
+          )}
         </Panel>
         <Panel>
           <h2>Entry and exit explanation</h2>
@@ -289,8 +280,8 @@ export function Trades() {
           }}
         />
         <p className="muted small">
-          Recent API records may be limited. Complete shadow histories remain
-          available under Experiments → Export.
+          Details show up to 100 linked records. Complete shadow histories
+          remain available under Experiments → Export.
         </p>
       </div>
     );
@@ -312,7 +303,12 @@ export function Trades() {
               key={t}
               role="tab"
               aria-selected={tab === t}
-              onClick={() => setTab(t)}
+              onClick={() => {
+                setTab(t);
+                setCursors([]);
+                setOrderCursors([]);
+                setShowOrders(false);
+              }}
             >
               {t}
             </button>
@@ -323,7 +319,11 @@ export function Trades() {
           <select
             aria-label="Trade account"
             value={account}
-            onChange={(e) => setAccount(e.target.value)}
+            onChange={(e) => {
+              setAccount(e.target.value);
+              setCursors([]);
+                setOrderCursors([]);
+            }}
           >
             <option value="all">All accounts</option>
             {accounts.map((a) => (
@@ -334,7 +334,7 @@ export function Trades() {
           </select>
         </label>
       </div>
-      <ResourceState resource={official} label="Official trades" />
+      <ResourceState resource={feed} label="Trades" />
       <ResourceState resource={shadow} label="Shadow trades" />
       <Panel>
         <CompactTable
@@ -399,11 +399,32 @@ export function Trades() {
           ]}
         />
       </Panel>
+      <div className="pagination">
+        <button
+          disabled={!cursors.length}
+          onClick={() => setCursors(cursors.slice(0, -1))}
+        >
+          Previous records
+        </button>
+        <span className="small muted">
+          Grouped by account · up to 30 records per page
+        </span>
+        <button
+          disabled={!feed.data?.next_cursor}
+          onClick={() => setCursors([...cursors, feed.data.next_cursor])}
+        >
+          Next records
+        </button>
+      </div>
       {tab === "Trade history" && (
-        <details className="panel disclosure">
+        <details
+          className="panel disclosure"
+          onToggle={(e) => setShowOrders(e.currentTarget.open)}
+        >
           <summary>
             Orders, rejections and execution details ({allOrders.length})
           </summary>
+          <ResourceState resource={orderFeed} label="Orders" />
           <CompactTable
             label="Recorded orders"
             rows={allOrders}
@@ -422,6 +443,11 @@ export function Trades() {
               { label: "Filled", render: (r) => r.record.filled_quantity },
             ]}
           />
+          <div className="pagination">
+            <button disabled={!orderCursors.length} onClick={() => setOrderCursors(orderCursors.slice(0, -1))}>Previous orders</button>
+            <span className="small muted">Up to 30 orders per page</span>
+            <button disabled={!orderFeed.data?.next_cursor} onClick={() => setOrderCursors([...orderCursors, orderFeed.data.next_cursor])}>Next orders</button>
+          </div>
         </details>
       )}
     </div>

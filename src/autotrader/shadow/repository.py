@@ -11,6 +11,7 @@ from autotrader.persistence.models import AccountModel, ShadowIdentityModel, Sys
 from autotrader.persistence.repository import PersistentTradingRepository
 from autotrader.research.artifacts import source_fingerprint
 from autotrader.research.data import canonical, digest
+from autotrader.shadow.versions import execution_fingerprint
 
 
 @dataclass(frozen=True)
@@ -78,7 +79,7 @@ class ShadowTradingRepository(PersistentTradingRepository):
     ) -> str | None:
         await self._assert_scope(session)
         m = self.scope.manifest
-        if source_fingerprint()[0] != m["source_fingerprint"]:
+        if (execution_fingerprint() != m["execution_fingerprint"] if m.get("execution_fingerprint") else source_fingerprint()[0] != m["source_fingerprint"]):
             return "shadow_frozen_source_changed"
         if (
             strategy != m["strategy_id"]
