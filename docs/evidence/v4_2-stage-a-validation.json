@@ -1,0 +1,89 @@
+{
+  "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+  "version": "4.2.0",
+  "native": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "183",
+    "time": "488.336",
+    "timestamp": "2026-10-16T13:45:22.192469+02:00",
+    "hostname": "MacBook-Air.local"
+  },
+  "native_failure_count": 0,
+  "native_skip_count": 0,
+  "browser": {
+    "startTime": "2026-10-16T11:50:53.273Z",
+    "duration": 57693.098000000005,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "frontend_lifecycle": {
+    "data_kind": "SYNTHETIC_ACCEPTANCE",
+    "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+    "real_test_api": true,
+    "actual_react_build": true,
+    "persisted_fills_displayed": 5,
+    "closed_trades_displayed": 1,
+    "net_pnl": "0.273417762120",
+    "fees": "0.149796346379",
+    "official_equity": 500,
+    "reconciliation": [],
+    "page_errors": []
+  },
+  "public_market_smoke": {
+    "observations": 6,
+    "events": {
+      "request_latency_ms": 6033.971040014876,
+      "request_success": 10,
+      "request_429": 1
+    },
+    "orders": 0
+  },
+  "original_exact_simulations": 12,
+  "docker_runtime": {
+    "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+    "uid": 10001,
+    "metadata_readable": true,
+    "metadata_writable": false
+  },
+  "ruff": "passed",
+  "mypy": "passed; 71 source files",
+  "frontend_typecheck": "passed",
+  "frontend_build": "passed",
+  "frontend_component_tests": 1,
+  "final_source_deployed": false,
+  "stage_b_requires_explicit_approval": true,
+  "experimental_run": "research-20261016T114522",
+  "research_verdict": "NO STRATEGY PASSED VALIDATION",
+  "experimental_oos": {
+    "A2_CONFIRMED_PULLBACK": {
+      "net_profit": -3.8036416518619944,
+      "closed_trades": 8,
+      "profit_factor": 0.06201273854065095
+    },
+    "B2_CONFIRMED_COMPRESSION": {
+      "net_profit": -0.9385613488449849,
+      "closed_trades": 2,
+      "profit_factor": 0.0
+    },
+    "C2_LIQUID_RETEST": {
+      "net_profit": -0.35341391515299847,
+      "closed_trades": 1,
+      "profit_factor": 0.0
+    },
+    "E2_ABSOLUTE_RELATIVE_STRENGTH": {
+      "net_profit": 0.0,
+      "closed_trades": 0,
+      "profit_factor": null
+    },
+    "F2_RESTRICTED_RANGE": {
+      "net_profit": 0.0,
+      "closed_trades": 0,
+      "profit_factor": null
+    }
+  }
+}

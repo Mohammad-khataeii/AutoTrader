@@ -1,0 +1,67 @@
+{
+  "before": "0010_v41_ai_quotas",
+  "after": "0011_v42_shadow_isolation",
+  "financial_history_unchanged": true,
+  "15_table_seal": {
+    "accounts": {
+      "rows": 1,
+      "digest": "441745ffe54e935d061eed4de8cc8676"
+    },
+    "balances": {
+      "rows": 1,
+      "digest": "0a3a3a9a4af5d97494efd02fa77711b3"
+    },
+    "financial_journal": {
+      "rows": 1,
+      "digest": "c41d8cca78dfdec6c1e773ed0e44a1e7"
+    },
+    "orders": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "fills": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "positions": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "capital_reservations": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "exit_intents": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "exit_targets": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "exit_plans": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "risk_periods": {
+      "rows": 2,
+      "digest": "e7d8dd43acbb7349ef811fdc7abb53cb"
+    },
+    "cooldowns": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "equity_snapshots": {
+      "rows": 4897,
+      "digest": "ec611d1db9c5fe41e2d2901e5a4c32a7"
+    },
+    "ai_budgets": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "ai_usage": {
+      "rows": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    }
+  }
+}

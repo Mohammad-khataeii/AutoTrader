@@ -1,0 +1,201 @@
+{
+  "classification_counts": {
+    "ADVERSE_TREND": 61,
+    "COST_EXCEEDS_EDGE": 320,
+    "ENTRY_TOO_LATE": 333,
+    "FALSE_BREAKOUT": 210,
+    "INSUFFICIENT_EVIDENCE": 833,
+    "LATE_EXIT": 74,
+    "LOW_LIQUIDITY": 273,
+    "PREMATURE_EXIT": 299,
+    "STOP_TOO_TIGHT": 198,
+    "TIMEOUT_EXIT": 278
+  },
+  "coverage": {
+    "closed": 833,
+    "open": 0,
+    "positions": 833
+  },
+  "data_kind": "HISTORICAL_OHLCV_PROXY",
+  "historical_source_fingerprint": "e0140ff18c36d86ac4c676e07aa650c2d93bac3fcfa6b708e0025f6573d66c5e",
+  "limitations": [
+    "previously examined historical periods; no untouched holdout claim",
+    "counterfactuals are hypotheses, never promotion evidence",
+    "no L2, intrabar path, causal explanation of every loss, or reconstructed risk rejection history"
+  ],
+  "run_id": "research-20261016T044934",
+  "schema": "4.2.0-diagnostics.1",
+  "sources": [
+    {
+      "file": "5m-A_TREND_PULLBACK-test.json",
+      "positions": 126,
+      "sha256": "2b4afb8c2e4f02f264c5c28b37fb03a0b7b64d0f7dd674bb5c47cf506aa19e49"
+    },
+    {
+      "file": "5m-B_COMPRESSION_BREAKOUT-test.json",
+      "positions": 77,
+      "sha256": "5dc4164bf8f8a02ec3a27a384689b48dca8349444fe9cbaf5ad6d453b99df8af"
+    },
+    {
+      "file": "5m-C_BREAKOUT_RETEST-test.json",
+      "positions": 67,
+      "sha256": "38376cf0f98fc4cce380ab1d91467116b4445a9197e88a8a98fecf9981ef227b"
+    },
+    {
+      "file": "5m-D_VOLUME_ACCUMULATION-test.json",
+      "positions": 129,
+      "sha256": "1b17d4a24fdbc130038c915fc02cd608b7114b135b16e14c0703dd2f0f3a4327"
+    },
+    {
+      "file": "5m-E_RELATIVE_STRENGTH-test.json",
+      "positions": 17,
+      "sha256": "f68247dd869b86e713109b569144a4e3d80446499183e79aba8a3a788944b5bb"
+    },
+    {
+      "file": "5m-F_MEAN_REVERSION-test.json",
+      "positions": 79,
+      "sha256": "59c1a7ff2a1e21346cebfe910fb21a1a7f1e5f361e36acce40682f99d77783f0"
+    },
+    {
+      "file": "15m-A_TREND_PULLBACK-test.json",
+      "positions": 91,
+      "sha256": "850dd61345f6625c7b0bef386807ca6ff83a533ce35f00adecd9bf33d64a5c6a"
+    },
+    {
+      "file": "15m-B_COMPRESSION_BREAKOUT-test.json",
+      "positions": 50,
+      "sha256": "c7cc1e0046c83ae3f74b5462fb3cbd9d2956c7d9fe1d0a99bb156d433f89cf83"
+    },
+    {
+      "file": "15m-C_BREAKOUT_RETEST-test.json",
+      "positions": 40,
+      "sha256": "b8de195735ed29da62c3beabe9b537e960e2f6563403df01d913326e7457b51d"
+    },
+    {
+      "file": "15m-D_VOLUME_ACCUMULATION-test.json",
+      "positions": 84,
+      "sha256": "4855781ac41021990d3de0c84202d044421f7f1eb77c70bf1e3592e943408a8a"
+    },
+    {
+      "file": "15m-E_RELATIVE_STRENGTH-test.json",
+      "positions": 25,
+      "sha256": "25baec342191f4942b326fec5e553f876f9e91ef698bf7e7ace2199b508cdf94"
+    },
+    {
+      "file": "15m-F_MEAN_REVERSION-test.json",
+      "positions": 48,
+      "sha256": "904bc10754ea9fb4b44da7c50f98aa7d67ace170775a8779023dc6d7ba7c17fe"
+    }
+  ],
+  "artifact_sha256": "37d896efb9515bd250f84e6614d9d31b8b111f02f824cd1e7d29028ad12a136f",
+  "groups": {
+    "5m-A_TREND_PULLBACK": {
+      "positions": 126,
+      "losses": 89,
+      "net_pnl": "-24.134211071142",
+      "fees": "15.259636742143",
+      "total_cost_drag": "35.09717071437063941609748941",
+      "fixed_fill_cost_sign_crossings": 23,
+      "average_age_minutes": 40.0
+    },
+    "5m-B_COMPRESSION_BREAKOUT": {
+      "positions": 77,
+      "losses": 51,
+      "net_pnl": "-11.792790874227",
+      "fees": "11.127589806886",
+      "total_cost_drag": "25.59346857250075950177501397",
+      "fixed_fill_cost_sign_crossings": 16,
+      "average_age_minutes": 23.961038961038962
+    },
+    "5m-C_BREAKOUT_RETEST": {
+      "positions": 67,
+      "losses": 54,
+      "net_pnl": "-18.496250359537",
+      "fees": "8.447562121366",
+      "total_cost_drag": "19.42938969027113535878192190",
+      "fixed_fill_cost_sign_crossings": 17,
+      "average_age_minutes": 22.238805970149254
+    },
+    "5m-D_VOLUME_ACCUMULATION": {
+      "positions": 129,
+      "losses": 93,
+      "net_pnl": "-33.325646744973",
+      "fees": "18.255398284253",
+      "total_cost_drag": "41.98741773489224513525189998",
+      "fixed_fill_cost_sign_crossings": 27,
+      "average_age_minutes": 28.178294573643413
+    },
+    "5m-E_RELATIVE_STRENGTH": {
+      "positions": 17,
+      "losses": 11,
+      "net_pnl": "-6.191600080997",
+      "fees": "2.290790666812",
+      "total_cost_drag": "5.268816152088154163083970556",
+      "fixed_fill_cost_sign_crossings": 3,
+      "average_age_minutes": 23.235294117647058
+    },
+    "5m-F_MEAN_REVERSION": {
+      "positions": 79,
+      "losses": 64,
+      "net_pnl": "-18.827883834517",
+      "fees": "8.242436582601",
+      "total_cost_drag": "18.95760002138859730973118560",
+      "fixed_fill_cost_sign_crossings": 22,
+      "average_age_minutes": 20.126582278481013
+    },
+    "15m-A_TREND_PULLBACK": {
+      "positions": 91,
+      "losses": 65,
+      "net_pnl": "-12.702714278570",
+      "fees": "10.191662289487",
+      "total_cost_drag": "23.44083181848516694144178294",
+      "fixed_fill_cost_sign_crossings": 17,
+      "average_age_minutes": 97.41758241758242
+    },
+    "15m-B_COMPRESSION_BREAKOUT": {
+      "positions": 50,
+      "losses": 35,
+      "net_pnl": "-14.302384422842",
+      "fees": "7.095293540988",
+      "total_cost_drag": "16.31917405647203884011074621",
+      "fixed_fill_cost_sign_crossings": 6,
+      "average_age_minutes": 66.6
+    },
+    "15m-C_BREAKOUT_RETEST": {
+      "positions": 40,
+      "losses": 32,
+      "net_pnl": "-11.930920251091",
+      "fees": "4.856760972906",
+      "total_cost_drag": "11.17054673134745909970301533",
+      "fixed_fill_cost_sign_crossings": 12,
+      "average_age_minutes": 70.875
+    },
+    "15m-D_VOLUME_ACCUMULATION": {
+      "positions": 84,
+      "losses": 64,
+      "net_pnl": "-29.262820080308",
+      "fees": "12.344416215187",
+      "total_cost_drag": "28.39214975280906456185220040",
+      "fixed_fill_cost_sign_crossings": 16,
+      "average_age_minutes": 97.5
+    },
+    "15m-E_RELATIVE_STRENGTH": {
+      "positions": 25,
+      "losses": 13,
+      "net_pnl": "-1.511436661854",
+      "fees": "3.161599814286",
+      "total_cost_drag": "7.271685359586023296862742801",
+      "fixed_fill_cost_sign_crossings": 4,
+      "average_age_minutes": 104.4
+    },
+    "15m-F_MEAN_REVERSION": {
+      "positions": 48,
+      "losses": 37,
+      "net_pnl": "-16.555006619071",
+      "fees": "5.907229288171",
+      "total_cost_drag": "13.58662046190654781600879112",
+      "fixed_fill_cost_sign_crossings": 14,
+      "average_age_minutes": 54.0625
+    }
+  }
+}

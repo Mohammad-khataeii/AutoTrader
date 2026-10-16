@@ -1,0 +1,111 @@
+{
+  "scan_utc": "2026-10-16",
+  "scope": "Prior source072 dual-architecture core scans; final Stage A ARM64 backend scan is separate. No final Stage A AMD64 production build is claimed.",
+  "images": [
+    {
+      "component": "backend",
+      "architecture": "arm64",
+      "image_id": "sha256:c19134b4187a532e6d30e259960ef65171da909dcd7873ae92b7c02a41723048",
+      "high_critical_findings": 0,
+      "scanner": "Docker Scout1.25.0",
+      "sarif": "v4_2-backend-arm64.sarif",
+      "sarif_sha256": "15f909e693b5ffffc1947299764c2515972c8bb01fdffde1e6cc1f053997a031",
+      "image_archive_sha256": null,
+      "archive_config_digest": null,
+      "archive_layers_and_config_match_remote": null
+    },
+    {
+      "component": "frontend",
+      "architecture": "arm64",
+      "image_id": "sha256:295795d02a35f5de02536d1bd5fc51087f88a81240ecfc86977be88fea65eb24",
+      "high_critical_findings": 0,
+      "scanner": "Docker Scout1.25.0",
+      "sarif": "v4_2-frontend-arm64.sarif",
+      "sarif_sha256": "15f909e693b5ffffc1947299764c2515972c8bb01fdffde1e6cc1f053997a031",
+      "image_archive_sha256": null,
+      "archive_config_digest": null,
+      "archive_layers_and_config_match_remote": null
+    },
+    {
+      "component": "postgres",
+      "architecture": "arm64",
+      "image_id": "sha256:8b628fc88dddf37b8db60d800efb780039c1fe1ed6eec6d390a1cbbc2cebda7f",
+      "high_critical_findings": 0,
+      "scanner": "Docker Scout1.25.0",
+      "sarif": "v4_2-postgres-arm64.sarif",
+      "sarif_sha256": "15f909e693b5ffffc1947299764c2515972c8bb01fdffde1e6cc1f053997a031",
+      "image_archive_sha256": null,
+      "archive_config_digest": null,
+      "archive_layers_and_config_match_remote": null
+    },
+    {
+      "component": "redis",
+      "architecture": "arm64",
+      "image_id": "sha256:f91927c704ccdfedd85306cb1f8efdd3f0c29fa67098faaa87bd1023e745af4b",
+      "high_critical_findings": 0,
+      "scanner": "Docker Scout1.25.0",
+      "sarif": "v4_2-redis-arm64.sarif",
+      "sarif_sha256": "15f909e693b5ffffc1947299764c2515972c8bb01fdffde1e6cc1f053997a031",
+      "image_archive_sha256": null,
+      "archive_config_digest": null,
+      "archive_layers_and_config_match_remote": null
+    },
+    {
+      "component": "backend",
+      "architecture": "amd64",
+      "image_id": "sha256:281fe009d19d75eeb43bacc783e04a9a27559c4e1d4e23f5c8a857b1d3da23b4",
+      "high_critical_findings": 0,
+      "scanner": "Docker Scout1.25.0",
+      "sarif": "v4_2-backend-amd64.sarif",
+      "sarif_sha256": "15f909e693b5ffffc1947299764c2515972c8bb01fdffde1e6cc1f053997a031",
+      "image_archive_sha256": "36c156210b3ac9b782aaa7ca6947a671559d56cc7853ec2ff77602c67fd4e4f5",
+      "archive_config_digest": "sha256:d95d95c78bc88bbb75ff478d2db853e5969d6dd1c9efb66eb7828f46f3ffce00",
+      "archive_layers_and_config_match_remote": true
+    },
+    {
+      "component": "frontend",
+      "architecture": "amd64",
+      "image_id": "sha256:a396928be43edac7c647bdffefa16fa2e3564c2bcdde8f98942e29211c16e1d3",
+      "high_critical_findings": 0,
+      "scanner": "Docker Scout1.25.0",
+      "sarif": "v4_2-frontend-amd64.sarif",
+      "sarif_sha256": "15f909e693b5ffffc1947299764c2515972c8bb01fdffde1e6cc1f053997a031",
+      "image_archive_sha256": "d1c0e630967822f70ed62880367982cf87f464b93b77c3e4b404655bf4e5795b",
+      "archive_config_digest": "sha256:9014b144677cc145210c9c3cbb4ce070b8b84524f13e79672b90db379f886641",
+      "archive_layers_and_config_match_remote": true
+    },
+    {
+      "component": "postgres",
+      "architecture": "amd64",
+      "image_id": "sha256:b0535a9b0c0ede347417619578881b08d085d2a09c10d999301545a6514e97f2",
+      "high_critical_findings": 0,
+      "scanner": "Docker Scout1.25.0",
+      "sarif": "v4_2-postgres-amd64.sarif",
+      "sarif_sha256": "15f909e693b5ffffc1947299764c2515972c8bb01fdffde1e6cc1f053997a031",
+      "image_archive_sha256": "76726a8cc3b5c82e522a50668346c1c7d6553f4d46a49cd5fe0bb01d773a608f",
+      "archive_config_digest": "sha256:931535ec87e5e2c21db1297c7116403061ea6b187456f08dc513fcca1d9d9cab",
+      "archive_layers_and_config_match_remote": true
+    },
+    {
+      "component": "redis",
+      "architecture": "amd64",
+      "image_id": "sha256:3af709197c180653b51850eaf76e7397c01c4ef646c515268895ba7f0f033715",
+      "high_critical_findings": 0,
+      "scanner": "Docker Scout1.25.0",
+      "sarif": "v4_2-redis-amd64.sarif",
+      "sarif_sha256": "15f909e693b5ffffc1947299764c2515972c8bb01fdffde1e6cc1f053997a031",
+      "image_archive_sha256": "f5a2dc1b5c751cf948c1fceec2090833a36d0c7e6e354742490510389c50a1be",
+      "archive_config_digest": "sha256:d5a00407e2d015e320761d02b098fc69ae92570a03188525a08024916b7eecdb",
+      "archive_layers_and_config_match_remote": true
+    }
+  ],
+  "core_high_critical_findings": 0,
+  "grafana_quarantined": true,
+  "grafana_unresolved": {
+    "critical_distinct_cves": 2,
+    "high_distinct_cves": 19,
+    "occurrences": 53
+  },
+  "paid_ai_used": false,
+  "live_trading_enabled": false
+}

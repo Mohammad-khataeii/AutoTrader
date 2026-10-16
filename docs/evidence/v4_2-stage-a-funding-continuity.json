@@ -1,0 +1,9 @@
+{
+  "funding_events": 1,
+  "accounts": 1,
+  "orders": 0,
+  "fills": 0,
+  "cash": "500.000000000000",
+  "schema": "0011_v42_shadow_isolation",
+  "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a"
+}

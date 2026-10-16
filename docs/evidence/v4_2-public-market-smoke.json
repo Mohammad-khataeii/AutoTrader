@@ -1,0 +1,84 @@
+{
+  "started_at": "2026-10-16T09:54:50.602469+00:00",
+  "data_kind": "GENUINE_PUBLIC_REVOLUT_X",
+  "orders_submitted": 0,
+  "observations": [
+    {
+      "phase": 0,
+      "symbol": "BTC-EUR",
+      "quality": "GOOD",
+      "reasons": [],
+      "candles": 719,
+      "last_candle": "2026-10-16T09:45:00+00:00",
+      "book_timestamp": "2026-10-16T09:54:51.145000+00:00",
+      "book_source": "revolut-x",
+      "candle_source": "revolut-x",
+      "spread_bps": "0.8152227616782719253750024704"
+    },
+    {
+      "phase": 0,
+      "symbol": "ETH-EUR",
+      "quality": "GOOD",
+      "reasons": [],
+      "candles": 719,
+      "last_candle": "2026-10-16T09:45:00+00:00",
+      "book_timestamp": "2026-10-16T09:54:52.122000+00:00",
+      "book_source": "revolut-x",
+      "candle_source": "revolut-x",
+      "spread_bps": "2.572737254613698907046084156"
+    },
+    {
+      "phase": 0,
+      "symbol": "SOL-EUR",
+      "quality": "GOOD",
+      "reasons": [],
+      "candles": 719,
+      "last_candle": "2026-10-16T09:45:00+00:00",
+      "book_timestamp": "2026-10-16T09:54:53.141000+00:00",
+      "book_source": "revolut-x",
+      "candle_source": "revolut-x",
+      "spread_bps": "3.492266745683611215467566895"
+    },
+    {
+      "phase": 1,
+      "symbol": "BTC-EUR",
+      "quality": "GOOD",
+      "reasons": [],
+      "candles": 719,
+      "last_candle": "2026-10-16T09:45:00+00:00",
+      "book_timestamp": "2026-10-16T09:54:54.131000+00:00",
+      "book_source": "revolut-x",
+      "candle_source": "revolut-x",
+      "spread_bps": "0.9977294450064773501348959030"
+    },
+    {
+      "phase": 1,
+      "symbol": "ETH-EUR",
+      "quality": "GOOD",
+      "reasons": [],
+      "candles": 719,
+      "last_candle": "2026-10-16T09:45:00+00:00",
+      "book_timestamp": "2026-10-16T09:54:55.122000+00:00",
+      "book_source": "revolut-x",
+      "candle_source": "revolut-x",
+      "spread_bps": "2.434749852422001869704131954"
+    },
+    {
+      "phase": 1,
+      "symbol": "SOL-EUR",
+      "quality": "GOOD",
+      "reasons": [],
+      "candles": 719,
+      "last_candle": "2026-10-16T09:45:00+00:00",
+      "book_timestamp": "2026-10-16T09:54:56.123000+00:00",
+      "book_source": "revolut-x",
+      "candle_source": "revolut-x",
+      "spread_bps": "2.857218444932405619196275034"
+    }
+  ],
+  "metrics": {
+    "request_latency_ms": 5385.014664017945,
+    "request_success": 10
+  },
+  "completed_at": "2026-10-16T09:54:56.013193+00:00"
+}

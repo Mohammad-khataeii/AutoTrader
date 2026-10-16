@@ -1,0 +1,116 @@
+{
+  "original_source": "e0140ff18c36d86ac4c676e07aa650c2d93bac3fcfa6b708e0025f6573d66c5e",
+  "replay_source": "072c258fa3820975e493643da00dca779ff43446869c6a5ce268dd054b07d704",
+  "source_unchanged_during_replay": true,
+  "deterministic_tolerance": "exact equality across every original artifact field, including fills and equity curves",
+  "results": [
+    {
+      "artifact": "5m-A_TREND_PULLBACK-test.json",
+      "original_sha256": "2b4afb8c2e4f02f264c5c28b37fb03a0b7b64d0f7dd674bb5c47cf506aa19e49",
+      "all_fields_exact": true,
+      "different_fields": [],
+      "net_profit": -24.134211071141976,
+      "trades": 126,
+      "fills": 352
+    },
+    {
+      "artifact": "5m-B_COMPRESSION_BREAKOUT-test.json",
+      "original_sha256": "5dc4164bf8f8a02ec3a27a384689b48dca8349444fe9cbaf5ad6d453b99df8af",
+      "all_fields_exact": true,
+      "different_fields": [],
+      "net_profit": -11.792790874227023,
+      "trades": 77,
+      "fills": 213
+    },
+    {
+      "artifact": "5m-C_BREAKOUT_RETEST-test.json",
+      "original_sha256": "38376cf0f98fc4cce380ab1d91467116b4445a9197e88a8a98fecf9981ef227b",
+      "all_fields_exact": true,
+      "different_fields": [],
+      "net_profit": -18.496250359536987,
+      "trades": 67,
+      "fills": 167
+    },
+    {
+      "artifact": "5m-D_VOLUME_ACCUMULATION-test.json",
+      "original_sha256": "1b17d4a24fdbc130038c915fc02cd608b7114b135b16e14c0703dd2f0f3a4327",
+      "all_fields_exact": true,
+      "different_fields": [],
+      "net_profit": -33.32564674497303,
+      "trades": 129,
+      "fills": 370
+    },
+    {
+      "artifact": "5m-E_RELATIVE_STRENGTH-test.json",
+      "original_sha256": "f68247dd869b86e713109b569144a4e3d80446499183e79aba8a3a788944b5bb",
+      "all_fields_exact": true,
+      "different_fields": [],
+      "net_profit": -6.191600080996977,
+      "trades": 17,
+      "fills": 41
+    },
+    {
+      "artifact": "5m-F_MEAN_REVERSION-test.json",
+      "original_sha256": "59c1a7ff2a1e21346cebfe910fb21a1a7f1e5f361e36acce40682f99d77783f0",
+      "all_fields_exact": true,
+      "different_fields": [],
+      "net_profit": -18.827883834517024,
+      "trades": 79,
+      "fills": 196
+    },
+    {
+      "artifact": "15m-A_TREND_PULLBACK-test.json",
+      "original_sha256": "850dd61345f6625c7b0bef386807ca6ff83a533ce35f00adecd9bf33d64a5c6a",
+      "all_fields_exact": true,
+      "different_fields": [],
+      "net_profit": -12.70271427857,
+      "trades": 91,
+      "fills": 236
+    },
+    {
+      "artifact": "15m-B_COMPRESSION_BREAKOUT-test.json",
+      "original_sha256": "c7cc1e0046c83ae3f74b5462fb3cbd9d2956c7d9fe1d0a99bb156d433f89cf83",
+      "all_fields_exact": true,
+      "different_fields": [],
+      "net_profit": -14.30238442284201,
+      "trades": 50,
+      "fills": 142
+    },
+    {
+      "artifact": "15m-C_BREAKOUT_RETEST-test.json",
+      "original_sha256": "b8de195735ed29da62c3beabe9b537e960e2f6563403df01d913326e7457b51d",
+      "all_fields_exact": true,
+      "different_fields": [],
+      "net_profit": -11.930920251090981,
+      "trades": 40,
+      "fills": 90
+    },
+    {
+      "artifact": "15m-D_VOLUME_ACCUMULATION-test.json",
+      "original_sha256": "4855781ac41021990d3de0c84202d044421f7f1eb77c70bf1e3592e943408a8a",
+      "all_fields_exact": true,
+      "different_fields": [],
+      "net_profit": -29.262820080308018,
+      "trades": 84,
+      "fills": 216
+    },
+    {
+      "artifact": "15m-E_RELATIVE_STRENGTH-test.json",
+      "original_sha256": "25baec342191f4942b326fec5e553f876f9e91ef698bf7e7ace2199b508cdf94",
+      "all_fields_exact": true,
+      "different_fields": [],
+      "net_profit": -1.5114366618540203,
+      "trades": 25,
+      "fills": 64
+    },
+    {
+      "artifact": "15m-F_MEAN_REVERSION-test.json",
+      "original_sha256": "904bc10754ea9fb4b44da7c50f98aa7d67ace170775a8779023dc6d7ba7c17fe",
+      "all_fields_exact": true,
+      "different_fields": [],
+      "net_profit": -16.55500661907098,
+      "trades": 48,
+      "fills": 117
+    }
+  ]
+}

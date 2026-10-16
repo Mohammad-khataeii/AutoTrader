@@ -1,65 +1,58 @@
-# Revolut X AutoTrader V4.1
+# Revolut X AutoTrader4.2
 
-Autonomous EUR 500 **paper trading** with public Revolut X data, PostgreSQL accounting,
-FastAPI and a React dashboard. Existing bid/ask execution, partial targets, protective
-exits, financial journal and server risk controls are retained. Live trading is
-rejected; no exchange trading credentials are used. AI defaults to mock and enforces
-persistent paid-mode limits of 30/day, 6/rolling hour and USD 10/calendar month.
+An autonomous EUR500 **paper-trading research platform** using public Revolut X observations, FastAPI, React and authoritative PostgreSQL accounting. The existing journal, realistic bid/ask execution, partial targets, protective stops, reservations and recovery remain intact. Real-money trading stays disabled. AI defaults to mock with persistent30/day,6/rolling-hour and USD10/month paid-mode limits.
 
-**NO STRATEGY PASSED VALIDATION.** The genuine 5m/15m study rejected all six strategies.
-Normal operation is RESEARCH_ONLY with cash held and new entries blocked. Software
-tests do not establish a profitable strategy. Overall status is
-PARTIALLY_COMPLETE_WITH_BLOCKERS; see the [full report](docs/V4_1_FINAL_REPORT.md).
+**NO STRATEGY PASSED VALIDATION.** Official paper trading remains RESEARCH_ONLY. V4.2 adds independently funded, explicitly unvalidated EUR500 shadow experiments. Their equity and approval status never become official portfolio equity or approval. Engineering tests do not establish profitability.
 
-## Start an isolated deployment
+Develop locally, test/build, commit, push, prepare an immutable release, then **wait for approval** before VPS deployment. [AGENTS.md](AGENTS.md) records this permanent workflow. The production server is a deployment target; its secrets and financial runtime state remain authoritative and stay on the server.
+
+## Local development
+
+Use a Python3.12+ virtual environment, Node/npm and Docker Desktop. Generate private local credentials without copying production `.env`:
 
 ```sh
-python3 scripts/generate_env.py --output .env
-python3 deploy/vps.py inventory --project autotrader-v41 --env-file .env
-python3 deploy/vps.py build --project autotrader-v41 --env-file .env
-python3 deploy/vps.py up --project autotrader-v41 --env-file .env
-python3 deploy/vps.py verify --project autotrader-v41 --env-file .env
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r requirements.lock -e '.[dev]'
+python scripts/generate_env.py --output .env.local
+python deploy/vps.py build --project autotrader-v42-dev --env-file .env.local
+python deploy/vps.py up --project autotrader-v42-dev --env-file .env.local
+python deploy/vps.py verify --project autotrader-v42-dev --env-file .env.local
 ```
 
-The generator refuses overwrites and creates private credentials. Sign in using
-your local `.env`. Default dashboard: http://127.0.0.1:3000; readiness:
-http://127.0.0.1:8000/readyz. UI/API bind to loopback; database/cache ports stay
-internal. Optional monitoring is stopped. Grafana is quarantined pending remediation.
-Read [deployment](docs/V4_1_VPS_DEPLOYMENT.md) before operating on existing data or a
-VPS. Actual testing used a separate local Docker project; no user's VPS was deployed.
+`.env.local` is ignored; `.env.example` contains placeholders. The generator refuses overwrites. Local default UI/API are loopback3000/8000; PostgreSQL/Redis stay private. Actual acceptance used the separate `autotrader-v42-acceptance` project on13042/18042. Grafana remains quarantined.
 
-Research needs verified history in `.data/research`. The [data report](docs/V4_1_INTRADAY_DATA.md)
-records all 48 datasets, 351,788 observations, coverage and gaps. The
-[backtests](docs/V4_1_FIVE_MINUTE_BACKTESTS.md) retain losing results and cost stress.
-Use `deploy/vps.py sync-research` to publish matching-source research into the project
-volume after verification. Approval is explicit and cannot override failed gates.
+Genuine historical data must already be verified under `.data/research`. Existing immutable datasets/runs must not be overwritten. The original48datasets/351,788observations and original losing outcomes are retained. See [backtests](docs/V4_2_BACKTEST_RESULTS.md), [diagnostics](docs/V4_2_TRADE_FAILURE_ANALYSIS.md) and [limitations](docs/V4_2_KNOWN_LIMITATIONS.md).
 
-## Verify
+## Verify locally
 
 ```sh
-python3 -m pip install -e '.[dev]'
-# Set AUTOTRADER_TEST_PG_ADMIN_URL to a disposable PostgreSQL admin database.
-python3 -m pytest -q -s
-python3 -m ruff check src tests scripts alembic deploy
-python3 -m mypy src/autotrader
+# Supply a private disposable LOCAL PostgreSQL admin URL; never production.
+# Tests create separate prefixed databases and fail if PostgreSQL is unavailable.
+python -m pytest tests -q -s
+python -m ruff check src tests scripts alembic deploy
+python -m mypy src/autotrader
 npm ci --prefix frontend
 npm run typecheck --prefix frontend
 npm test --prefix frontend
 npm run build --prefix frontend
+# Real API/worker + built React synthetic lifecycle acceptance:
+AUTOTRADER_BROWSER_ACCEPTANCE=1 python -m pytest tests/test_v42_lifecycle.py -q -s
 ```
 
-PostgreSQL tests create separate databases and fail if PostgreSQL is missing;
-they never substitute SQLite. Browser/deployment verification requires the explicitly
-selected isolated project. Final native and installed-Linux regressions: **148 passed each**, including the
-selected backported PostgreSQL16 image in the Linux run. See the
-[executed evidence](docs/V4_1_TEST_EVIDENCE.md) for the exact scope and retained failures.
+The financial lifecycle uses real PostgreSQL/API/worker/broker components with deterministic external observations. A separate public-feed smoke verifies genuine market acquisition. [Local validation](docs/V4_2_LOCAL_VALIDATION.md) and [test evidence](docs/V4_2_TEST_EVIDENCE.md) distinguish final native, Docker, browser, earlier Ubuntu and actual deployment results. No completed30-day experiment is claimed.
 
-[Completion matrix](docs/V4_1_COMPLETION_MATRIX.md) ·
-[Security disposition](docs/V4_1_SECURITY_REMEDIATION.md) ·
-[AI quotas](docs/V4_1_AI_QUOTAS.md) ·
-[Paper pilot](docs/V4_1_PAPER_PILOT.md) ·
-[Limitations](docs/V4_1_KNOWN_LIMITATIONS.md) ·
-[Continuation](docs/CONTINUE_FROM_HERE.md)
+## Release and deployment
 
-The prospective pilot capability is verified; 30 days have not elapsed. Earlier
-V1–V4 documentation is retained as historical evidence, not current acceptance.
+```sh
+# Only after tests, clean commits, push and immutable tag verification:
+python deploy/release.py prepare --ref v4.2.0 --output .tools/releases/v4.2.0
+```
+
+The archive/manifest identify the exact Git commit and every released source hash, excluding secrets and runtime data. Production source operations require that manifest plus the approved full commit. **Stop after Stage A and obtain explicit approval.** Then follow [controlled deployment](docs/V4_2_VPS_DEPLOYMENT.md) and [rollback](docs/V4_2_ROLLBACK.md). Keep Compose project `autotrader-v41`; preserve Nginx/TLS, all financial volumes/backups and unrelated apps. ARM64 local tests do not replace verification of the LinuxAMD64 deployment build.
+
+An earlier authorized rollout completed while the later local-first instruction arrived. Its actual state and remaining verification are recorded candidly in [executed upgrade](docs/V4_2_VPS_UPGRADE.md). It preceded the final Git release and must not be described as deployment of that final commit. Further deployment, data publication, shadow activation and cleanup are approval-gated.
+
+[Release notes](docs/V4_2_RELEASE_NOTES.md) · [Completion matrix](docs/V4_2_COMPLETION_MATRIX.md) · [Security](docs/V4_2_SECURITY_EVIDENCE.md) · [Shadow financial integrity](docs/V4_2_SHADOW_FINANCIAL_INTEGRITY.md) · [Architecture](docs/V4_2_SHADOW_TRADING_ARCHITECTURE.md)
+
+Earlier V1–V4.1 reports remain historical evidence. Thirty prospective days and a defensible net advantage require future observations under a frozen configuration; failed gates are never lowered to force trades.

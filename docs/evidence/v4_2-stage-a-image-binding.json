@@ -1,0 +1,9 @@
+{
+  "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+  "image_id": "sha256:eabe19e09c38b1c4dd394490db21f4ee678bfe1729e83ee848ed02a5857e2520",
+  "architecture": "arm64",
+  "high_critical_findings": 0,
+  "sarif": "v4_2-stage-a-backend-arm64.sarif",
+  "production_deployed": false,
+  "final_amd64_build": "approval-gated Stage B; prior source072 native AMD64 evidence retained separately"
+}

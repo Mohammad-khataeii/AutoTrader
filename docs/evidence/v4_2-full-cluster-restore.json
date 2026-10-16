@@ -1,0 +1,51 @@
+{
+  "source_fingerprint": "072c258fa3820975e493643da00dca779ff43446869c6a5ce268dd054b07d704",
+  "data_kind": "SYNTHETIC_ACCEPTANCE",
+  "archives": [
+    {
+      "database": "autotrader_test_cluster_9e78577b",
+      "bytes": 84279,
+      "sha256": "dad4dc2a1c91aa2474f7462ec06d23adf1b30469f879317379f5170cb06c277a",
+      "mode": "0o600"
+    },
+    {
+      "database": "autotrader_shadow_174bb76bdd932d08748d0583d7566edc",
+      "bytes": 130935,
+      "sha256": "e12a6e699a03674fac68a9541f7fb7013e8f28b5c3cf8d401c210f94cf4031b2",
+      "mode": "0o600"
+    },
+    {
+      "database": "autotrader_shadow_4bfc37f47fa3e8ad96528b839c8797dc",
+      "bytes": 83218,
+      "sha256": "210d16b43cc75d6c95bb04de3b216ae1bf397d91ece137c23e17f61309628b59",
+      "mode": "0o600"
+    }
+  ],
+  "fresh_cluster_restored": {
+    "mode": "restore",
+    "cluster": "7697221222442692643",
+    "official_equity": "500.000000000000",
+    "second_shadow_equity": "500.000000000000",
+    "first_shadow_quantity": "0.404606970000",
+    "first_shadow_fills": 2,
+    "reconciliation": [],
+    "no_refunding": true,
+    "data_kind": "SYNTHETIC_ACCEPTANCE"
+  },
+  "original_cluster_after_restored_trade": {
+    "mode": "source-check",
+    "cluster": "7697201974464630813",
+    "official_equity": "500.000000000000",
+    "second_shadow_equity": "500.000000000000",
+    "first_shadow_quantity": "0.578009950000",
+    "first_shadow_fills": 1,
+    "reconciliation": [],
+    "no_refunding": true,
+    "data_kind": "SYNTHETIC_ACCEPTANCE"
+  },
+  "new_cluster_financial_databases": true,
+  "official_account_unchanged_in_both_clusters": true,
+  "second_shadow_unchanged_in_both_clusters": true,
+  "only_restored_first_shadow_received_the_exit": true,
+  "volumes_deleted": false
+}

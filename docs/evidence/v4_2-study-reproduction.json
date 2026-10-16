@@ -1,0 +1,14 @@
+{
+  "earlier_run": "research-20261016T101122",
+  "canonical_run": "research-20261016T114522",
+  "earlier_source": "6cb92163c7683d073d5594cc562d64d57dc3c0cc2a463cd4f8cb1a56f4b24ea2",
+  "canonical_source": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+  "all_oos_fields_exact_by_strategy": {
+    "A2_CONFIRMED_PULLBACK": true,
+    "B2_CONFIRMED_COMPRESSION": true,
+    "C2_LIQUID_RETEST": true,
+    "E2_ABSOLUTE_RELATIVE_STRENGTH": true,
+    "F2_RESTRICTED_RANGE": true
+  },
+  "parameters_retuned_after_test": false
+}

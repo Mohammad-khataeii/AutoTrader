@@ -1,0 +1,30 @@
+{
+  "Dockerfile.backend": {
+    "production_sha256": "f2b654dcc119ee113418282b55047bcce0b8da368291e730ba1598f56ad676f1",
+    "local_baseline_sha256": "20ffd32a93780344ecd5c93364c7b145051e954b5afb1f0e2560c658947aaa61",
+    "same": false
+  },
+  "deploy/vps.py": {
+    "production_sha256": "6b5d6d3181e9fd231123ddf68bb43eb3e9e5a3c53e9e0fc689b6f99ab5d24e67",
+    "local_baseline_sha256": "6b5d6d3181e9fd231123ddf68bb43eb3e9e5a3c53e9e0fc689b6f99ab5d24e67",
+    "same": true
+  },
+  "docker-compose.yml": {
+    "production_sha256": "769ea1495c99d8fb6dd74575c62eadb948fe2482485d778150bc1df35fb00e9d",
+    "local_baseline_sha256": "769ea1495c99d8fb6dd74575c62eadb948fe2482485d778150bc1df35fb00e9d",
+    "same": true
+  },
+  "src/autotrader/api/security.py": {
+    "production_sha256": "beb71afd71835881c6bf7aac2032403b83dff950f5c19058fa4ac537e6331a42",
+    "local_baseline_sha256": "beb71afd71835881c6bf7aac2032403b83dff950f5c19058fa4ac537e6331a42",
+    "same": true
+  },
+  "scripts/generate_env.py": {
+    "status": "not_in_preserved_source_archive; not compared, no assertion about live file"
+  },
+  "pyproject.toml": {
+    "production_sha256": "b7c1447e4b9ccf35969f44b88a246a6b8cbb6f20095b3c0be86beeb678f5b4dd",
+    "local_baseline_sha256": "b7c1447e4b9ccf35969f44b88a246a6b8cbb6f20095b3c0be86beeb678f5b4dd",
+    "same": true
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "kind": "CONTROLLED_COMPARISON_REAL_APPLICATION_CODE_MOCK_EXTERNAL_FEED",
+  "original_service_sha256": "677e4778507b8b2d80f8eb00249fe3dd4459710e2037da0458a88e1c23fb0d11",
+  "original": {
+    "scans": 10,
+    "candle_requests": 10,
+    "downloaded_candles": 2392,
+    "book_requests": 10
+  },
+  "v42": {
+    "scans": 10,
+    "candle_requests": 2,
+    "downloaded_candles": 243,
+    "book_requests": 10
+  },
+  "candle_request_reduction": 0.8,
+  "downloaded_record_reduction": 0.8984113712374582
+}

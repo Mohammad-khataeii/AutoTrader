@@ -1,0 +1,81 @@
+{
+  "started_at": "2026-10-16T11:51:45.515241+00:00",
+  "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+  "data_kind": "GENUINE_PUBLIC_REVOLUT_X",
+  "orders_submitted": 0,
+  "observations": [
+    {
+      "phase": 0,
+      "symbol": "BTC-EUR",
+      "quality": "GOOD",
+      "reasons": [],
+      "candles": 719,
+      "last_candle": "2026-10-16T11:45:00+00:00",
+      "book_timestamp": "2026-10-16T11:51:45.895000+00:00",
+      "book_source": "revolut-x",
+      "candle_source": "revolut-x"
+    },
+    {
+      "phase": 0,
+      "symbol": "ETH-EUR",
+      "quality": "GOOD",
+      "reasons": [],
+      "candles": 719,
+      "last_candle": "2026-10-16T11:45:00+00:00",
+      "book_timestamp": "2026-10-16T11:51:47.921000+00:00",
+      "book_source": "revolut-x",
+      "candle_source": "revolut-x"
+    },
+    {
+      "phase": 0,
+      "symbol": "SOL-EUR",
+      "quality": "GOOD",
+      "reasons": [],
+      "candles": 719,
+      "last_candle": "2026-10-16T11:45:00+00:00",
+      "book_timestamp": "2026-10-16T11:51:48.928000+00:00",
+      "book_source": "revolut-x",
+      "candle_source": "revolut-x"
+    },
+    {
+      "phase": 1,
+      "symbol": "BTC-EUR",
+      "quality": "GOOD",
+      "reasons": [],
+      "candles": 719,
+      "last_candle": "2026-10-16T11:45:00+00:00",
+      "book_timestamp": "2026-10-16T11:51:49.923000+00:00",
+      "book_source": "revolut-x",
+      "candle_source": "revolut-x"
+    },
+    {
+      "phase": 1,
+      "symbol": "ETH-EUR",
+      "quality": "GOOD",
+      "reasons": [],
+      "candles": 719,
+      "last_candle": "2026-10-16T11:45:00+00:00",
+      "book_timestamp": "2026-10-16T11:51:50.909000+00:00",
+      "book_source": "revolut-x",
+      "candle_source": "revolut-x"
+    },
+    {
+      "phase": 1,
+      "symbol": "SOL-EUR",
+      "quality": "GOOD",
+      "reasons": [],
+      "candles": 719,
+      "last_candle": "2026-10-16T11:45:00+00:00",
+      "book_timestamp": "2026-10-16T11:51:51.921000+00:00",
+      "book_source": "revolut-x",
+      "candle_source": "revolut-x"
+    }
+  ],
+  "events": {
+    "request_latency_ms": 6033.971040014876,
+    "request_success": 10,
+    "request_429": 1
+  },
+  "passed": true,
+  "finished_at": "2026-10-16T11:51:51.910371+00:00"
+}

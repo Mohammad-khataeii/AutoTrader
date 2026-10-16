@@ -1,0 +1,26 @@
+{
+  "exit_code": 0,
+  "architecture": "amd64",
+  "runtime_proof": {
+    "fingerprint": "072c258fa3820975e493643da00dca779ff43446869c6a5ce268dd054b07d704",
+    "uid": 10001,
+    "readable": true,
+    "writable": false
+  },
+  "production_database_used_for_test_money": false,
+  "test_database_prefix": "autotrader_v34_",
+  "private_log": "/home/ubuntu/autotrader/.tools/v42-staging/ubuntu-verification.log",
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "178",
+      "time": "875.119",
+      "timestamp": "2026-10-16T11:02:28.641327+00:00",
+      "hostname": "c306bc1d3240"
+    }
+  ],
+  "failed_tests": []
+}

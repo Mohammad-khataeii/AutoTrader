@@ -1,0 +1,9 @@
+{
+  "files_scanned": 481,
+  "secret_patterns_checked": 13,
+  "findings": [],
+  "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+  "original_sqlite_unchanged": true,
+  "ssh_private_key_read": false,
+  "production_secrets_downloaded": false
+}

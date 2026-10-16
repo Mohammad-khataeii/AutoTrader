@@ -1,0 +1,7 @@
+{
+  "checks": 128,
+  "exact_all_fields_equal": true,
+  "old_elapsed_seconds": 0.20880070503335446,
+  "new_elapsed_seconds": 0.16961853805696592,
+  "hypothesis_or_threshold_changes": false
+}
