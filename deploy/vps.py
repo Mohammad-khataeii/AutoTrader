@@ -73,6 +73,8 @@ def main() -> None:
                 'portfolio':overview.json()['portfolio'],'health':health.json()}
             if result['health']['postgresql']!='ok' or result['health']['reconciliation']['problems']:
                 raise RuntimeError('Post-deployment database reconciliation failed.')
+            if result['health']['worker']!='ok' or result['health'].get('operational_state') in {'SYSTEM_ERROR','RECOVERY_REQUIRED'}:
+                raise RuntimeError('Post-deployment worker operational verification failed.')
         ids=dc('ps','-q').decode().split()
         result['containers']=[{'name':r['Name'],'image':r['Image'],'state':r['State']['Status'],
             'health':r['State'].get('Health',{}).get('Status'),'ports':r['NetworkSettings']['Ports']}
