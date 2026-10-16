@@ -1,0 +1,9 @@
+{
+  "image_id": "sha256:8b628fc88dddf37b8db60d800efb780039c1fe1ed6eec6d390a1cbbc2cebda7f",
+  "postgres_version": "16.15",
+  "package": "libxml2-2.13.9-r3",
+  "sql_xml": "41",
+  "pg_config": "'--enable-option-checking=fatal' '--build=aarch64-linux-musl' '--enable-integer-datetimes' '--enable-thread-safety' '--enable-tap-tests' '--disable-rpath' '--with-uuid=e2fs' '--with-pgport=5432' '--with-system-tzdata=/usr/share/zoneinfo' '--prefix=/usr/local' '--with-includes=/usr/local/include' '--with-libraries=/usr/local/lib' '--with-gssapi' '--with-icu' '--with-ldap' '--with-libxml' '--with-libxslt' '--with-llvm' '--with-lz4' '--with-openssl' '--with-perl' '--with-python' '--with-tcl' '--with-zstd' 'build_alias=aarch64-linux-musl' 'LLVM_CONFIG=/usr/lib/llvm21/bin/llvm-config' 'CLANG=clang-21'",
+  "journal_rows": "1",
+  "application_fingerprint": "e0140ff18c36d86ac4c676e07aa650c2d93bac3fcfa6b708e0025f6573d66c5e"
+}

@@ -1,0 +1,591 @@
+{
+  "overview": {
+    "application_version": "4.1.0",
+    "portfolio": {
+      "initial_cash": "500",
+      "cash": "500.000000000000",
+      "available_cash": "500.000000000000",
+      "reserved_cash": "0E-12",
+      "open_exposure": "0E-12",
+      "equity": "500.000000000000",
+      "realized_pnl": "0",
+      "unrealized_pnl": "0E-12",
+      "total_net_pnl": "0E-12",
+      "current_drawdown": "0E-12",
+      "daily_risk_status": "WITHIN_LIMIT",
+      "weekly_risk_status": "WITHIN_LIMIT",
+      "daily_equity_change": "0E-12",
+      "weekly_equity_change": "0E-12",
+      "valuation_degraded": "false",
+      "missing_marks": "",
+      "positions": "0",
+      "orders": "0",
+      "pending_orders": "0",
+      "risk_state": "HEALTHY",
+      "control": "RUNNING"
+    },
+    "health": {
+      "api": "ok",
+      "risk": "HEALTHY",
+      "ai_provider": "mock",
+      "market_data": "revolut-x-public",
+      "mode": "paper"
+    },
+    "orders": [],
+    "fills": [],
+    "positions": [],
+    "targets": []
+  },
+  "system": {
+    "operational_state": "RESEARCH_ONLY",
+    "operation": {
+      "observed_at": "2026-10-16T06:04:37.243139+00:00",
+      "last_completed_scan": "2026-10-16T06:04:37.242578+00:00",
+      "scan_duration_seconds": 3.928604876999998,
+      "schedule_overrun_seconds": 0,
+      "markets_scanned": 3,
+      "successful_observations": 3,
+      "data_failures": 0,
+      "strategies_evaluated": 24,
+      "qualified_signals": 0,
+      "rejected_signals": 3,
+      "paper_entries_filled": 0,
+      "execution_outcomes": [
+        {
+          "symbol": "BTC-EUR",
+          "accepted": false,
+          "reason": "decision_not_accepted",
+          "order_id": null
+        },
+        {
+          "symbol": "ETH-EUR",
+          "accepted": false,
+          "reason": "decision_not_accepted",
+          "order_id": null
+        },
+        {
+          "symbol": "SOL-EUR",
+          "accepted": false,
+          "reason": "decision_not_accepted",
+          "order_id": null
+        }
+      ],
+      "next_scan_at": "2026-10-16T06:05:33.313984+00:00"
+    },
+    "coordinator": {
+      "owner": "coordinator_c8714862a84e4f61837289a348575e0f",
+      "heartbeat": "2026-10-16T06:04:49.395570+00:00",
+      "expires_at": "2026-10-16T06:05:04.395570+00:00"
+    },
+    "postgresql": "ok",
+    "database_engine": "postgresql",
+    "exchange_data": "OK",
+    "data_freshness": [
+      {
+        "symbol": "BTC-EUR",
+        "source": "revolut-x",
+        "timestamp": "2026-10-16T06:04:33.728000+00:00",
+        "age_seconds": 18.401284
+      },
+      {
+        "symbol": "ETH-EUR",
+        "source": "revolut-x",
+        "timestamp": "2026-10-16T06:04:35.545000+00:00",
+        "age_seconds": 16.584298
+      },
+      {
+        "symbol": "SOL-EUR",
+        "source": "revolut-x",
+        "timestamp": "2026-10-16T06:04:36.698000+00:00",
+        "age_seconds": 15.431303
+      }
+    ],
+    "position_monitor_heartbeat": "2026-10-16T06:04:48.902179+00:00",
+    "worker": "ok",
+    "worker_heartbeat": "2026-10-16T06:04:37.236849+00:00",
+    "worker_age_seconds": 14.889712,
+    "pending_intents": 0,
+    "reconciliation": {
+      "checked_at": "2026-10-16T06:04:52.132212+00:00",
+      "problems": []
+    },
+    "risk_state": "HEALTHY",
+    "incidents": [
+      {
+        "message": "scan_cycle_completed",
+        "severity": "INFO",
+        "state": "RESEARCH_ONLY",
+        "created_at": "2026-10-16T05:54:37.115664+00:00"
+      },
+      {
+        "message": "waiting_for_completed_market_observations",
+        "severity": "INFO",
+        "state": "DATA_SYNCING",
+        "created_at": "2026-10-16T05:54:32.946981+00:00"
+      },
+      {
+        "message": "coordinator_acquired",
+        "severity": "INFO",
+        "state": "INITIALIZING",
+        "created_at": "2026-10-16T05:54:32.904023+00:00"
+      },
+      {
+        "message": "scan_cycle_completed",
+        "severity": "INFO",
+        "state": "RESEARCH_ONLY",
+        "created_at": "2026-10-16T05:52:42.150210+00:00"
+      },
+      {
+        "message": "waiting_for_completed_market_observations",
+        "severity": "INFO",
+        "state": "DATA_SYNCING",
+        "created_at": "2026-10-16T05:52:39.122591+00:00"
+      },
+      {
+        "message": "coordinator_acquired",
+        "severity": "INFO",
+        "state": "INITIALIZING",
+        "created_at": "2026-10-16T05:52:39.070493+00:00"
+      },
+      {
+        "message": "scan_cycle_completed",
+        "severity": "INFO",
+        "state": "RESEARCH_ONLY",
+        "created_at": "2026-10-16T05:45:12.840288+00:00"
+      },
+      {
+        "message": "waiting_for_completed_market_observations",
+        "severity": "INFO",
+        "state": "DATA_SYNCING",
+        "created_at": "2026-10-16T05:45:09.529880+00:00"
+      },
+      {
+        "message": "coordinator_acquired",
+        "severity": "INFO",
+        "state": "INITIALIZING",
+        "created_at": "2026-10-16T05:45:09.462538+00:00"
+      },
+      {
+        "message": "scan_cycle_completed",
+        "severity": "INFO",
+        "state": "RESEARCH_ONLY",
+        "created_at": "2026-10-16T05:42:31.689816+00:00"
+      },
+      {
+        "message": "waiting_for_completed_market_observations",
+        "severity": "INFO",
+        "state": "DATA_SYNCING",
+        "created_at": "2026-10-16T05:42:28.864201+00:00"
+      },
+      {
+        "message": "coordinator_acquired",
+        "severity": "INFO",
+        "state": "INITIALIZING",
+        "created_at": "2026-10-16T05:42:28.822102+00:00"
+      },
+      {
+        "message": "scan_cycle_completed",
+        "severity": "INFO",
+        "state": "RESEARCH_ONLY",
+        "created_at": "2026-10-16T05:41:53.557571+00:00"
+      },
+      {
+        "message": "waiting_for_completed_market_observations",
+        "severity": "INFO",
+        "state": "DATA_SYNCING",
+        "created_at": "2026-10-16T05:41:50.447982+00:00"
+      },
+      {
+        "message": "coordinator_acquired",
+        "severity": "INFO",
+        "state": "INITIALIZING",
+        "created_at": "2026-10-16T05:41:50.404860+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_REJECTED",
+        "created_at": "2026-10-16T05:41:33.399869+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_CANDIDATE",
+        "created_at": "2026-10-16T05:41:33.399869+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_REJECTED",
+        "created_at": "2026-10-16T05:41:33.399869+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_REJECTED",
+        "created_at": "2026-10-16T05:41:33.399869+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_CANDIDATE",
+        "created_at": "2026-10-16T05:41:33.399869+00:00"
+      }
+    ],
+    "redis": "ok"
+  },
+  "ai": {
+    "provider": "mock",
+    "model": "mock-v1",
+    "enabled": true,
+    "paid_enabled": false,
+    "budget": {
+      "month": "2026-10",
+      "spent_usd": "0",
+      "estimated_spend_usd": "0",
+      "reserved_usd": "0",
+      "confirmed_spend_usd": "0",
+      "remaining_usd": "10",
+      "requests": 0,
+      "daily_used": 0,
+      "daily_limit": 30,
+      "daily_remaining": 30,
+      "rolling_hour_used": 0,
+      "hourly_limit": 6,
+      "hourly_remaining": 6,
+      "daily_reset_at": "2026-10-17T00:00:00+00:00",
+      "next_hourly_release_at": null,
+      "monthly_reset_at": "2026-11-01T00:00:00+00:00",
+      "clock": "PostgreSQL UTC clock",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "cache_hits": 14,
+      "rejected_requests": 0,
+      "last_successful_analysis": null,
+      "billing_review_required": false,
+      "errors": []
+    },
+    "account_model_verified": false
+  },
+  "pilot_report": {
+    "pilot_id": "pilot_990697c3ab00f2469745d9b10168695e",
+    "mode": "RESEARCH_ONLY",
+    "performance_label": "PROSPECTIVE REAL-MARKET PAPER OBSERVATION",
+    "state": "ACTIVE",
+    "start": "2026-10-16T05:39:21.255631+00:00",
+    "end_exclusive": "2026-10-16T06:04:52.163267+00:00",
+    "generated_at": "2026-10-16T06:04:52.175714+00:00",
+    "config_fingerprint": "0807cde183a1ea844cb43833de67dcc1dbafcab98f59e2ec42e4cd10573354ac",
+    "elapsed_days": 0.017718838379629627,
+    "thirty_days_elapsed": false,
+    "interruptions": [],
+    "starting_snapshot": {
+      "initial_cash": "500",
+      "cash": "500.000000000000",
+      "available_cash": "500.000000000000",
+      "reserved_cash": "0E-12",
+      "open_exposure": "0E-12",
+      "equity": "500.000000000000",
+      "realized_pnl": "0",
+      "unrealized_pnl": "0E-12",
+      "total_net_pnl": "0E-12",
+      "current_drawdown": "0E-12",
+      "daily_risk_status": "WITHIN_LIMIT",
+      "weekly_risk_status": "WITHIN_LIMIT",
+      "daily_equity_change": "0E-12",
+      "weekly_equity_change": "0E-12",
+      "valuation_degraded": "false",
+      "missing_marks": "",
+      "positions": "0",
+      "orders": "0",
+      "pending_orders": "0"
+    },
+    "ending_snapshot": {
+      "initial_cash": "500",
+      "cash": "500.000000000000",
+      "available_cash": "500.000000000000",
+      "reserved_cash": "0E-12",
+      "open_exposure": "0E-12",
+      "equity": "500.000000000000",
+      "realized_pnl": "0",
+      "unrealized_pnl": "0E-12",
+      "total_net_pnl": "0E-12",
+      "current_drawdown": "0E-12",
+      "daily_risk_status": "WITHIN_LIMIT",
+      "weekly_risk_status": "WITHIN_LIMIT",
+      "daily_equity_change": "0E-12",
+      "weekly_equity_change": "0E-12",
+      "valuation_degraded": "false",
+      "missing_marks": "",
+      "positions": "0",
+      "orders": "0",
+      "pending_orders": "0"
+    },
+    "net_portfolio_pnl": "0E-12",
+    "observed_max_drawdown": "0",
+    "observations": 28,
+    "fees": "0",
+    "fills": 0,
+    "buy_fills": 0,
+    "closed_trades": 0,
+    "closed_trade_win_rate": null,
+    "modeled_slippage_cost": "0",
+    "observed_spread_cost": "0.0005",
+    "worker_downtime": "See observation gaps and incident timestamps; unobserved periods are not asserted to be exact downtime.",
+    "research_policy_status": "RESEARCH_ONLY",
+    "realized_pnl": "0",
+    "largest_realized_exit_loss": null,
+    "profitable_exit_postings": 0,
+    "losing_exit_postings": 0,
+    "win_loss_unit": "Realized exit postings including partial fills; not independent completed trades.",
+    "strategy_realized_pnl": {},
+    "rejected_opportunities": 84,
+    "observation_gaps": [],
+    "unobserved_seconds": 0,
+    "incidents": [
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:39:33.321067+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:39:33.321067+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:39:33.321067+00:00",
+        "state": "ENTRY_POLICY",
+        "message": "research_strategy_promotion_policy"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_CANDIDATE",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "RESEARCH_REJECTED",
+        "message": "research_promotion_transition"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:33.399869+00:00",
+        "state": "ENTRY_POLICY",
+        "message": "research_strategy_promotion_policy"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:50.404860+00:00",
+        "state": "INITIALIZING",
+        "message": "coordinator_acquired"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:50.447982+00:00",
+        "state": "DATA_SYNCING",
+        "message": "waiting_for_completed_market_observations"
+      },
+      {
+        "timestamp": "2026-10-16T05:41:53.557571+00:00",
+        "state": "RESEARCH_ONLY",
+        "message": "scan_cycle_completed"
+      },
+      {
+        "timestamp": "2026-10-16T05:42:28.822102+00:00",
+        "state": "INITIALIZING",
+        "message": "coordinator_acquired"
+      },
+      {
+        "timestamp": "2026-10-16T05:42:28.864201+00:00",
+        "state": "DATA_SYNCING",
+        "message": "waiting_for_completed_market_observations"
+      },
+      {
+        "timestamp": "2026-10-16T05:42:31.689816+00:00",
+        "state": "RESEARCH_ONLY",
+        "message": "scan_cycle_completed"
+      },
+      {
+        "timestamp": "2026-10-16T05:45:09.462538+00:00",
+        "state": "INITIALIZING",
+        "message": "coordinator_acquired"
+      },
+      {
+        "timestamp": "2026-10-16T05:45:09.529880+00:00",
+        "state": "DATA_SYNCING",
+        "message": "waiting_for_completed_market_observations"
+      },
+      {
+        "timestamp": "2026-10-16T05:45:12.840288+00:00",
+        "state": "RESEARCH_ONLY",
+        "message": "scan_cycle_completed"
+      },
+      {
+        "timestamp": "2026-10-16T05:52:39.070493+00:00",
+        "state": "INITIALIZING",
+        "message": "coordinator_acquired"
+      },
+      {
+        "timestamp": "2026-10-16T05:52:39.122591+00:00",
+        "state": "DATA_SYNCING",
+        "message": "waiting_for_completed_market_observations"
+      },
+      {
+        "timestamp": "2026-10-16T05:52:42.150210+00:00",
+        "state": "RESEARCH_ONLY",
+        "message": "scan_cycle_completed"
+      },
+      {
+        "timestamp": "2026-10-16T05:54:32.904023+00:00",
+        "state": "INITIALIZING",
+        "message": "coordinator_acquired"
+      },
+      {
+        "timestamp": "2026-10-16T05:54:32.946981+00:00",
+        "state": "DATA_SYNCING",
+        "message": "waiting_for_completed_market_observations"
+      },
+      {
+        "timestamp": "2026-10-16T05:54:37.115664+00:00",
+        "state": "RESEARCH_ONLY",
+        "message": "scan_cycle_completed"
+      }
+    ],
+    "ai_requests": 0,
+    "ai_estimated_cost": "0",
+    "ai_confirmed_cost": "0",
+    "benchmarks": {
+      "CASH": {
+        "capital_eur": "500",
+        "net_pnl": "0"
+      },
+      "BTC-EUR": {
+        "capital_eur": "500",
+        "net_pnl": "-1.6929438757494061565519446",
+        "first_completed_start": "2026-10-16T05:40:00+00:00",
+        "last_completed_start": "2026-10-16T05:55:00+00:00",
+        "source": "revolut-x",
+        "assumption": "Separate EUR500 buy-and-hold reference at observed completed closes, modeled fees/spread/slippage; different exposure from bot."
+      },
+      "ETH-EUR": {
+        "capital_eur": "500",
+        "net_pnl": "-1.2215157460978244381403466",
+        "first_completed_start": "2026-10-16T05:40:00+00:00",
+        "last_completed_start": "2026-10-16T05:55:00+00:00",
+        "source": "revolut-x",
+        "assumption": "Separate EUR500 buy-and-hold reference at observed completed closes, modeled fees/spread/slippage; different exposure from bot."
+      }
+    },
+    "limitations": "Observed drawdown only; gaps are not reconstructed. No claim of statistical significance or completed 30-day pilot. Synthetic acceptance requires a separate database and is excluded by mode."
+  }
+}

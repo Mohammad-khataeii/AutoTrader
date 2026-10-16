@@ -37,7 +37,7 @@ statistics, drawdown over observed marks, strategy contribution, rejections, gap
 AI usage and estimated/confirmed spend. Missing equity is unavailable, never zero.
 Observation gaps are not asserted to be measured process downtime.
 
-Cash, BTC and ETH benchmarks use separate EUR500 capital references. BTC/ETH require
+Cash, BTC and ETH benchmarks use separate EUR 500 capital references. BTC/ETH require
 at least two genuine new completed candles within the pilot interval, with modeled
 entry/exit fees, spread and slippage. Missing benchmark history remains explicitly
 unavailable. Passive references have different exposure and are not allocation
@@ -55,3 +55,5 @@ executes start, idempotency, snapshot, cash-only report, restart and incompatibl
 configuration interruption using isolated PostgreSQL. It does not establish an
 actual elapsed prospective period. Database administrators are trusted; ordinary
 application paths expose no account reset or live-money execution.
+
+During browser acceptance, an explicit local RESEARCH_ONLY pilot started at 2026-10-16T05:39:21Z, with planned end 2026-11-15T05:39:21Z. It records genuine public-data observations and intentional local acceptance outage/restart gaps. It is not a remote VPS pilot, and thirty days have not elapsed. The acceptance scanner is capped at three symbols; the normal configurable default is eight.

@@ -1,0 +1,36 @@
+{
+  "status": "PASSED",
+  "observed_at": "2026-10-16T06:02:46.662961+00:00",
+  "scope": "High/critical; current running core image IDs; not all severity or remote penetration test",
+  "scan_retry_note": "A concurrent index attempt failed. All four sequential scan commands then succeeded. The identity check detected a retained Redis container after its image tag was rebuilt; Redis alone was recreated from the scanned image with its persistent volume preserved. Current image IDs now match all scans.",
+  "images": [
+    {
+      "service": "backend",
+      "configured_image": "autotrader-v41-acceptance-app:upgrade-20261016t055319z",
+      "scanned_image": "sha256:74a1b3e0cfd0ad6a4f27a48a50a4fcca77f72914514193b00e847dfb2b739a34",
+      "findings": 0,
+      "artifact": "docs/evidence/v4_1-backend-final.sarif"
+    },
+    {
+      "service": "frontend",
+      "configured_image": "autotrader-v41-acceptance-frontend:upgrade-20261016t055319z",
+      "scanned_image": "sha256:524f443fc3e7fa4b1edbb25b20d473f8259451e8899c3d4b478ae270bc7824da",
+      "findings": 0,
+      "artifact": "docs/evidence/v4_1-frontend-final.sarif"
+    },
+    {
+      "service": "postgres",
+      "configured_image": "autotrader-v41-postgres:16-backported",
+      "scanned_image": "sha256:8b628fc88dddf37b8db60d800efb780039c1fe1ed6eec6d390a1cbbc2cebda7f",
+      "findings": 0,
+      "artifact": "docs/evidence/v4_1-postgres-final.sarif"
+    },
+    {
+      "service": "redis",
+      "configured_image": "autotrader-v41-redis:7-patched",
+      "scanned_image": "sha256:f91927c704ccdfedd85306cb1f8efdd3f0c29fa67098faaa87bd1023e745af4b",
+      "findings": 0,
+      "artifact": "docs/evidence/v4_1-redis-final.sarif"
+    }
+  ]
+}

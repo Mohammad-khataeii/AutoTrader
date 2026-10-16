@@ -1,0 +1,19 @@
+{
+  "project": "autotrader-v41-acceptance",
+  "status": "PASSED",
+  "journal_events_before": 1,
+  "redis_outage": {
+    "reported": "unavailable",
+    "database": "ok",
+    "api_ready": true,
+    "financial_reconciliation": []
+  },
+  "postgres_outage": {
+    "readiness_http": 503,
+    "financial_admission": "blocked by unavailable account transaction and lease"
+  },
+  "recovered_state": "RESEARCH_ONLY",
+  "journal_preserved": true,
+  "initial_funding_events": 1,
+  "reconciliation": []
+}

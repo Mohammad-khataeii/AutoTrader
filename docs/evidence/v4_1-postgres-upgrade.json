@@ -1,0 +1,593 @@
+{
+  "before": {
+    "ready": {
+      "ready": true,
+      "live_trading_enabled": false
+    },
+    "version": "4.1.0",
+    "portfolio": {
+      "initial_cash": "500",
+      "cash": "500.000000000000",
+      "available_cash": "500.000000000000",
+      "reserved_cash": "0E-12",
+      "open_exposure": "0E-12",
+      "equity": "500.000000000000",
+      "realized_pnl": "0",
+      "unrealized_pnl": "0E-12",
+      "total_net_pnl": "0E-12",
+      "current_drawdown": "0E-12",
+      "daily_risk_status": "WITHIN_LIMIT",
+      "weekly_risk_status": "WITHIN_LIMIT",
+      "daily_equity_change": "0E-12",
+      "weekly_equity_change": "0E-12",
+      "valuation_degraded": "false",
+      "missing_marks": "",
+      "positions": "0",
+      "orders": "0",
+      "pending_orders": "0",
+      "risk_state": "HEALTHY",
+      "control": "RUNNING"
+    },
+    "health": {
+      "operational_state": "RESEARCH_ONLY",
+      "operation": {
+        "observed_at": "2026-10-16T05:52:42.150545+00:00",
+        "last_completed_scan": "2026-10-16T05:52:42.149942+00:00",
+        "scan_duration_seconds": 3.02506941799993,
+        "schedule_overrun_seconds": 0,
+        "markets_scanned": 3,
+        "successful_observations": 3,
+        "data_failures": 0,
+        "strategies_evaluated": 24,
+        "qualified_signals": 2,
+        "rejected_signals": 3,
+        "paper_entries_filled": 0,
+        "execution_outcomes": [
+          {
+            "symbol": "ETH-EUR",
+            "accepted": false,
+            "reason": "decision_not_accepted",
+            "order_id": null
+          },
+          {
+            "symbol": "SOL-EUR",
+            "accepted": false,
+            "reason": "decision_not_accepted",
+            "order_id": null
+          },
+          {
+            "symbol": "BTC-EUR",
+            "accepted": false,
+            "reason": "decision_not_accepted",
+            "order_id": null
+          }
+        ],
+        "next_scan_at": "2026-10-16T05:53:39.124889+00:00"
+      },
+      "coordinator": {
+        "owner": "coordinator_c3a0b53d837e4fde8bfdae89de792d73",
+        "heartbeat": "2026-10-16T05:53:19.219832+00:00",
+        "expires_at": "2026-10-16T05:53:34.219832+00:00"
+      },
+      "postgresql": "ok",
+      "database_engine": "postgresql",
+      "exchange_data": "OK",
+      "data_freshness": [
+        {
+          "symbol": "BTC-EUR",
+          "source": "revolut-x",
+          "timestamp": "2026-10-16T05:52:39.861000+00:00",
+          "age_seconds": 39.454945
+        },
+        {
+          "symbol": "ETH-EUR",
+          "source": "revolut-x",
+          "timestamp": "2026-10-16T05:52:40.893000+00:00",
+          "age_seconds": 38.42296
+        },
+        {
+          "symbol": "SOL-EUR",
+          "source": "revolut-x",
+          "timestamp": "2026-10-16T05:52:41.887000+00:00",
+          "age_seconds": 37.428965
+        }
+      ],
+      "position_monitor_heartbeat": "2026-10-16T05:53:19.222512+00:00",
+      "worker": "ok",
+      "worker_heartbeat": "2026-10-16T05:52:42.140237+00:00",
+      "worker_age_seconds": 37.173186,
+      "pending_intents": 0,
+      "reconciliation": {
+        "checked_at": "2026-10-16T05:53:19.318296+00:00",
+        "problems": []
+      },
+      "risk_state": "HEALTHY",
+      "incidents": [
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:52:42.150210+00:00"
+        },
+        {
+          "message": "waiting_for_completed_market_observations",
+          "severity": "INFO",
+          "state": "DATA_SYNCING",
+          "created_at": "2026-10-16T05:52:39.122591+00:00"
+        },
+        {
+          "message": "coordinator_acquired",
+          "severity": "INFO",
+          "state": "INITIALIZING",
+          "created_at": "2026-10-16T05:52:39.070493+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:45:12.840288+00:00"
+        },
+        {
+          "message": "waiting_for_completed_market_observations",
+          "severity": "INFO",
+          "state": "DATA_SYNCING",
+          "created_at": "2026-10-16T05:45:09.529880+00:00"
+        },
+        {
+          "message": "coordinator_acquired",
+          "severity": "INFO",
+          "state": "INITIALIZING",
+          "created_at": "2026-10-16T05:45:09.462538+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:42:31.689816+00:00"
+        },
+        {
+          "message": "waiting_for_completed_market_observations",
+          "severity": "INFO",
+          "state": "DATA_SYNCING",
+          "created_at": "2026-10-16T05:42:28.864201+00:00"
+        },
+        {
+          "message": "coordinator_acquired",
+          "severity": "INFO",
+          "state": "INITIALIZING",
+          "created_at": "2026-10-16T05:42:28.822102+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:41:53.557571+00:00"
+        },
+        {
+          "message": "waiting_for_completed_market_observations",
+          "severity": "INFO",
+          "state": "DATA_SYNCING",
+          "created_at": "2026-10-16T05:41:50.447982+00:00"
+        },
+        {
+          "message": "coordinator_acquired",
+          "severity": "INFO",
+          "state": "INITIALIZING",
+          "created_at": "2026-10-16T05:41:50.404860+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        }
+      ],
+      "redis": "ok"
+    },
+    "containers": [
+      {
+        "name": "/autotrader-v41-acceptance-backend-1",
+        "image": "sha256:59d38629046d0aeb916d803cf7d61381538c2523214a77a82bb8494ee1835cb9",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "8000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "18000"
+            }
+          ]
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-frontend-1",
+        "image": "sha256:725ed8a2e4f26d356addf970f988e8aa85ecb0ca1f08184506e20ed88763745c",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "80/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "13000"
+            }
+          ]
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-postgres-1",
+        "image": "sha256:da8fc42990fa96a85f434530ee0c91eaebb8a041bda257f2c42334f20eb29f99",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "5432/tcp": null
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-redis-1",
+        "image": "sha256:b1a62613a18292a2be21e6ab96328a3df9a694438696f493ca1eee0d74690135",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "6379/tcp": null
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-research-worker-1",
+        "image": "sha256:59d38629046d0aeb916d803cf7d61381538c2523214a77a82bb8494ee1835cb9",
+        "state": "running",
+        "health": null,
+        "ports": {
+          "8000/tcp": null
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-worker-1",
+        "image": "sha256:59d38629046d0aeb916d803cf7d61381538c2523214a77a82bb8494ee1835cb9",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "8000/tcp": null
+        }
+      }
+    ],
+    "project": "autotrader-v41-acceptance"
+  },
+  "after": {
+    "ready": {
+      "ready": true,
+      "live_trading_enabled": false
+    },
+    "version": "4.1.0",
+    "portfolio": {
+      "initial_cash": "500",
+      "cash": "500.000000000000",
+      "available_cash": "500.000000000000",
+      "reserved_cash": "0E-12",
+      "open_exposure": "0E-12",
+      "equity": "500.000000000000",
+      "realized_pnl": "0",
+      "unrealized_pnl": "0E-12",
+      "total_net_pnl": "0E-12",
+      "current_drawdown": "0E-12",
+      "daily_risk_status": "WITHIN_LIMIT",
+      "weekly_risk_status": "WITHIN_LIMIT",
+      "daily_equity_change": "0E-12",
+      "weekly_equity_change": "0E-12",
+      "valuation_degraded": "false",
+      "missing_marks": "",
+      "positions": "0",
+      "orders": "0",
+      "pending_orders": "0",
+      "risk_state": "HEALTHY",
+      "control": "RUNNING"
+    },
+    "health": {
+      "operational_state": "RESEARCH_ONLY",
+      "operation": {
+        "observed_at": "2026-10-16T05:54:37.115929+00:00",
+        "last_completed_scan": "2026-10-16T05:54:37.115417+00:00",
+        "scan_duration_seconds": 4.166974918000051,
+        "schedule_overrun_seconds": 0,
+        "markets_scanned": 3,
+        "successful_observations": 3,
+        "data_failures": 0,
+        "strategies_evaluated": 24,
+        "qualified_signals": 2,
+        "rejected_signals": 3,
+        "paper_entries_filled": 0,
+        "execution_outcomes": [
+          {
+            "symbol": "ETH-EUR",
+            "accepted": false,
+            "reason": "decision_not_accepted",
+            "order_id": null
+          },
+          {
+            "symbol": "SOL-EUR",
+            "accepted": false,
+            "reason": "decision_not_accepted",
+            "order_id": null
+          },
+          {
+            "symbol": "BTC-EUR",
+            "accepted": false,
+            "reason": "decision_not_accepted",
+            "order_id": null
+          }
+        ],
+        "next_scan_at": "2026-10-16T05:55:32.948455+00:00"
+      },
+      "coordinator": {
+        "owner": "coordinator_c8714862a84e4f61837289a348575e0f",
+        "heartbeat": "2026-10-16T05:54:42.980115+00:00",
+        "expires_at": "2026-10-16T05:54:57.980115+00:00"
+      },
+      "postgresql": "ok",
+      "database_engine": "postgresql",
+      "exchange_data": "OK",
+      "data_freshness": [
+        {
+          "symbol": "BTC-EUR",
+          "source": "revolut-x",
+          "timestamp": "2026-10-16T05:54:33.727000+00:00",
+          "age_seconds": 14.17501
+        },
+        {
+          "symbol": "ETH-EUR",
+          "source": "revolut-x",
+          "timestamp": "2026-10-16T05:54:35.728000+00:00",
+          "age_seconds": 12.174015
+        },
+        {
+          "symbol": "SOL-EUR",
+          "source": "revolut-x",
+          "timestamp": "2026-10-16T05:54:36.758000+00:00",
+          "age_seconds": 11.144019
+        }
+      ],
+      "position_monitor_heartbeat": "2026-10-16T05:54:42.982356+00:00",
+      "worker": "ok",
+      "worker_heartbeat": "2026-10-16T05:54:37.109998+00:00",
+      "worker_age_seconds": 10.788596,
+      "pending_intents": 0,
+      "reconciliation": {
+        "checked_at": "2026-10-16T05:54:47.906592+00:00",
+        "problems": []
+      },
+      "risk_state": "HEALTHY",
+      "incidents": [
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:54:37.115664+00:00"
+        },
+        {
+          "message": "waiting_for_completed_market_observations",
+          "severity": "INFO",
+          "state": "DATA_SYNCING",
+          "created_at": "2026-10-16T05:54:32.946981+00:00"
+        },
+        {
+          "message": "coordinator_acquired",
+          "severity": "INFO",
+          "state": "INITIALIZING",
+          "created_at": "2026-10-16T05:54:32.904023+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:52:42.150210+00:00"
+        },
+        {
+          "message": "waiting_for_completed_market_observations",
+          "severity": "INFO",
+          "state": "DATA_SYNCING",
+          "created_at": "2026-10-16T05:52:39.122591+00:00"
+        },
+        {
+          "message": "coordinator_acquired",
+          "severity": "INFO",
+          "state": "INITIALIZING",
+          "created_at": "2026-10-16T05:52:39.070493+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:45:12.840288+00:00"
+        },
+        {
+          "message": "waiting_for_completed_market_observations",
+          "severity": "INFO",
+          "state": "DATA_SYNCING",
+          "created_at": "2026-10-16T05:45:09.529880+00:00"
+        },
+        {
+          "message": "coordinator_acquired",
+          "severity": "INFO",
+          "state": "INITIALIZING",
+          "created_at": "2026-10-16T05:45:09.462538+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:42:31.689816+00:00"
+        },
+        {
+          "message": "waiting_for_completed_market_observations",
+          "severity": "INFO",
+          "state": "DATA_SYNCING",
+          "created_at": "2026-10-16T05:42:28.864201+00:00"
+        },
+        {
+          "message": "coordinator_acquired",
+          "severity": "INFO",
+          "state": "INITIALIZING",
+          "created_at": "2026-10-16T05:42:28.822102+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:41:53.557571+00:00"
+        },
+        {
+          "message": "waiting_for_completed_market_observations",
+          "severity": "INFO",
+          "state": "DATA_SYNCING",
+          "created_at": "2026-10-16T05:41:50.447982+00:00"
+        },
+        {
+          "message": "coordinator_acquired",
+          "severity": "INFO",
+          "state": "INITIALIZING",
+          "created_at": "2026-10-16T05:41:50.404860+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        }
+      ],
+      "redis": "ok"
+    },
+    "containers": [
+      {
+        "name": "/autotrader-v41-acceptance-backend-1",
+        "image": "sha256:74a1b3e0cfd0ad6a4f27a48a50a4fcca77f72914514193b00e847dfb2b739a34",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "8000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "18000"
+            }
+          ]
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-frontend-1",
+        "image": "sha256:524f443fc3e7fa4b1edbb25b20d473f8259451e8899c3d4b478ae270bc7824da",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "80/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "13000"
+            }
+          ]
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-postgres-1",
+        "image": "sha256:8b628fc88dddf37b8db60d800efb780039c1fe1ed6eec6d390a1cbbc2cebda7f",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "5432/tcp": null
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-redis-1",
+        "image": "sha256:b1a62613a18292a2be21e6ab96328a3df9a694438696f493ca1eee0d74690135",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "6379/tcp": null
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-worker-1",
+        "image": "sha256:74a1b3e0cfd0ad6a4f27a48a50a4fcca77f72914514193b00e847dfb2b739a34",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "8000/tcp": null
+        }
+      }
+    ],
+    "project": "autotrader-v41-acceptance"
+  },
+  "backup": "/Users/mohammadkhataei/Desktop/AutoTrader/.tools/deployments/autotrader-v41-acceptance/20261016T055417Z-a0c81d.dump",
+  "restore": {
+    "restore_database": "autotrader_restore_1790cccf26db",
+    "reconciliation": [],
+    "original_database_modified": false,
+    "backup_sha256": "cc7e60ffbb67e666532ff18be12d4c634430c4a9917d59aa2e2993b532425c1e"
+  },
+  "previous_tag": "upgrade-20261016t055217z",
+  "image_tag": "upgrade-20261016t055319z",
+  "previous_images_retained": true
+}

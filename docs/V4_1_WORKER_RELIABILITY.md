@@ -32,7 +32,7 @@ leases and bounded queue capacity; crash recovery recomputes a job with old part
 artifacts retained. The research worker has separate memory/CPU constraints.
 
 Evidence: `evidence/v4_1-lifecycle.xml` executed the actual worker/API processes on
-PostgreSQL16: cost rejection, entry, TP1, partial TP2, killed process/restart,
+PostgreSQL 16: cost rejection, entry, TP1, partial TP2, killed process/restart,
 remaining TP2, protective gap exit, five unique fills, zero reserved cash and empty
 reconciliation. `test_v41_promotion_operations.py` verifies single-owner claims and
 fencing after expiry. The full process suites additionally cover crash boundaries,

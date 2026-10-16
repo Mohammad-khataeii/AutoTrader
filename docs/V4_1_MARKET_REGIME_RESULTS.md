@@ -1,0 +1,49 @@
+# V4.1 market-regime results
+
+Run `research-20261016T044934`. Regimes are causal heuristic labels at entry, not hindsight ground truth.
+
+The strategy engine uses the prior completed five-minute feature cross-section and complete four-bar confirmation (20m for 5m; 1h for 15m). No unfinished higher candle is joined. Future-candle mutation and prefix invariance tests cover the causal boundary. Current-bar final volume is unavailable at the open: modeled shared depth uses previous completed volume. Real historical Revolut X L2 is unavailable.
+
+Group P&L includes marked remaining positions. Group returns/drawdown use a shared EUR 500 attribution denominator; they are contributions to the common portfolio, not independent allocations or standalone asset strategy returns. Per-asset and regime machine-readable statistics are exported alongside full curves.
+
+| TF | Strategy | Entry regime | Closed trades | Net contribution EUR | Fees EUR | PF |
+|---|---|---|---:|---:|---:|---:|
+| 15m | A_TREND_PULLBACK | COMPRESSION | 71 | -14.5887 | 7.651813875559 | 0.2962 |
+| 15m | A_TREND_PULLBACK | EXPANSION | 11 | -1.8314 | 1.555153035326 | 0.5870 |
+| 15m | A_TREND_PULLBACK | MODERATE_BULL | 5 | 1.1973 | 0.463392060596 | 1.8351 |
+| 15m | A_TREND_PULLBACK | STRONG_BULL | 4 | 2.5202 | 0.521303318006 | 21.1724 |
+| 15m | B_COMPRESSION_BREAKOUT | COMPRESSION | 14 | -3.4816 | 1.984667685377 | 0.4317 |
+| 15m | B_COMPRESSION_BREAKOUT | EXPANSION | 34 | -11.2870 | 4.810964354302 | 0.2845 |
+| 15m | B_COMPRESSION_BREAKOUT | MODERATE_BULL | 1 | -0.1991 | 0.149398101732 | 0.0000 |
+| 15m | B_COMPRESSION_BREAKOUT | STRONG_BULL | 1 | 0.6653 | 0.150263399577 | undefined |
+| 15m | C_BREAKOUT_RETEST | COMPRESSION | 26 | -7.9093 | 2.900799628259 | 0.0360 |
+| 15m | C_BREAKOUT_RETEST | EXPANSION | 5 | -0.3914 | 0.722307644565 | 0.8146 |
+| 15m | C_BREAKOUT_RETEST | MODERATE_BULL | 6 | 0.3995 | 0.788895324503 | 1.4454 |
+| 15m | C_BREAKOUT_RETEST | STRONG_BULL | 3 | -4.0298 | 0.444758375579 | 0.0000 |
+| 15m | D_VOLUME_ACCUMULATION | COMPRESSION | 45 | -13.2784 | 6.641858476531 | 0.3135 |
+| 15m | D_VOLUME_ACCUMULATION | EXPANSION | 35 | -13.2628 | 5.108758561366 | 0.2160 |
+| 15m | D_VOLUME_ACCUMULATION | MODERATE_BULL | 2 | 0.1940 | 0.297522940689 | 1.6887 |
+| 15m | D_VOLUME_ACCUMULATION | STRONG_BULL | 2 | -2.9157 | 0.296276236601 | 0.0000 |
+| 15m | E_RELATIVE_STRENGTH | MODERATE_BULL | 14 | 2.3194 | 1.690516896399 | 1.6558 |
+| 15m | E_RELATIVE_STRENGTH | STRONG_BULL | 11 | -3.8309 | 1.471082917887 | 0.5448 |
+| 15m | F_MEAN_REVERSION | COMPRESSION | 46 | -15.6744 | 5.608915927837 | 0.0610 |
+| 15m | F_MEAN_REVERSION | RANGE | 2 | -0.8806 | 0.298313360334 | 0.0299 |
+| 5m | A_TREND_PULLBACK | COMPRESSION | 102 | -16.6742 | 11.775105523873 | 0.4204 |
+| 5m | A_TREND_PULLBACK | EXPANSION | 17 | -3.7807 | 2.441032370033 | 0.3015 |
+| 5m | A_TREND_PULLBACK | MODERATE_BULL | 3 | 0.0979 | 0.448890277832 | 1.0621 |
+| 5m | A_TREND_PULLBACK | STRONG_BULL | 4 | -3.7773 | 0.594608570405 | 0.0000 |
+| 5m | B_COMPRESSION_BREAKOUT | COMPRESSION | 26 | -6.1427 | 3.674871256585 | 0.3153 |
+| 5m | B_COMPRESSION_BREAKOUT | EXPANSION | 48 | -5.7180 | 7.036018925587 | 0.6442 |
+| 5m | B_COMPRESSION_BREAKOUT | MODERATE_BULL | 3 | 0.0679 | 0.416699624714 | 1.2698 |
+| 5m | C_BREAKOUT_RETEST | COMPRESSION | 52 | -13.0115 | 6.324617024480 | 0.1712 |
+| 5m | C_BREAKOUT_RETEST | EXPANSION | 7 | -2.7294 | 1.019083906308 | 0.3160 |
+| 5m | C_BREAKOUT_RETEST | MODERATE_BULL | 7 | -1.0912 | 0.955929622579 | 0.5192 |
+| 5m | C_BREAKOUT_RETEST | STRONG_BULL | 1 | -1.6642 | 0.147931567999 | 0.0000 |
+| 5m | D_VOLUME_ACCUMULATION | COMPRESSION | 80 | -19.7965 | 11.189103746669 | 0.3009 |
+| 5m | D_VOLUME_ACCUMULATION | EXPANSION | 43 | -12.2263 | 6.197984226174 | 0.2445 |
+| 5m | D_VOLUME_ACCUMULATION | MODERATE_BULL | 4 | 1.5988 | 0.572020066771 | 3.0387 |
+| 5m | D_VOLUME_ACCUMULATION | STRONG_BULL | 2 | -2.9017 | 0.296290244639 | 0.0000 |
+| 5m | E_RELATIVE_STRENGTH | MODERATE_BULL | 11 | -3.5559 | 1.497473113526 | 0.2827 |
+| 5m | E_RELATIVE_STRENGTH | STRONG_BULL | 6 | -2.6357 | 0.793317553286 | 0.2680 |
+| 5m | F_MEAN_REVERSION | COMPRESSION | 77 | -18.1768 | 7.943893465786 | 0.0747 |
+| 5m | F_MEAN_REVERSION | RANGE | 2 | -0.6511 | 0.298543116815 | 0.0000 |

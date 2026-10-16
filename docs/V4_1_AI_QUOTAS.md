@@ -7,7 +7,7 @@ cost and cache status. Existing billing holds and financial history remain intac
 Legacy `UNKNOWN` states become `OUTCOME_UNKNOWN`.
 
 Defaults: mock provider, no key/model required, 30/day (UTC midnight), 6 per rolling
-60 minutes, USD10/calendar month, 12-second timeout and mandatory persistent quota.
+60 minutes, USD 10/calendar month, 12-second timeout and mandatory persistent quota.
 Configuration can reduce quotas, not exceed these maxima. Production paid mode also
 requires nonnegative explicit token prices and a UTC pricing-verification timestamp
 no older than 31 days. Model access is checked by read-only retrieval before each
@@ -33,8 +33,8 @@ or unknown billing never frees a hold. Duplicate unknown events remain blocked.
 `reconcile_ai_request` requires an actor and billing evidence; it records the
 receipt amount and an audit event. Repeated settlement/reconciliation is idempotent.
 A token/cost bound overrun records the actual estimated cost, blocks later paid
-requests with a persistent pricing-review hold, and does not falsify a USD10 total.
-This internal guardrail cannot guarantee external invoicing never exceeds USD10.
+requests with a persistent pricing-review hold, and does not falsify a USD 10 total.
+This internal guardrail cannot guarantee external invoicing never exceeds USD 10.
 
 Responses token-derived `actual_cost` is an estimate, not a confirmed invoice.
 `actual_reported_cost` remains null until billing reconciliation. The dashboard
@@ -44,7 +44,7 @@ No credential fields are exposed. AI cannot approve research or alter risk, capi
 orders, targets or financial postings.
 
 Executed initial quota evidence: `evidence/v4_1-quotas.xml`, 17 passing cases on real
-PostgreSQL16. It covers 30/31, 6/7, exact rolling expiry, concurrent reservations,
+PostgreSQL 16. It covers 30/31, 6/7, exact rolling expiry, concurrent reservations,
 repository restart, leap/non-leap February and 30/31-day month boundaries, day/month
 crossover, duplicate unknown requests, audited zero-charge reconciliation, cost
 bound overruns, persistent review holds and usage detail. Portfolio capacity and

@@ -1,37 +1,89 @@
-# V4 verified checkpoint and exact continuation
+# V4.1 verified checkpoint and continuation
 
-Branch: codex/v4-execution-research. Current implementation source commit: ee272db. Source fingerprint: b31992258941962d61ee8bfaa7b38ea882a7f5449099ff78fb0045fc15e4966d. Subsequent commits contain deployment/security builds, documentation and evidence.
+Status: PARTIALLY_COMPLETE_WITH_BLOCKERS. Branch: `codex/v4-execution-research`.
+Baseline commit: `2033c7b6cf2f8f327913deb2d92e3343ded370b9`.
+Integrated V4.1 source: `d2e9e8b`; deployment/security follow-up: `387fec0`; operational verifier: `c14beff`.
+Package fingerprint (62 Python files):
+`e0140ff18c36d86ac4c676e07aa650c2d93bac3fcfa6b708e0025f6573d66c5e`.
+Later commits contain evidence/reports; inspect Git before continuing.
 
-Status: PARTIALLY_COMPLETE_WITH_BLOCKERS. The connected V4 application and research pipeline are implemented. Security clearance is blocked by PostgreSQL libxml2 and Grafana bundled dependencies. No strategy passed validation, so approved strategy IDs remain empty and the bot holds cash. This is a legitimate research outcome.
+## Verified current scope
 
-## Verified
+- Native final regression: 148 passed on disposable PostgreSQL16 databases. Final
+  installed-Linux regression: 148 passed against the selected backported PostgreSQL16
+  image, 414.98s. See V4_1_TEST_EVIDENCE.md and final JUnit artifacts.
+  Prior failures remain as development evidence, not final acceptance.
+- Six existing strategies×5m/15m, exact matching source, frozen member parameters,
+  causal liquidity, chronological selection/walk-forward/cost stresses are complete.
+  Run `research-20261016T044934`: **NO STRATEGY PASSED VALIDATION**. Approval set empty.
+-48 genuine Coinbase direct-EUR datasets,351788observations; BTC/ETH180days5m,
+  others90days5m, all source gaps retained. Bulk cache is ignored `.data/research`;
+  exported results/trades/curves/diagnostics/checksums are tracked under docs/evidence.
+- Durable30/day,6/rolling-hour,USD10/month quotas with real PostgreSQL account locking,
+  restart/concurrency/calendar/unknown-billing tests. Mock runtime; no paid call.
+- Exact worker/API paper lifecycle, partial target/kill/restart/protective exit,
+  risk losses, financial concurrency and reconciliation pass. Existing user DB unchanged.
+-16-page real browser workflow passes: queued research, LIMIT replay, controls,
+  genuine5m evidence, quota views, local prospective pilot observation/JSON/CSV.
+- Backup/restore, upgrade, same-schema image rollback, full-volume restart, Redis
+  outage and PostgreSQL outage/recovery executed in the isolated local project.
+- PostgreSQL16 CVE-2026-86140 is now backported from the upstream GNOME fix into
+  local Alpine2.13.9-r3, preserving ABI/SQL/XML and existing distro patches. Upstream
+  checks plus the actual-function bounds regression and vulnerable negative control
+  pass. XML/extensions, restored-data restart and reconciliation pass. Do not repeat
+  the old V4 conclusion that no compatible fix was implemented.
+- Core high/critical scans are clear in recorded local scope. Disabled Grafana still
+  has21distinct CVEs (2critical/19high),53package occurrences. Whole-stack security is
+  not cleared. Raw scans/provenance/bounds/functional records are retained.
 
-- Unchanged baseline80passed; execution/data regression98passed.
-- Final native Windows118passed/516.60s and installed-Linux118passed/445.74s, zero failures/skips. See V4_TEST_EVIDENCE.md and the release JUnit artifacts.
-- Actual worker/API lifecycle: cost rejection, valid entry, TP1, partial TP2, killed interpreter/restart, protective exit and exact reconciliation.
-- Genuine Coinbase direct-EUR48datasets/76606bar records; eight assets, six TF. Full final-source study research-20261015T205023, six strategies on daily/4h, all fail validation.623fills/4260curve rows exported.
-- Browser15pages, actual queued research worker job, plots, historical LIMIT replay and persisted controls pass. Ruff/mypy/TypeScript/Vitest pass.
-- Rebuilt/deployed core and research worker; restart preserves51journal events, reconciliation empty. Isolated binary backup/restore passes.
-- Backend/frontend all-severity, Redis high/critical, pip/npm audits clear.
-- Patched Prometheus reproducible build/scan/UI/query/authenticated scrape verified; Compose selects it. Official old findings are retained as superseded evidence.
-- Original user SQLite blob b2b81065cd9f90c2d2f728cb3e5c8a7d6e424c31 unchanged. Existing user data/volumes not reset.
+## Local deployment
 
-## Current local deployment
+Project `autotrader-v41-acceptance`; core + research worker running. UI
+http://127.0.0.1:13000; API http://127.0.0.1:18000. Private generated credentials only
+in ignored `.tools/v41-test.env` and associated secret files; never print/commit.
+Selected PostgreSQL tag: `autotrader-v41-postgres:16-backported`. Actual image IDs,
+current application tag, health and reconciliation are in the final deployment/core
+scan evidence. Named volumes are preserved. Grafana/Prometheus remain stopped.
+No unrelated workload/image/volume was removed. No remote VPS was accessed.
 
-Project autotrader-v34-acceptance retains its existing volumes. Core services and research worker run. Dashboard http://127.0.0.1:13000; API http://127.0.0.1:18000. Credentials remain only in ignored .tools/v34-test.env and its private secret files; never print/commit them. Optional monitoring containers remain stopped. Do not enable Grafana until remediation/rescan/functional verification.
+A local RESEARCH_ONLY pilot started2026-10-16T05:39:21Z, planned end
+2026-11-15T05:39:21Z, from the actual public-data worker. It has acceptance restart/
+outage gaps and is not the user's VPS experiment. Thirty days have NOT elapsed.
 
-## Exact mandatory remaining work
+## Exact remaining work
 
-1. Remediate PostgreSQL16 image libxml2 2.13.9-r2 CVE-2026-86140 using a verified fixed compatible package/build. The selected Alpine branch did not supply a fix after --pull/--no-cache rebuild. Preserve SQL/XML capability and PG16 volume/extension compatibility, then exercise XML behavior, populated-volume restart and isolated restore. Internal DB/unused application XML reduces exposure but is not a patch.
-2. Obtain/rebuild Grafana13.2.4 bundled Go plugins with patched Go/x/net/x/crypto/grpc dependencies. Raw scan2critical/14high unique CVEs; exact affected versions/binaries and13unresolved CVEs are retained in evidence/v4-security-assessment.json. Windows-only and current-no-Tempo-server exclusions are scoped, not removed. Verify login, persistent dashboards, provisioning and Prometheus queries after replacements.
-3. Rescan exact selected image IDs, rerun scripts/assess_v4_security.py, update V4_SECURITY_REMEDIATION.md and reconsider completion only after required security checks pass. Keep optional monitoring stopped while unresolved.
+1. Rebuild/replace Grafana's affected bundled Go/plugin dependencies with verified
+   fixed versions. Rescan actual selected image IDs, then verify authenticated login,
+   persistent dashboards, provisioning and Prometheus queries before enabling its
+   quarantined profile. Full CVE/package list: V4_1_SECURITY_REMEDIATION.md.
+2. Maintain the local libxml2 backport until a verified compatible official package
+   replaces it. Dockerfile refuses application to a base library other than
+  2.13.9-r2 after upgrade. Review/rebase new distro patches; preserve SQL/XML,
+   PostgreSQL16 volumes/extensions, upstream+bounds checks, restore/restart and exact
+   destination-architecture scan. APKBUILD provenance records a post-build whitespace
+   normalization only; source/commands/checksums are unchanged.
+3. Obtain the actual Ubuntu host/access and inventory existing workloads. Follow
+   V4_1_VPS_DEPLOYMENT.md with a unique project, private secrets/loopback ports,
+   destination build/scan, scoped migration/backup/restore/health checks, host restart,
+   firewall/TLS or SSH tunnel, disk monitoring and secure off-host backups. No remote
+   verification claim can be made without doing those steps there.
+4. Freeze and explicitly start the intended prospective pilot after configuration
+   is settled. Collect genuine observations/daily reports for30days, disclose gaps,
+   compare costs/benchmarks/rejections and do not present elapsed time alone as edge.
+   Do not weaken historical validation or force entries to create activity.
 
-Research advancement is separate: no strategy is approved. A daily/4h study cannot approve production5m; promotion requires explicit approval, matching source, actual timeframe and exact frozen runtime parameters. More suitable history and prospective validation are needed before any claim of predictive edge.
+## Reproduction
 
-Before reporting a future nonempty optimized ensemble, replace its current runtime-default simulation parameters with per-member frozen parameters and verify the combined replay. Only the empty cash ensemble has been demonstrated; no optimized-ensemble return is claimed.
+Read V4_1_FINAL_REPORT.md, V4_1_TEST_EVIDENCE.md and the completion matrix first.
+`python3 -m autotrader.research.cli research evaluate --root .data/research --timeframes 5m 15m`
+replays the completed study; exported reports disclose reused historical dates.
+Any package Python change invalidates its fingerprint and requires matching new
+research. Do not relabel old reports. `deploy/vps.py sync-research` verifies all
+hashes/source identity and gives new pointers to UID10001. Selected browser jobs
+change latest-run; restore the complete study with the verified synchronization.
 
-## Commands
-
-Exact tested deployment/Linux commands: V4_DEPLOYMENT.md. Final results: V4_BACKTEST_RESULTS.md. Scope/assumptions: V4_KNOWN_LIMITATIONS.md. Requirement status: V4_COMPLETION_MATRIX.md. Do not restart PostgreSQL while either full suite is running. Never use down -v as an upgrade. Any Python source change invalidates the source fingerprint and requires a matching new research run; do not relabel old reports as current.
-
-No live trading, paid AI request, external message or remote VPS deployment was performed.
+Use the scoped deploy script for inventory/build/up/verify/backup/restore/upgrade/
+rollback. Never remove project volumes or perform global pruning. Full Linux tests
+use the installed runtime with disposable PostgreSQL databases; do not restart
+PostgreSQL while that suite runs. No live trading or real-money orders are available
+through ordinary application paths. No external message was sent.

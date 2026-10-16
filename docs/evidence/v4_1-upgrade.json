@@ -1,0 +1,593 @@
+{
+  "before": {
+    "ready": {
+      "ready": true,
+      "live_trading_enabled": false
+    },
+    "version": "4.1.0",
+    "portfolio": {
+      "initial_cash": "500",
+      "cash": "500.000000000000",
+      "available_cash": "500.000000000000",
+      "reserved_cash": "0E-12",
+      "open_exposure": "0E-12",
+      "equity": "500.000000000000",
+      "realized_pnl": "0",
+      "unrealized_pnl": "0E-12",
+      "total_net_pnl": "0E-12",
+      "current_drawdown": "0E-12",
+      "daily_risk_status": "WITHIN_LIMIT",
+      "weekly_risk_status": "WITHIN_LIMIT",
+      "daily_equity_change": "0E-12",
+      "weekly_equity_change": "0E-12",
+      "valuation_degraded": "false",
+      "missing_marks": "",
+      "positions": "0",
+      "orders": "0",
+      "pending_orders": "0",
+      "risk_state": "HEALTHY",
+      "control": "RUNNING"
+    },
+    "health": {
+      "operational_state": "RESEARCH_ONLY",
+      "operation": {
+        "observed_at": "2026-10-16T05:40:37.192417+00:00",
+        "last_completed_scan": "2026-10-16T05:40:37.191672+00:00",
+        "scan_duration_seconds": 3.8473221259996535,
+        "schedule_overrun_seconds": 0,
+        "markets_scanned": 3,
+        "successful_observations": 3,
+        "data_failures": 0,
+        "strategies_evaluated": 24,
+        "qualified_signals": 0,
+        "rejected_signals": 3,
+        "paper_entries_filled": 0,
+        "execution_outcomes": [
+          {
+            "symbol": "BTC-EUR",
+            "accepted": false,
+            "reason": "decision_not_accepted",
+            "order_id": null
+          },
+          {
+            "symbol": "ETH-EUR",
+            "accepted": false,
+            "reason": "decision_not_accepted",
+            "order_id": null
+          },
+          {
+            "symbol": "SOL-EUR",
+            "accepted": false,
+            "reason": "decision_not_accepted",
+            "order_id": null
+          }
+        ],
+        "next_scan_at": "2026-10-16T05:41:33.344369+00:00"
+      },
+      "coordinator": {
+        "owner": "coordinator_30c0ef7911ab4dfc88d71302b7a2752e",
+        "heartbeat": "2026-10-16T05:41:30.052418+00:00",
+        "expires_at": "2026-10-16T05:41:45.052418+00:00"
+      },
+      "postgresql": "ok",
+      "database_engine": "postgresql",
+      "exchange_data": "OK",
+      "data_freshness": [
+        {
+          "symbol": "BTC-EUR",
+          "source": "revolut-x",
+          "timestamp": "2026-10-16T05:40:33.592000+00:00",
+          "age_seconds": 57.357196
+        },
+        {
+          "symbol": "ETH-EUR",
+          "source": "revolut-x",
+          "timestamp": "2026-10-16T05:40:35.482000+00:00",
+          "age_seconds": 55.467201
+        },
+        {
+          "symbol": "SOL-EUR",
+          "source": "revolut-x",
+          "timestamp": "2026-10-16T05:40:36.469000+00:00",
+          "age_seconds": 54.480204
+        }
+      ],
+      "position_monitor_heartbeat": "2026-10-16T05:41:29.048099+00:00",
+      "worker": "ok",
+      "worker_heartbeat": "2026-10-16T05:40:37.179897+00:00",
+      "worker_age_seconds": 53.766748,
+      "pending_intents": 0,
+      "reconciliation": {
+        "checked_at": "2026-10-16T05:41:30.952463+00:00",
+        "problems": []
+      },
+      "risk_state": "HEALTHY",
+      "incidents": [
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:39:33.321067+00:00"
+        },
+        {
+          "message": "research_strategy_promotion_policy",
+          "severity": "INFO",
+          "state": "ENTRY_POLICY",
+          "created_at": "2026-10-16T05:39:33.321067+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:39:33.321067+00:00"
+        },
+        {
+          "message": "pilot_990697c3ab00f2469745d9b10168695e",
+          "severity": "INFO",
+          "state": "PILOT_STARTED",
+          "created_at": "2026-10-16T05:39:21.251815+00:00"
+        },
+        {
+          "message": "fresh_portfolio_valuation",
+          "severity": "INFO",
+          "state": "HEALTHY",
+          "created_at": "2026-10-16T05:39:20.878346+00:00"
+        },
+        {
+          "message": "operator_emergency",
+          "severity": "ERROR",
+          "state": "STOPPED",
+          "created_at": "2026-10-16T05:39:20.654131+00:00"
+        },
+        {
+          "message": "fresh_portfolio_valuation",
+          "severity": "INFO",
+          "state": "HEALTHY",
+          "created_at": "2026-10-16T05:39:20.507928+00:00"
+        },
+        {
+          "message": "operator_stop",
+          "severity": "ERROR",
+          "state": "STOPPED",
+          "created_at": "2026-10-16T05:39:20.254434+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:38:40.966601+00:00"
+        },
+        {
+          "message": "PermissionError",
+          "severity": "ERROR",
+          "state": "SYSTEM_ERROR",
+          "created_at": "2026-10-16T05:37:33.271650+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:37:33.269698+00:00"
+        },
+        {
+          "message": "PermissionError",
+          "severity": "ERROR",
+          "state": "SYSTEM_ERROR",
+          "created_at": "2026-10-16T05:36:30.100687+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:36:30.098463+00:00"
+        },
+        {
+          "message": "PermissionError",
+          "severity": "ERROR",
+          "state": "SYSTEM_ERROR",
+          "created_at": "2026-10-16T05:35:26.764928+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:35:26.762298+00:00"
+        },
+        {
+          "message": "PermissionError",
+          "severity": "ERROR",
+          "state": "SYSTEM_ERROR",
+          "created_at": "2026-10-16T05:34:52.236386+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:34:52.232758+00:00"
+        },
+        {
+          "message": "PermissionError",
+          "severity": "ERROR",
+          "state": "SYSTEM_ERROR",
+          "created_at": "2026-10-16T05:34:32.761089+00:00"
+        },
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:34:32.758936+00:00"
+        },
+        {
+          "message": "PermissionError",
+          "severity": "ERROR",
+          "state": "SYSTEM_ERROR",
+          "created_at": "2026-10-16T05:34:22.218942+00:00"
+        }
+      ],
+      "redis": "ok"
+    },
+    "containers": [
+      {
+        "name": "/autotrader-v41-acceptance-backend-1",
+        "image": "sha256:66979720ad936f7f1a2eabeb4034a195258bade80f87f0ca4d9b1eb2475604ce",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "8000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "18000"
+            }
+          ]
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-frontend-1",
+        "image": "sha256:4864f0aedbbf2f91b43725520ab6f6062e57eb80cb7a1e8cf9d298e44f590890",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "80/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "13000"
+            }
+          ]
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-postgres-1",
+        "image": "sha256:5913691f98fc01ec33df001372c69f03bbb200bf2f14a83db0f077670e15b19e",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "5432/tcp": null
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-redis-1",
+        "image": "sha256:b1a62613a18292a2be21e6ab96328a3df9a694438696f493ca1eee0d74690135",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "6379/tcp": null
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-research-worker-1",
+        "image": "sha256:66979720ad936f7f1a2eabeb4034a195258bade80f87f0ca4d9b1eb2475604ce",
+        "state": "running",
+        "health": null,
+        "ports": {
+          "8000/tcp": null
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-worker-1",
+        "image": "sha256:66979720ad936f7f1a2eabeb4034a195258bade80f87f0ca4d9b1eb2475604ce",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "8000/tcp": null
+        }
+      }
+    ],
+    "project": "autotrader-v41-acceptance"
+  },
+  "after": {
+    "ready": {
+      "ready": true,
+      "live_trading_enabled": false
+    },
+    "version": "4.1.0",
+    "portfolio": {
+      "initial_cash": "500",
+      "cash": "500.000000000000",
+      "available_cash": "500.000000000000",
+      "reserved_cash": "0E-12",
+      "open_exposure": "0E-12",
+      "equity": "500.000000000000",
+      "realized_pnl": "0",
+      "unrealized_pnl": "0E-12",
+      "total_net_pnl": "0E-12",
+      "current_drawdown": "0E-12",
+      "daily_risk_status": "WITHIN_LIMIT",
+      "weekly_risk_status": "WITHIN_LIMIT",
+      "daily_equity_change": "0E-12",
+      "weekly_equity_change": "0E-12",
+      "valuation_degraded": "false",
+      "missing_marks": "",
+      "positions": "0",
+      "orders": "0",
+      "pending_orders": "0",
+      "risk_state": "HEALTHY",
+      "control": "RUNNING"
+    },
+    "health": {
+      "operational_state": "RESEARCH_ONLY",
+      "operation": {
+        "observed_at": "2026-10-16T05:41:53.557918+00:00",
+        "last_completed_scan": "2026-10-16T05:41:53.557185+00:00",
+        "scan_duration_seconds": 3.1069748350000737,
+        "schedule_overrun_seconds": 0,
+        "markets_scanned": 3,
+        "successful_observations": 3,
+        "data_failures": 0,
+        "strategies_evaluated": 24,
+        "qualified_signals": 0,
+        "rejected_signals": 3,
+        "paper_entries_filled": 0,
+        "execution_outcomes": [
+          {
+            "symbol": "BTC-EUR",
+            "accepted": false,
+            "reason": "decision_not_accepted",
+            "order_id": null
+          },
+          {
+            "symbol": "ETH-EUR",
+            "accepted": false,
+            "reason": "decision_not_accepted",
+            "order_id": null
+          },
+          {
+            "symbol": "SOL-EUR",
+            "accepted": false,
+            "reason": "decision_not_accepted",
+            "order_id": null
+          }
+        ],
+        "next_scan_at": "2026-10-16T05:42:50.450229+00:00"
+      },
+      "coordinator": {
+        "owner": "coordinator_f2dcb8bb9b44465d9e7943706b9a7132",
+        "heartbeat": "2026-10-16T05:42:00.497582+00:00",
+        "expires_at": "2026-10-16T05:42:15.497582+00:00"
+      },
+      "postgresql": "ok",
+      "database_engine": "postgresql",
+      "exchange_data": "OK",
+      "data_freshness": [
+        {
+          "symbol": "BTC-EUR",
+          "source": "revolut-x",
+          "timestamp": "2026-10-16T05:41:51.173000+00:00",
+          "age_seconds": 13.596138
+        },
+        {
+          "symbol": "ETH-EUR",
+          "source": "revolut-x",
+          "timestamp": "2026-10-16T05:41:52.197000+00:00",
+          "age_seconds": 12.572142
+        },
+        {
+          "symbol": "SOL-EUR",
+          "source": "revolut-x",
+          "timestamp": "2026-10-16T05:41:53.206000+00:00",
+          "age_seconds": 11.563145
+        }
+      ],
+      "position_monitor_heartbeat": "2026-10-16T05:42:00.484792+00:00",
+      "worker": "ok",
+      "worker_heartbeat": "2026-10-16T05:41:53.546876+00:00",
+      "worker_age_seconds": 11.219497,
+      "pending_intents": 0,
+      "reconciliation": {
+        "checked_at": "2026-10-16T05:42:04.772702+00:00",
+        "problems": []
+      },
+      "risk_state": "HEALTHY",
+      "incidents": [
+        {
+          "message": "scan_cycle_completed",
+          "severity": "INFO",
+          "state": "RESEARCH_ONLY",
+          "created_at": "2026-10-16T05:41:53.557571+00:00"
+        },
+        {
+          "message": "waiting_for_completed_market_observations",
+          "severity": "INFO",
+          "state": "DATA_SYNCING",
+          "created_at": "2026-10-16T05:41:50.447982+00:00"
+        },
+        {
+          "message": "coordinator_acquired",
+          "severity": "INFO",
+          "state": "INITIALIZING",
+          "created_at": "2026-10-16T05:41:50.404860+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_REJECTED",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        },
+        {
+          "message": "research_promotion_transition",
+          "severity": "INFO",
+          "state": "RESEARCH_CANDIDATE",
+          "created_at": "2026-10-16T05:41:33.399869+00:00"
+        }
+      ],
+      "redis": "ok"
+    },
+    "containers": [
+      {
+        "name": "/autotrader-v41-acceptance-backend-1",
+        "image": "sha256:57dc995244ffcdb862f6322eefa8fcfe2266c7756b173ffee6504433a95b6e93",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "8000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "18000"
+            }
+          ]
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-frontend-1",
+        "image": "sha256:e5abb59ffa06b954c734ecd1f8fceb49784b935c06db5fabc5d83533ad03854e",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "80/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "13000"
+            }
+          ]
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-postgres-1",
+        "image": "sha256:5913691f98fc01ec33df001372c69f03bbb200bf2f14a83db0f077670e15b19e",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "5432/tcp": null
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-redis-1",
+        "image": "sha256:b1a62613a18292a2be21e6ab96328a3df9a694438696f493ca1eee0d74690135",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "6379/tcp": null
+        }
+      },
+      {
+        "name": "/autotrader-v41-acceptance-worker-1",
+        "image": "sha256:57dc995244ffcdb862f6322eefa8fcfe2266c7756b173ffee6504433a95b6e93",
+        "state": "running",
+        "health": "healthy",
+        "ports": {
+          "8000/tcp": null
+        }
+      }
+    ],
+    "project": "autotrader-v41-acceptance"
+  },
+  "backup": "/Users/mohammadkhataei/Desktop/AutoTrader/.tools/deployments/autotrader-v41-acceptance/20261016T054139Z-b27712.dump",
+  "restore": {
+    "restore_database": "autotrader_restore_07f30cf145af",
+    "reconciliation": [],
+    "original_database_modified": false,
+    "backup_sha256": "312c34aa49e7472c07d2d83d8b8eb68c589079a1458654bb43002d54b08e208a"
+  },
+  "previous_tag": "4.1.0",
+  "image_tag": "upgrade-20261016t054131z",
+  "previous_images_retained": true
+}

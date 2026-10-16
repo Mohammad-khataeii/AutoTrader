@@ -1,0 +1,17 @@
+{
+  "status": "PASSED",
+  "image_id": "sha256:0fb80b5f49928550c0535bafe76133886c51318707b261a10d7a47931b2f0c94",
+  "postgres_version": "16.15",
+  "libxml_package": "libxml2-2.13.9-r3",
+  "xml_parse_xpath_serialize": "PASSED",
+  "extensions": [
+    "hstore",
+    "pgcrypto",
+    "uuid-ossp"
+  ],
+  "backup_restored": true,
+  "journal_rows_preserved_after_restart": 1,
+  "reconciliation": [],
+  "original_deployment_database_modified": false,
+  "disposable_resources_cleaned": true
+}

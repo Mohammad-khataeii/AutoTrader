@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="13" time="1.405" timestamp="2026-10-16T06:26:55.728723+02:00" hostname="MacBook-Air.local"><testcase classname="tests.test_v4_research" name="test_shared_posting_proportional_release_and_final_dust" time="0.000" /><testcase classname="tests.test_v4_research" name="test_research_is_deterministic_causal_and_can_hold_cash" time="0.306" /><testcase classname="tests.test_v4_research" name="test_no_trade_or_tiny_sample_cannot_pass_validation" time="0.161" /><testcase classname="tests.test_v4_research" name="test_full_candle_quality_cannot_remove_an_entry_before_the_range_is_known" time="0.172" /><testcase classname="tests.test_v4_research" name="test_legacy_comparison_obeys_the_same_known_data_quality_gate" time="0.162" /><testcase classname="tests.test_v4_research" name="test_entry_liquidity_does_not_see_future_bar_volume" time="0.332" /><testcase classname="tests.test_v4_research" name="test_ensemble_uses_exact_frozen_parameters_and_refuses_missing_members" time="0.170" /><testcase classname="tests.test_v4_research" name="test_unfinished_higher_timeframe_candles_cannot_change_historical_confirmation" time="0.003" /><testcase classname="tests.test_v4_regimes_strategies" name="test_regime_uses_only_causal_benchmarks_and_quality" time="0.000" /><testcase classname="tests.test_v4_regimes_strategies" name="test_explicit_eligibility_independent_configuration_and_risk_off" time="0.000" /><testcase classname="tests.test_v4_regimes_strategies" name="test_linear_ema_series_matches_every_original_prefix_exactly" time="0.032" /><testcase classname="tests.test_v4_allocation_policy" name="test_profiles_correlation_and_monotonic_volatility_stop" time="0.000" /><testcase classname="tests.test_v4_allocation_policy" name="test_unvalidated_entry_gate_persists_and_protection_remains_available" time="0.001"><error message="failed on setup with &quot;Failed: Real PostgreSQL required: set AUTOTRADER_TEST_PG_ADMIN_URL. No SQLite fallback.&quot;">self = &lt;Coroutine test_unvalidated_entry_gate_persists_and_protection_remains_available&gt;
+
+    def setup(self) -&gt; None:
+        runner_fixture_id = f"_{self._loop_scope}_scoped_runner"
+        if runner_fixture_id not in self.fixturenames:
+            self.fixturenames.append(runner_fixture_id)
+        # When loop factories are configured, resolve the loop factory
+        # fixture early so that a factory variant change cascades cache
+        # invalidation before any async fixture checks its cache.
+        hook_caller = self.config.hook.pytest_asyncio_loop_factories
+        if hook_caller.get_hookimpls():
+            _ = self._request.getfixturevalue(_asyncio_loop_factory.__name__)
+&gt;       return super().setup()
+               ^^^^^^^^^^^^^^^
+
+../../Library/Python/3.12/lib/python/site-packages/pytest_asyncio/plugin.py:558: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../Library/Python/3.12/lib/python/site-packages/pytest_asyncio/plugin.py:944: in pytest_fixture_setup
+    hook_result = yield
+                  ^^^^^
+../../Library/Python/3.12/lib/python/site-packages/pytest_asyncio/plugin.py:407: in _asyncgen_fixture_wrapper
+    result = runner.run(setup(), context=context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:664: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+../../Library/Python/3.12/lib/python/site-packages/pytest_asyncio/plugin.py:403: in setup
+    res = await gen_obj.__anext__()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+request = &lt;SubRequest 'pg_repo' for &lt;Coroutine test_unvalidated_entry_gate_persists_and_protection_remains_available&gt;&gt;
+
+    @pytest.fixture
+    async def pg_repo(request: pytest.FixtureRequest) -&gt; AsyncIterator[PersistentTradingRepository]:
+        admin = os.getenv("AUTOTRADER_TEST_PG_ADMIN_URL")
+        if not admin:
+&gt;           pytest.fail("Real PostgreSQL required: set AUTOTRADER_TEST_PG_ADMIN_URL. No SQLite fallback.")
+E           Failed: Real PostgreSQL required: set AUTOTRADER_TEST_PG_ADMIN_URL. No SQLite fallback.
+
+tests/conftest.py:21: Failed</error></testcase></testsuite></testsuites>
