@@ -27,8 +27,8 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1695b91f0&gt;
             ],
             "markets": {s: copy.deepcopy(market) for s in ("BTC-EUR", "ETH-EUR")},
         }
-    
-    
+
+
     async def test_actual_experimental_worker_partial_targets_sigkill_restart_and_official_api(
         lab, tmp_path: Path, monkeypatch
     ):
@@ -41,8 +41,8 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1695b91f0&gt;
 &gt;       f.metadata["experimental_context"] = completed_context(cs, utc_now())
             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-tests/test_v42_lifecycle.py:67: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v42_lifecycle.py:67:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 check = &lt;function test_actual_experimental_worker_partial_targets_sigkill_restart_and_official_api.&lt;locals&gt;.&lt;lambda&gt; at 0x16957bc40&gt;
 worker = &lt;process_support.WorkerProcess object at 0x12fea5670&gt;, timeout = 40
