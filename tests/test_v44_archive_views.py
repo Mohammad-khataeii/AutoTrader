@@ -207,7 +207,7 @@ async def test_summary_size_time_query_budget_authentication_and_readiness(lab, 
             }
 
     evidence = await asyncio.to_thread(browser)
-    Path("docs/evidence/v4_4/api-benchmark.json").write_text(json.dumps(evidence, indent=2) + "\n")
+    Path("docs/evidence/v4_5/api-benchmark.json").write_text(json.dumps(evidence, indent=2) + "\n")
 
 
 async def test_pilot_started_under_test_replay_remains_synthetic_with_shadows_enabled(

@@ -1,0 +1,14 @@
+{
+  "data_kind": "SYNTHETIC_ACCEPTANCE_LOCAL_PG",
+  "accounts": 4,
+  "seeded_signal_rows": 240,
+  "before_bytes": 3690502,
+  "after_bytes": 5711,
+  "after_elapsed_ms": 121.4778749999823,
+  "after_sql_queries": 53,
+  "production_reference": {
+    "shadow_bytes": 3074748,
+    "shadow_ms": 652,
+    "source": "User-supplied single bounded production sample; not comparable latency conditions."
+  }
+}

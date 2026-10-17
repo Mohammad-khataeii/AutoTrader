@@ -1,0 +1,3224 @@
+{
+  "controlled_postgresql_execution": {
+    "status": "PASS",
+    "strategies": [
+      "A2_CONFIRMED_PULLBACK",
+      "B2_CONFIRMED_COMPRESSION"
+    ],
+    "evidence": "focused-tests.xml and compiled-lifecycle-tests.xml",
+    "purpose": "Synthetic acceptance only; not market performance"
+  },
+  "historical_proxy_study": {
+    "status": "EXECUTED",
+    "run_id": "research-20261017T083840",
+    "manifest": {
+      "comparisons": 300,
+      "costs": {
+        "fee_bps": "10",
+        "slippage_bps": "8",
+        "spread_bps": "10",
+        "volume_participation": ".01"
+      },
+      "created_at": "2026-10-17T08:38:40.042284+00:00",
+      "dataset_catalog_hash": "72d0dcfd3fac90b47a904a451efcd2589bf5e7f81716e486fba41228c8b4abd6",
+      "datasets": [
+        {
+          "actual_last_start": "2026-10-15T23:55:00+00:00",
+          "actual_start": "2026-04-19T00:00:00+00:00",
+          "base": "BTC",
+          "dataset_version": "40ebc11fa747a1a13402c82a7690765a1264bac72396750eaa2c1bdb32f2d45a",
+          "duplicates_removed": 0,
+          "file": "datasets/BTC-EUR-5m-40ebc11fa747a1a1.jsonl.gz",
+          "file_sha256": "4008cf0c1dbb2d891e879e00d77233570de7794b25fab56800ad765de8c0ea83",
+          "gaps": [
+            {
+              "count": 1,
+              "end_exclusive": 1777342500,
+              "start": 1777342200
+            },
+            {
+              "count": 78,
+              "end_exclusive": 1778226600,
+              "start": 1778203200
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1778270100,
+              "start": 1778269800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1778381700,
+              "start": 1778381400
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1778807700,
+              "start": 1778807400
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1779593700,
+              "start": 1779593400
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1779760500,
+              "start": 1779760200
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1783829700,
+              "start": 1783829400
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1784433300,
+              "start": 1784433000
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1786154100,
+              "start": 1786153800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1786504200,
+              "start": 1786503900
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1788573300,
+              "start": 1788573000
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789179600,
+              "start": 1789179300
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789184100,
+              "start": 1789183800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1791594900,
+              "start": 1791594600
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1791684900,
+              "start": 1791684600
+            }
+          ],
+          "historical_l2": false,
+          "missing_observations": 93,
+          "observations": 51747,
+          "provenance": {
+            "acquisitions": [
+              {
+                "end_exclusive": "2026-10-16T00:00:00+00:00",
+                "pages": [
+                  {
+                    "body_sha256": "bb038f6de95e7d27daea964c33750a114c74380b94fb6a0232009f0eaa650158",
+                    "ingested_at": "2026-10-16T04:22:44.859538+00:00",
+                    "raw_cache": "a5277e860a62aa3886db277e52c3f406b316a4bd23b63e1f6f930aae93b9e154.json"
+                  },
+                  {
+                    "body_sha256": "895addd8df6eee8c8bf992597230857297991d4fc3143275a5161a1877327e00",
+                    "ingested_at": "2026-10-16T04:22:45.283183+00:00",
+                    "raw_cache": "6047b87efb320766b3c36f534ee8ae39685bac0da1bbfc5500aaca1bf706062b.json"
+                  },
+                  {
+                    "body_sha256": "b2a20f58e729feb38d809ac37c06cf8b7f7795e4dde38b814165efeb794cecd1",
+                    "ingested_at": "2026-10-16T04:22:45.678722+00:00",
+                    "raw_cache": "e5f6b6c249e41a5c996f86f4acb5fb13f184ca7c353de54e5209f782bec996da.json"
+                  },
+                  {
+                    "body_sha256": "574770e2327646c9533a5ddc5401d875b6a1c0ac7b649d18e7d2ed624eafd205",
+                    "ingested_at": "2026-10-16T04:22:46.379491+00:00",
+                    "raw_cache": "234aa71e2518984bb3b0e21ecc3d18765853ddb6e6bd3f5034bf9ddaba187c70.json"
+                  },
+                  {
+                    "body_sha256": "0852b3d44477bbcce5f8925cfbdc50a4ac1095b4ef2a80fcd0a2bc0174a73d2a",
+                    "ingested_at": "2026-10-16T04:22:46.758312+00:00",
+                    "raw_cache": "5df12bba078d190ac831af9e9377b9dba11337451b3cd8cb1bf066b14ec4f7f8.json"
+                  },
+                  {
+                    "body_sha256": "741ca2e2cde4222b823a13c64ae8adc4badb9ba62d2e2a3bff6f4b3173bf9eec",
+                    "ingested_at": "2026-10-16T04:22:47.158761+00:00",
+                    "raw_cache": "ee07808e32780bc6e28d3e5be5453f55b7db44fdf64c9b7a6fa3d965b1fc162f.json"
+                  },
+                  {
+                    "body_sha256": "d20d8fd888bb78390d2d31b7eea121be68938533e603c758fd421a94279b9086",
+                    "ingested_at": "2026-10-16T04:22:47.543830+00:00",
+                    "raw_cache": "4e7c0c121f4046d2e6c16fa981c48babdb87ee7d061b9f17201fbfef543839ca.json"
+                  },
+                  {
+                    "body_sha256": "2fd8b1dc8b3742f23f8bb4d6ef6677ef14190036450a5ae91fdad2a3eb723877",
+                    "ingested_at": "2026-10-16T04:22:48.001853+00:00",
+                    "raw_cache": "e7bccf4f7b919462231364c0768c07195b036372dc52f027f218303c2180273e.json"
+                  },
+                  {
+                    "body_sha256": "c9e51be7a64fdcf8e5dc5e052b1289b92a2b91d1e0604da875647b1550078c52",
+                    "ingested_at": "2026-10-16T04:22:48.469924+00:00",
+                    "raw_cache": "0f797624611ac210772352d18c9d0f0cf658c4ca17793685359bd04cf5d168ef.json"
+                  },
+                  {
+                    "body_sha256": "50e8f01f155914673f2f49e630ca7aa05880af9e206b79c87a7d005706fa7a20",
+                    "ingested_at": "2026-10-16T04:22:48.834715+00:00",
+                    "raw_cache": "4358bfbb9fe6baa1bb5b2b12fb2353f1710337ca0177af3aee51741c3f4d1dc1.json"
+                  },
+                  {
+                    "body_sha256": "2456f0ec19dc30562b1d2f48861bcbd0532f97f339bbd0bd769bda2eb1cea63d",
+                    "ingested_at": "2026-10-16T04:22:49.240078+00:00",
+                    "raw_cache": "4082198297ec0c3660fae5f492a54121779a34a53920dbfb9fe8e16db8b03c5a.json"
+                  },
+                  {
+                    "body_sha256": "71c3f9c1499c7c2b59f3b1a6811396ee3177a95a7f5fb907d667548b66180cd3",
+                    "ingested_at": "2026-10-16T04:22:49.601240+00:00",
+                    "raw_cache": "fabd54f4bebcedb56d374678e5cd78444586922ff1907653e478401e00b4ad9a.json"
+                  },
+                  {
+                    "body_sha256": "546687306ef62b44a8133e8f2b3dc19c333e45c0bef6f1fc901d5847b909fec4",
+                    "ingested_at": "2026-10-16T04:22:50.099881+00:00",
+                    "raw_cache": "59f81c29bea125a081fa452094c0533c02a42950b593906b8e880daf454ab00e.json"
+                  },
+                  {
+                    "body_sha256": "cceb3e09ac54ccc9940ee958e828923cdadd3ba13eb1e330b669d82adc7733ca",
+                    "ingested_at": "2026-10-16T04:22:50.480069+00:00",
+                    "raw_cache": "d2cbbd79699aa1da3be2457d6425e8fb7927491a83ad0cb1fd45096b23a44258.json"
+                  },
+                  {
+                    "body_sha256": "e539e561c4415fbf74ed6fe5c218702ed8853f7d05ce2bfca02f4760236f02be",
+                    "ingested_at": "2026-10-16T04:22:50.864724+00:00",
+                    "raw_cache": "39fb44a394f12a373338e1b00b01168bd1107ea18bbb44925719e7bbdaab1080.json"
+                  },
+                  {
+                    "body_sha256": "d585bd585c54709168175c1c1d3a1515e873db482c3b829ad7e6077084c5b365",
+                    "ingested_at": "2026-10-16T04:22:51.261405+00:00",
+                    "raw_cache": "a141700d80e9e9ccd29e5ab3a89e7bf00496a44e2f92432317585aecb884ab55.json"
+                  },
+                  {
+                    "body_sha256": "f9bc6a0a29a9bf42b93c24687ef8fe2e07b163a3ed95ce03c996d45dccd46a47",
+                    "ingested_at": "2026-10-16T04:22:51.635388+00:00",
+                    "raw_cache": "49b61cfea598d03bc9756935c2c4810edbfd92a3c7c807c0d914c93ed6fc4b84.json"
+                  },
+                  {
+                    "body_sha256": "88fa36aa15ed09f2ff8136eb3ac2421d0cfe16bae88fc2c7f8927edda775565a",
+                    "ingested_at": "2026-10-16T04:22:52.197632+00:00",
+                    "raw_cache": "10c3ed2dc39a5058bf9b4a88eda94a1aafceda3d6ac30a086dca426c85311420.json"
+                  },
+                  {
+                    "body_sha256": "ba74dcc3ad1d1d875147734713bd6d002fb185430e2fca7f54ff49714cda75aa",
+                    "ingested_at": "2026-10-16T04:22:52.558330+00:00",
+                    "raw_cache": "566cf9619346c22badc4c4ce2f26ba4d564c79d06d3a69d5d04bc6df81513177.json"
+                  },
+                  {
+                    "body_sha256": "adce2c3571f8131a90b9a8cc0b809090c79e244942fabfb6f5efe4ab4e85623f",
+                    "ingested_at": "2026-10-16T04:22:52.990642+00:00",
+                    "raw_cache": "4ecad73ed15fd5cdc0ed919cea5810cd2217b69af09ab713e9ec18e19a13b990.json"
+                  },
+                  {
+                    "body_sha256": "516cf59b6c69e1ca414f92919cabd0b5de4073898047d7f5c9c8461b593d92fa",
+                    "ingested_at": "2026-10-16T04:22:53.471767+00:00",
+                    "raw_cache": "5bd9b1ff838017516498204d532732830fdeefcb8a63b5b7c8057d57f7dcad7e.json"
+                  },
+                  {
+                    "body_sha256": "2b1379f1fa64f71f90420217866e6f24dd4221b360c0636d2cc9cd145c1d1895",
+                    "ingested_at": "2026-10-16T04:22:53.833201+00:00",
+                    "raw_cache": "f5a54f47d57ce78c00009d0195f9287795753cdaa758681c887c86d26099f259.json"
+                  },
+                  {
+                    "body_sha256": "d63811d6e9b79475cd1267f7a767b7ba405c5dd4e2372d24badcea61489ab164",
+                    "ingested_at": "2026-10-16T04:22:54.362210+00:00",
+                    "raw_cache": "4ce5bae714702d303d3812261d5a8c4b5b32fcfd18b51e7c1d844f6abbbfaf7f.json"
+                  },
+                  {
+                    "body_sha256": "400bb2a4c894df63912af735099278266f29a04e02ffe27e2aa347a8be955a87",
+                    "ingested_at": "2026-10-16T04:22:54.748891+00:00",
+                    "raw_cache": "d9467358e1ebcd2605adbd04b9b4f9f40f9666b9e61efbaec401908eaa880315.json"
+                  },
+                  {
+                    "body_sha256": "c83ff8945ca9373b8b7dcfb80ac91a171d492d505eadc3a0b28e1515e8b32dbf",
+                    "ingested_at": "2026-10-16T04:22:55.106050+00:00",
+                    "raw_cache": "b3c3720dd5dffb65d4103147bba003c4103b897dc9c41fa554e246ec90da3677.json"
+                  },
+                  {
+                    "body_sha256": "46f1c95db7b24550c561a664487a33ce41b23e4c23578b11cfe2fea2dbe642d7",
+                    "ingested_at": "2026-10-16T04:22:55.541701+00:00",
+                    "raw_cache": "c28a5b19568be6d54fcc60b622aa3b1a09e104021fa561a306c6616940f75d0a.json"
+                  },
+                  {
+                    "body_sha256": "75dfea9ff50d754cc09311a3def7623612a7a23a0a3ba469492be4240c8afbcc",
+                    "ingested_at": "2026-10-16T04:22:55.901805+00:00",
+                    "raw_cache": "f281c17f5dad6532d0e069f23ee63b492460a3875dc90ba74bc3aac2acb541e4.json"
+                  },
+                  {
+                    "body_sha256": "eac190c9139cbd7b0bb7328f99d53e2f956c696acc1c6d7abc09e5ca555ec9de",
+                    "ingested_at": "2026-10-16T04:22:56.389641+00:00",
+                    "raw_cache": "43a85d8ba3f37edeb45ecc7ecb3c996a76a82cbd3c632d3ea68a271a9de6861b.json"
+                  },
+                  {
+                    "body_sha256": "46c31f44500c8c5627c2de37fc26b316cf9363fa634340f7ca4dffe7d17a88a0",
+                    "ingested_at": "2026-10-16T04:22:56.755062+00:00",
+                    "raw_cache": "08f7306f307bd4c1ea1aacf53f6ecf0ce2c65bc206535af84758516bef51dc91.json"
+                  },
+                  {
+                    "body_sha256": "96950697d15328eb56ef85fe8a4b7d382236823a84286fee0e25e39d62053967",
+                    "ingested_at": "2026-10-16T04:22:57.145268+00:00",
+                    "raw_cache": "d00a50355b6153829ae1288c82ff77928c95cdac174ca8e930128fa66983ab35.json"
+                  },
+                  {
+                    "body_sha256": "c199b8932cba92f3fefcf796d632641f4389d15d713ef079c3dec7fb48c28c64",
+                    "ingested_at": "2026-10-16T04:22:57.498821+00:00",
+                    "raw_cache": "b88aab17bccf6bf2b487e716f51098fd935c48f5e2b62fa83b3d7cb5713e9e5c.json"
+                  },
+                  {
+                    "body_sha256": "957980abfa0896f584862c9ccbe185f77e5558e07395ac75162da197fe1179b8",
+                    "ingested_at": "2026-10-16T04:22:57.843346+00:00",
+                    "raw_cache": "0bb3cd06ebae6aa58c8fd6d5d205376b33e362c39de566f52d1237a7a8b3b5d5.json"
+                  },
+                  {
+                    "body_sha256": "8dbebacf7881321018afd3f307cd4fd29b5f1f95141bba39f6b18d65e2cee50c",
+                    "ingested_at": "2026-10-16T04:22:58.214473+00:00",
+                    "raw_cache": "77f489fa7b28fdb35deabf2305d097569ab3d186a83e6d20c148f7229f9e992a.json"
+                  },
+                  {
+                    "body_sha256": "1c9d1c9b07bb7e1ee546ef83f0f79225262042e584897afefa4a0f4b9c682064",
+                    "ingested_at": "2026-10-16T04:22:58.579781+00:00",
+                    "raw_cache": "8d286effe009fa660b1ed7614cf5aa5dd6bc060bd4e1c77ff03fe290d7f5a886.json"
+                  },
+                  {
+                    "body_sha256": "818978ef6f8d84e47137dfc2a09b38a6e080b866b1033efdc8df74a9450d2374",
+                    "ingested_at": "2026-10-16T04:22:58.944680+00:00",
+                    "raw_cache": "d8eec288d799b69d288dd1130d7d5b29cabfd9e49680f55fc83be51c4ebd6ab4.json"
+                  },
+                  {
+                    "body_sha256": "de8c8265f10720086d720c358bf9bd5c9a230fd076d8bf4d4aa34553730c4884",
+                    "ingested_at": "2026-10-16T04:22:59.340974+00:00",
+                    "raw_cache": "99910c0dac8bbd487b6846dc29a22d22a538b40edd78d89020bf521cbf7dfd24.json"
+                  },
+                  {
+                    "body_sha256": "f59f03d8abfe56221e666ba60cc02dab1b27b0a5627a86bfd0d7d32dadc94004",
+                    "ingested_at": "2026-10-16T04:23:00.260907+00:00",
+                    "raw_cache": "03d3dbdf87edfa7ab8d720d4ef366b0511fc99d3652ea0194d4ac4cb16ead511.json"
+                  },
+                  {
+                    "body_sha256": "5fbcbf8a8e6ab5061949453d1675fa310b2dad3761266ac46814e1a9a27337f0",
+                    "ingested_at": "2026-10-16T04:23:00.630951+00:00",
+                    "raw_cache": "da2a222faad70d8e2fcfe2c5f7458f3a1cb8e4854ec3d1e6e1fc85cd7016241d.json"
+                  },
+                  {
+                    "body_sha256": "699356d99c165c6c1c4a1741979362e748fd43ed3bcc4599196471c5f6381831",
+                    "ingested_at": "2026-10-16T04:23:00.993438+00:00",
+                    "raw_cache": "3f16e225d186ce335d8699a8755c41c6c6c8eab1dc1e6c71e666470385a9df34.json"
+                  },
+                  {
+                    "body_sha256": "3141528dec492a9bae5cbe43a6369e13798fe9ffc811277a62e7f270c481c8a7",
+                    "ingested_at": "2026-10-16T04:23:01.382937+00:00",
+                    "raw_cache": "811963dac027e9aba2a2b7a9e8ce47bf11ec8182ea69c8777e076bc53c9fe5f6.json"
+                  },
+                  {
+                    "body_sha256": "f1cf3a88c0df005b56c0ca8445c1fd27b682fe8bf50b47e224df56a863ab2bd4",
+                    "ingested_at": "2026-10-16T04:23:01.833545+00:00",
+                    "raw_cache": "1c5bf9eee8ab458b54c7b460685e7158d30547a3c44ac8fa37d14dada28dbba1.json"
+                  },
+                  {
+                    "body_sha256": "8c2b87a2e6e6535e813a9dba2e47c897e3afdf9de92d4655f469d2aa46b60a6d",
+                    "ingested_at": "2026-10-16T04:23:02.257139+00:00",
+                    "raw_cache": "7c27c46b6bf85d7a07dcecb2c913156a889e7e0dfef10d0b93d3b0509bda0c5c.json"
+                  },
+                  {
+                    "body_sha256": "3bc4e2703758910d9bb000a17c7e709d9682552c565a647d31d57139fbde014c",
+                    "ingested_at": "2026-10-16T04:23:02.682771+00:00",
+                    "raw_cache": "87bed5976737dd6359d31086c0f86dd1b0ddeb6c64a1237bf5982e5cc599644a.json"
+                  },
+                  {
+                    "body_sha256": "c6e05fb5c2782447b52c5a27681c64a1c1da7545d213e2c0261c186095282e21",
+                    "ingested_at": "2026-10-16T04:23:03.047325+00:00",
+                    "raw_cache": "5b39d8c886d46cf6c4619df3d9bb2784dde8b1d92761c6b3d1daf75c4bb3ad1f.json"
+                  },
+                  {
+                    "body_sha256": "dd12cbfa5051796fa004765d709cef784207921b42e0b674f59b30e1166113dd",
+                    "ingested_at": "2026-10-16T04:23:03.412874+00:00",
+                    "raw_cache": "9b309ac392bd8dd58ee0bdf9f75f446f946d234cc6f6d4e60c4893f9e3ecad80.json"
+                  },
+                  {
+                    "body_sha256": "de112852be895d0bcc32f106777f79815d3b0fbbcb20b991750fc2a22a803fa2",
+                    "ingested_at": "2026-10-16T04:23:03.777761+00:00",
+                    "raw_cache": "af0e8f69d0fe443ce9cd4c7a988f0f85962b36fe687a067de492aa6eda1884a0.json"
+                  },
+                  {
+                    "body_sha256": "f9ba639ca2f8161a07e792282411e1cf9a906938f89dd83e9abdb9db5c75bcd8",
+                    "ingested_at": "2026-10-16T04:23:04.195766+00:00",
+                    "raw_cache": "ba5e8401393ca3c8b601666b1c635682f18b08834f9de97b3eb6a7d480360bf5.json"
+                  },
+                  {
+                    "body_sha256": "fa52fc2d443bb20ebb9c61c617dd7130683a61151791c93633e9f870122405ea",
+                    "ingested_at": "2026-10-16T04:23:04.606426+00:00",
+                    "raw_cache": "6e68666b72388c4e30f2c63a8c5da794736a96eccaf9eed6c736efcda82f2da3.json"
+                  },
+                  {
+                    "body_sha256": "7b401e016a030f244508b7f548c031917ae55bf17909ee07149facb8376fdc53",
+                    "ingested_at": "2026-10-16T04:23:05.483395+00:00",
+                    "raw_cache": "813ab4a46a7f9e02fe2160ce5554794c7b879d6af6716a6dd4ece23529bbdfa7.json"
+                  },
+                  {
+                    "body_sha256": "d79ab2fb986417f1a4c60613d358f0a19d31bfe37c09f43a25e93dc758182099",
+                    "ingested_at": "2026-10-16T04:23:05.851717+00:00",
+                    "raw_cache": "b38bd5c19e466351cc26f6435bb006b06a664023942607ae87358604e3779831.json"
+                  },
+                  {
+                    "body_sha256": "8585f7fde23a42ae6c95460d162bbd17962b5d82d58349d525f0a50e362ea04b",
+                    "ingested_at": "2026-10-16T04:23:06.261212+00:00",
+                    "raw_cache": "04a066a935e8ebb3542444e2fe4dcb68be559a4463a6937e2151554ea6a02745.json"
+                  },
+                  {
+                    "body_sha256": "e9fb438abf499edc1ba232250c295d4a647840cfb725004aecb4eea04f1e52f4",
+                    "ingested_at": "2026-10-16T04:23:06.638463+00:00",
+                    "raw_cache": "73b30d8e67d0d97ad8c908894c836a44185870ef865c5a8f60819d476796c245.json"
+                  },
+                  {
+                    "body_sha256": "5ea36330e124c89d5df325f0018b45f6cdaf28554371c99024fea0a874c4c7dd",
+                    "ingested_at": "2026-10-16T04:23:07.094303+00:00",
+                    "raw_cache": "c5090c7ac9643b46464e701a87a9b55bee7f9acedbf3c46b8a61e61523d15e3a.json"
+                  },
+                  {
+                    "body_sha256": "9188d31aee9e26b9ff44992c56e2f57481eacf0b81cbf06eba4db9273c93a381",
+                    "ingested_at": "2026-10-16T04:23:07.476791+00:00",
+                    "raw_cache": "124b4d9bcb603e5ceb5446394a8c2aa14d9483cddb5db1c32cfc7d246baf26f2.json"
+                  },
+                  {
+                    "body_sha256": "64b528f4c4783e151e8f4f2475588823a1e1cec71b6bfcaff7290824ff9eba49",
+                    "ingested_at": "2026-10-16T04:23:07.923328+00:00",
+                    "raw_cache": "f6e0f3e6e3a523b19fa28206e5b37f1adcd9214ff5c2dd2a4796dfd1d654c789.json"
+                  },
+                  {
+                    "body_sha256": "951f84c379fb2b0ab14b034ced15febcde0aeff44107459798e6062327709e42",
+                    "ingested_at": "2026-10-16T04:23:08.286742+00:00",
+                    "raw_cache": "f7379f4f4f3baab6e72728f374641b6c1bb32707b3eba7b449bfd74bd48de238.json"
+                  },
+                  {
+                    "body_sha256": "05f8744ad048765aeb1895dc2b771616e0db0664caf6da5ea9b56a420b05be7d",
+                    "ingested_at": "2026-10-16T04:23:08.649150+00:00",
+                    "raw_cache": "060674fc7a1761a2647a4c05569ca298b7be9ebdb66a0af8ad426776869eea94.json"
+                  },
+                  {
+                    "body_sha256": "3ffe98282e4e04f0b782c09503c2973f0a4c9df8a7aa3bba694be930f50f5746",
+                    "ingested_at": "2026-10-16T04:23:09.024553+00:00",
+                    "raw_cache": "71d6f2e1a13edc8e26b898c4aa121b6b3a290ae70e6a010363e07051b259d43e.json"
+                  },
+                  {
+                    "body_sha256": "a7e55d6e8641cab4ee0ad23f8bb59c77d4b489121abcf203820c8205cd24ade1",
+                    "ingested_at": "2026-10-16T04:23:09.399508+00:00",
+                    "raw_cache": "babb266698926918a20a8bab6c7e7a9cc89a556629eccdf37a0cd9026bb69cff.json"
+                  },
+                  {
+                    "body_sha256": "a82a6e5155a46775413a62566c544817954f4b8058a3901a40f3fcf3f2926db7",
+                    "ingested_at": "2026-10-16T04:23:10.149802+00:00",
+                    "raw_cache": "027ccc47a5448c1a94529145dd6b90f70d5970a1a021b4505a0b34593735439c.json"
+                  },
+                  {
+                    "body_sha256": "b24678681761a5f9899d62dd61ce8818039edc0b8f90dd601b7c1473f123d4b6",
+                    "ingested_at": "2026-10-16T04:23:10.561721+00:00",
+                    "raw_cache": "47137ef6f8d30bf590608251c0a0e9961ae91e872aba7dfb064ef66d90b66c99.json"
+                  },
+                  {
+                    "body_sha256": "d5136375ef8266bcced355af42fa36658800552e181e3c1ced457567bddd4199",
+                    "ingested_at": "2026-10-16T04:23:10.935841+00:00",
+                    "raw_cache": "8a6021fb33a522455645d3f7b84f9e69f5222ee70e244686764c49c7004615f5.json"
+                  },
+                  {
+                    "body_sha256": "231a9c07644584c06ec9d89051a8ca7fd2d8b75964d55b00274f1617da0c23f4",
+                    "ingested_at": "2026-10-16T04:23:11.582519+00:00",
+                    "raw_cache": "4853e581df8c2a897bd18daf3381df74f1069eb29210f51e0bb2ffbed3988cfc.json"
+                  },
+                  {
+                    "body_sha256": "bac92f2654883becd5001f3d10ebfa82acdb0b9f33efa2d87d0f5ba993968865",
+                    "ingested_at": "2026-10-16T04:23:12.118989+00:00",
+                    "raw_cache": "06a0721157fde3133d408cc25a3f60ba86640172d38efae3d36f869d47f32cd7.json"
+                  },
+                  {
+                    "body_sha256": "a4487ac8a5a54759cf1ff11109f36131d574cf3e978fc93fc1eac4a7cf323ea2",
+                    "ingested_at": "2026-10-16T04:23:12.518226+00:00",
+                    "raw_cache": "d0397bc44118a08f32a01fd9e2644f9cb04940629c0693de3c1aaa66d6d29d97.json"
+                  },
+                  {
+                    "body_sha256": "a10a0e52f0215f8ff9818cfbf8d56726ab1a4460938b087b45a32f8495b14038",
+                    "ingested_at": "2026-10-16T04:23:12.928340+00:00",
+                    "raw_cache": "08c2498239f66afb682188bfc4e765abcde2f0bd34f16be58f8625aac638d731.json"
+                  },
+                  {
+                    "body_sha256": "c984339badc4bf17443cf0f84cdf0d99a50c5ea739ec7465339cc5d1997a0e8d",
+                    "ingested_at": "2026-10-16T04:23:13.441157+00:00",
+                    "raw_cache": "be34c22dd6667f12418ce58465f85e25b1b822478d1328871b5e2eefbe481d70.json"
+                  },
+                  {
+                    "body_sha256": "199a8e68c77ffa61adc0da8f7218b0c4f15699e80e06e9152b4b6b1698e5eb11",
+                    "ingested_at": "2026-10-16T04:23:13.855959+00:00",
+                    "raw_cache": "4077e7bcf5c271a1a0ca5eb9b374e53debc0cddf6cccfd8629b861112e1f36a5.json"
+                  },
+                  {
+                    "body_sha256": "5648cd8f2110839e4ce866878dd08379edc12bedd038469d07a383eabb16bd3d",
+                    "ingested_at": "2026-10-16T04:23:14.221777+00:00",
+                    "raw_cache": "994de0bb83841696992bf4527e82e306f45f23d5ec17822919175582fb361128.json"
+                  },
+                  {
+                    "body_sha256": "c5b85bd578e2bb697615b26c91140c28f841325040ffff60f6d6cc1899d22764",
+                    "ingested_at": "2026-10-16T04:23:14.673903+00:00",
+                    "raw_cache": "762dccf6034efd406fba7ef4a3b477ce12daefad3bf2c1e8343469f02aa2608b.json"
+                  },
+                  {
+                    "body_sha256": "b6ac16a0102560c497a1b2bf26e39dd2fe1072ddff704364351d1826d1eed071",
+                    "ingested_at": "2026-10-16T04:23:15.082094+00:00",
+                    "raw_cache": "535c0512839d76fcea8b7467e6c7c02d4891e9ca00b16492519955e85019c096.json"
+                  },
+                  {
+                    "body_sha256": "299916a11cd0428c0397a12f5b9e00357b89cd3c36de975f81ea8349e2e4fda4",
+                    "ingested_at": "2026-10-16T04:23:15.496531+00:00",
+                    "raw_cache": "3947ae0380189bafbb71aaaf94b408d25511428efd0f2cabdd649eebc526eb1f.json"
+                  },
+                  {
+                    "body_sha256": "44a1350104752e370210fe2e2944739c1805bcecd6e911aa0d8e3557b542c943",
+                    "ingested_at": "2026-10-16T04:23:15.905092+00:00",
+                    "raw_cache": "c53c3c7f3089e2f62e72ae5f9493d061f6ad949aff56c93dbfbbf212bd98f08a.json"
+                  },
+                  {
+                    "body_sha256": "d9602a06eb5fd61e4969f35638c1134bc67a7b7a94451ab5bdc797b4c5ae6f05",
+                    "ingested_at": "2026-10-16T04:23:16.317181+00:00",
+                    "raw_cache": "bc16bcd51d30c52a706b4d7ef3f2c1f615902993e58ed023de390fac23840015.json"
+                  },
+                  {
+                    "body_sha256": "ac0fd5b4d57476e9371813f91aa5b450c2474ad8c8499e83cfa85ef121d1b103",
+                    "ingested_at": "2026-10-16T04:23:16.728337+00:00",
+                    "raw_cache": "053ecd1182a9a4a7a5582183fcfb561264a9d6b545369f4a0ed18f57de2ce2bc.json"
+                  },
+                  {
+                    "body_sha256": "296423e3341c55896c40fe6de550da52c919720abcf916197401f80c05d544e5",
+                    "ingested_at": "2026-10-16T04:23:17.462701+00:00",
+                    "raw_cache": "e5bab10199c107a159003181d33c193d94fea3995756441f05fd310299f4e53b.json"
+                  },
+                  {
+                    "body_sha256": "525540ecc65675daa43697214291af6b5209af471836c60137edd5b715410a33",
+                    "ingested_at": "2026-10-16T04:23:17.895370+00:00",
+                    "raw_cache": "f857561cc15bd9156b562f86d3f3b702d3e50fd39ab4dd5ff5fae32505a03307.json"
+                  },
+                  {
+                    "body_sha256": "b89680262b19526c4beef987a18315baf728ce48ff1522f07aab7b4c51331a04",
+                    "ingested_at": "2026-10-16T04:23:18.277214+00:00",
+                    "raw_cache": "ca3bb1d891caca32d2afd1b9a58461613357370065e3225facec31d804a60e15.json"
+                  },
+                  {
+                    "body_sha256": "9f668584723cf741d7ad57a4441472e2af1463fbdaf17b21632e632edc61ea6b",
+                    "ingested_at": "2026-10-16T04:23:18.678586+00:00",
+                    "raw_cache": "0c8129eb5552d0915560fe207c509c8137e4efe9640c83b00e22bd4c8201b5b2.json"
+                  },
+                  {
+                    "body_sha256": "c5dc34d1f69315c7e67632361f331526bb7060a35df6a925cca21a684428f6cd",
+                    "ingested_at": "2026-10-16T04:23:19.109009+00:00",
+                    "raw_cache": "23e3269991d7924e9b5f303458a3aae125d96ac68fb3497d7cde17252da3ddc3.json"
+                  },
+                  {
+                    "body_sha256": "6adf3c8620f579f9ac8379f7105fd96e1767c5ac4508810cfc67d46bc4d73f43",
+                    "ingested_at": "2026-10-16T04:23:19.505217+00:00",
+                    "raw_cache": "2fb2475f3b01218fab5d15cb202569d375b20fa3752640b525088e664676b7be.json"
+                  },
+                  {
+                    "body_sha256": "6c122bc76b26753b04601258f5f48bc1e0809b07d92bac4b4f1304444e6daa0e",
+                    "ingested_at": "2026-10-16T04:23:19.874223+00:00",
+                    "raw_cache": "c4f1f6d67aa023c639844d3f01ff668e62117d86ffc7753f1b4d399b87b2c934.json"
+                  },
+                  {
+                    "body_sha256": "a641d7a614dbc658e7bddbb7e301902a8a1037f8873062ed3a4e47e7b73bcdaa",
+                    "ingested_at": "2026-10-16T04:23:20.255560+00:00",
+                    "raw_cache": "41e07bb1272fab46e21cde0641a55c814346fba951567ab3970cd993d9251815.json"
+                  },
+                  {
+                    "body_sha256": "b65517f3b8e357cdf6bae711fb882ce2f3bca3e3b00a97e1d0bd33b07cb2a2f1",
+                    "ingested_at": "2026-10-16T04:23:20.722996+00:00",
+                    "raw_cache": "de230727b370756f09ff64e15116572ed14295f63a0dbeb5ca557dcb970bbc07.json"
+                  },
+                  {
+                    "body_sha256": "a7764c7375fca9634af80dc6b15781aed6d7dd530195444523b9f06d9214dae4",
+                    "ingested_at": "2026-10-16T04:23:21.086217+00:00",
+                    "raw_cache": "e2e5b8e3f48ebb978388911b414bfa9ba4a8408beec2a67f68c57b4f6de49f27.json"
+                  },
+                  {
+                    "body_sha256": "dd96088dffa2b79fb62fde4611f23c1b572e4c736c59caad84d6db0f85ec7c81",
+                    "ingested_at": "2026-10-16T04:23:21.739502+00:00",
+                    "raw_cache": "064bc52b8b440502eb1f2014f50df1b9dcdafb81052243cec9d5e324ee866829.json"
+                  },
+                  {
+                    "body_sha256": "c047910f07d06d2942efc050abb4e975a7b2607cdd1bb40d56bdfc3bf85b25cf",
+                    "ingested_at": "2026-10-16T04:23:22.091461+00:00",
+                    "raw_cache": "eec1343f4d11102491f9c8ec09555eb8dc07b0ef75256ba33489411e0d5155b6.json"
+                  },
+                  {
+                    "body_sha256": "ec3efe803df79063e2edb7b1f82243220249f48f2aa14065e451c37c913d948f",
+                    "ingested_at": "2026-10-16T04:23:22.464852+00:00",
+                    "raw_cache": "9426e7df389bbbd9a197d1cd2ac7ce69bfe6d6bdec60793c34a8322ea32c74ca.json"
+                  },
+                  {
+                    "body_sha256": "f5c60d456fb69ecdb5c4815aaa1720c3ff30f0f29725ddd59113e6e5b4d969ae",
+                    "ingested_at": "2026-10-16T04:23:23.407989+00:00",
+                    "raw_cache": "3a21268eaf247a885d5eb030feea12710ce46aaf2f8cdaac5a3b0062bb00a881.json"
+                  },
+                  {
+                    "body_sha256": "0c8c4048ed9272d3e6591ea68a95582a959de051f58f35b0922188925ded1f94",
+                    "ingested_at": "2026-10-16T04:23:23.841390+00:00",
+                    "raw_cache": "a261627b42dbe515c18261e43265a19427ff9ae27bdca3ebc5cd81357063d252.json"
+                  },
+                  {
+                    "body_sha256": "94aacef2ce9689f13b4d5b8ce487cafdf1b94dc6fea7bf4750a89e6f19884348",
+                    "ingested_at": "2026-10-16T04:23:24.493566+00:00",
+                    "raw_cache": "d05007618b49fc192215084867ac09041e5a7465da6bc6bbd602ebae9f009246.json"
+                  },
+                  {
+                    "body_sha256": "10d3ab511a39ca85138f2913124fb562836400e49e1ef1322526632c88af3faa",
+                    "ingested_at": "2026-10-16T04:23:24.901798+00:00",
+                    "raw_cache": "b76a0938a0860116267f0816c11be36ab632ea88995b09fc3abd9c743d4b1f27.json"
+                  },
+                  {
+                    "body_sha256": "335be90cfef499da9ce5c7e64fd317e35ea93a2950622574f69bf4687ef6a9f5",
+                    "ingested_at": "2026-10-16T04:23:25.277428+00:00",
+                    "raw_cache": "d332ac7ccaa8c2fc49182c073f8b7b2ed2db9a41d7748097f5b93d479efee6e6.json"
+                  },
+                  {
+                    "body_sha256": "5e2d83421dac66d97e06f90012a12484f2ee63bccc3b27a2948b2dcb80118473",
+                    "ingested_at": "2026-10-16T04:23:25.752516+00:00",
+                    "raw_cache": "aef2cdb8d729a924d59314bde22edbee59fd8cb268b84fbfc88cdfc017fc1385.json"
+                  },
+                  {
+                    "body_sha256": "340f13c5bbb3ca8f184048ca5b7f3a17272811f23d70add29b4cb7fd69c7a086",
+                    "ingested_at": "2026-10-16T04:23:26.125765+00:00",
+                    "raw_cache": "276240d2454e910728845ec363ccddb6eef732e9ca52272134154302a2038ab4.json"
+                  },
+                  {
+                    "body_sha256": "d354995baf6cc6f3ca78e3050324871d933a2023f21d9ec7ded33ff95638038a",
+                    "ingested_at": "2026-10-16T04:23:26.493310+00:00",
+                    "raw_cache": "b9d4c4b5f82c2dcd082025d69039f0c850a5b0a08e696a89a65c491a79536bd9.json"
+                  },
+                  {
+                    "body_sha256": "5c15fa5d9cd38e19136cdb045bb958abd889e340420bb764220bb40a99019b82",
+                    "ingested_at": "2026-10-16T04:23:26.854130+00:00",
+                    "raw_cache": "ff467ddc5ea2bee2ff9f65ef826c018e738c782a86bf604b76c3795686d153c5.json"
+                  },
+                  {
+                    "body_sha256": "5e73a183f3b304c3028180ae3dea3b85fb60a17378d94d1e50a7729b261977e6",
+                    "ingested_at": "2026-10-16T04:23:27.225879+00:00",
+                    "raw_cache": "41bfcad7f5fdd8de3c9219eb50d6a4a3006b78a7e9822b355ce8bcae8be94a6b.json"
+                  },
+                  {
+                    "body_sha256": "0eebd3d3985ba991e9a984911c580e66767df7bfda4391f7a4ac6c84d4de7c09",
+                    "ingested_at": "2026-10-16T04:23:27.620508+00:00",
+                    "raw_cache": "e23f7ea5a094a7c1147a4388f2b7306d7a5a6604cddebe8fe1a697beb9dfdc0c.json"
+                  },
+                  {
+                    "body_sha256": "532aebe52e8290de62cf1106aa748779b0d8c15e2e30107ae0f3793889b82c3b",
+                    "ingested_at": "2026-10-16T04:23:28.396159+00:00",
+                    "raw_cache": "83f40d5a8e4b3d437e90cc4c9d8a380406e4f946a043684c12324318e99f3ca7.json"
+                  },
+                  {
+                    "body_sha256": "479ac5cfbcdf77d7ef963d52eb824a7529146f866ed6fae6a9a5c0decc5a83a2",
+                    "ingested_at": "2026-10-16T04:23:28.771673+00:00",
+                    "raw_cache": "055f3fb998193f45a163e75796079da8de3ea0e1b95cde01e4cbe934c02feeee.json"
+                  },
+                  {
+                    "body_sha256": "54cf07ffa2bea168631fe629cd5eb5443637a1ffe1605a896073c7c9a69e7101",
+                    "ingested_at": "2026-10-16T04:23:29.171438+00:00",
+                    "raw_cache": "e4323edeab509dc067fd134c004f51e0b82928443a9e887ad07ee3a45c339239.json"
+                  },
+                  {
+                    "body_sha256": "22d39f241e7cc48bb202392539d3155343d1ec40f5f6e4978ab90e62c10f5cf5",
+                    "ingested_at": "2026-10-16T04:23:29.574843+00:00",
+                    "raw_cache": "9c04e30fcb9df217a876bbf46b12a25774c523cd21a4a00505f6fe6bd323e071.json"
+                  },
+                  {
+                    "body_sha256": "399641fb0df903519b2feda4cef82ae0807331980a32c7ef47b92f947a653547",
+                    "ingested_at": "2026-10-16T04:23:29.990205+00:00",
+                    "raw_cache": "98ea471a46ca52fd0dd4267dabbcb12e3e34fd506a0c2b69b3f6ec151e3ba005.json"
+                  },
+                  {
+                    "body_sha256": "8220d148b7360bea8aea9953f75e57f4c60cbb5ff57086a10df116934b2712d0",
+                    "ingested_at": "2026-10-16T04:23:30.398025+00:00",
+                    "raw_cache": "e32efd7180e68470c5edcd195da24d714e69009e4079c93461288c4eebac958a.json"
+                  },
+                  {
+                    "body_sha256": "f7c7824d8207b8cebca5fdfa6dc7c031d127c5b456e7fd5ef724b30f921d4c99",
+                    "ingested_at": "2026-10-16T04:23:30.767954+00:00",
+                    "raw_cache": "4796a4b651000aebdf6e1ba86652195c490a9ab497c3e3b00698bd46da7987a1.json"
+                  },
+                  {
+                    "body_sha256": "079214f9b9ec702a001c2015b2cd5e0dd4167c379b1e942b57e78005ba6e17ac",
+                    "ingested_at": "2026-10-16T04:23:31.200969+00:00",
+                    "raw_cache": "8bcf700fc64f3a5865130416fa3b941967deceb40259e9af15bbcb65d4337419.json"
+                  },
+                  {
+                    "body_sha256": "dd00d37deffe568669371bd285c818ba666a2829dc6c7d5916a9ede4fe2b1466",
+                    "ingested_at": "2026-10-16T04:23:31.568799+00:00",
+                    "raw_cache": "586df9b1c9730c03688f14e4489cd763b310363415571e682ded771c26138414.json"
+                  },
+                  {
+                    "body_sha256": "3ca71b815a0f0ed7f6777f0fd1cb8f25958216905c27e0453aac65d4bc23f789",
+                    "ingested_at": "2026-10-16T04:23:31.947244+00:00",
+                    "raw_cache": "f0d643f4fcd261944dd0cf99e3412fe03aedb9b36fe120582bfeef377b04cbf3.json"
+                  },
+                  {
+                    "body_sha256": "07102321ab43c6937e346fb0114b04f8e3d52d2c9fe9cf4b5cd1c7b81b392f8e",
+                    "ingested_at": "2026-10-16T04:23:32.328827+00:00",
+                    "raw_cache": "bbc9b5352791359d6d133942eee1a216ec18df1d8d721dbcbca022ca0425cd5b.json"
+                  },
+                  {
+                    "body_sha256": "e6cee69c410ac8461d49a482bfb41678e8c0c231d42a91bba92ad8fd0b202fb0",
+                    "ingested_at": "2026-10-16T04:23:32.758080+00:00",
+                    "raw_cache": "dd1444c051ec948f93dceb6dd7b0463821413cdcc152f4e8cf57b44feb188295.json"
+                  },
+                  {
+                    "body_sha256": "bec406d183aca58286eeb7c9dd4549c27a10a5cc649ccf255c6be63a288e18a2",
+                    "ingested_at": "2026-10-16T04:23:33.409729+00:00",
+                    "raw_cache": "2bf90ed3ae132af0011fa85253c646586c61fd32650d4ae98f1d10a0dfb933c2.json"
+                  },
+                  {
+                    "body_sha256": "ba10b5cf8c4da8d819c6169978648b820c173c3b3115fe11480c40b3a76b9d4e",
+                    "ingested_at": "2026-10-16T04:23:33.769263+00:00",
+                    "raw_cache": "4b5224698827d5f52d8925523256deeaa61fb6dcc83be7af884f2a6a1db5be73.json"
+                  },
+                  {
+                    "body_sha256": "77e20a1a8c8895ee8d7549104b3a8235a6bea73c22fa8ba584543ff0b29e7139",
+                    "ingested_at": "2026-10-16T04:23:34.138836+00:00",
+                    "raw_cache": "78a0e788ba515d60fef441b0a4b1754ccb69987977985a2bc15a6613f98f0c1e.json"
+                  },
+                  {
+                    "body_sha256": "695b55bcf480139ab2a5355203395f1051cddfbb33b7b1b3c26385e39016197f",
+                    "ingested_at": "2026-10-16T04:23:34.511490+00:00",
+                    "raw_cache": "892f2a1fde6d8233d7980ea490ecbdb5f2b092984acb6548e076c74152e8c096.json"
+                  },
+                  {
+                    "body_sha256": "e69d1985da4fc206276a56fabbafafe823417f536f6989b16deb734529184cf0",
+                    "ingested_at": "2026-10-16T04:23:34.885108+00:00",
+                    "raw_cache": "15a9b2369b00429dc9231424d8072d5713a7a2ef58664ed48feb3ee5e21ee786.json"
+                  },
+                  {
+                    "body_sha256": "e5f786b298edb156f90b5c873325eaff1a0d44ee5a2c0ea8e5b8095260747d9b",
+                    "ingested_at": "2026-10-16T04:23:35.258935+00:00",
+                    "raw_cache": "1d2f1031effe8aff305ea2fe6fdcd63ed02cf6e0d8138f3bc0ee36a3045c6ee3.json"
+                  },
+                  {
+                    "body_sha256": "9d0d7f1c2a737afcf995d0e967ad343f3f50af3aaa19a4528405412e63a3c34b",
+                    "ingested_at": "2026-10-16T04:23:35.660803+00:00",
+                    "raw_cache": "9a6582144a2aca07fb7b08e76dad5197a51c83d37f01e0e0da3fc8180be3266e.json"
+                  },
+                  {
+                    "body_sha256": "c24921605e7fb45838d8f7718f98955a5e9c7a8e1d2665afca716c3c76e0a9a9",
+                    "ingested_at": "2026-10-16T04:23:36.026911+00:00",
+                    "raw_cache": "35b07b2a55851b2b7974f52c50ad0a654215540352005ebc7b6d62fe3c88bd84.json"
+                  },
+                  {
+                    "body_sha256": "63649b68ff974d750823619953d3191d752fba2b91d68ac581cc284d9417a5f5",
+                    "ingested_at": "2026-10-16T04:23:36.469469+00:00",
+                    "raw_cache": "c3a6fa67b73c4b7b87790e91aae9e9792b31248c2a32aa74296de5152a88bb17.json"
+                  },
+                  {
+                    "body_sha256": "26044cd72ccfd0ecf237e7c8d904236b966f5008193b43dfcea976966db6f7c6",
+                    "ingested_at": "2026-10-16T04:23:36.846048+00:00",
+                    "raw_cache": "7d5df7d274af610ab1e0f7846e78a920f93a6ce5981b1a972813cc4f99d9d86c.json"
+                  },
+                  {
+                    "body_sha256": "d2f6e127ebf79d0297f31d75d955d9d2f67e1ac70a143d53cb2f5f1e64c91870",
+                    "ingested_at": "2026-10-16T04:23:37.284996+00:00",
+                    "raw_cache": "4a152382c04d8da7f23d77bed4f43875422d770461fcd579a9ae1a6831fe8999.json"
+                  },
+                  {
+                    "body_sha256": "d50f158937fb98cbebfaf7b4c5db25af050ae48c5fb5a7c1befda6f7db21d0fb",
+                    "ingested_at": "2026-10-16T04:23:37.689897+00:00",
+                    "raw_cache": "6ac8f419703761230571f516c67f4f4542f91f736717bd2bb2b8677c6f3990ba.json"
+                  },
+                  {
+                    "body_sha256": "2c48cd94951388312e96fc1dcb0212826e552eb0b98d67d7d9732df08f64760c",
+                    "ingested_at": "2026-10-16T04:23:38.076775+00:00",
+                    "raw_cache": "0f509dacc0c041538eb7301771e0e133543600f09e273b408762327e895aae2b.json"
+                  },
+                  {
+                    "body_sha256": "b8ae98eb3fcbeedc2a13ecf9b1fd10914bd0d43fb9fc29b09387197e70740ded",
+                    "ingested_at": "2026-10-16T04:23:38.527393+00:00",
+                    "raw_cache": "2094bad265bbeab1f75223c28255f1fd02ce6dfa58f519bd790a1d0b18b191ca.json"
+                  },
+                  {
+                    "body_sha256": "5bbb99181a22093dd5cad201dfaae1fb8b525cdef18e7c522e6c226c201dd7d3",
+                    "ingested_at": "2026-10-16T04:23:38.923913+00:00",
+                    "raw_cache": "9efec1915028f68abaaed4c288a8427c0e13ec22e272a0a241c4db2e17d1e16c.json"
+                  },
+                  {
+                    "body_sha256": "d56ce1dc9db54e9d8653ee40230bd52ed11adb1b9b2db3033311331a18ca386b",
+                    "ingested_at": "2026-10-16T04:23:39.380718+00:00",
+                    "raw_cache": "4bf3600d88f3aaf8b5188c1793ed91f2571d69ef637b7d05d6494844c7a43714.json"
+                  },
+                  {
+                    "body_sha256": "69e1188833c2d72f57b38c21d7a11e9370c2f23880bfe6bb1dc9ba54a0fefb7a",
+                    "ingested_at": "2026-10-16T04:23:40.031105+00:00",
+                    "raw_cache": "675f61af28ad2a3fff10de921a5d7eee0222d20d6f76919b75844ea7c4397592.json"
+                  },
+                  {
+                    "body_sha256": "71bd38a818ff79629d299e57982651e6c8a4ff9ec90d56bfec60155041e523c0",
+                    "ingested_at": "2026-10-16T04:23:40.432265+00:00",
+                    "raw_cache": "6925d275af34a9cd3c7f1809cd580b7593254f241e8c5c35a1a6ba80057e844c.json"
+                  },
+                  {
+                    "body_sha256": "dd00e5e71c3151e305afec0d96e0facea78e98d21f19c9418be9817a21ab26ed",
+                    "ingested_at": "2026-10-16T04:23:40.874944+00:00",
+                    "raw_cache": "52a098baabc2f333ec54dbc5dfd9bcb2282259b8c8e9276a3e016a17abecb592.json"
+                  },
+                  {
+                    "body_sha256": "dbafa7c9056c314c7637578b891fed3f003c2666ee7ad2473725cffae8d42fdb",
+                    "ingested_at": "2026-10-16T04:23:41.603947+00:00",
+                    "raw_cache": "c3e1d99fd629554e57a6dadec17bda66c1eb9cadf9c472d41ee4525a18debf88.json"
+                  },
+                  {
+                    "body_sha256": "accbab1db882e5773cf883e0953b0acfd096c5844d882d325231821be919c84f",
+                    "ingested_at": "2026-10-16T04:23:41.962323+00:00",
+                    "raw_cache": "255d01ed417154b1daf483fb2b64e7558e1e20fe62bb29463461887e078d868c.json"
+                  },
+                  {
+                    "body_sha256": "a85be601d0291aa22e5b7e6b0683d56af9c4c65b41237b48fdf70a1bfd72583c",
+                    "ingested_at": "2026-10-16T04:23:42.352634+00:00",
+                    "raw_cache": "b39ab55e24735ea0daabcb59c122572d38a5b6b4ba4634d4667e0ee4e548cc54.json"
+                  },
+                  {
+                    "body_sha256": "4f0763d21271f7bf44f52e30c2229d456d7f60c037e4fe35d6345fee0ac3a25a",
+                    "ingested_at": "2026-10-16T04:23:42.731174+00:00",
+                    "raw_cache": "48faf3eb9ea02e61c1d2bab9f0f048c73c79b30b85a1ba37656a91bbef99787d.json"
+                  },
+                  {
+                    "body_sha256": "4741182d639c1a65e25ffe104905f6b3040bf8c8fca2addbf1f4157e854a2fcd",
+                    "ingested_at": "2026-10-16T04:23:43.135649+00:00",
+                    "raw_cache": "c21a042eb35dc328f91bce17f0c3dd51b54d84429f631ab7d464f259c6f05738.json"
+                  },
+                  {
+                    "body_sha256": "30756bfd87e50613ed4484de1d44ab3e08216d3d522ae6436eaebde8f9fc5887",
+                    "ingested_at": "2026-10-16T04:23:43.577792+00:00",
+                    "raw_cache": "73ae622f3a5982de3b69aea2c6464378719bbc59ea4fe88baab800f3a441cab3.json"
+                  },
+                  {
+                    "body_sha256": "3b552e57058463f728b5c1c59200b66c34335adb4394f1ee28c894eb5f7b4c90",
+                    "ingested_at": "2026-10-16T04:23:43.947760+00:00",
+                    "raw_cache": "672ee5160d54433e0efbac244ed6068aaedfd7f6ee76cd113da2a34adaa892c1.json"
+                  },
+                  {
+                    "body_sha256": "fc4713bec64647872ac442e482c827887179d7158e1bdda4345f0f7bbec86f40",
+                    "ingested_at": "2026-10-16T04:23:44.325218+00:00",
+                    "raw_cache": "2646f7d05058aa8b5f4f457c3713a70fcff888f76b53be159d0be3a57ac56178.json"
+                  },
+                  {
+                    "body_sha256": "2796d033fc10bd063d182aa40610ac4a686f872dca8bad6b2dbf819e74122f0e",
+                    "ingested_at": "2026-10-16T04:23:44.726700+00:00",
+                    "raw_cache": "7a4609c67b1dc44ba01b7df463962188a98f8bd7f7b765e3f43e631c1e681da8.json"
+                  },
+                  {
+                    "body_sha256": "15e4f0eaf0e68f840e3fed98fb9ff25f473aba89f039f3afa83fb62177dac6aa",
+                    "ingested_at": "2026-10-16T04:23:45.093472+00:00",
+                    "raw_cache": "4b8c8fb1d0c3eb0f43b5472a81373cb1bc1357b13fadba8c388dc8a1ce1b8a62.json"
+                  },
+                  {
+                    "body_sha256": "c551425a1c9bf1027afd1376554d36c7523e4679ededa6f7802d4d239fa5984e",
+                    "ingested_at": "2026-10-16T04:23:45.451689+00:00",
+                    "raw_cache": "4d6df7299e235201f20d3ba041e0bd18e9c52c365c2976c2a827db022f2f28cf.json"
+                  },
+                  {
+                    "body_sha256": "a30e32466c35a857c4ca49f77572255845449f1dbf36d46abc0a2db5eefa4f4e",
+                    "ingested_at": "2026-10-16T04:23:45.871128+00:00",
+                    "raw_cache": "a67ee9936b9c56f5e47d78561bdde513f5d99a67b7f3702e46597d992c7c68fd.json"
+                  },
+                  {
+                    "body_sha256": "6749066e8683ab8c2d2f439a4f4d69b7f237dd1b80a50f22d629f93cec893492",
+                    "ingested_at": "2026-10-16T04:23:46.321469+00:00",
+                    "raw_cache": "084639da30c3effa97b13151c7d1e6c5ce231db6b894a4a2beacd7200b306e27.json"
+                  },
+                  {
+                    "body_sha256": "52f0659a90ba0ead2016a2ce349183cec238ac582d6b20cec7681f8698789690",
+                    "ingested_at": "2026-10-16T04:23:46.750302+00:00",
+                    "raw_cache": "25fd8d2f9fbe69541463df5336aafec6265a0611b408c2026bcb9a272bcbce23.json"
+                  },
+                  {
+                    "body_sha256": "148410c2260b37284e1d52d152ef8fcf38eac71c0601b448442fd3ecc2294893",
+                    "ingested_at": "2026-10-16T04:23:47.123148+00:00",
+                    "raw_cache": "60b174b758d09b383710754a0f6a0313ce54ec2dc777599a2ef2864d2f953241.json"
+                  },
+                  {
+                    "body_sha256": "690ed078b177ba6374a676a1e3826fd88b664b0367d2e58a8ec7499967abab34",
+                    "ingested_at": "2026-10-16T04:23:47.850655+00:00",
+                    "raw_cache": "958bcbb0336ce1f53335705b2a2f43c5b786dba19e500ed141a333b19980235f.json"
+                  },
+                  {
+                    "body_sha256": "15668ffcea5abf3fb496f66d29226a5922439216ac0ca31890fd1032cc0a3574",
+                    "ingested_at": "2026-10-16T04:23:48.262041+00:00",
+                    "raw_cache": "f4ddd6f997dcfe7a762f13633c2f3bd318dbe17a60d5b373fff6b15982776241.json"
+                  },
+                  {
+                    "body_sha256": "a39fead0dbbee44794fb67d3a69d7e0de0e563db157258f35a9ef905b8e01f5e",
+                    "ingested_at": "2026-10-16T04:23:48.618172+00:00",
+                    "raw_cache": "23000e7c814fc6ce0288c6d663f3da9a00c6f64dedee81f080cba2c00ff0a984.json"
+                  },
+                  {
+                    "body_sha256": "65e9085b522fbb5804e56d1f7032555a21f3fdd28927cc24ee3a941253208325",
+                    "ingested_at": "2026-10-16T04:23:49.094917+00:00",
+                    "raw_cache": "fe9dbe65647a035e494ac924bb308790ac9eac0f78cfdc9be53f7fd58766f382.json"
+                  },
+                  {
+                    "body_sha256": "d644ac4467c0b87a3ad607cb0b76bcd22b88fd61badd53b24b8e7a35382f290e",
+                    "ingested_at": "2026-10-16T04:23:49.733243+00:00",
+                    "raw_cache": "13cbe00dba44a2182e1c43b621cdf67305800cee098fc334700acce27a3cfe6b.json"
+                  },
+                  {
+                    "body_sha256": "8928b4c0a0881842b1c7b6d3d654cb3c7409e9551af8b7cbb19291254f2d9ee0",
+                    "ingested_at": "2026-10-16T04:23:50.165075+00:00",
+                    "raw_cache": "2ebb2a8e1ca6e58da0e9018c385c14d32e68c1e9515cca1829f210ff8ca03c21.json"
+                  },
+                  {
+                    "body_sha256": "cabd995f45c9fb77a4f8e3e10826a1cf5396ed85f8d4dbefaa2cf439b32a08be",
+                    "ingested_at": "2026-10-16T04:23:50.637200+00:00",
+                    "raw_cache": "f1d1ec927e04f070e1a72f718ff1534ad243b22ab422bf9072a510ba202a2c6a.json"
+                  },
+                  {
+                    "body_sha256": "7241be2c7c670cf50319e4319982a53db801037e317cd3a721e8f8a5c5dc2731",
+                    "ingested_at": "2026-10-16T04:23:51.272781+00:00",
+                    "raw_cache": "caf6137ead56a7d1c54d770b419d4f64d091024323ae948a029f604c4ad94213.json"
+                  },
+                  {
+                    "body_sha256": "d3b485542c776309bea5e8c01d86aeb01c298b7b07d480acaa6a6943929d2584",
+                    "ingested_at": "2026-10-16T04:23:51.685041+00:00",
+                    "raw_cache": "da0aac293cc93048a4315df095d9afb114029f6d56953d80b109578e52ddb23c.json"
+                  },
+                  {
+                    "body_sha256": "ee5a21f8a1abe4d1594b42ecb6ab98ab2f9171661a06c699e6096f91896775d0",
+                    "ingested_at": "2026-10-16T04:23:52.051550+00:00",
+                    "raw_cache": "291dc9c2d08a8821e700543a20cd949f123a6f3da71f20afcfe2838f517d7f62.json"
+                  },
+                  {
+                    "body_sha256": "dc13522c7f19d75e22b31f91e83ae43f3e41e7554236a55a217911b2771ff1fd",
+                    "ingested_at": "2026-10-16T04:23:52.811643+00:00",
+                    "raw_cache": "a896cb1dfa3a3051e1e57a3436b739da2fa225a7a3384eb0f5063fb20bb2e6ef.json"
+                  },
+                  {
+                    "body_sha256": "54789bef017ce9a35a0605218f629cfc43c785b94e173ab7c0c5b1398dd26284",
+                    "ingested_at": "2026-10-16T04:23:53.215655+00:00",
+                    "raw_cache": "ac2b7b32b0df005ad7876e620d091f37e38d71d3a9319f7146dc4f8fef811ee1.json"
+                  },
+                  {
+                    "body_sha256": "313baff93c92420dd02cbcd7efe74642607f48e7cc0c86e58db20fd9ad969f57",
+                    "ingested_at": "2026-10-16T04:23:53.617359+00:00",
+                    "raw_cache": "f82d22dc5a64b7ae2c871173cb6693ec126ce933ee3712517fd52b91724df3fc.json"
+                  },
+                  {
+                    "body_sha256": "1ba45b45212a7bdd205aee27cdb79f81e437f9b878694ad335bc64239df967db",
+                    "ingested_at": "2026-10-16T04:23:54.063075+00:00",
+                    "raw_cache": "5fd1808556ad862847e1bd56d9d038063572b1e81331f6e53b7ba93f1bbab0f5.json"
+                  },
+                  {
+                    "body_sha256": "72f82c1a5675db575b891f117ba65ba185c1e6eaad1fa3fd9ee6d68a2f2b5a63",
+                    "ingested_at": "2026-10-16T04:23:54.708711+00:00",
+                    "raw_cache": "bcc6e277a6ce9890362430cb4658cea8554df89f48caba1e660644028739c1ac.json"
+                  },
+                  {
+                    "body_sha256": "9b23bc6182292797b2f44463e2859e40c709cf1d46a2402172a64e610adeeef3",
+                    "ingested_at": "2026-10-16T04:23:55.367098+00:00",
+                    "raw_cache": "ee9504aea701ee4d2d9823eed117b7c2df06b80ca981cbf07c023e976e701524.json"
+                  },
+                  {
+                    "body_sha256": "670c6b1738d7d014f8589b583847494c15230db0962cd9892c2e7368fb91984a",
+                    "ingested_at": "2026-10-16T04:23:55.793123+00:00",
+                    "raw_cache": "c4f02c2ad66243af3672459fea93cf3b71556e188013fcfda676a65216894da5.json"
+                  },
+                  {
+                    "body_sha256": "950f8e20c250ec497122734bd67739f739c1bbf4cb1383ce21bfee73ea72552a",
+                    "ingested_at": "2026-10-16T04:23:56.173498+00:00",
+                    "raw_cache": "6038dde7c4337947d8cb42bbd0517dd7596aa10b0f14c57c2f04ee42f1a0c07a.json"
+                  },
+                  {
+                    "body_sha256": "1fa9cd48ec23ffc5011a86423b4d1fd5b56864f7e8fbe03d6275b8149aefc69b",
+                    "ingested_at": "2026-10-16T04:23:56.541042+00:00",
+                    "raw_cache": "1a97581ee3c492e9bfa9112931876c24ec9b12308501ccf05108706f00b559f9.json"
+                  },
+                  {
+                    "body_sha256": "e5d9c89d7515647928f2998768bd2f62ca5b66f72622f383160d1c0bc9414471",
+                    "ingested_at": "2026-10-16T04:23:56.914962+00:00",
+                    "raw_cache": "b2120e40296904e48b27042bcbde55e606bccf5779ee33d0a204133a3e4b6130.json"
+                  },
+                  {
+                    "body_sha256": "cf2619b631a583f101ae5070d895c362da533e3e025edde5e76251a14dcb8bf9",
+                    "ingested_at": "2026-10-16T04:23:57.585208+00:00",
+                    "raw_cache": "d568af697bdb7429c74d186156eff1e3a1b15f6987ed60a228dbf320082daa88.json"
+                  },
+                  {
+                    "body_sha256": "3200556d3892045d217cbb874ca7331a8575d216e79fcd72f3b74c8e1adf3559",
+                    "ingested_at": "2026-10-16T04:23:57.960288+00:00",
+                    "raw_cache": "a01f4cd50e141e061cc8c3d2d54ba9fe91e640a526e829fbee616959d85baaac.json"
+                  },
+                  {
+                    "body_sha256": "60e8449b28d1b89ce607436e82ec4d7c6d5ed59980c9545caceae1ba9df43d2a",
+                    "ingested_at": "2026-10-16T04:23:58.334804+00:00",
+                    "raw_cache": "09c1a26cfcee4d280aad1fee88abf0c1199b925cd62593faf6a99b27c5fdcbf4.json"
+                  },
+                  {
+                    "body_sha256": "c30e167811ebbfd63aee09d7a810563837a86f36fa9c9fcb9f295c5ef78af73d",
+                    "ingested_at": "2026-10-16T04:23:58.756969+00:00",
+                    "raw_cache": "dc1c855371349eea5b144b7c2f65126acd8be4037c8203a6ef56a34fc1f58d45.json"
+                  },
+                  {
+                    "body_sha256": "1b7484a36e364feceb834ba511099987af419217d78e9f052499793da479a4a5",
+                    "ingested_at": "2026-10-16T04:23:59.178020+00:00",
+                    "raw_cache": "e60e00e96fad705f5ea183a5265f1e3d42f92a840fe21865beb863d8a4c3d8fb.json"
+                  },
+                  {
+                    "body_sha256": "a50fdcd27b128d673ba1278814e957b663e776b1a3931f52e136e3e763bf19ba",
+                    "ingested_at": "2026-10-16T04:23:59.572645+00:00",
+                    "raw_cache": "7c7cb2874d5fd475d6d8a47c7cc123ea59f66b13235559cd11011ea258df3a07.json"
+                  },
+                  {
+                    "body_sha256": "f5f40ba9fb7c9bbdc6b383712b551189ea3db57f301abe26ddaa009904518262",
+                    "ingested_at": "2026-10-16T04:23:59.928213+00:00",
+                    "raw_cache": "b623437a9b06c8f3c20ebc607578582cff87e066083b7e868e89c741a5d08907.json"
+                  },
+                  {
+                    "body_sha256": "9fd71e90f3617247897f0be9ea7986252e7e9d47ffcff5ea0ac29940d170692d",
+                    "ingested_at": "2026-10-16T04:24:00.650844+00:00",
+                    "raw_cache": "a6c89f08fcd44627eeebc546b756dbc8867144529c3d8991b606ca90b2935c75.json"
+                  },
+                  {
+                    "body_sha256": "64f12e28d308ae4588ca7bea44888ea201b4445a9cf648d98f65047e15148984",
+                    "ingested_at": "2026-10-16T04:24:01.016078+00:00",
+                    "raw_cache": "a1283be557763e94be51d922a4c7cb1660f3d977ac9f7875182725e4d48453a2.json"
+                  }
+                ],
+                "product": {
+                  "auction_mode": false,
+                  "base_currency": "BTC",
+                  "base_increment": "0.00000001",
+                  "cancel_only": false,
+                  "display_name": "BTC-EUR",
+                  "fx_stablecoin": false,
+                  "high_bid_limit_percentage": "",
+                  "id": "BTC-EUR",
+                  "limit_only": false,
+                  "margin_enabled": false,
+                  "max_slippage_percentage": "0.03000000",
+                  "min_market_funds": "0.84",
+                  "post_only": false,
+                  "quote_currency": "EUR",
+                  "quote_increment": "0.01",
+                  "status": "online",
+                  "status_message": "",
+                  "trading_disabled": false
+                },
+                "product_response": {
+                  "body_sha256": "27da0757d34aa12e670baf807b86cd590020f264c88dd6e2de9fe3adac33dc64",
+                  "ingested_at": "2026-10-16T04:22:28.929360+00:00",
+                  "raw_cache": "2eecfa6418cc8f68ab7b79b7b7a545efbae58036cf56ef1f95624f0b9830abf0.json"
+                },
+                "provider_docs": "https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-candles",
+                "start": "2026-04-19T00:00:00+00:00"
+              }
+            ],
+            "gap_policy": "unobserved intervals retained; no synthetic candles",
+            "parent_versions": [],
+            "retention": "keep immutable versions/raw pages while referenced by research; no automatic deletion"
+          },
+          "quality_counts": {},
+          "quote": "EUR",
+          "requested_end_exclusive": "2026-10-16T00:00:00+00:00",
+          "requested_start": "2026-04-19T00:00:00+00:00",
+          "schema": "eur-ohlcv-4.0.0",
+          "source": [
+            "coinbase-exchange-public"
+          ],
+          "survivorship_bias": "current product universe; delisted assets not represented",
+          "symbol": "BTC-EUR",
+          "timeframe": "5m"
+        },
+        {
+          "actual_last_start": "2026-10-15T23:55:00+00:00",
+          "actual_start": "2026-04-19T00:00:00+00:00",
+          "base": "ETH",
+          "dataset_version": "55b123bbcf0eab780269db49e9d18ced7526c96109b87da2b620a02efbec8942",
+          "duplicates_removed": 0,
+          "file": "datasets/ETH-EUR-5m-55b123bbcf0eab78.jsonl.gz",
+          "file_sha256": "1948a61fd6080bd45ca181a4d87a8b1b9f5953ce949ac6688d3295b32468b4dc",
+          "gaps": [
+            {
+              "count": 1,
+              "end_exclusive": 1777690800,
+              "start": 1777690500
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1777696200,
+              "start": 1777695900
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1778036100,
+              "start": 1778035800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1778113500,
+              "start": 1778113200
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1778201100,
+              "start": 1778200800
+            },
+            {
+              "count": 78,
+              "end_exclusive": 1778226600,
+              "start": 1778203200
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1778270100,
+              "start": 1778269800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1778384100,
+              "start": 1778383800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1778898600,
+              "start": 1778898300
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1779246900,
+              "start": 1779246600
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1779421800,
+              "start": 1779421500
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1779681300,
+              "start": 1779681000
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1780199100,
+              "start": 1780198800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1781923800,
+              "start": 1781923500
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1782011400,
+              "start": 1782011100
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1782014100,
+              "start": 1782013800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1782271800,
+              "start": 1782271500
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1783224900,
+              "start": 1783224600
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1785727200,
+              "start": 1785726900
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1786160400,
+              "start": 1786160100
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1786251000,
+              "start": 1786250700
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1786419600,
+              "start": 1786419300
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1786763700,
+              "start": 1786763400
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1786843800,
+              "start": 1786843500
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1786852200,
+              "start": 1786851900
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1786852800,
+              "start": 1786852500
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1786856100,
+              "start": 1786855800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1788580500,
+              "start": 1788580200
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1788668100,
+              "start": 1788667800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1788921600,
+              "start": 1788921300
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789276800,
+              "start": 1789276500
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789614000,
+              "start": 1789613700
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789616700,
+              "start": 1789616400
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789876500,
+              "start": 1789876200
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1790388600,
+              "start": 1790388300
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1790998200,
+              "start": 1790997900
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1791602100,
+              "start": 1791601800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1791685800,
+              "start": 1791685500
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1791689400,
+              "start": 1791689100
+            }
+          ],
+          "historical_l2": false,
+          "missing_observations": 116,
+          "observations": 51724,
+          "provenance": {
+            "acquisitions": [
+              {
+                "end_exclusive": "2026-10-16T00:00:00+00:00",
+                "pages": [
+                  {
+                    "body_sha256": "e1bbcd0949080dd8c39c00954e452564a1a5efc6fbd5ebaaaf7ce567f8a66c77",
+                    "ingested_at": "2026-10-16T04:24:32.768262+00:00",
+                    "raw_cache": "224410068403e5aef2af1dc7ac21252d7082fde9db0258d174cb076209fdff87.json"
+                  },
+                  {
+                    "body_sha256": "eb9fe54f12ede2e497d8acf8d6c5c21bbb303b90f483b0771b20965723aee1a0",
+                    "ingested_at": "2026-10-16T04:24:33.119341+00:00",
+                    "raw_cache": "2d074471a62d17f25cb4d1d004e64c5798113bf5fe9811413e2caf3a336d9695.json"
+                  },
+                  {
+                    "body_sha256": "a291313fa26eb2d1c8f7699911283fce6a4af6a09ec81d259d39effa58a4da99",
+                    "ingested_at": "2026-10-16T04:24:33.469493+00:00",
+                    "raw_cache": "53a8e150b2184e69b91d5201e59b4c0699c18def0fa81b88f7d1b6d68d02f6b3.json"
+                  },
+                  {
+                    "body_sha256": "7c4b479b4b4108e3179ee025c504a70817f59cf841521d28c5be2630bb09428c",
+                    "ingested_at": "2026-10-16T04:24:33.856504+00:00",
+                    "raw_cache": "5a780387762d687fe9be96faede962b6d36d8142b404de36bf7ea53d3e195fa2.json"
+                  },
+                  {
+                    "body_sha256": "915553feffb45707ce8464b53a298c3a15d42fe555c8fff2756ba75f7578f3ac",
+                    "ingested_at": "2026-10-16T04:24:34.221846+00:00",
+                    "raw_cache": "bf6b795f7bd4209015df65d983408519a06ab926f6472ea016446a3e1088ee30.json"
+                  },
+                  {
+                    "body_sha256": "ae3dff45ff70b8a27524fefc5fce70db43fb9724145aed174d5a84a41a6c0b7b",
+                    "ingested_at": "2026-10-16T04:24:34.581524+00:00",
+                    "raw_cache": "7199fa926428072272ae0e631ce677d7c59fb4627c21652e59965b3e3fb28173.json"
+                  },
+                  {
+                    "body_sha256": "eb3eb3c9b358cf5138cc511b35b7f023c960089148208be860ac6968da63a53f",
+                    "ingested_at": "2026-10-16T04:24:34.938193+00:00",
+                    "raw_cache": "1283a52597b4fcef94135f4096f13138f761a03ba11c0fe7e928396f694d8e28.json"
+                  },
+                  {
+                    "body_sha256": "d92cf85425640c0c06ff18222ee6cee45e9452b0da6388cf3943019b67b7d1b1",
+                    "ingested_at": "2026-10-16T04:24:35.298202+00:00",
+                    "raw_cache": "786c7ecd775dc65df66f707d4ab63326e81981eee4711aa077928f711200e648.json"
+                  },
+                  {
+                    "body_sha256": "80f3ff979a426fc7549295acb5eccafb170fd2760ca91fe15a7dfb05b864af00",
+                    "ingested_at": "2026-10-16T04:24:35.664787+00:00",
+                    "raw_cache": "d3447cd4ca79bf7df6fef539d64b9831d8817e9320420982c262de37d7936aed.json"
+                  },
+                  {
+                    "body_sha256": "b01463e6a5feb84d6d9bcf80469dc9bd70f116016bfb2f08dbaf62aec337a31f",
+                    "ingested_at": "2026-10-16T04:24:36.312587+00:00",
+                    "raw_cache": "0bb2663dbb2577d7f244a32e6df430658403ea7665d86c9922ef9430c4e4f4ba.json"
+                  },
+                  {
+                    "body_sha256": "5e831281501ae8c6a2e444bc52d960cf3631b5e7843108b95d5ce09ac41c2983",
+                    "ingested_at": "2026-10-16T04:24:36.678286+00:00",
+                    "raw_cache": "846a6eaaf2b6cef041dc8c7122f4499b1fdb04cfefa74d4b038ce579b3c4ea68.json"
+                  },
+                  {
+                    "body_sha256": "9c02794bb8139854cfe09bbb40eb70b11cdf5111c08984ae558aed8bbdfa2edf",
+                    "ingested_at": "2026-10-16T04:24:37.087901+00:00",
+                    "raw_cache": "ebe9eeaabd161f03b838fee3eb9fcaacb9cea2d5f633d2a36e5a8136a3e2c33a.json"
+                  },
+                  {
+                    "body_sha256": "c1571271e6b3751cec7e335e73a4c74f291638662205edd4d6e87fbdb21c1a0d",
+                    "ingested_at": "2026-10-16T04:24:37.505221+00:00",
+                    "raw_cache": "ba29ae27dde08cb1502933d303fb42f351e9b88931529e37c2cfc745c5f5eaaf.json"
+                  },
+                  {
+                    "body_sha256": "c44571169831386e8a271392f1ad81461b87c497b5ffe52e5594d082179689d5",
+                    "ingested_at": "2026-10-16T04:24:37.863360+00:00",
+                    "raw_cache": "539c3494015d26c25cfe266123257c3b5bb4af37aacca4fdc31203d390fbf14a.json"
+                  },
+                  {
+                    "body_sha256": "af5fc9f8697ce8b9708fe7a3cd2adae6c1ac74b14059ba355d482fec8293c88e",
+                    "ingested_at": "2026-10-16T04:24:38.226844+00:00",
+                    "raw_cache": "5519c1d9196ce6a31ca6555780781205bd148fe2427cc6f7cfc834e7b921729a.json"
+                  },
+                  {
+                    "body_sha256": "730cf13af269294591f1921ae34a05abbbe944c795394e4ebeefb0e64bcb7e11",
+                    "ingested_at": "2026-10-16T04:24:38.963607+00:00",
+                    "raw_cache": "f4b41646641ba75e132bd4991c6120edd737691442e10dc297cb8bdff9b8b2d1.json"
+                  },
+                  {
+                    "body_sha256": "fe81f563cd722a6212bb3f718c9f68294fa2d32ca66d825d8d15521189364f10",
+                    "ingested_at": "2026-10-16T04:24:39.691002+00:00",
+                    "raw_cache": "22e32ff95e28654bfda5d92331550ee4694fc9c9816fc258ca09310cfab88b58.json"
+                  },
+                  {
+                    "body_sha256": "2fce308fb65f24d01279eeaedc83d2a00a13de5259a5e7f5d5f11b98407a39fc",
+                    "ingested_at": "2026-10-16T04:24:40.059835+00:00",
+                    "raw_cache": "0214402ca825d296191ffc223f2c28e82cb7f737f1403551e668229f86a4b698.json"
+                  },
+                  {
+                    "body_sha256": "94f19c56b5bcc3384f5ee65f3aa0ff41ecf7580ed24e2b39d4513917a3bf0b15",
+                    "ingested_at": "2026-10-16T04:24:40.416086+00:00",
+                    "raw_cache": "1deb870dec4da7d0f9581b25f003fc00ba27fe9bcd9957d66fe602a92580c122.json"
+                  },
+                  {
+                    "body_sha256": "c9030506eb418c371a06a4d6c8d5f8aab5b9ea2ce9d708d1c7de613021b080ca",
+                    "ingested_at": "2026-10-16T04:24:40.791307+00:00",
+                    "raw_cache": "9de32cbce1d8fa7190766a3d2d4767d41c71a89b03e2fef8edfdad7e51fcbb69.json"
+                  },
+                  {
+                    "body_sha256": "c0d0c6db66beb73e2f2ffda0131de1c7e4a672412024a88c70850412a21bc819",
+                    "ingested_at": "2026-10-16T04:24:41.152380+00:00",
+                    "raw_cache": "d247ca730daeecef5515d5514502de314bdad2bc45ace021a8616cafefb5c850.json"
+                  },
+                  {
+                    "body_sha256": "aee432ace674822109d79004e63f9b7e8499772f58a2643c32df9e68abf773e7",
+                    "ingested_at": "2026-10-16T04:24:41.521586+00:00",
+                    "raw_cache": "78d71abd06485ff74ac5df342e8944e0f9497115c903e2d449896b74ff83f5cb.json"
+                  },
+                  {
+                    "body_sha256": "7eca4e7bdb0309bbc577e161fd51cf34d5b69694bb55f098c07e15bc9c90527a",
+                    "ingested_at": "2026-10-16T04:24:41.890242+00:00",
+                    "raw_cache": "4d81b9a0ee07eb5c5505dc3d62ddd832354b83955fac84a8d6e77d15dd436837.json"
+                  },
+                  {
+                    "body_sha256": "effc2f86c29919ae4ab3a66cd89e8efa5fb504bbfed21fcba175c794c534aaea",
+                    "ingested_at": "2026-10-16T04:24:42.251051+00:00",
+                    "raw_cache": "6134996c031c1082f7c6321932a3e37aac48fb9cfc44adef3717654b2e2fdc65.json"
+                  },
+                  {
+                    "body_sha256": "2e2299e1a6c2194d908a8f0e31e6666e588638b5fc4e08237b502984990d45d9",
+                    "ingested_at": "2026-10-16T04:24:42.966497+00:00",
+                    "raw_cache": "981aab71d9b3e8b92bcd647396b157e9e19405ed809a822d203ada8684cd79c8.json"
+                  },
+                  {
+                    "body_sha256": "566817cf02c61c65bc389b8f93339bace3de5eaeee0bbc0f335f038ae48dc1d6",
+                    "ingested_at": "2026-10-16T04:24:43.336633+00:00",
+                    "raw_cache": "f0798d4f44f8298d219f5280de62c3ab7a60a21eba266e8f89715c90aafe2cad.json"
+                  },
+                  {
+                    "body_sha256": "7f05caa18c60d494bc140041a7ba1a226da7ea6c08c10206fa63c52dc23bc519",
+                    "ingested_at": "2026-10-16T04:24:43.714546+00:00",
+                    "raw_cache": "431ad58f8002c17aa04785838d234b0af842ab58d358dddaa6f30b3c16d4dfe4.json"
+                  },
+                  {
+                    "body_sha256": "d17bfe23ff0b65e84711bc288af545893df91c096acceee9bc3eb56ee2d2d8ac",
+                    "ingested_at": "2026-10-16T04:24:44.093985+00:00",
+                    "raw_cache": "0447b54bfa43f814fda9eb0222f536ba7d03909e764a285533d982b00152a50b.json"
+                  },
+                  {
+                    "body_sha256": "5930dd7fc3ad13492d9e90d1a133aa017596761d85691c812a0280ce339ec223",
+                    "ingested_at": "2026-10-16T04:24:44.466713+00:00",
+                    "raw_cache": "0ce106a3b0e3219d6c4f100c0d71502b04f53790570f01c32c6d839bba88e0a0.json"
+                  },
+                  {
+                    "body_sha256": "0780788afe16c931dd6ae0af311d1d6b61f0d7d705fe74e03bc43072b639fff6",
+                    "ingested_at": "2026-10-16T04:24:44.842168+00:00",
+                    "raw_cache": "a8e1963e3d58a2bd4b5d63343c4903fe4c341d9c3af7ce89615643cf63b0863a.json"
+                  },
+                  {
+                    "body_sha256": "bfed4055ffc069eb88a6a4fbc23ac3f91a6fccaf400f8929a3f0e9681184f6a5",
+                    "ingested_at": "2026-10-16T04:24:45.223534+00:00",
+                    "raw_cache": "9ba4561cd68e2de9e88ad43c6aa7ce2f7885f76266489899f8c07db2553305cc.json"
+                  },
+                  {
+                    "body_sha256": "ad11beb5d307dc31a193ba4768fdd70b5b73fa43f17b99d501d16f1df3960733",
+                    "ingested_at": "2026-10-16T04:24:45.604671+00:00",
+                    "raw_cache": "25245d58756262681bf0da3032d88cd753358a158c136524963ffba03524aca6.json"
+                  },
+                  {
+                    "body_sha256": "ca43e35e188d4fc4de6010d1fa46594862b190bef721162688fca19dec509233",
+                    "ingested_at": "2026-10-16T04:24:45.958625+00:00",
+                    "raw_cache": "5b3c68b5dac9cf7ca80866e2baba2b2325c8b933b6eeaf1a267a35476fc0fe25.json"
+                  },
+                  {
+                    "body_sha256": "5aa5566f329f67a377c1f78aa0434e30197ef72b6629baebd7cb4e2a36c61455",
+                    "ingested_at": "2026-10-16T04:24:46.663736+00:00",
+                    "raw_cache": "c068affda4d0c828a3f601a873a7e71d081a8ea6d0a4ec23a4a332033376fea1.json"
+                  },
+                  {
+                    "body_sha256": "86134c4134bfafe6948fa2c938ef11d745424647a1c75077cd98181a401be50c",
+                    "ingested_at": "2026-10-16T04:24:47.020596+00:00",
+                    "raw_cache": "ed9aa24884f2ed4910681ee142058928b456e3c68ed525674201af917c21dc53.json"
+                  },
+                  {
+                    "body_sha256": "930bdaa94046bc169f249928b841ee9fdb11ab1fc869cf3d82917e929808a3eb",
+                    "ingested_at": "2026-10-16T04:24:47.372688+00:00",
+                    "raw_cache": "9a3a215981c7731804cd622b1cb686629ad4628a038d4423344c457d8bd2b42e.json"
+                  },
+                  {
+                    "body_sha256": "6937598668296c3cb7814e1a8343c8812b32e446e74903a474cc446c7090a1d5",
+                    "ingested_at": "2026-10-16T04:24:48.088599+00:00",
+                    "raw_cache": "5ee5ca2d1f01e1348da7647acbdbca47fba7d69fa83baef304127028ff96f094.json"
+                  },
+                  {
+                    "body_sha256": "ed42294a380086474fbe2dd1a5fab100a89f270f37309a396ef3a393bb1c15c9",
+                    "ingested_at": "2026-10-16T04:24:48.492505+00:00",
+                    "raw_cache": "80f5651e7bcf39f618cc590b46d408786346caee6e7e0fa037f4216480580e29.json"
+                  },
+                  {
+                    "body_sha256": "261d04cdd26f68da9b0abd87da634ea24311b31d2fe5d8d0bc06cb830c80b501",
+                    "ingested_at": "2026-10-16T04:24:48.899384+00:00",
+                    "raw_cache": "963ae0a4e1c2da37d068b6774191276df71f26766224078083bb39a0ee6e68eb.json"
+                  },
+                  {
+                    "body_sha256": "d817a4390c900a3fc463d462ffaf3c4f1720cef6a001316a353b1dfa40f55343",
+                    "ingested_at": "2026-10-16T04:24:49.445161+00:00",
+                    "raw_cache": "262e9ba92bd24729ae80646128505ec9a726d41e9bd0fe7ec03bb6646fd3b45e.json"
+                  },
+                  {
+                    "body_sha256": "fc04fb617ba3348e7c87c4f21c6e40ecafc94bee952fb01633c086c4cc4be7e5",
+                    "ingested_at": "2026-10-16T04:24:49.813307+00:00",
+                    "raw_cache": "f3ad4a19a7b9c8981f9316cdc298b70097c27491b1c877dd1e0a7d2051082987.json"
+                  },
+                  {
+                    "body_sha256": "4b24b560a5a9211b2c30b1896ee1a7414b954e620beb3c37ba5a81c7c8c15d7e",
+                    "ingested_at": "2026-10-16T04:24:50.183462+00:00",
+                    "raw_cache": "dbb42c15b28c41842ef9ff7dbd8a92c81490262f5fa2b8dcbda6bf29072cea45.json"
+                  },
+                  {
+                    "body_sha256": "d31e2e096d0963b7eeff7eb4f00db6764af1c9952ddc0a84c2cd76401cd5657c",
+                    "ingested_at": "2026-10-16T04:24:50.549684+00:00",
+                    "raw_cache": "676ffbbb1fdaebd92ee35b6da44657aabe0cb104a51cd248cb51eec03817fd46.json"
+                  },
+                  {
+                    "body_sha256": "a5f2f0795d3b271e9d2b31bd4d32d8fa76ddc6b9219440283bd9775f88de9880",
+                    "ingested_at": "2026-10-16T04:24:50.912948+00:00",
+                    "raw_cache": "be0069e39675d9fdfb9d565cb7f5350303dac4b522b4781805cef602d203f44b.json"
+                  },
+                  {
+                    "body_sha256": "6a743551de890a0f18d2edf690ecb519f8a8de0c6a1b650663fb2aadbce2679b",
+                    "ingested_at": "2026-10-16T04:24:51.322178+00:00",
+                    "raw_cache": "66d514f7450faf529b627df1ad9afc48b426a71d9def0581663e63e2478dcae3.json"
+                  },
+                  {
+                    "body_sha256": "58b6aaa72fb37971dda38a0fc60985fd1e9ccdfda3d3b70b8bbaa5712fe770d3",
+                    "ingested_at": "2026-10-16T04:24:51.696646+00:00",
+                    "raw_cache": "020d02b48880877d64c52e4181e39b5c7014251b8f4a688dc3036542eeb5b8fb.json"
+                  },
+                  {
+                    "body_sha256": "5bceac85ebd6d75cc3b9898137858070d66cc2bc0514d994f0a464c8e1256dcf",
+                    "ingested_at": "2026-10-16T04:24:52.072258+00:00",
+                    "raw_cache": "a3cb61c5ea34377a5c89b1c4880b7bdd06e48f8f0f72e54a7bfad168c260a781.json"
+                  },
+                  {
+                    "body_sha256": "019005b7e7aad51a425278e351b0cafe2d7dcd824307f1c169f79d2260d3cb8a",
+                    "ingested_at": "2026-10-16T04:24:52.447323+00:00",
+                    "raw_cache": "a5ef8773b160e6eb6d4ec92d8ca5b8ec2f358dc22e3a2a6ee5a17d418242dc5e.json"
+                  },
+                  {
+                    "body_sha256": "e019b207be8a4a95e036edf50656f65f4c711e06f8361a688dbc90e5a34c9605",
+                    "ingested_at": "2026-10-16T04:24:52.810590+00:00",
+                    "raw_cache": "7054c19acc4f49acc4df84774f5d7a3aaddfa093ef474c73f6d01025cb114e3f.json"
+                  },
+                  {
+                    "body_sha256": "4523625afb6e20d241a2920bf5f5ca7c37391b254d5b42e52c7b46abcfadd012",
+                    "ingested_at": "2026-10-16T04:24:53.454875+00:00",
+                    "raw_cache": "14cdf1019d7f9143884b788aadb7892f525db6717184fa7d3a25e819b7c58f7b.json"
+                  },
+                  {
+                    "body_sha256": "72749f53313d162e394b7d55186e4cbd86db05abce2001c639f01f95b63dff62",
+                    "ingested_at": "2026-10-16T04:24:53.821963+00:00",
+                    "raw_cache": "9672152e424f93e7b98e1909cd8b7f73b72476afb6df412c10568da53aaf7709.json"
+                  },
+                  {
+                    "body_sha256": "c657211665cbaf39a7b2aaab6582dbae809e27b86a6480606c0c4eb57959ead4",
+                    "ingested_at": "2026-10-16T04:24:54.193738+00:00",
+                    "raw_cache": "6d232102df79a4e8472168c7375dd49bec6707d1e07d0d332d2744178ab0ede1.json"
+                  },
+                  {
+                    "body_sha256": "f7b27233c20aae51fa518c827c29ac4628bd97144fe38fd8a55604b1b80d0939",
+                    "ingested_at": "2026-10-16T04:24:54.560058+00:00",
+                    "raw_cache": "57c43fe6eb5ed076d4c1041fbca82f1a30ff227e4bf0afc0f3c59838c809776b.json"
+                  },
+                  {
+                    "body_sha256": "0c7002314419c0bde7c21a598ecf3d0daa4325be7922e554f2c5be7779f134fd",
+                    "ingested_at": "2026-10-16T04:24:54.927747+00:00",
+                    "raw_cache": "28ac3169d2cfbba93a2a10d8b7846fd7d1d66d4e943c6a5499497e73506dfad2.json"
+                  },
+                  {
+                    "body_sha256": "5990e08c915e9e4c7108e08edcffbf3f1fbc95a84382cca89250c3f7eca88289",
+                    "ingested_at": "2026-10-16T04:24:55.297833+00:00",
+                    "raw_cache": "edc90d8bdba8113bf6ce663fbd4de28517b001d9ef60a3c96dcc6c0c3ddc1183.json"
+                  },
+                  {
+                    "body_sha256": "faf5ce1b58ca09b50d8cd6fedf8b5f00d380c1ffd7ffe728b73ff57bf46d676c",
+                    "ingested_at": "2026-10-16T04:24:55.666654+00:00",
+                    "raw_cache": "6e2fdc4e71fcfbf9aa0300b9b7901b241b6db56d61b30f929c915e4264cb2e61.json"
+                  },
+                  {
+                    "body_sha256": "047a3b0e6d0ab6cc3f87a9458d30da5670510ef480f85250e298264b81171d79",
+                    "ingested_at": "2026-10-16T04:24:56.032269+00:00",
+                    "raw_cache": "e1f7bb6cc5ddda3670522724c047cf2bc30c28075bcdfae665c3fdcff2e627b8.json"
+                  },
+                  {
+                    "body_sha256": "811713c6f81dd49c0cbf14f0f3810ccfc0e9250034ab88860eaef762c4d4b92c",
+                    "ingested_at": "2026-10-16T04:24:56.397201+00:00",
+                    "raw_cache": "7b0fa0d98e5ca0a507ba45a1f09ba4c8b3c58b5c34e8bd550bf14790a4c2e26d.json"
+                  },
+                  {
+                    "body_sha256": "b810c30cd385a291a2705c3cc02ef7e9132eb1a91c68ee90ef2c7ede446b81c1",
+                    "ingested_at": "2026-10-16T04:24:56.751213+00:00",
+                    "raw_cache": "4e5f592541b5d081a6897bbc3cc5f90f8e43e6cd1b20fa214246413ce8994cfd.json"
+                  },
+                  {
+                    "body_sha256": "7bcce659202d26aea8d8d4b3e44b235c3e1118224bbec4bdab3572b807355c41",
+                    "ingested_at": "2026-10-16T04:24:57.125810+00:00",
+                    "raw_cache": "809c7a5ef1a2f5120833cabea2c4ea1472e15282fa2f7584fb2a5e8fe879711a.json"
+                  },
+                  {
+                    "body_sha256": "ee10fc70ad9acb7a0c57034813c4b8aa9d5b398f8988b647c1663920a47af4d0",
+                    "ingested_at": "2026-10-16T04:24:57.525872+00:00",
+                    "raw_cache": "ef7e5aad5f82b04d2a8969e180120f5ee31b97e579d8fa474e560a6cd131b30b.json"
+                  },
+                  {
+                    "body_sha256": "1ba9e91d98b7d3361df577192e40feb868ea9661ffacb2273b9a66e46bcc6871",
+                    "ingested_at": "2026-10-16T04:24:57.931160+00:00",
+                    "raw_cache": "7c4bd7947112073c8aec59a540de90f7a41d73121c2bcecafe68e662f53bf464.json"
+                  },
+                  {
+                    "body_sha256": "afe9b51bb10ef77ea83c2722476595f1c0ab26833afe35720f9c92ae1399cc56",
+                    "ingested_at": "2026-10-16T04:24:58.303035+00:00",
+                    "raw_cache": "af1156764814b2c2ccf61f352425f5e4268e8897ba7dae65bd9de9fc2813f65f.json"
+                  },
+                  {
+                    "body_sha256": "11515acf5f87f76454766666c10f6c199019d4554fef2f94b0295878954fb677",
+                    "ingested_at": "2026-10-16T04:24:58.707565+00:00",
+                    "raw_cache": "3d19166523ba2eaeb660d2a60e08bd160b1fc753cccd7924b6211743ecbea90f.json"
+                  },
+                  {
+                    "body_sha256": "5ec5b2c9c9d29a9b49f9650fbece12eb5b871f8a5beeea0bde19369f0899eb66",
+                    "ingested_at": "2026-10-16T04:24:59.117844+00:00",
+                    "raw_cache": "d515168767614434117101d0f5ea2b4c1779d924a4e6f945c58ebc0dabae45aa.json"
+                  },
+                  {
+                    "body_sha256": "d519eeb9a25c684e86f8c75a3b4e4caa15dcf9d994c2712ef2eed74579fbbd0d",
+                    "ingested_at": "2026-10-16T04:24:59.498350+00:00",
+                    "raw_cache": "acaaef53f3900d9c9a6a6379e8955189926f0d200e87569eb6e83c039a829909.json"
+                  },
+                  {
+                    "body_sha256": "aa674fe027e6958429ca1df06c922e1563355bff0793f2856d41d1cad09a3b9c",
+                    "ingested_at": "2026-10-16T04:24:59.873856+00:00",
+                    "raw_cache": "0abf8593a3aa8ec79b6758a210d39e5b98ff82e57766d39df4d42932e09e8fd9.json"
+                  },
+                  {
+                    "body_sha256": "5b759aedebc22914ad1021b499be45683f773a5ff3e96b8b5c5a5fa2c6ecf6f0",
+                    "ingested_at": "2026-10-16T04:25:00.235245+00:00",
+                    "raw_cache": "701610ee19a3576216e8694fe43609cfa2bbda2ca718206eb661376ab5d57461.json"
+                  },
+                  {
+                    "body_sha256": "d0d842ea3808a72d568de979ac8a7e5603d29ba06c2ad36c0ee316fc462090d7",
+                    "ingested_at": "2026-10-16T04:25:00.596762+00:00",
+                    "raw_cache": "add5eb68c59e9446c391c9015a24bedb8271fd8f7fd4d57fbddc32e9c43e9f86.json"
+                  },
+                  {
+                    "body_sha256": "78d0c49327facdcb5320ad22ff66975da209986b7aba187bcf10e7da1d193e31",
+                    "ingested_at": "2026-10-16T04:25:01.011652+00:00",
+                    "raw_cache": "00beea7da974db73ca07b371c16e8f0e4d24ad0620ce412d8eca94c68bcde326.json"
+                  },
+                  {
+                    "body_sha256": "112e650227c56024ce886b80741654945942c9c04bcdc59512fdb38c81639a08",
+                    "ingested_at": "2026-10-16T04:25:01.376317+00:00",
+                    "raw_cache": "0eb218c184e53108247ea5f3e2b3f67bdc955326abf22bdbbf72decf1c999c3e.json"
+                  },
+                  {
+                    "body_sha256": "ffc75e7d221733b465ed27a9f6ab61d3750b8084626d23c6a6fc51c54afcd44a",
+                    "ingested_at": "2026-10-16T04:25:01.750531+00:00",
+                    "raw_cache": "ecce78ee4ac5e9ff02fa7b9caa02d6cd58af39a32cb881279882b998d6dc8a6d.json"
+                  },
+                  {
+                    "body_sha256": "c5ec3fba31a38b09629a0ffd29f6094cc51cd05eeea1447a27fadc15da337c79",
+                    "ingested_at": "2026-10-16T04:25:02.120276+00:00",
+                    "raw_cache": "2a65bc0a4dc1624e791d42231b6d67410d201520fb7442a0d48ef17a584c59fb.json"
+                  },
+                  {
+                    "body_sha256": "642c128e04a381456627591a381ad55c8704ec5ecd28dcefefbcdb55cd8878ad",
+                    "ingested_at": "2026-10-16T04:25:02.512328+00:00",
+                    "raw_cache": "e4c87c871d55e566f6c07db8ce87fb77e811fcb0201662e1b4ac11f38638c599.json"
+                  },
+                  {
+                    "body_sha256": "b3e3288db21ed88083b14edddef1b44cb45ee691006733e89216c062241e555d",
+                    "ingested_at": "2026-10-16T04:25:03.099342+00:00",
+                    "raw_cache": "d043be6670910d8c08ed6d6035f8334c9ced9673daa59bf4e0902a235cbf486a.json"
+                  },
+                  {
+                    "body_sha256": "747a293b3ad7f5d977981db024ef46c46a8c03af20d2a78d034801cd618c4d47",
+                    "ingested_at": "2026-10-16T04:25:03.451158+00:00",
+                    "raw_cache": "0acc656e33c2cb8e475465e2833f67be718372bbed6bff27d30793aae3f5f4c0.json"
+                  },
+                  {
+                    "body_sha256": "0d63b064b70d96e2865661ca21a3138c4c581c539bb9c19d6f9f536d1baa3f75",
+                    "ingested_at": "2026-10-16T04:25:03.843190+00:00",
+                    "raw_cache": "11a17938e9c4e976f775c2cdf486fc0e52b706eabe7b64a91e0f2c4ea1f013b5.json"
+                  },
+                  {
+                    "body_sha256": "7d06fc89165d2f467f7f5cd90996e35fd8e4a078cc2d3b314bc173d79e67ca1c",
+                    "ingested_at": "2026-10-16T04:25:04.226571+00:00",
+                    "raw_cache": "7b09dc8b7998db4db3366bf7a4f57fa1de00e344f845698ab34315b27409b9f7.json"
+                  },
+                  {
+                    "body_sha256": "c8c5e04e6e313bc4a939731cbac6b89643a9da1735b2ff413d8876aabc46ef85",
+                    "ingested_at": "2026-10-16T04:25:04.852884+00:00",
+                    "raw_cache": "7734c45153ebf044e6d0265c74f9d8766c0015ec38fef58446bd5c0fdcba94ab.json"
+                  },
+                  {
+                    "body_sha256": "0fe69f828de5010e2554753d426a1ce5762628bfb023262dc5ddb5ad66cc4199",
+                    "ingested_at": "2026-10-16T04:25:05.218362+00:00",
+                    "raw_cache": "05d3f7e0f4f5d4582a47bb6c7a2e7acc67a74019d4263b371cc6934e3c220a8d.json"
+                  },
+                  {
+                    "body_sha256": "82e92b51f2b7ac8742bc7e066d53e22da7d68b5d54772a0031df315ea9251487",
+                    "ingested_at": "2026-10-16T04:25:05.576187+00:00",
+                    "raw_cache": "9498520ee6aaf40543cf0d15ba9bf4040b3138810454d742dcdb00299077e1f2.json"
+                  },
+                  {
+                    "body_sha256": "4011e452d7c0d0199423b5a4fc9728ed1d8dc3ebb17a036ed1603eb855bba94a",
+                    "ingested_at": "2026-10-16T04:25:06.028759+00:00",
+                    "raw_cache": "451d8f2846932342aba34f29e4393ecc52dff660a4bf5c4a5852bfc55435856c.json"
+                  },
+                  {
+                    "body_sha256": "f80954796f6f6724c3e62f8125dc078e09743da9c080871af8b4cc4eae5187b5",
+                    "ingested_at": "2026-10-16T04:25:06.381046+00:00",
+                    "raw_cache": "6b3d280ae5fb015af647a3b4f4153869f87f0eab91197cd1f0eb5a22a80f3023.json"
+                  },
+                  {
+                    "body_sha256": "920f3cdc906574c492803ecb3fbc6ffef2b7215ccee10a4d1f57f887279b3b9c",
+                    "ingested_at": "2026-10-16T04:25:06.755756+00:00",
+                    "raw_cache": "72b4e9590e496e6d516ee0338daeff1f544e47a7f041c2819f84a38f77c76865.json"
+                  },
+                  {
+                    "body_sha256": "15568506b9ff2c94c0d6ab6d3f56a28d59efdcb2b257525301dc539dc3ff8bcf",
+                    "ingested_at": "2026-10-16T04:25:07.132022+00:00",
+                    "raw_cache": "c12961b4a8ba4d368c2049a3705bd72ad76684ab89b0b712a47fbaed7d7a69e3.json"
+                  },
+                  {
+                    "body_sha256": "16db743a4304d10a8bfac8f8f67a98e22e6c5dc21e04931f6d60ff6736828464",
+                    "ingested_at": "2026-10-16T04:25:07.818910+00:00",
+                    "raw_cache": "bbfbdc6fa3620d204027076700f2432e778292b6b7f063e2db8bd405f8ab90b9.json"
+                  },
+                  {
+                    "body_sha256": "dae0ac1023cccfc3a44ce9df9b8af771d953db337a33193672c7749253ce0b16",
+                    "ingested_at": "2026-10-16T04:25:08.191937+00:00",
+                    "raw_cache": "87220e1d7b3bee9fd2b89bca2fb4bc99b3e3f16c7cefe9c99e6dc1a312ebb11b.json"
+                  },
+                  {
+                    "body_sha256": "917a47df9e502b337abd28b69699b9d205041cd3124c34be0afad0023539b0e1",
+                    "ingested_at": "2026-10-16T04:25:08.592358+00:00",
+                    "raw_cache": "7f5f8b0c0758c049199fa7b5a63b8951c65a0f6e0a65f79b78822863844e979f.json"
+                  },
+                  {
+                    "body_sha256": "90b36b0967737476092cc35cd58128a5456b581975e2e4dff245e355d454f374",
+                    "ingested_at": "2026-10-16T04:25:08.996809+00:00",
+                    "raw_cache": "68806055237db26642137c7311aa24ba1824dc3fa95979d6b79e0d35bfcff318.json"
+                  },
+                  {
+                    "body_sha256": "0f523ef2f3b6bab07dfa0fc68c941a9efe7bee546b51c14d3831a0559a276070",
+                    "ingested_at": "2026-10-16T04:25:09.366986+00:00",
+                    "raw_cache": "483aced962f16f11db794de40b7bc00df42329882552995f4a3cf03bc60cc227.json"
+                  },
+                  {
+                    "body_sha256": "1be741272e82794e675dd96450f0ee7bc843a15806211fccef58e9b9448f988f",
+                    "ingested_at": "2026-10-16T04:25:10.066771+00:00",
+                    "raw_cache": "b3eae43f3c75fba67c97520ce7fc95cca516d6e3037762f971adc90214847b75.json"
+                  },
+                  {
+                    "body_sha256": "f55410feb26f6e4803b9e8df5641bea6b2ab89f106407069ad3c4bef9ef30f66",
+                    "ingested_at": "2026-10-16T04:25:10.786919+00:00",
+                    "raw_cache": "2684733cc40764718a71849e07e23ded76867123ade153da5ee8179053e3ceee.json"
+                  },
+                  {
+                    "body_sha256": "9b614090d4db771c5db909a4ffbe4bfbe7d6422b43a5c1a72762131ba809b47d",
+                    "ingested_at": "2026-10-16T04:25:11.433546+00:00",
+                    "raw_cache": "b67dcacca16786a5d420737a50f78a0471bc9ef6e08070011791cd0224f6f35b.json"
+                  },
+                  {
+                    "body_sha256": "3f7e23f2ef26f63a9a733aa8f3a8709e526fe3efae414d674bfb618e43886c42",
+                    "ingested_at": "2026-10-16T04:25:12.114584+00:00",
+                    "raw_cache": "e0ac43d88378a14454b270312f89e4f978ddbbc539ef61b70d6e5c3428e83f51.json"
+                  },
+                  {
+                    "body_sha256": "22d4181df080346f1abba71503799f711da162b44f8e92e58bc8d4f20708bdc7",
+                    "ingested_at": "2026-10-16T04:25:12.483592+00:00",
+                    "raw_cache": "b9f56fe9b59988137269655c02221c57c14a6afad6ecc5093bbf4fb0b8169cf1.json"
+                  },
+                  {
+                    "body_sha256": "02b9ac9e8e142e03953a210d1edf64c6a9a4f6a572f34b96a1ccf33eea2db355",
+                    "ingested_at": "2026-10-16T04:25:12.866380+00:00",
+                    "raw_cache": "1d07d3a73acaa7190950e57f2f118806fada0263f3edd9d0aaef5d957f5d6958.json"
+                  },
+                  {
+                    "body_sha256": "50dfdb4d0f86150d1ea5e1db35bd4d46f38807e99c008e73b689cc4987ecb8fc",
+                    "ingested_at": "2026-10-16T04:25:13.225441+00:00",
+                    "raw_cache": "94e3bf36671e678dced3e3adbdaf7964b3ab77e108f4566e7d9fcfaa214fce07.json"
+                  },
+                  {
+                    "body_sha256": "a0fde72a4080d864cd91f5b47be841e818ed0a17d306d5b96bfc4ff10164550e",
+                    "ingested_at": "2026-10-16T04:25:13.628720+00:00",
+                    "raw_cache": "05e79e6ed2f5fe4a089635d6ed647dadddf1f6676a8490861d568402c01faa61.json"
+                  },
+                  {
+                    "body_sha256": "b45ad9d606dfd05c299f88f562593cf5b742c43f016eb245fc661eb0fbe9aa5f",
+                    "ingested_at": "2026-10-16T04:25:14.369071+00:00",
+                    "raw_cache": "ac3ff7308e738dd876d95d638f113e32cefae3154d3b2c6990dbb813cc1b1e2e.json"
+                  },
+                  {
+                    "body_sha256": "81d0d22ae28b6689563a91f6e4f0344c027b4cd9b07c14cbef4fce0b6ff89251",
+                    "ingested_at": "2026-10-16T04:25:14.748563+00:00",
+                    "raw_cache": "301363500eaed135250139fe9959ceb951aca3c032909d940ef30a55c8bf33c6.json"
+                  },
+                  {
+                    "body_sha256": "25c52f1d4803249f0c56faca20c4246fd842f2fb774878295adb629be1b25968",
+                    "ingested_at": "2026-10-16T04:25:15.148055+00:00",
+                    "raw_cache": "024ee38db09d68fdc26f295299630256fdfdadac2f0463d588b2f47238d8aa40.json"
+                  },
+                  {
+                    "body_sha256": "07b3011405d6b3b81d1e12a231230497cba15f445a99d99dbf4c1558b9ad6355",
+                    "ingested_at": "2026-10-16T04:25:15.528803+00:00",
+                    "raw_cache": "bb3cfaac921591adc2347f36e4bd9af470421d9801d56d24e637a9857a1a87f6.json"
+                  },
+                  {
+                    "body_sha256": "534dacd01a36e35d3676373a9ef5dd88aff9704bf385ae1f8a38f38eb6b2b8fc",
+                    "ingested_at": "2026-10-16T04:25:16.214060+00:00",
+                    "raw_cache": "7322b44d986696daee3d2202f0c7e0f45e3f411db3b783045a2ac8fc45d8d172.json"
+                  },
+                  {
+                    "body_sha256": "353f52caf965d2e6e3f4ed648a054f89313e5d6c5831d56488d8668cee8cc27a",
+                    "ingested_at": "2026-10-16T04:25:16.597528+00:00",
+                    "raw_cache": "8887ca5520d19c740c38529cd9dc3feee5eacc3e0fe3b5f294133f38712f2ac6.json"
+                  },
+                  {
+                    "body_sha256": "732a0fb5327a1a45456d627cd648ef08d227443588a1073920408ca2c5e2fd2c",
+                    "ingested_at": "2026-10-16T04:25:16.968129+00:00",
+                    "raw_cache": "937e5c6f157f58831847a13875a930f3c9476a74064094642226865e7e977bf6.json"
+                  },
+                  {
+                    "body_sha256": "f09dbafc252a62e98d84a0bd68260fcf9f8bb4a702d9f6407914efa8b50b7afe",
+                    "ingested_at": "2026-10-16T04:25:17.348728+00:00",
+                    "raw_cache": "9c0cd658c31cc2272dd9e556c53be9ef6f9e2aa6c20c88455861b54f135b17b2.json"
+                  },
+                  {
+                    "body_sha256": "20644199c13746c6646b028de8346ec46461e421199e6ea80e503bcf94f7c688",
+                    "ingested_at": "2026-10-16T04:25:17.706813+00:00",
+                    "raw_cache": "f6cf1547f2cbc427865d463efe53671d16eb54f69203a7a71cb41c7eaaea9946.json"
+                  },
+                  {
+                    "body_sha256": "c85861c5e77d4c4a0f6f079056b7046e189728a490213b6bb96c4812c6706bd9",
+                    "ingested_at": "2026-10-16T04:25:18.085113+00:00",
+                    "raw_cache": "10c77e5c5c8f8a84a447659f519ea23da675ce4ecbb86d56b055ddc47944b73a.json"
+                  },
+                  {
+                    "body_sha256": "17fa93db3d662f4cc9a39bda3c64f3894a2417644974fca5a4d6a568894a9205",
+                    "ingested_at": "2026-10-16T04:25:18.509499+00:00",
+                    "raw_cache": "35db89651170cfe9a438e0c6a2af29431fafb70b04df02d7eb46a00057b5c239.json"
+                  },
+                  {
+                    "body_sha256": "903103a4044038864dcf07cd8389b9731a0639d7c40bb2d97a302dac6bbb3055",
+                    "ingested_at": "2026-10-16T04:25:18.873188+00:00",
+                    "raw_cache": "7d2de9baa23497d186b587b3686fbd29f449b9e4598c72c0225a4cdbde0b5f62.json"
+                  },
+                  {
+                    "body_sha256": "2ff3387cce8db7d712c0abb22e44f869af85afa071dba49b4e37d205e835a475",
+                    "ingested_at": "2026-10-16T04:25:19.283543+00:00",
+                    "raw_cache": "2cb1782b556e18f6c5ec0e6a2dd4ffbedbcfb63af382dad85f89ae486bc719d5.json"
+                  },
+                  {
+                    "body_sha256": "417445a3441ad153ebb62a6871c298c4976164d2236cc39e0643ffa9b73c3d97",
+                    "ingested_at": "2026-10-16T04:25:19.685610+00:00",
+                    "raw_cache": "dfa8e363d498ebc46a4734b52a071b558502ab0986edc1ca9b8b20e299aa75ff.json"
+                  },
+                  {
+                    "body_sha256": "8671df73b33aed5d41c0813375ca36dff97c174528215eeba3aecd27b9955561",
+                    "ingested_at": "2026-10-16T04:25:20.070844+00:00",
+                    "raw_cache": "388faa62a9824989ef313498503e60f0be97dab5acff6c8b0d9b083dc517dabf.json"
+                  },
+                  {
+                    "body_sha256": "7772798c4f3c23fcfbd453807bca317d8b0717e082cabf7eba2894717020c271",
+                    "ingested_at": "2026-10-16T04:25:20.440809+00:00",
+                    "raw_cache": "5a1119fdbb813a8abce8e1ef835a9f035f5ba3393880b343c0e5d82ec8816602.json"
+                  },
+                  {
+                    "body_sha256": "42123567a22615e4b7a1b741537fdf406a8a1e5b6db1b1a05db120513af631ff",
+                    "ingested_at": "2026-10-16T04:25:21.331915+00:00",
+                    "raw_cache": "06cdb091e2afe30a82e4698547a624a51a540cea628ba9d3be33006799928152.json"
+                  },
+                  {
+                    "body_sha256": "4cef13862e70019533bc877172defa53b29f382be1d9af738e62e484f4d43ed6",
+                    "ingested_at": "2026-10-16T04:25:21.721334+00:00",
+                    "raw_cache": "0b975db4cfbff8b953d990ae886a87e1e91f0934b7d5f0b53c7c2213745f8cfe.json"
+                  },
+                  {
+                    "body_sha256": "dac3742f452c0882710605a4267cdfe49b78eb6ae04a7166a00a68f228218454",
+                    "ingested_at": "2026-10-16T04:25:22.107044+00:00",
+                    "raw_cache": "c0a3e19121c53e55f9456a0898ba04f8eaff519cf75218f61e3731c31512d1b3.json"
+                  },
+                  {
+                    "body_sha256": "5050060d181374096ffede6f95caa297b59c8e67043693e30583115ea7fa6d40",
+                    "ingested_at": "2026-10-16T04:25:22.481755+00:00",
+                    "raw_cache": "91df3921180f5ea2aab8fe8f047aba33b13e0317ab73f95970d650aa437841a1.json"
+                  },
+                  {
+                    "body_sha256": "3c32430517d30bad16472f9555143346880a8522362aac3470f42867c32fa131",
+                    "ingested_at": "2026-10-16T04:25:22.849899+00:00",
+                    "raw_cache": "2d5ea3137fd3724fbe97f2f8d54e0bffabd72e3d1aba439770451cf7df6cfa43.json"
+                  },
+                  {
+                    "body_sha256": "693fffddfef76992a3d6a61b90e2483abf3218844be7c559f3d7a070e1df5829",
+                    "ingested_at": "2026-10-16T04:25:23.263414+00:00",
+                    "raw_cache": "72347d1b1039c3c6c9a6631f5cd823892c1e2ed28f9a57517e4c99ded783d7bf.json"
+                  },
+                  {
+                    "body_sha256": "822c570f3a1dad6246600ee0587496ddfe70136149b491307746637e804ca45c",
+                    "ingested_at": "2026-10-16T04:25:23.639732+00:00",
+                    "raw_cache": "0f53841e79dc1efa558428d9715e8de2226256c9b5ca29900448e87d4380b8f6.json"
+                  },
+                  {
+                    "body_sha256": "f705f010f2e331b25235d0abd72507ff7c3c923435441e1a7abbf763358c7d66",
+                    "ingested_at": "2026-10-16T04:25:24.008940+00:00",
+                    "raw_cache": "986f5e967016332c17b186cf02af8d4a8d17d0ddd19aa4cd327b7b5103f14156.json"
+                  },
+                  {
+                    "body_sha256": "aef1d78c1586df08c2b97ddf9f00693d131809ed453291872d6a74898b784520",
+                    "ingested_at": "2026-10-16T04:25:24.400195+00:00",
+                    "raw_cache": "e487aaccc7c34aa5c66c1ab6a66957d8ad9ca808a54fe13145e5a26533a0276a.json"
+                  },
+                  {
+                    "body_sha256": "df3cc2528a29ab422361b7958ad0b718127391f6c52439b03d8adf6a73e7dada",
+                    "ingested_at": "2026-10-16T04:25:24.780660+00:00",
+                    "raw_cache": "48ad062d13b0b81c78966c13f8be3a9708184be885ee9b9f27457b1e57d9bc0f.json"
+                  },
+                  {
+                    "body_sha256": "b5787520fc94cf9cc806316c25f458a6eb588ba4216502d99bf487e63df9cdb7",
+                    "ingested_at": "2026-10-16T04:25:25.142750+00:00",
+                    "raw_cache": "0bb2b561443d503ee9697614e51d5fe1ee806ef60b87eb91e43f2f657f63e1fe.json"
+                  },
+                  {
+                    "body_sha256": "ed672e2e03ba8093b007124d72f8ac32f272b2dc60d6619ed137299bd2d209b9",
+                    "ingested_at": "2026-10-16T04:25:25.530854+00:00",
+                    "raw_cache": "b5a28a6395f08b6c2ab3859eea8d0a962e2ad0217e979506d3fb90a79995490f.json"
+                  },
+                  {
+                    "body_sha256": "e6c056ca9f76fa05a5571f622d657d8cd2c1b9c7aed5e0047ae4fb2851e0d629",
+                    "ingested_at": "2026-10-16T04:25:25.922040+00:00",
+                    "raw_cache": "03552bb229d09eb2feec95e2224caeb97727237306654253b888cc1e14af157f.json"
+                  },
+                  {
+                    "body_sha256": "3c808b3bd616ee15f62184a748cda8104789abb49c42ee8ffcb9322265d1bba6",
+                    "ingested_at": "2026-10-16T04:25:26.284290+00:00",
+                    "raw_cache": "47f5bf5ef67e998310b7b4c017b60c1eafd8c809900d07249444f5a728a871f4.json"
+                  },
+                  {
+                    "body_sha256": "e85c20905594fb2780f6309963af52b7e0378030b131e9f7aa382144405b354e",
+                    "ingested_at": "2026-10-16T04:25:26.635898+00:00",
+                    "raw_cache": "a2b7a01c1f18f5654cd78d2dfe9a58c15a853ee96fcfe7b495bb7b5d1c5c9c19.json"
+                  },
+                  {
+                    "body_sha256": "2a133115281d6ed67663a062cf07dcc30895b9247f445759e39880c964c67b6a",
+                    "ingested_at": "2026-10-16T04:25:27.287387+00:00",
+                    "raw_cache": "3166e11f7d4a758cacd8a037c4f02654867b4ec001e4f9d0c548a5a52517d2cb.json"
+                  },
+                  {
+                    "body_sha256": "6882d7892465e1d0c90cf11290a0faa656eb7066c216a253cc909dc86fdeff7a",
+                    "ingested_at": "2026-10-16T04:25:27.695646+00:00",
+                    "raw_cache": "3d7c7da7bb311e833c0b3950120f6daaafa3450589941530457c4659d6aa311e.json"
+                  },
+                  {
+                    "body_sha256": "8092a409dbf3fbb29dbab3ed4a440a0bf8037689aa38d0e57deb54d5b754a3d3",
+                    "ingested_at": "2026-10-16T04:25:28.198123+00:00",
+                    "raw_cache": "5fa934af11d6ed5ff64c608503a5bf6c0e38233316f89c28b0b4763da586f9ab.json"
+                  },
+                  {
+                    "body_sha256": "57f5ecb688b240df145cc65e5145bbeb0216b60e8ceab6ef9a110fc4686ee14c",
+                    "ingested_at": "2026-10-16T04:25:28.577868+00:00",
+                    "raw_cache": "7022e3d3f9b05ca250f3dac859e9dfc0318532de1d1ded36f66e5613fd9e2418.json"
+                  },
+                  {
+                    "body_sha256": "c4f8526f9879f70cefd60cca0dc3849cb86523444562c898f64f28e154568512",
+                    "ingested_at": "2026-10-16T04:25:28.953425+00:00",
+                    "raw_cache": "1276bef85b53387b68d6b51b87aea6fe64c03297833fb0f1d1d1c08af6319eac.json"
+                  },
+                  {
+                    "body_sha256": "7aa6e4d73b9b51187d9e20613055c3c8940426f01e9fc8780910c34f7c422408",
+                    "ingested_at": "2026-10-16T04:25:29.430023+00:00",
+                    "raw_cache": "bbb3d639327604a84ff5c99764468350fa10176e711dad7fb230e0a7c3e4542a.json"
+                  },
+                  {
+                    "body_sha256": "9708176deb46acd2bb8146b55fc20da581feaf3b0128d2c78105fbd45da75c0e",
+                    "ingested_at": "2026-10-16T04:25:29.848732+00:00",
+                    "raw_cache": "45acb2d1c32c66ef58349b17dcb7fd291ab45c78d6bb4daf2d36e622c3e791dd.json"
+                  },
+                  {
+                    "body_sha256": "9bcea3ee94e9a54dab7b229a08c42a6b6d9a9c2770fddd3e17bca0daccb53d94",
+                    "ingested_at": "2026-10-16T04:25:30.259422+00:00",
+                    "raw_cache": "70b049255ffeedf6ef79a282849b9a6c8862329f304fae710f15288fc68b92fa.json"
+                  },
+                  {
+                    "body_sha256": "915ac3672649475c802ce0f31e92b6b44b8554316107aeb99ead2ef6442435ff",
+                    "ingested_at": "2026-10-16T04:25:30.632492+00:00",
+                    "raw_cache": "310ca90cf1649568614e5c98eff175e60fba4099d94841aca87bbad935bdcf91.json"
+                  },
+                  {
+                    "body_sha256": "44d683627b86286b45a43fbc321c079f4047654473f8a875c9ba26e1eb7c5b5a",
+                    "ingested_at": "2026-10-16T04:25:31.287742+00:00",
+                    "raw_cache": "3e1e04f4103b94fb4289408c05a1c643983f1a48813a559172bf9b97d9fac202.json"
+                  },
+                  {
+                    "body_sha256": "f7bc4d042d69edcaaac13b2c1130bc23c7d1991b4a1c861d44072f7a7408963b",
+                    "ingested_at": "2026-10-16T04:25:31.690836+00:00",
+                    "raw_cache": "12aca4f189cd52e0e03bf6df97801462f32fcf60826a62ea22272052dd1a1b46.json"
+                  },
+                  {
+                    "body_sha256": "59643f6d7844415b1a2e372a886fc3b03cf2563ae4cd205d02b438feaa0e2b63",
+                    "ingested_at": "2026-10-16T04:25:32.101085+00:00",
+                    "raw_cache": "5fa3722514ee399266a202eb181e7815b3b8ee8d18ed3d79ffa74303d9dc8368.json"
+                  },
+                  {
+                    "body_sha256": "2f485fbb413790f189c958e94a32b595bf5ed2ce519f93c3c66f1b750be41fc8",
+                    "ingested_at": "2026-10-16T04:25:32.824063+00:00",
+                    "raw_cache": "b107a9cd5413c4bf999cca8cf4990faf5efc3a307e7e589ba96351e98664bfec.json"
+                  },
+                  {
+                    "body_sha256": "4ce8be986508bbafec1c0c0550a73f29efaa5efac110d6501ae6d045afa4fdd0",
+                    "ingested_at": "2026-10-16T04:25:33.233655+00:00",
+                    "raw_cache": "624e8f3970d42897f7a2cb9be4a508860c068c88328470d74d99f936c8c04425.json"
+                  },
+                  {
+                    "body_sha256": "aba065e08b655613f40b3fa331d25460a143323342d9dcd2abc6e6b60c118f05",
+                    "ingested_at": "2026-10-16T04:25:33.603379+00:00",
+                    "raw_cache": "74ae56aba2f6eae401602b0e1b0742130d944720349b60d3bcb2fda506548ed7.json"
+                  },
+                  {
+                    "body_sha256": "737510dc08c67625c7f4818d722aed962ddfe57d29b134dbbaede075c1239a97",
+                    "ingested_at": "2026-10-16T04:25:33.976214+00:00",
+                    "raw_cache": "c40c39843b6382e4e2750df075e19e8d08f927469f8aac8f58f1ac8e95aeac72.json"
+                  },
+                  {
+                    "body_sha256": "4805a7ba92cf179aa5362b84d66a0c547034e84ca516d66d540bf94662a27550",
+                    "ingested_at": "2026-10-16T04:25:34.364083+00:00",
+                    "raw_cache": "c4548e50d2cc873cb9b96eff0cdb3b4de6e0a2e8ebf4c517036eab45fe862ba3.json"
+                  },
+                  {
+                    "body_sha256": "23cd337fa041bb3f900337c111247126ca41baa6ddbb01bd71268dbfdf36b218",
+                    "ingested_at": "2026-10-16T04:25:34.777068+00:00",
+                    "raw_cache": "15c2050c87e489cfaec861287680905310b235b3aa0b009e96827ed509ad1886.json"
+                  },
+                  {
+                    "body_sha256": "32c282b9a3ed5928ef4aad9e5762ec41cc4414894978fcb01e4f30a993fb0112",
+                    "ingested_at": "2026-10-16T04:25:35.672092+00:00",
+                    "raw_cache": "e20c0cb8ef01cf4698d57a74260ba0250d793e4f087a751493f53f0be6cdcbcc.json"
+                  },
+                  {
+                    "body_sha256": "af4512f4f5c77678237c59f698c832507a37334060ce77c86500e3728d9685ad",
+                    "ingested_at": "2026-10-16T04:25:36.040956+00:00",
+                    "raw_cache": "6995ef5351a0e5ef004406772e794cde0c2e439559789187cae7eb41b7c3c04c.json"
+                  },
+                  {
+                    "body_sha256": "ca9c33b7de74d5293fa5a6089c6a0f939ec7116118289d1fd9cd8cea9ad2004c",
+                    "ingested_at": "2026-10-16T04:25:36.461836+00:00",
+                    "raw_cache": "71c972ef8594cdf2622b91f55d0f8d7928c1046a103c5db48a814ef3ec911802.json"
+                  },
+                  {
+                    "body_sha256": "4821ced6be9a6aa93a5c3578d31f046ed3b6e5ff168593fa2c5d37afeda565d7",
+                    "ingested_at": "2026-10-16T04:25:36.838659+00:00",
+                    "raw_cache": "56e7afcb11dc8f75e9a849e9f7d3b91ebfb1fa0e42069a2edc54b8b06d78d3b6.json"
+                  },
+                  {
+                    "body_sha256": "724929bdf07f7412ce943fec42f100847731696fcc2e479606caf8d001fdb97e",
+                    "ingested_at": "2026-10-16T04:25:37.279923+00:00",
+                    "raw_cache": "b385353aa71ccc7303b902d1971d7011e9326b4d863c903c4c3080156c5f53ca.json"
+                  },
+                  {
+                    "body_sha256": "a90de5430b288c11d04cef3548d83508d6c74fdf946027b870f782d61d33060a",
+                    "ingested_at": "2026-10-16T04:25:37.653248+00:00",
+                    "raw_cache": "a1b0a6a076d715445e5804e53939bb871ed152421ef9460fe042acba4ee459d4.json"
+                  },
+                  {
+                    "body_sha256": "69d6ab8e0420a1ea96c309985c0b2e6ecaf5a1e522923d7dcba481a6cb6cf010",
+                    "ingested_at": "2026-10-16T04:25:38.064097+00:00",
+                    "raw_cache": "101572cc9e497edf994559c908013e292461f49466b2940a9a276a09878681d6.json"
+                  },
+                  {
+                    "body_sha256": "8e51c0de72ea973ec04b434cf4b49a8a8d32b6a72e9ca6904e4f346cde5bf97c",
+                    "ingested_at": "2026-10-16T04:25:38.576772+00:00",
+                    "raw_cache": "25d297b8fc953ba5eeb7fab318d78469c4a5260a2b2fb78aa61fd7152f670554.json"
+                  },
+                  {
+                    "body_sha256": "638d5a733f19a1c7ae98768062ce0926d1c692179c8167b97f3aebdbb0512706",
+                    "ingested_at": "2026-10-16T04:25:38.986956+00:00",
+                    "raw_cache": "6833f1cee70d38d59b8effdf43647ec12e72affcab9802f446cc7b606a25b81a.json"
+                  },
+                  {
+                    "body_sha256": "3887bc9d8781cc5911ab7426bb522e3ccd75283536e4841733450fc8ced72b1b",
+                    "ingested_at": "2026-10-16T04:25:39.415815+00:00",
+                    "raw_cache": "4a92fff9fc6f0390c5d16041e07d7f9f5a1db969fc44b14348dbf4ee4e812f50.json"
+                  },
+                  {
+                    "body_sha256": "6dfac3d86f5e9b34197e71cf3d8c113a6f71b124cd6b97fe6825825a893997d8",
+                    "ingested_at": "2026-10-16T04:25:39.793965+00:00",
+                    "raw_cache": "4b70718305861819bc6dc11c9463147c6f3e9faf2aa63ab26a6910840cdb0d9d.json"
+                  },
+                  {
+                    "body_sha256": "052877689e7eb063f294506df734e32e131f20331f92dc31fdfe22fe73991e10",
+                    "ingested_at": "2026-10-16T04:25:40.162152+00:00",
+                    "raw_cache": "5a11b2a79f65a80d271105e4f73915a304edb2f8944f9abb478b19a61390794e.json"
+                  },
+                  {
+                    "body_sha256": "5c43f83f6896c820b97a4469ec0e77f2d66312e570b69508f8ac35d6a2afb10d",
+                    "ingested_at": "2026-10-16T04:25:40.539755+00:00",
+                    "raw_cache": "2d65f4f9e44d108b5fc9ad118e7ad0473d78414d5f9c7292ed7327e9987eafa9.json"
+                  },
+                  {
+                    "body_sha256": "dcf8f9d94ad12ec51bce665806882ebf9495bc8b5f1ffed3d6fbe158d80292a0",
+                    "ingested_at": "2026-10-16T04:25:40.904760+00:00",
+                    "raw_cache": "db1e219106af512456a11b82340f84c0423560f81b650103e739e832b1cae923.json"
+                  },
+                  {
+                    "body_sha256": "ac5fb4247d363bdeaec68be57dbb49a6eb43660c62587b7f4a61dc4552acf77c",
+                    "ingested_at": "2026-10-16T04:25:41.276822+00:00",
+                    "raw_cache": "6cc37b11ab9fc9a0c6266c1dbeea66291f5e7642639a8aad319be344b81f599f.json"
+                  },
+                  {
+                    "body_sha256": "392f8688723548b0244cf28fd3deec54514d9c3b6c464ae33da994c4ac18303d",
+                    "ingested_at": "2026-10-16T04:25:41.690440+00:00",
+                    "raw_cache": "9ca1f0a1be7d2702a4941c21f2597c8717b7c3b5e70670d958e2100b7305a3a7.json"
+                  },
+                  {
+                    "body_sha256": "cbfdc1b1b8778fa4607744ddc70810f6edf842e696db3290916dd539b4c95886",
+                    "ingested_at": "2026-10-16T04:25:42.076084+00:00",
+                    "raw_cache": "45b5afbdc73b9cb45a4010bc76498f52dece9c0a0d91e87b9b10acc0c47dcc91.json"
+                  },
+                  {
+                    "body_sha256": "7c3c1eb26050379f7e3da8e877eeefdefb53a0230700eece0c4fcfe2db400139",
+                    "ingested_at": "2026-10-16T04:25:42.531127+00:00",
+                    "raw_cache": "2a5c1ef9cef937c1887ba37497401a4f6ea86485daa9f3551261a6afb5eacd3b.json"
+                  },
+                  {
+                    "body_sha256": "93be99f1e8ba76d8f55b63061a3f71462be8f1f0c8a310307a659aab347527b1",
+                    "ingested_at": "2026-10-16T04:25:42.902091+00:00",
+                    "raw_cache": "121fddcc15fde33c5cda2c18264056994f6b4d5cf77c7a5f408d849c736d1250.json"
+                  },
+                  {
+                    "body_sha256": "c2252fc8776653b4332d94437be6d4824486c084844d72385d146115d826819c",
+                    "ingested_at": "2026-10-16T04:25:43.308311+00:00",
+                    "raw_cache": "3bc0da4f30aaa049003a20b4afb7092a1efa18ba6dfef1c31509b76839be391d.json"
+                  },
+                  {
+                    "body_sha256": "b86ee1249371daeef7222e56d5c7910cf746073462629410dcb389e1a28348fe",
+                    "ingested_at": "2026-10-16T04:25:43.821226+00:00",
+                    "raw_cache": "1e00e8b82b7b606d5783e3fc32f20ee25da9480fecac311f016b6144a436dee6.json"
+                  },
+                  {
+                    "body_sha256": "81827e19e48b0c8c62838e33b127d02f8ac78803bb1ed3435506f1af03c80bbe",
+                    "ingested_at": "2026-10-16T04:25:44.230038+00:00",
+                    "raw_cache": "92337cf71df5d68e561e7bde1882df6a554fce0e0802bcd488c05c0161d56127.json"
+                  },
+                  {
+                    "body_sha256": "7519efed4cc321f8d97d53135eda0129468e1ca9edc224bddf737a474dda0a15",
+                    "ingested_at": "2026-10-16T04:25:44.622563+00:00",
+                    "raw_cache": "f147a86d3b8922e0d5bd54b11eb26485b1aca0d342342f1da54527fecdb7ec4f.json"
+                  },
+                  {
+                    "body_sha256": "611b7cce150f6067da4afcdedeaadba84b70a4ffe90a42df32d1486cb2d2a282",
+                    "ingested_at": "2026-10-16T04:25:45.075413+00:00",
+                    "raw_cache": "b51866fd86b5a521c45d9189b948835053c3d65c6f77fb10d9e9ab50bdf6b461.json"
+                  },
+                  {
+                    "body_sha256": "63eb27ee21313c879ea238727bfd98354469c7aa91ed84f6284dd6cafd02bdb7",
+                    "ingested_at": "2026-10-16T04:25:45.472128+00:00",
+                    "raw_cache": "de376dbc32046e045cef2e0896d24c602f67bbd0e60101cf4f09709ce0450d80.json"
+                  },
+                  {
+                    "body_sha256": "a358ba760e1dc780d04baae91dc8d86d19e4bfeecfaa5ac9bbe657904a2d5f1b",
+                    "ingested_at": "2026-10-16T04:25:45.891625+00:00",
+                    "raw_cache": "9a59d976d086f652309fe9a8c97f8091dda95f9e31a2b5aeef43c897cdd78ada.json"
+                  },
+                  {
+                    "body_sha256": "b9f8e55f3a97961dc1c15bfba92e136fe3f5d13b4b2792fbc112706282bed0a8",
+                    "ingested_at": "2026-10-16T04:25:46.233521+00:00",
+                    "raw_cache": "fa15c8739194ca1663bc2909baba3dbbe431c34520a719edc1fed58568e824e8.json"
+                  }
+                ],
+                "product": {
+                  "auction_mode": false,
+                  "base_currency": "ETH",
+                  "base_increment": "0.00000001",
+                  "cancel_only": false,
+                  "display_name": "ETH-EUR",
+                  "fx_stablecoin": false,
+                  "high_bid_limit_percentage": "",
+                  "id": "ETH-EUR",
+                  "limit_only": false,
+                  "margin_enabled": false,
+                  "max_slippage_percentage": "0.03000000",
+                  "min_market_funds": "0.84",
+                  "post_only": false,
+                  "quote_currency": "EUR",
+                  "quote_increment": "0.01",
+                  "status": "online",
+                  "status_message": "",
+                  "trading_disabled": false
+                },
+                "product_response": {
+                  "body_sha256": "27da0757d34aa12e670baf807b86cd590020f264c88dd6e2de9fe3adac33dc64",
+                  "ingested_at": "2026-10-16T04:22:28.929360+00:00",
+                  "raw_cache": "2eecfa6418cc8f68ab7b79b7b7a545efbae58036cf56ef1f95624f0b9830abf0.json"
+                },
+                "provider_docs": "https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-candles",
+                "start": "2026-04-19T00:00:00+00:00"
+              }
+            ],
+            "gap_policy": "unobserved intervals retained; no synthetic candles",
+            "parent_versions": [],
+            "retention": "keep immutable versions/raw pages while referenced by research; no automatic deletion"
+          },
+          "quality_counts": {},
+          "quote": "EUR",
+          "requested_end_exclusive": "2026-10-16T00:00:00+00:00",
+          "requested_start": "2026-04-19T00:00:00+00:00",
+          "schema": "eur-ohlcv-4.0.0",
+          "source": [
+            "coinbase-exchange-public"
+          ],
+          "survivorship_bias": "current product universe; delisted assets not represented",
+          "symbol": "ETH-EUR",
+          "timeframe": "5m"
+        },
+        {
+          "actual_last_start": "2026-10-15T23:55:00+00:00",
+          "actual_start": "2026-07-18T00:00:00+00:00",
+          "base": "SOL",
+          "dataset_version": "0a12d97a4de1f9af13ad0f3d1981b5652c7912fa3b659ed552745b95658892bf",
+          "duplicates_removed": 0,
+          "file": "datasets/SOL-EUR-5m-0a12d97a4de1f9af.jsonl.gz",
+          "file_sha256": "d9bae3ab490cab4384bf224fd5e3bd47b4b0cab1d5b04784c50135bf78dccda0",
+          "gaps": [
+            {
+              "count": 1,
+              "end_exclusive": 1785035100,
+              "start": 1785034800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1785035700,
+              "start": 1785035400
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1785038700,
+              "start": 1785038400
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1785815700,
+              "start": 1785815400
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1786079400,
+              "start": 1786079100
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1786083900,
+              "start": 1786083600
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1788057600,
+              "start": 1788057300
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1788580800,
+              "start": 1788580500
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789276200,
+              "start": 1789275900
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789277100,
+              "start": 1789276800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789350900,
+              "start": 1789350600
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789353900,
+              "start": 1789353600
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789692600,
+              "start": 1789692300
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789694100,
+              "start": 1789693800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789786800,
+              "start": 1789786500
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789791000,
+              "start": 1789790700
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789958700,
+              "start": 1789958400
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1789962000,
+              "start": 1789961700
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1790045100,
+              "start": 1790044800
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1790048400,
+              "start": 1790048100
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1790223000,
+              "start": 1790222700
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1790562600,
+              "start": 1790562300
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1791609900,
+              "start": 1791609600
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1791687900,
+              "start": 1791687600
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1791688500,
+              "start": 1791688200
+            },
+            {
+              "count": 1,
+              "end_exclusive": 1791689400,
+              "start": 1791689100
+            }
+          ],
+          "historical_l2": false,
+          "missing_observations": 26,
+          "observations": 25894,
+          "provenance": {
+            "acquisitions": [
+              {
+                "end_exclusive": "2026-10-16T00:00:00+00:00",
+                "pages": [
+                  {
+                    "body_sha256": "beb318d86df7da9f2e27516c70454fe6b56974d8a232f1a83cb251bae91e2dad",
+                    "ingested_at": "2026-10-16T04:26:17.012873+00:00",
+                    "raw_cache": "0c31245417335674c421179c4fd612adc724d12bdfec8e0db163f149d5523d8b.json"
+                  },
+                  {
+                    "body_sha256": "61dc33be2ec6412a73c8df24c4c8dc958ad00ebb078e6a4b8cd8a64bf6243d7c",
+                    "ingested_at": "2026-10-16T04:26:17.407216+00:00",
+                    "raw_cache": "859c0303650bfb2a158ae9331bce122df9f9012a97e5d368ae2baab3705ef4aa.json"
+                  },
+                  {
+                    "body_sha256": "7dc0b1ae1c83b7d0c913695a23f8f9c1221b9f8ed29452ecf954a9279b890957",
+                    "ingested_at": "2026-10-16T04:26:17.935617+00:00",
+                    "raw_cache": "19cf1fa0429ac32607bef98624f6327c07d9c6f17e1a4b9383b85c279d0421c6.json"
+                  },
+                  {
+                    "body_sha256": "c01043bdcd92198c7f71152c8c19a19fd077ced1490014ed92910bb161dfd6ec",
+                    "ingested_at": "2026-10-16T04:26:18.382919+00:00",
+                    "raw_cache": "a486dfcf9378921c35ddaa45bf782d58b3b1de906c5c16eeda3b26d61e7f8577.json"
+                  },
+                  {
+                    "body_sha256": "6fd9383b416aec64fb1eed7afe04046952016edab6c0ee21da13a8b2dd9c3b0c",
+                    "ingested_at": "2026-10-16T04:26:18.859740+00:00",
+                    "raw_cache": "66d34da2956a3de87fc48c598ec3be35a78f2fb9bd9f56005b437a4c306108dd.json"
+                  },
+                  {
+                    "body_sha256": "23b246b301c3d0975f8065a5e31c7fdc781813ac7972b2d4df3d7c3b94956635",
+                    "ingested_at": "2026-10-16T04:26:19.518768+00:00",
+                    "raw_cache": "ea899aafa9e83e880eb3370703ccf32ef6113e12b226ed0a33826ab2c4936c14.json"
+                  },
+                  {
+                    "body_sha256": "aa6fa593f343934a34b45db20d7aae66f8b682a68d5d7553dcca47631899dac8",
+                    "ingested_at": "2026-10-16T04:26:19.989133+00:00",
+                    "raw_cache": "8d4499b08e1519e84cf632fcf0205f4313aa1aedab5713cc39ec23c11eac2cc3.json"
+                  },
+                  {
+                    "body_sha256": "12e7e5a86dcf43dc91868f6a3f365126b297c8bdc0fac57da28382f2e1398ac0",
+                    "ingested_at": "2026-10-16T04:26:20.646451+00:00",
+                    "raw_cache": "9b7c4526e97714cf646543ee9ddec64b721290653e263f546e90d46b69667df7.json"
+                  },
+                  {
+                    "body_sha256": "9b2f6261febfbac6fa2bd8d2349540d6ffdd1d0014226734537242f7175496ca",
+                    "ingested_at": "2026-10-16T04:26:21.121368+00:00",
+                    "raw_cache": "f7520dba9d93180a627d8c00d048d84872750403b0a2b939d331561ac59c8e84.json"
+                  },
+                  {
+                    "body_sha256": "eeebb883bfe19ee295106feac5154e904ce34d51af6b466a0bff8af596e71e9f",
+                    "ingested_at": "2026-10-16T04:26:21.529515+00:00",
+                    "raw_cache": "7ea8db05aaac8ff1da447d28eb34bb02ca49c533fa3152abf713367ebdacc4f1.json"
+                  },
+                  {
+                    "body_sha256": "f56253b00287fe4aa13c167de2bd3b171cc1dc783bd4cdc450d0e9bcf9813d1c",
+                    "ingested_at": "2026-10-16T04:26:21.898010+00:00",
+                    "raw_cache": "9535cd7a947886cfdbc0b6449d8e1aacf8ea25ad0ec4916da9ce7afe86ab24be.json"
+                  },
+                  {
+                    "body_sha256": "30f9451acd01675e64847c5d1a2788b01ebef67834cfc28a0f52542e239420d5",
+                    "ingested_at": "2026-10-16T04:26:22.258409+00:00",
+                    "raw_cache": "bcd43c6ee22c05ed24ccae134e60958b9546719f36e9c8c733a12a12da516726.json"
+                  },
+                  {
+                    "body_sha256": "ef64b4b97c472fed71a19f071f625ba711bb6c6dd48b1ee8f851ed5068e74b21",
+                    "ingested_at": "2026-10-16T04:26:22.660243+00:00",
+                    "raw_cache": "a25f5992db0b8ed1e85705fa03a46386fff46f8537d8fd1984a77bc464e8d529.json"
+                  },
+                  {
+                    "body_sha256": "3a30c7e490ce14b28c1ffa2a69991da6cd92823326183641b2b4567ca120e909",
+                    "ingested_at": "2026-10-16T04:26:23.037827+00:00",
+                    "raw_cache": "f8dd9567699536989b4c9f37ceda1ea8b2e612d40e065dd18961439b6bc94842.json"
+                  },
+                  {
+                    "body_sha256": "f01dc45b08140cb27af4152ca96781c10130fe9d1ac6bc680956bd9e68e73600",
+                    "ingested_at": "2026-10-16T04:26:23.417711+00:00",
+                    "raw_cache": "2315d8ef44b21cd42939ca8e50a86226930b4ea3665cc1fd4715e8b71ecbe5ee.json"
+                  },
+                  {
+                    "body_sha256": "512905eff2e04ee943f9b6e8b51613980cfed37604d4b59670246db41d9a9525",
+                    "ingested_at": "2026-10-16T04:26:23.890515+00:00",
+                    "raw_cache": "6b0ab6018481186e9f3af17c177401fce97ac668e1ee92441a8a0b3096e0d8a8.json"
+                  },
+                  {
+                    "body_sha256": "5396a18dc345f2aca8ba97eb2e97f31a11eb4596627dc27f281eb01b97a60b8e",
+                    "ingested_at": "2026-10-16T04:26:24.250547+00:00",
+                    "raw_cache": "8066356bcdcf5ef0173d219fc28f121888125f85e43836d74debce965203b367.json"
+                  },
+                  {
+                    "body_sha256": "c5b31858194922404f5c6b13eda4ff76e965ab9629104cba8c143b11708fc840",
+                    "ingested_at": "2026-10-16T04:26:24.659845+00:00",
+                    "raw_cache": "d1a23491d60fa110d846383c93f92f5b205abd68a97ff9fb52d75c66dea7d63a.json"
+                  },
+                  {
+                    "body_sha256": "4b104f0cdd31fb16e9f925a9893a02de4b26afb1de1f649ec76977d769cf0ce0",
+                    "ingested_at": "2026-10-16T04:26:25.047952+00:00",
+                    "raw_cache": "a7e07382325bb4e3864200d521aa8b49359535c40977f82e60ecaf8503b1c983.json"
+                  },
+                  {
+                    "body_sha256": "a0e408d7d29834b7e059ee0888f887b8a9091f3bb0657d9ac5838dc147ad245e",
+                    "ingested_at": "2026-10-16T04:26:25.538807+00:00",
+                    "raw_cache": "e69525f2590cf2742be753080aaa09ca055612ffdf8c5f8964a86020ba9f367d.json"
+                  },
+                  {
+                    "body_sha256": "aea98b0c17ca4f9ddf1f924c72f410f6d808758ffd0e5a14a333a2e5024b65eb",
+                    "ingested_at": "2026-10-16T04:26:25.949318+00:00",
+                    "raw_cache": "8df0320770bd3486172c60da70fa075b231dcf59f6b08d107b4e154a5e5290a7.json"
+                  },
+                  {
+                    "body_sha256": "70c48f38e86c657a8f60d2f1209b1632dcd477bbbe8edb520c01b51fe75d76fb",
+                    "ingested_at": "2026-10-16T04:26:26.682266+00:00",
+                    "raw_cache": "f1727c18856f78752267715238bfe483d600ec0e121b8a9593504f0ebc6af487.json"
+                  },
+                  {
+                    "body_sha256": "8999dd819ae5dc3180a9a377ea09bade0c3f9c495605da49d7741499373d38c4",
+                    "ingested_at": "2026-10-16T04:26:27.110396+00:00",
+                    "raw_cache": "b043c3cd384ad19fc31f4095db69f1cab8307b664cb5db515d14e65d3f7025b0.json"
+                  },
+                  {
+                    "body_sha256": "03341b8e841136aba5be6dddb54ef5355a04e6ac2b8ff60b3dc51bc817ae09c3",
+                    "ingested_at": "2026-10-16T04:26:27.490741+00:00",
+                    "raw_cache": "71495251e137888e85d1da7cbfe22a132d8f86833d7074079babc4450d9b20c1.json"
+                  },
+                  {
+                    "body_sha256": "c82d2704aaf16aeba12bdccdf77a507b9893c38c2b11304a56672c8a1bed8b6d",
+                    "ingested_at": "2026-10-16T04:26:27.847448+00:00",
+                    "raw_cache": "143ed39de246bf5a05907f112435639ad4e74f8f20c16a48c9f315eb65219b1b.json"
+                  },
+                  {
+                    "body_sha256": "6ca1a01ea4ea78cdb81b7dc7e0203b70a5be689f9f115bb161b0297824a98bec",
+                    "ingested_at": "2026-10-16T04:26:28.524962+00:00",
+                    "raw_cache": "6d2951b661ea35231a77df9e66de208bdcc18a6aaa9ee8d6fb9fe633ce53218a.json"
+                  },
+                  {
+                    "body_sha256": "284c57768d09bab1f726caf49d7f34fcf5671daa25d1db4a3e0d1dd6987e89eb",
+                    "ingested_at": "2026-10-16T04:26:28.886522+00:00",
+                    "raw_cache": "4edd76590f878ecef78fa80f64b229d8d6a1473596307a75bf3eab12a9754c2a.json"
+                  },
+                  {
+                    "body_sha256": "64ff412957f2847d867e8a9e11c4955cdeefe56675086373add6ee363ad1d57a",
+                    "ingested_at": "2026-10-16T04:26:29.249120+00:00",
+                    "raw_cache": "fdf618e5307fcf267342ee7c02b351d64462abc68e0801e0b53a687d1e338c9f.json"
+                  },
+                  {
+                    "body_sha256": "e52ba23fa6c32f90f30f20e850624ffc9668d95734f3ae9358bd98871e8542bb",
+                    "ingested_at": "2026-10-16T04:26:29.711547+00:00",
+                    "raw_cache": "ee21bb3f7bed2a238ad86517234944079b101393299744aeef3dd64ad886d01d.json"
+                  },
+                  {
+                    "body_sha256": "88fb9249daec4d0e2f634e6368315b04f2a2a06bc8cfcf9bae00aaba7603901c",
+                    "ingested_at": "2026-10-16T04:26:30.080314+00:00",
+                    "raw_cache": "6079e8fe721765a4af80fe8eafa2d3b04eb525a4062ece79dd55f0b3c781c629.json"
+                  },
+                  {
+                    "body_sha256": "e4ed5482a2aea83806ddb343adb163a018c700ac54cde11a604bd23e5e9be940",
+                    "ingested_at": "2026-10-16T04:26:30.449154+00:00",
+                    "raw_cache": "ccfe6bedbc5330061b761a5861f746c7797fc2062e4df8e91f080ba630656981.json"
+                  },
+                  {
+                    "body_sha256": "4ee25e9e5f09659b57387c5c711b430603da3d3bf3cc75b95252a3c43483e379",
+                    "ingested_at": "2026-10-16T04:26:30.802236+00:00",
+                    "raw_cache": "809e6efc2873daa2f6d3ec6981d0f0bb8a8aed89684dd185d9469dd6679c109d.json"
+                  },
+                  {
+                    "body_sha256": "3920b5af7e21202ff2486bf201a2377b522c17d5d669995295bde2715d12b9f4",
+                    "ingested_at": "2026-10-16T04:26:31.158345+00:00",
+                    "raw_cache": "13ca18588aa0856d7ef8cc83a60f81c37306dcb57d4865a9607bf59ac03cc78b.json"
+                  },
+                  {
+                    "body_sha256": "22d19bf61ce2b79c868e313b1424b7198d7841e3b10956b76d0997c3af019f6c",
+                    "ingested_at": "2026-10-16T04:26:31.806859+00:00",
+                    "raw_cache": "5cf6bf80e99f5efd0c1f0a6be29beb2be9182757fbd2d9b8da0e4ec654638632.json"
+                  },
+                  {
+                    "body_sha256": "cda5a14c0a0c0f5f310d9d25411708523b5527d9b72717bdda605ca13e84401e",
+                    "ingested_at": "2026-10-16T04:26:32.170353+00:00",
+                    "raw_cache": "e04367d604d530c8c9fdd29dc0a3ff5b0fb65c2d98ce9be0f352dfe517b2641a.json"
+                  },
+                  {
+                    "body_sha256": "26eb74eb6f1e863333dd0e34f4deef1194471ed2d5dee3ab20905a73901dcc46",
+                    "ingested_at": "2026-10-16T04:26:32.538879+00:00",
+                    "raw_cache": "3ba455e66bd53819e75b89173f3b275d7899e258824ee0d735022e322e192df6.json"
+                  },
+                  {
+                    "body_sha256": "8cb3e706ab3b990fac27c137148d02c7384e60bfd3d4e77bd7000507f6eb7898",
+                    "ingested_at": "2026-10-16T04:26:32.884465+00:00",
+                    "raw_cache": "08385f57aa22b31f3da1ed7c10f1a432d92694b906bc1b6e3573696c53b4634b.json"
+                  },
+                  {
+                    "body_sha256": "c5b4a22a4e4374ec64beb075d123ec11ba80c37a2de7d87df728edbe43ef62bf",
+                    "ingested_at": "2026-10-16T04:26:33.241526+00:00",
+                    "raw_cache": "1d4adfe1a978c7fab1a9e179927e3307cd2d6e4cc06e953766973c2d7d8f6253.json"
+                  },
+                  {
+                    "body_sha256": "9ca4484b6548352d09cd95871e695920d389de8dd385aa305359a803a3bed45d",
+                    "ingested_at": "2026-10-16T04:26:33.661757+00:00",
+                    "raw_cache": "00de8b46aa9f67994005ef323fada491a63b862889a5be80844a87738b34cd4c.json"
+                  },
+                  {
+                    "body_sha256": "9d5ecb49363e5f263f81feb65bc73be30f292065d142cb2eedd16c8ed7930bd1",
+                    "ingested_at": "2026-10-16T04:26:34.098919+00:00",
+                    "raw_cache": "7782d0d22fc387cac538b96aa6910e97ebf798165202cab779910d44561f291a.json"
+                  },
+                  {
+                    "body_sha256": "42de3ff874abc55b13e56841bda462d64992a11aecbc37869c54fe07bfe901bc",
+                    "ingested_at": "2026-10-16T04:26:34.479773+00:00",
+                    "raw_cache": "3a669f66dd40c5bd0d03ef44b0c492a3a8b2476ad09dc5c7109497d27821f31e.json"
+                  },
+                  {
+                    "body_sha256": "9104a13ce99a351e9837bc52466031af34580a4bf34e0991beab1b4ae1569fae",
+                    "ingested_at": "2026-10-16T04:26:34.962213+00:00",
+                    "raw_cache": "39236f68f958491aacc689ffdd3646e3e17cf92171cb103d7edc4c5ba794b40f.json"
+                  },
+                  {
+                    "body_sha256": "19ae02078310be7dc9b858a65d9c1f2d6484417fa5b605b96eff64408460935a",
+                    "ingested_at": "2026-10-16T04:26:35.346875+00:00",
+                    "raw_cache": "184d42c107f752b6290eb3e6b964dd8c7175a23d22ee60c82506fda34ad5a534.json"
+                  },
+                  {
+                    "body_sha256": "17a7574085917af592c339fdfdd90ad30e2a58254b570c964d93b424adf14807",
+                    "ingested_at": "2026-10-16T04:26:35.720381+00:00",
+                    "raw_cache": "6683500b713dac169cdcc302430764a2952e5bd75b42b508497873d8645c4cff.json"
+                  },
+                  {
+                    "body_sha256": "828be236f94f162a22a743165743093db43b6c27c1cae2b81eec497abf8821dd",
+                    "ingested_at": "2026-10-16T04:26:36.080439+00:00",
+                    "raw_cache": "98a2ef464c6bf015009079e1e16adf9401fde47af564bf99a3113974a1d5aaeb.json"
+                  },
+                  {
+                    "body_sha256": "dc931dbd164e4601106357aa2cde340fa4a555c0d6062cfd09046fc64e2b0299",
+                    "ingested_at": "2026-10-16T04:26:36.897894+00:00",
+                    "raw_cache": "e8caae37f939b354fe77e1884f1ef5aac98dd7a54ac6a86a5d5549fa6e2f33bb.json"
+                  },
+                  {
+                    "body_sha256": "caa6d9a38abd4ae6d0b35a4099f9422cea7a57dff57aedbfc6de879c67998d7e",
+                    "ingested_at": "2026-10-16T04:26:37.253303+00:00",
+                    "raw_cache": "78b5efebb7c78b62dc586757d91c3131cd984877c08e485b2c4d238674905430.json"
+                  },
+                  {
+                    "body_sha256": "05e2da2baa5366070b483d87447c2e77efaecd3f81311917bf6f53df3c04902a",
+                    "ingested_at": "2026-10-16T04:26:38.734481+00:00",
+                    "raw_cache": "9c6b9109108b61bf3b641827bebd167f9f45c4a51485f43bc5a309fb67b3060c.json"
+                  },
+                  {
+                    "body_sha256": "fcab71fe8167eebba9194914bca92089829a475548240d6162889eb2ab8487a3",
+                    "ingested_at": "2026-10-16T04:26:39.166386+00:00",
+                    "raw_cache": "7e35e56d428d9070e2bad6959aef9d18cd7ec1351cb5b15d0754805af99c34d3.json"
+                  },
+                  {
+                    "body_sha256": "5d131399a2df0869a493f01a6189ef3130fb95c1680c6aae06c0a200bbdd93fd",
+                    "ingested_at": "2026-10-16T04:26:39.522904+00:00",
+                    "raw_cache": "77f417dcdda35c69604e87c37a302a30dfde94f194a2089dfcdc0583790ecd2a.json"
+                  },
+                  {
+                    "body_sha256": "7524f1fcaa8038b8b42fff3ea73a98b45c2d4684d7f8724c85249a60b64ceba2",
+                    "ingested_at": "2026-10-16T04:26:40.039445+00:00",
+                    "raw_cache": "09512dc90f3bcc33ff6a15c99c28f17cbb12a2c4c77fdb914d014694a4e4fa86.json"
+                  },
+                  {
+                    "body_sha256": "d21ef24a24cf79ebb2303c702f5859d9df1528d5a778cd986b4c168d8413f1de",
+                    "ingested_at": "2026-10-16T04:26:40.392005+00:00",
+                    "raw_cache": "c49b6701c358e6a114260952145677451d8d652dc4adadbc8cc2a34a36ffb555.json"
+                  },
+                  {
+                    "body_sha256": "a4f603d918cd4a0b7e27066fa5102460a326fb7d632a8256a11832b9a982656b",
+                    "ingested_at": "2026-10-16T04:26:40.844334+00:00",
+                    "raw_cache": "9d2f77981fa581ff3a655b58bc774dfd051bdb87341f6d416f7d108ea4894774.json"
+                  },
+                  {
+                    "body_sha256": "30efc7d61b81fb4ce9d71a32957efa5558e833ef4c05a5487cbbd859ff052ed2",
+                    "ingested_at": "2026-10-16T04:26:41.574406+00:00",
+                    "raw_cache": "f9df93430492fabb2e787cca1b04dca15fdda74ab99515d1dafc04a4ec0bd935.json"
+                  },
+                  {
+                    "body_sha256": "ea23983dd5bdd8656666261e995bd57c282c2ae7f196a368048febe2908381eb",
+                    "ingested_at": "2026-10-16T04:26:41.971975+00:00",
+                    "raw_cache": "d80bc7d7c459b504afd7e868e3de2d633207316f8b2713f1740ff530297299f2.json"
+                  },
+                  {
+                    "body_sha256": "f76ad782100d9f5825d228cec80cbe54504eb9f01932c4aaf042bbcd8f68f4fa",
+                    "ingested_at": "2026-10-16T04:26:42.613287+00:00",
+                    "raw_cache": "ddd9794a788e1119a0b6f3b0cf76fa2892d047975cf091abd05ac0dea83c35cc.json"
+                  },
+                  {
+                    "body_sha256": "4cb74028030c39a30c60b40da84627bc7de2cf94e6e2d64a071612e9c11f01f3",
+                    "ingested_at": "2026-10-16T04:26:43.006798+00:00",
+                    "raw_cache": "941974dfedfcb9f29963990e1a6303c8fafe81175121a769b1fb239220e84341.json"
+                  },
+                  {
+                    "body_sha256": "520bf1a2814521e9d0cb02802264f4c2075321a7793a51783bcb68ce3746ce2a",
+                    "ingested_at": "2026-10-16T04:26:43.416742+00:00",
+                    "raw_cache": "054a7b5b4eac02ce16f02f34a20fbbfb6149ebcd49f62947bd34dc18b37d021c.json"
+                  },
+                  {
+                    "body_sha256": "2d1224a90eb55bc77f02253bb86e1c0f9dce5c4427834b356600eb9faa48c21f",
+                    "ingested_at": "2026-10-16T04:26:43.767821+00:00",
+                    "raw_cache": "23a232e423cb65ecbe778423af8f05ee5014ae349ac0018850d2e0f71247bff3.json"
+                  },
+                  {
+                    "body_sha256": "32dd0892acb9e919e5b2d9ad30d0dce4da3f973a37f4432f9fb44be80199ae3a",
+                    "ingested_at": "2026-10-16T04:26:44.138091+00:00",
+                    "raw_cache": "605f68812debb546e2d2310c850fc6d768a115ef2abced712f82eda492abcd3c.json"
+                  },
+                  {
+                    "body_sha256": "0eacb2bb80638f0eb4dfbed6ddb1812d8951f767c542a425c5132ad8da610fda",
+                    "ingested_at": "2026-10-16T04:26:44.584943+00:00",
+                    "raw_cache": "e8a3c4fa923bf0ffeeb863d05873de560de9df17a2035a525e07185b61fd434a.json"
+                  },
+                  {
+                    "body_sha256": "33b0558d33fe2494ed5d535ab1b13ed8970388b1182e35d1cb0abc5ff7b12d77",
+                    "ingested_at": "2026-10-16T04:26:45.271219+00:00",
+                    "raw_cache": "1fb203c8019b055b91b5c3fef5d44f22b5d9f5f2b4c8c37cae423d8f5d6d00be.json"
+                  },
+                  {
+                    "body_sha256": "0f936fc3b326753472c59d30a62057d5d5bd9ab0309e3a956ffa8822e98e3c3e",
+                    "ingested_at": "2026-10-16T04:26:45.986907+00:00",
+                    "raw_cache": "614e159d4bd3b87ea97813ea6771043dfb9f775e367a4a7b4152aa80bdd1568f.json"
+                  },
+                  {
+                    "body_sha256": "1282f2b2a6dc32cb0de656438b47812e276a4435863da60b259c3609bc0bb7ba",
+                    "ingested_at": "2026-10-16T04:26:46.485776+00:00",
+                    "raw_cache": "53a0d150dd2742125c17bb4223e17b6dbc6f2ec8ab654bd1abcfd49ceb695061.json"
+                  },
+                  {
+                    "body_sha256": "5a5573f457ef0b061b920d7a9447c419935d997ece27506b593019464b88e9da",
+                    "ingested_at": "2026-10-16T04:26:46.847276+00:00",
+                    "raw_cache": "372fd8a40cf36cc2704cc16bf762c4ec0d12cf5f839426514bc435c5377bd0f1.json"
+                  },
+                  {
+                    "body_sha256": "ba36d3c3f6694574f53ac2b9518fe49a45e879d3f4f38324f5014aaaf7b1ccc9",
+                    "ingested_at": "2026-10-16T04:26:47.223218+00:00",
+                    "raw_cache": "90d5b007d2f1db9799da36ad1fdd86c3e56634bf082b3fc0407d5ac9c08c4aa0.json"
+                  },
+                  {
+                    "body_sha256": "65becb7014562aa3a4b695e66d347457dd1884d6f980a17513260794a213a7ce",
+                    "ingested_at": "2026-10-16T04:26:47.585527+00:00",
+                    "raw_cache": "9526c87b32c4bcf35786944b8427f88bbb0653e7f1cad0b09a111cb73545c4ad.json"
+                  },
+                  {
+                    "body_sha256": "a933e015bfeed6241431aa212cab94e5a7a45732d709c8b558ed2652ab25f7a7",
+                    "ingested_at": "2026-10-16T04:26:48.277204+00:00",
+                    "raw_cache": "c39f2df36a48ff851c47187f95506a4db18288e7cccc8762b1ca227e4f429ef4.json"
+                  },
+                  {
+                    "body_sha256": "f82b8b9f2483e74b140c3a2e8adf051a6c62316d6445fc7e3c45dfcde7b06e7a",
+                    "ingested_at": "2026-10-16T04:26:48.622073+00:00",
+                    "raw_cache": "34164969bac7bb4a4daceaed80410d379e3abc25e2da3f18fac3796d5adb1563.json"
+                  },
+                  {
+                    "body_sha256": "bf21ae616e0db0546dcee3148b857f71cbaa725845c5883a0ab97def5f967fdb",
+                    "ingested_at": "2026-10-16T04:26:49.001398+00:00",
+                    "raw_cache": "ca1fb63272af1d06dfb715b52ab77afed6306c3f71685f305c99224798fbe46a.json"
+                  },
+                  {
+                    "body_sha256": "93d16d205ef7fc6ab89765ed66862e1bbd78cec6cd01bcc6fdfc0df81c40ebab",
+                    "ingested_at": "2026-10-16T04:26:49.380146+00:00",
+                    "raw_cache": "3057503009596a81a878c68043787c8e975e9ec2b871598d3387d5f82455eafd.json"
+                  },
+                  {
+                    "body_sha256": "3d3ff3d6c7ee6fa6b413fbfa2c9a4338dfe09c48a657d629e564cf481fed0446",
+                    "ingested_at": "2026-10-16T04:26:49.837495+00:00",
+                    "raw_cache": "430b6961d03b1495d450adf450b6bb7a4cdad9b297dff33d99e3f22cfa3a34cb.json"
+                  },
+                  {
+                    "body_sha256": "19c35d89f7ba371166d73251bce6b9eb635b32a4e8cb64dfb15ee05d007b26d6",
+                    "ingested_at": "2026-10-16T04:26:50.219934+00:00",
+                    "raw_cache": "91fc0d7874ff78291f2682e72262462c421b9cdf053db709d57ef86c9726e901.json"
+                  },
+                  {
+                    "body_sha256": "611683f613a3183439e17bd0704aba8a0b530d0726e0df8663c5e565c01acb4a",
+                    "ingested_at": "2026-10-16T04:26:50.699496+00:00",
+                    "raw_cache": "4254aa38c1ae39134f5aa51880b917626179647e05ca1efcf48bdd16c9a0120f.json"
+                  },
+                  {
+                    "body_sha256": "64b7f8685c4fd5495a09896ef6f1049ab5e1ff5b1d384a3cd82e645bed2e61d0",
+                    "ingested_at": "2026-10-16T04:26:51.124499+00:00",
+                    "raw_cache": "2031947925e838b9f2cadb52f331d730e4da5414384fff5999501f0d1adb08a1.json"
+                  },
+                  {
+                    "body_sha256": "60de041f614fad9b9614909722a6a60728825a28857560035da86cd7735eb8a5",
+                    "ingested_at": "2026-10-16T04:26:51.773085+00:00",
+                    "raw_cache": "7c26b676582530e2e3f67e4ebf59093f7769689eeea03086717338264b64c723.json"
+                  },
+                  {
+                    "body_sha256": "aa23c7bdc8664c58b4e2c8ffeda8d8038d9dd962246a391ad2b5ce3df1a9b8d3",
+                    "ingested_at": "2026-10-16T04:26:52.138397+00:00",
+                    "raw_cache": "40fea5948fd7f24761c279ff8170eb311b88921698f649aa098c93cc0d8e25c6.json"
+                  },
+                  {
+                    "body_sha256": "45b5569dd7987a96f246aa928970a079fa003785de594a4bd63d91bb64af1dde",
+                    "ingested_at": "2026-10-16T04:26:52.565183+00:00",
+                    "raw_cache": "764da244674432c465dc13ddd0cf2a809ed795d500785e3cecc6d0e8f6273cd9.json"
+                  },
+                  {
+                    "body_sha256": "4f5a7c3bc83da2dfbdaf32767c504a1e079501778e8e798f6542116cd5960dbf",
+                    "ingested_at": "2026-10-16T04:26:52.981660+00:00",
+                    "raw_cache": "f13c99bc893fe9434e214069542c16830999fd96288006cca6db32a53fe7ba5c.json"
+                  },
+                  {
+                    "body_sha256": "0da5b77fc36a8d18c1b31c5c29a345b3634906c5e4b5b5d9285a96907cb02d87",
+                    "ingested_at": "2026-10-16T04:26:53.679263+00:00",
+                    "raw_cache": "4705e0d91047d12592ef4afd0b05c23ad9fcef7a2782c164f6ce11ed1df49d31.json"
+                  },
+                  {
+                    "body_sha256": "3c7385932e48d7d8b46d8b5e304e8165e79f6c1bf027755f6ceebad46df16b6d",
+                    "ingested_at": "2026-10-16T04:26:54.050727+00:00",
+                    "raw_cache": "1e3e8b9d7b23a5d9d1b049ac20f6bdcc58b148085dee2141f45e1afb51f36dbc.json"
+                  },
+                  {
+                    "body_sha256": "f0863bcd592247a6be6bd3345132b86a79367f44e2db44159fef0c33fea28b56",
+                    "ingested_at": "2026-10-16T04:26:54.416515+00:00",
+                    "raw_cache": "0c9b8cb4fff2a3f3136a81d8193344ad207dbf6dabce13bbaa3b236e8e1c144a.json"
+                  },
+                  {
+                    "body_sha256": "b54645f5ef4dbef683054dbdc7e3d01d7f7a481c888f4b3d3699617692dbcd7e",
+                    "ingested_at": "2026-10-16T04:26:54.778822+00:00",
+                    "raw_cache": "05eb859be46542a3e34c855f37e115d665cb7755533667352f1ff936b1f28432.json"
+                  },
+                  {
+                    "body_sha256": "e497c2e36ea4a11fb609db81c9592619172c53305e2192871dd5eb524af696d5",
+                    "ingested_at": "2026-10-16T04:26:55.165351+00:00",
+                    "raw_cache": "8334f53f84c5cf6468807a0ce514ddd6e7ab8d829d92a9f8b9f4259ac673cdb2.json"
+                  },
+                  {
+                    "body_sha256": "6f4a9e1ee62ba1e5a4661feca5f6a17822bc26ed70d39dcb731f73453d6d0eb1",
+                    "ingested_at": "2026-10-16T04:26:55.523766+00:00",
+                    "raw_cache": "1655243b3abc3d91d72f1d0388da320a25d3891efa5d755c3e276f03d6c3cf0f.json"
+                  },
+                  {
+                    "body_sha256": "c2314c745d5f933508f0938d79c8a1e3816a4ac0be7b41022ce6c6e2a8475228",
+                    "ingested_at": "2026-10-16T04:26:55.931504+00:00",
+                    "raw_cache": "14c0042ab7a60ad388fc4c5d869b163b473c46ecc13639ba7c47936376dce1e3.json"
+                  },
+                  {
+                    "body_sha256": "535d6051e4d2d0631487280c7dc7ccb21fc5aaa5f91462b2925321077843222a",
+                    "ingested_at": "2026-10-16T04:26:56.328643+00:00",
+                    "raw_cache": "b8c3d8614cbf00811124bf45d4dbe60764006a158a6c592f3ef70d4d146c78aa.json"
+                  },
+                  {
+                    "body_sha256": "19ac812ea1bf44ca8ad9d3f8b9bcca93e4b22d1d3490e21cfb9fc9407a57283e",
+                    "ingested_at": "2026-10-16T04:26:56.691521+00:00",
+                    "raw_cache": "de19090898dba5c084aa9b4e1ebb707ece422d3f32bc1697b6859f4ad94e1ea7.json"
+                  }
+                ],
+                "product": {
+                  "auction_mode": false,
+                  "base_currency": "SOL",
+                  "base_increment": "0.001",
+                  "cancel_only": false,
+                  "display_name": "SOL-EUR",
+                  "fx_stablecoin": false,
+                  "high_bid_limit_percentage": "",
+                  "id": "SOL-EUR",
+                  "limit_only": false,
+                  "margin_enabled": false,
+                  "max_slippage_percentage": "0.03000000",
+                  "min_market_funds": "0.84",
+                  "post_only": false,
+                  "quote_currency": "EUR",
+                  "quote_increment": "0.01",
+                  "status": "online",
+                  "status_message": "",
+                  "trading_disabled": false
+                },
+                "product_response": {
+                  "body_sha256": "27da0757d34aa12e670baf807b86cd590020f264c88dd6e2de9fe3adac33dc64",
+                  "ingested_at": "2026-10-16T04:22:28.929360+00:00",
+                  "raw_cache": "2eecfa6418cc8f68ab7b79b7b7a545efbae58036cf56ef1f95624f0b9830abf0.json"
+                },
+                "provider_docs": "https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-candles",
+                "start": "2026-07-18T00:00:00+00:00"
+              }
+            ],
+            "gap_policy": "unobserved intervals retained; no synthetic candles",
+            "parent_versions": [],
+            "retention": "keep immutable versions/raw pages while referenced by research; no automatic deletion"
+          },
+          "quality_counts": {},
+          "quote": "EUR",
+          "requested_end_exclusive": "2026-10-16T00:00:00+00:00",
+          "requested_start": "2026-07-18T00:00:00+00:00",
+          "schema": "eur-ohlcv-4.0.0",
+          "source": [
+            "coinbase-exchange-public"
+          ],
+          "survivorship_bias": "current product universe; delisted assets not represented",
+          "symbol": "SOL-EUR",
+          "timeframe": "5m"
+        }
+      ],
+      "embargo_bars": 1,
+      "experimental": true,
+      "fixed_split_fractions": [
+        0.6,
+        0.2,
+        0.2
+      ],
+      "holdout_disclosure": "Historical intervals can overlap V4 engineering studies. No untouched prospective holdout is claimed; frozen future pilot is separate.",
+      "optimization": "training only; no validation/test retuning; failed candidates remain failed",
+      "parameter_grid": [
+        {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        }
+      ],
+      "purge_bars": 12,
+      "run_id": "research-20261017T083840",
+      "source_files": {
+        "__init__.py": "c4f7a32ffb114c4a76019d847ef592291ae2d2b0793a534b3f9e6ffdf831fd46",
+        "_frozen/__init__.py": "016dfb58d4bd6bb9b1ebd3446ef5a8757faaa6be259eb904c0ad6646bccec244",
+        "_frozen/v42/__init__.py": "7e4d2a3b86191de1c9e243b3229fbbd682ae5cfc6379e4613e799c5b67197c39",
+        "_frozen/v42/ai.py": "09e59aff260802128b689c6115a77a7eba7dad37a6d7eafa7d5020d8ed47d870",
+        "_frozen/v42/allocation.py": "a1790e38cbd092367e5b3cff10e84f3d79600c53d72933d2bd0930466a2b6d9b",
+        "_frozen/v42/api/__init__.py": "d85d765bcbe5b99ebc7bf88f5739dfd584d7ebd60c8a4ab2fe6e39dfda35743c",
+        "_frozen/v42/api/main.py": "5f1d0e268a88e9f7e72b1f581928965bcb10d34693e12e77b315a6b2b876951c",
+        "_frozen/v42/api/security.py": "beb71afd71835881c6bf7aac2032403b83dff950f5c19058fa4ac537e6331a42",
+        "_frozen/v42/backtest.py": "ef2f346c2106ced5712bc884721ca446cebdcb86d10e686b3cf4826861f8aa9c",
+        "_frozen/v42/cli.py": "419c44d39a46b1051ab62eabf7d1d6cea38fd79bda1892e1bd35b77102ddfa84",
+        "_frozen/v42/clock.py": "5c8aa70595f49803798ab8381fc644e1ab77adbd6cb2445c6c51bd2b3c20e186",
+        "_frozen/v42/config.py": "8f76ad1fee4fb3ef76c146569f46fe3fc14cd974ee9faf3562dffc5f78ad6864",
+        "_frozen/v42/decision.py": "8477bf8673b7bddf2352a1f97e589c12335f43d8963027bffc354879845f7d1b",
+        "_frozen/v42/domain.py": "e714cc381e06114e6da4a75cf7c0662faf0f172bae6f5d172d2a0abc80064d73",
+        "_frozen/v42/execution/__init__.py": "383f03b379a3058f5fe5019f1faab7a98985b57dad83b890f0c7b79c70292f13",
+        "_frozen/v42/execution/postings.py": "a5bb95a9fb0247501cbdbab116125915da9651346114fb2a1e0377534e04c872",
+        "_frozen/v42/execution/pricing.py": "e8209888a8f28641359799a020c83dd5d9e4ece95fd5fc2095389f769820625d",
+        "_frozen/v42/execution/protection.py": "726bd7139e9e1061261d7ea38dd2b98fa7b88e4e71738c906c6e223e2c299b15",
+        "_frozen/v42/execution/quality.py": "bab507cee176870e6453a38db4eaa1c6d8bd77456868811c67061b7402e9bbff",
+        "_frozen/v42/execution_gateway.py": "8aee25c289c3ddb45e1bde082e27bd9bb5850265b4fb71cdb3c46a07eab830c4",
+        "_frozen/v42/failure_injection.py": "f21b5e44715e510ac0019ca62939fe7c115b656bb31db42faefcb90dccc8a834",
+        "_frozen/v42/indicators.py": "a828746f564a72c392964aeb28e273b8c4c73340aca35b7e10c65d24b4fe7b37",
+        "_frozen/v42/logging_config.py": "6e651df83b0fae507e1c99ada16ec9a949ed5cc9e71fcfc325d2a3f43ea0239d",
+        "_frozen/v42/market_data/__init__.py": "9e8f992cb1ae01b0e31211884cde5ce341679cb2f9f1951701cf1905925047e4",
+        "_frozen/v42/market_data/replay.py": "c667af1f0a2aa85b7f03ac8600c358c8c8070ebd30b0e3e933c8c851f6972228",
+        "_frozen/v42/market_data/revolut.py": "60392db8c5d4a1306c8d47074948067d05e4247df9e87a0f524139348058bf7e",
+        "_frozen/v42/market_data/scheduling.py": "3d8be924a69d19afc2b699321b800492ce1685e1ba70ffd40b26d09679d3e234",
+        "_frozen/v42/market_data/service.py": "3a91a215d31cfc7c2290e96c16a14ee19c785f67e18041a143280e70b09bd543",
+        "_frozen/v42/notifications.py": "2f00aa409e8675e486780fe0158a2d48153fc39bb0f7785cf1efc6783601bb89",
+        "_frozen/v42/paper_broker.py": "91a4577f0caef13cef8dda8ff2d8779b29b3c4a10de91d426a5fed45eabff09d",
+        "_frozen/v42/persistence/__init__.py": "1d250956abb161c9bff6f7a20722a95309ead48a99b37a60a6938ea6dd071cb1",
+        "_frozen/v42/persistence/accounting.py": "b9a645df396a763b00d8a89ebf4357a2e77648e4e7066187a00e13370e378c3a",
+        "_frozen/v42/persistence/ai_budget.py": "95328e73fb094589f7db56bc17257dcd5af1743c0db541043cb500d4fc19468a",
+        "_frozen/v42/persistence/ai_events.py": "bd2ef2092be09682ed2588c6f5a26d435b297d5f523c33eaf8fca8eb0cf7ca2b",
+        "_frozen/v42/persistence/analytics.py": "1abd9897e1a8ae2ed25b19171dd22cda209fca0ec5a7bbe0b3d0e1ccbd9c01d0",
+        "_frozen/v42/persistence/corrections.py": "5b9dad750cafbed8da08314b99a4ea084f72ca42753ef0e6a6b7f6c293d436fa",
+        "_frozen/v42/persistence/database.py": "b653f5b4e1be9e28d3f7cd7dedbcc6ad2f153a9828ceff1d490cefbc5f5a9f5d",
+        "_frozen/v42/persistence/market_state.py": "593ccf9bf1f182b40403e4d3e7c43cb726e8c6775b8ef565497c430c193259d2",
+        "_frozen/v42/persistence/models.py": "ffb75f432e9c626979a46c323526bb976fd37900674a533be0b9b13f91339bee",
+        "_frozen/v42/persistence/operations.py": "d249b62db2f58adbeaef37dd8ae3777abf1c9ad1c2a4f55580b3c522dc8817ad",
+        "_frozen/v42/persistence/pilot.py": "55f9b86a83cf1d2847c4ad668d92cfc38c4e0e8680e754c4fd99081f5899f2a0",
+        "_frozen/v42/persistence/repository.py": "ea6b91d6fc46e4556e043797c991c5344f6c5b0a490e31ef08b97d5bd8984747",
+        "_frozen/v42/persistence/research_jobs.py": "dc887ccfa14114c4d525545f9c235ba3ea1771364b9a993c980987b9b8ad98ca",
+        "_frozen/v42/persistence/research_policy.py": "20836879e13f3d0de4d2f408983c764cca15092b990933ed94b0a14e0fdac414",
+        "_frozen/v42/persistence/retry.py": "a3315cedf236b0261c3251dc5a5d473277a98113c94c203d460101598e1004fb",
+        "_frozen/v42/pilot.py": "560e06c6e2595431efa35f82e51f90c51b131ca28d521ff645984d931c53f96b",
+        "_frozen/v42/portfolio.py": "852a772f70d522cf7165519a1117a77477fe98499683926dff6ddcae4a5c9c43",
+        "_frozen/v42/position_manager.py": "fc23e86d2f0b1726574952f10349b84785822ded39701b105e5e00cb38cd03ac",
+        "_frozen/v42/research/__init__.py": "06b7c2cbc6a4db73dc404eb87d5eea83531009255cfc13bef04ce0a0c19e18b3",
+        "_frozen/v42/research/artifacts.py": "130253c9921d540f998f1b91ce1cd5e09ec199f2b767214caaedee2747d21af3",
+        "_frozen/v42/research/cli.py": "415f5980b181b85c2a7a6acf6317d1b5ba0263258062f89da16544beffa76a6e",
+        "_frozen/v42/research/context.py": "adb0bdd92d4a94d57a9e373ff6e89a3c10c9edc8a6811e3a470c30b1f5954524",
+        "_frozen/v42/research/data.py": "470ab1728811a29ceaa729b1a564d2d1b21566ed689d4f9b1c441aae8a1f99ff",
+        "_frozen/v42/research/diagnostics.py": "1483c804fb97f187b7a00b83c0893be30e70a95cac04adaef20b45a372304dea",
+        "_frozen/v42/research/experimental.py": "4af484da49015cd8ae7e55e1bdcf581185126967fee6ec3b91720291d72ab658",
+        "_frozen/v42/research/panel.py": "d9e939ed41690b4635cfb82460968c7c13c45a45a5ccac3cfb718c38a6dd8e37",
+        "_frozen/v42/research/regimes.py": "c0477ac82ee808aa61281d2db21dd64ad557d5a4bf47be5ea0d371b5ebe897ee",
+        "_frozen/v42/research/seed.py": "4652e0f8d11e34832a02ccb002377b94b821cd179a192f45533f8c5900e57a44",
+        "_frozen/v42/research/simulation.py": "595fcb5e4e2888be21b1fab39559bffef76b4e4a77728c571282db2625b3a72a",
+        "_frozen/v42/research/strategies.py": "585e6362408d1c3894363e073ed1a423cc7f52ad9b17d75f462ef07b157ff901",
+        "_frozen/v42/research/worker.py": "41760d2d73af48a9c3c7c4f17fb3211b088f010c19dfcb908ae85738f00ad028",
+        "_frozen/v42/research/workflow.py": "f833fc7d090420b6de11e9f3a319ec499ec7dab73c1130b93acc150831d1d341",
+        "_frozen/v42/risk.py": "c4caa24a6010b47f7f26d63fea1e7b24f867274f87be9b899983b2932699a354",
+        "_frozen/v42/runtime.py": "09fe805a0484c0deaa965849b62b5259bca3f17026c28c640791a1f9b6344180",
+        "_frozen/v42/scanner.py": "c1df5df0716ad0c0154cfde9ad0a0c48a8dff78bd12e9a91e76ebb7cf07885d2",
+        "_frozen/v42/shadow/__init__.py": "4a3c21bd8ebf4d4f672a52516825a63befffa0bbc0328c709482da5d64f2705b",
+        "_frozen/v42/shadow/lab.py": "f0291c48a5c948ee7e10a0063c06ddd44b6e1016fc0cf0690d235a678a04256b",
+        "_frozen/v42/shadow/repository.py": "78563688e52487f8d09172d53f133c2baf2ea813e1adade66f53f0c68e9f49af",
+        "_frozen/v42/shadow/runtime.py": "b469c4c29a4386b660a4b05a072db6f0a766d8a80964d2b1952c19efdd06e592",
+        "_frozen/v42/strategies.py": "6488e137ed05965791d700d9d1bea6dd8afffb79f64665689a79a23b1a09e7a8",
+        "_frozen/v42/worker/__init__.py": "ff25669f909727325a8366f3dedb648955c3abf7e407e84be3c2df83609cebc4",
+        "_frozen/v42/worker/health.py": "2a2ce350c1229d9051af04f4205f3ee6e1b500c86c64d65598fafc2d527ae73b",
+        "_frozen/v42/worker/runner.py": "92e12e0128942260f347d640593474b7485a279bd6a880da00008b4dd22b9fcd",
+        "ai.py": "09e59aff260802128b689c6115a77a7eba7dad37a6d7eafa7d5020d8ed47d870",
+        "allocation.py": "a1790e38cbd092367e5b3cff10e84f3d79600c53d72933d2bd0930466a2b6d9b",
+        "api/__init__.py": "d85d765bcbe5b99ebc7bf88f5739dfd584d7ebd60c8a4ab2fe6e39dfda35743c",
+        "api/main.py": "5ec347cdc2ecfc503afba38af341f80b59abd41d92ad6d6b00afe6bcdcc3e4ab",
+        "api/security.py": "beb71afd71835881c6bf7aac2032403b83dff950f5c19058fa4ac537e6331a42",
+        "api/v44.py": "cda5f27f2361d695f0957e5919f35732b5b84d2c22f95185559d83ddb352241a",
+        "api/v45.py": "1379b921e286d1e00b15a4668fa64cc68b1b3f2ff5059d003a4bea5378e0a057",
+        "backtest.py": "ef2f346c2106ced5712bc884721ca446cebdcb86d10e686b3cf4826861f8aa9c",
+        "cli.py": "419c44d39a46b1051ab62eabf7d1d6cea38fd79bda1892e1bd35b77102ddfa84",
+        "clock.py": "5c8aa70595f49803798ab8381fc644e1ab77adbd6cb2445c6c51bd2b3c20e186",
+        "config.py": "8abb651d92d7143486203360f21fd434a222afaa2b1e45a22a37281d194abedf",
+        "decision.py": "8477bf8673b7bddf2352a1f97e589c12335f43d8963027bffc354879845f7d1b",
+        "domain.py": "e714cc381e06114e6da4a75cf7c0662faf0f172bae6f5d172d2a0abc80064d73",
+        "execution/__init__.py": "383f03b379a3058f5fe5019f1faab7a98985b57dad83b890f0c7b79c70292f13",
+        "execution/postings.py": "a5bb95a9fb0247501cbdbab116125915da9651346114fb2a1e0377534e04c872",
+        "execution/pricing.py": "e8209888a8f28641359799a020c83dd5d9e4ece95fd5fc2095389f769820625d",
+        "execution/protection.py": "726bd7139e9e1061261d7ea38dd2b98fa7b88e4e71738c906c6e223e2c299b15",
+        "execution/quality.py": "bab507cee176870e6453a38db4eaa1c6d8bd77456868811c67061b7402e9bbff",
+        "execution_gateway.py": "8aee25c289c3ddb45e1bde082e27bd9bb5850265b4fb71cdb3c46a07eab830c4",
+        "failure_injection.py": "f21b5e44715e510ac0019ca62939fe7c115b656bb31db42faefcb90dccc8a834",
+        "indicators.py": "a828746f564a72c392964aeb28e273b8c4c73340aca35b7e10c65d24b4fe7b37",
+        "logging_config.py": "6e651df83b0fae507e1c99ada16ec9a949ed5cc9e71fcfc325d2a3f43ea0239d",
+        "market_data/__init__.py": "9e8f992cb1ae01b0e31211884cde5ce341679cb2f9f1951701cf1905925047e4",
+        "market_data/replay.py": "c667af1f0a2aa85b7f03ac8600c358c8c8070ebd30b0e3e933c8c851f6972228",
+        "market_data/revolut.py": "6eececc825d21ae796eb3457ed7cb3cca8c5ca5588b3d7b1991bdda575932d9b",
+        "market_data/scheduling.py": "3d8be924a69d19afc2b699321b800492ce1685e1ba70ffd40b26d09679d3e234",
+        "market_data/service.py": "bafd58334c7341d6782d569768a474a639c99dfd1d0a000eacc9e77ff3081ff7",
+        "notifications.py": "2f00aa409e8675e486780fe0158a2d48153fc39bb0f7785cf1efc6783601bb89",
+        "paper_broker.py": "91a4577f0caef13cef8dda8ff2d8779b29b3c4a10de91d426a5fed45eabff09d",
+        "persistence/__init__.py": "1d250956abb161c9bff6f7a20722a95309ead48a99b37a60a6938ea6dd071cb1",
+        "persistence/accounting.py": "b9a645df396a763b00d8a89ebf4357a2e77648e4e7066187a00e13370e378c3a",
+        "persistence/ai_budget.py": "95328e73fb094589f7db56bc17257dcd5af1743c0db541043cb500d4fc19468a",
+        "persistence/ai_events.py": "bd2ef2092be09682ed2588c6f5a26d435b297d5f523c33eaf8fca8eb0cf7ca2b",
+        "persistence/analytics.py": "1abd9897e1a8ae2ed25b19171dd22cda209fca0ec5a7bbe0b3d0e1ccbd9c01d0",
+        "persistence/corrections.py": "5b9dad750cafbed8da08314b99a4ea084f72ca42753ef0e6a6b7f6c293d436fa",
+        "persistence/database.py": "b653f5b4e1be9e28d3f7cd7dedbcc6ad2f153a9828ceff1d490cefbc5f5a9f5d",
+        "persistence/market_state.py": "68f2f0b1ca14a6dc406fee9c5106a32e0373bdde96e2e212d4d82facfc95149a",
+        "persistence/models.py": "ffb75f432e9c626979a46c323526bb976fd37900674a533be0b9b13f91339bee",
+        "persistence/operations.py": "d249b62db2f58adbeaef37dd8ae3777abf1c9ad1c2a4f55580b3c522dc8817ad",
+        "persistence/pilot.py": "9cfc2de4f1164bed1c50d81c5702c8753ce51ed46cf71a68249ef987c635cb87",
+        "persistence/repository.py": "ea6b91d6fc46e4556e043797c991c5344f6c5b0a490e31ef08b97d5bd8984747",
+        "persistence/research_jobs.py": "dc887ccfa14114c4d525545f9c235ba3ea1771364b9a993c980987b9b8ad98ca",
+        "persistence/research_policy.py": "20836879e13f3d0de4d2f408983c764cca15092b990933ed94b0a14e0fdac414",
+        "persistence/retry.py": "a3315cedf236b0261c3251dc5a5d473277a98113c94c203d460101598e1004fb",
+        "pilot.py": "560e06c6e2595431efa35f82e51f90c51b131ca28d521ff645984d931c53f96b",
+        "portfolio.py": "852a772f70d522cf7165519a1117a77477fe98499683926dff6ddcae4a5c9c43",
+        "position_manager.py": "fc23e86d2f0b1726574952f10349b84785822ded39701b105e5e00cb38cd03ac",
+        "research/__init__.py": "06b7c2cbc6a4db73dc404eb87d5eea83531009255cfc13bef04ce0a0c19e18b3",
+        "research/artifacts.py": "130253c9921d540f998f1b91ce1cd5e09ec199f2b767214caaedee2747d21af3",
+        "research/cli.py": "415f5980b181b85c2a7a6acf6317d1b5ba0263258062f89da16544beffa76a6e",
+        "research/context.py": "adb0bdd92d4a94d57a9e373ff6e89a3c10c9edc8a6811e3a470c30b1f5954524",
+        "research/data.py": "470ab1728811a29ceaa729b1a564d2d1b21566ed689d4f9b1c441aae8a1f99ff",
+        "research/diagnostics.py": "1483c804fb97f187b7a00b83c0893be30e70a95cac04adaef20b45a372304dea",
+        "research/experimental.py": "4af484da49015cd8ae7e55e1bdcf581185126967fee6ec3b91720291d72ab658",
+        "research/panel.py": "d9e939ed41690b4635cfb82460968c7c13c45a45a5ccac3cfb718c38a6dd8e37",
+        "research/regimes.py": "c0477ac82ee808aa61281d2db21dd64ad557d5a4bf47be5ea0d371b5ebe897ee",
+        "research/seed.py": "4652e0f8d11e34832a02ccb002377b94b821cd179a192f45533f8c5900e57a44",
+        "research/simulation.py": "595fcb5e4e2888be21b1fab39559bffef76b4e4a77728c571282db2625b3a72a",
+        "research/strategies.py": "585e6362408d1c3894363e073ed1a423cc7f52ad9b17d75f462ef07b157ff901",
+        "research/worker.py": "41760d2d73af48a9c3c7c4f17fb3211b088f010c19dfcb908ae85738f00ad028",
+        "research/workflow.py": "f833fc7d090420b6de11e9f3a319ec499ec7dab73c1130b93acc150831d1d341",
+        "risk.py": "c4caa24a6010b47f7f26d63fea1e7b24f867274f87be9b899983b2932699a354",
+        "runtime.py": "09fe805a0484c0deaa965849b62b5259bca3f17026c28c640791a1f9b6344180",
+        "scanner.py": "c1df5df0716ad0c0154cfde9ad0a0c48a8dff78bd12e9a91e76ebb7cf07885d2",
+        "shadow/__init__.py": "4a3c21bd8ebf4d4f672a52516825a63befffa0bbc0328c709482da5d64f2705b",
+        "shadow/diagnostics.py": "c86ebaf49133d68882ae842f4158a8253952e7b9deb5962b8d1b58f9baaf4bb6",
+        "shadow/gates.py": "ce299a8c7ae8a2fe68f1e5ef2eef118ddb58afbd49b720dafeac2c471f07124c",
+        "shadow/lab.py": "7d2b789225feaf2eb3259beb4d2cb76da2dddb7131baf11b98925061a40c52cb",
+        "shadow/legacy.py": "d2b5c001b45088ba96c355c0bd1124b8810096c43484afcf85dcf6f0dd7140c9",
+        "shadow/repository.py": "f5eb40fc84e3c45dedfd3979fc621210459ccdd3c4d0e90927af16016dae84e3",
+        "shadow/runtime.py": "45292cd0d29a8b3964c8427eece82efb1ad4e8ad7bbf2e4b1c0c896bd64701fe",
+        "shadow/versions.py": "d21b0296c8c12de5c1b9b4f73b4a518bf97c41686cfd8ac1969060d9a043d3f0",
+        "shadow/views.py": "113a3c6d6d8270259e1b799752605e02fa8f8e062f643730e8abb3e7abc46b03",
+        "strategies.py": "6488e137ed05965791d700d9d1bea6dd8afffb79f64665689a79a23b1a09e7a8",
+        "worker/__init__.py": "ff25669f909727325a8366f3dedb648955c3abf7e407e84be3c2df83609cebc4",
+        "worker/health.py": "2a2ce350c1229d9051af04f4205f3ee6e1b500c86c64d65598fafc2d527ae73b",
+        "worker/runner.py": "92e12e0128942260f347d640593474b7485a279bd6a880da00008b4dd22b9fcd"
+      },
+      "source_fingerprint": "44685708f4d160cec1666cb2357894caa4f132b9ed3ab0a14fbe917bfe144ca1",
+      "strategy_version": "4.2.0-experimental.1"
+    },
+    "strategies": {
+      "A2_CONFIRMED_PULLBACK": {
+        "data_kind": "HISTORICAL_COINBASE_EUR_OHLCV_PROXY",
+        "eligible_opportunities": "NOT_VERIFIED: aggregate simulation does not persist every pre-risk candidate stage",
+        "accepted_decisions": "NOT_VERIFIED: this research simulator does not persist TradingDecision records",
+        "attempted_paper_orders": "NOT_VERIFIED: simulated fills are not durable PostgreSQL order events",
+        "entry_fills": 27,
+        "all_fill_events": 56,
+        "closed_positions": 27,
+        "open_positions_at_end": [],
+        "net_pnl_eur": -11.183525321487025,
+        "net_return": -0.022367050642974062,
+        "before_fee_return_at_modeled_execution_prices": -0.01541535543505805,
+        "frictionless_gross_return": "NOT_VERIFIED: changing costs can change admissible trades; no synthetic cost add-back is presented as a gross backtest",
+        "fees_eur": "3.475847603958",
+        "spread_cost_eur": "1.737921033919548502822839990",
+        "slippage_cost_eur": "2.780674929903979085714285716",
+        "max_drawdown": 0.02256338483975618,
+        "average_exposure_eur": "1.383947341006897217928902628",
+        "regime_observations": {
+          "BEAR": 11035,
+          "COMPRESSION": 17788,
+          "EXPANSION": 989,
+          "MODERATE_BULL": 115,
+          "RANGE": 2,
+          "STRONG_BULL": 12
+        },
+        "per_regime_realized_pnl": {
+          "COMPRESSION": "-8.895986162161",
+          "EXPANSION": "-0.811476265523",
+          "STRONG_BULL": "-1.476062893803"
+        },
+        "grouped_closed_position_statistics": {
+          "asset": {
+            "BTC-EUR": {
+              "attribution_policy": "Contribution to shared EUR500 portfolio, marked residual positions; not independent asset allocations or stand-alone returns.",
+              "closed_positions": 12,
+              "expectancy": -0.40713655798416665,
+              "fees": "1.790267660584",
+              "max_drawdown_on_common_eur500": 0.010032662268404654,
+              "net_profit": -4.88563869581,
+              "net_realized_pnl": -4.88563869581,
+              "profit_factor": 0.001167893543873208,
+              "return_on_common_eur500": -0.00977127739162,
+              "slippage_cost": "1.432213064054844948571428572",
+              "spread_cost": "0.8951329730280285571357107125",
+              "win_rate": 0.08333333333333333
+            },
+            "ETH-EUR": {
+              "attribution_policy": "Contribution to shared EUR500 portfolio, marked residual positions; not independent asset allocations or stand-alone returns.",
+              "closed_positions": 10,
+              "expectancy": -0.5846628883427,
+              "fees": "1.333039411570",
+              "max_drawdown_on_common_eur500": 0.011891735539660577,
+              "net_profit": -5.846628883427,
+              "net_realized_pnl": -5.846628883427,
+              "profit_factor": 0.0,
+              "return_on_common_eur500": -0.011693257766853999,
+              "slippage_cost": "1.066429323081319782857142857",
+              "spread_cost": "0.6665176317651956120917601658",
+              "win_rate": 0.0
+            },
+            "SOL-EUR": {
+              "attribution_policy": "Contribution to shared EUR500 portfolio, marked residual positions; not independent asset allocations or stand-alone returns.",
+              "closed_positions": 5,
+              "expectancy": -0.09025154845,
+              "fees": "0.352540531804",
+              "max_drawdown_on_common_eur500": 0.0017246659706746938,
+              "net_profit": -0.45125774225,
+              "net_realized_pnl": -0.45125774225,
+              "profit_factor": 0.18340622028832276,
+              "return_on_common_eur500": -0.0009025154845,
+              "slippage_cost": "0.2820325427678143542857142857",
+              "spread_cost": "0.1762704291263243335953691131",
+              "win_rate": 0.2
+            }
+          },
+          "regime": {
+            "COMPRESSION": {
+              "attribution_policy": "Contribution to shared EUR500 portfolio, marked residual positions; not independent asset allocations or stand-alone returns.",
+              "closed_positions": 24,
+              "expectancy": -0.37066609009004164,
+              "fees": "3.029345294939",
+              "max_drawdown_on_common_eur500": 0.018354106992639674,
+              "net_profit": -8.895986162161,
+              "net_realized_pnl": -8.895986162161,
+              "profit_factor": 0.011892041737440701,
+              "return_on_common_eur500": -0.017791972324322,
+              "slippage_cost": "2.423474032340825737142857144",
+              "spread_cost": "1.514670788089004387908239833",
+              "win_rate": 0.08333333333333333
+            },
+            "EXPANSION": {
+              "attribution_policy": "Contribution to shared EUR500 portfolio, marked residual positions; not independent asset allocations or stand-alone returns.",
+              "closed_positions": 2,
+              "expectancy": -0.40573813276149995,
+              "fees": "0.298382466815",
+              "max_drawdown_on_common_eur500": 0.002330359353238455,
+              "net_profit": -0.811476265523,
+              "net_realized_pnl": -0.8114762655229999,
+              "profit_factor": 0.0,
+              "return_on_common_eur500": -0.001622952531046,
+              "slippage_cost": "0.2387057978453973942857142857",
+              "spread_cost": "0.1491910923541462445508468520",
+              "win_rate": 0.0
+            },
+            "STRONG_BULL": {
+              "attribution_policy": "Contribution to shared EUR500 portfolio, marked residual positions; not independent asset allocations or stand-alone returns.",
+              "closed_positions": 1,
+              "expectancy": -1.476062893803,
+              "fees": "0.148119842204",
+              "max_drawdown_on_common_eur500": 0.0031523590077174595,
+              "net_profit": -1.476062893803,
+              "net_realized_pnl": -1.476062893803,
+              "profit_factor": 0.0,
+              "return_on_common_eur500": -0.0029521257876060003,
+              "slippage_cost": "0.1184950997177559542857142857",
+              "spread_cost": "0.07405915347639787036375330522",
+              "win_rate": 0.0
+            }
+          }
+        },
+        "recorded_failed_breakout_exits": 3,
+        "recorded_failed_breakout_exit_fraction": 0.1111111111111111,
+        "false_breakout_frequency_limitation": "This counts recorded FAILED_BREAKOUT exit predicates, not every economically false breakout; other stops may fire first.",
+        "regimes_not_represented": [
+          "LIQUIDITY_STRESS"
+        ],
+        "rejections": {
+          "correlation_concentration_limit": 5,
+          "data_quality_or_history": 1053,
+          "exit_limit_not_executable": 3,
+          "first_target_destroyed_by_execution_costs": 272,
+          "insufficient_executable_entry_notional": 2,
+          "position_or_cooldown": 38,
+          "regime_or_signal_ineligible": 29599
+        },
+        "source_report_sha256": "d383d68e5e8d580600a44cbeb87e97a476687051723967f323dbda9e99ff1a20"
+      },
+      "B2_CONFIRMED_COMPRESSION": {
+        "data_kind": "HISTORICAL_COINBASE_EUR_OHLCV_PROXY",
+        "eligible_opportunities": "NOT_VERIFIED: aggregate simulation does not persist every pre-risk candidate stage",
+        "accepted_decisions": "NOT_VERIFIED: this research simulator does not persist TradingDecision records",
+        "attempted_paper_orders": "NOT_VERIFIED: simulated fills are not durable PostgreSQL order events",
+        "entry_fills": 2,
+        "all_fill_events": 4,
+        "closed_positions": 2,
+        "open_positions_at_end": [],
+        "net_pnl_eur": -1.0387097976930022,
+        "net_return": -0.0020774195953859875,
+        "before_fee_return_at_modeled_execution_prices": -0.0015019676938560042,
+        "frictionless_gross_return": "NOT_VERIFIED: changing costs can change admissible trades; no synthetic cost add-back is presented as a gross backtest",
+        "fees_eur": "0.287725950765",
+        "spread_cost_eur": "0.1438626728265982276852712070",
+        "slippage_cost_eur": "0.2301804272988558857142857143",
+        "max_drawdown": 0.0020774195953860044,
+        "average_exposure_eur": "0.08076122764945904173106646059",
+        "regime_observations": {
+          "BEAR": 11035,
+          "COMPRESSION": 17788,
+          "EXPANSION": 989,
+          "MODERATE_BULL": 115,
+          "RANGE": 2,
+          "STRONG_BULL": 12
+        },
+        "per_regime_realized_pnl": {
+          "COMPRESSION": "-1.038709797693"
+        },
+        "grouped_closed_position_statistics": {
+          "asset": {
+            "BTC-EUR": {
+              "attribution_policy": "Contribution to shared EUR500 portfolio, marked residual positions; not independent asset allocations or stand-alone returns.",
+              "closed_positions": 1,
+              "expectancy": -0.353413915153,
+              "fees": "0.149243631242",
+              "max_drawdown_on_common_eur500": 0.0007068278303060001,
+              "net_profit": -0.353413915153,
+              "net_realized_pnl": -0.353413915153,
+              "profit_factor": 0.0,
+              "return_on_common_eur500": -0.0007068278303060001,
+              "slippage_cost": "0.1193948507382616",
+              "spread_cost": "0.074621779173",
+              "win_rate": 0.0
+            },
+            "ETH-EUR": {
+              "attribution_policy": "Contribution to shared EUR500 portfolio, marked residual positions; not independent asset allocations or stand-alone returns.",
+              "closed_positions": 0,
+              "expectancy": 0,
+              "fees": "0",
+              "max_drawdown_on_common_eur500": 0.0,
+              "net_profit": 0.0,
+              "net_realized_pnl": 0,
+              "profit_factor": null,
+              "return_on_common_eur500": 0.0,
+              "slippage_cost": "0",
+              "spread_cost": "0",
+              "win_rate": 0
+            },
+            "SOL-EUR": {
+              "attribution_policy": "Contribution to shared EUR500 portfolio, marked residual positions; not independent asset allocations or stand-alone returns.",
+              "closed_positions": 1,
+              "expectancy": -0.68529588254,
+              "fees": "0.138482319523",
+              "max_drawdown_on_common_eur500": 0.00137059176508,
+              "net_profit": -0.68529588254,
+              "net_realized_pnl": -0.68529588254,
+              "profit_factor": 0.0,
+              "return_on_common_eur500": -0.00137059176508,
+              "slippage_cost": "0.1107855765605942857142857143",
+              "spread_cost": "0.06924089365359822768527120703",
+              "win_rate": 0.0
+            }
+          },
+          "regime": {
+            "COMPRESSION": {
+              "attribution_policy": "Contribution to shared EUR500 portfolio, marked residual positions; not independent asset allocations or stand-alone returns.",
+              "closed_positions": 2,
+              "expectancy": -0.5193548988465,
+              "fees": "0.287725950765",
+              "max_drawdown_on_common_eur500": 0.002077419595386,
+              "net_profit": -1.038709797693,
+              "net_realized_pnl": -1.038709797693,
+              "profit_factor": 0.0,
+              "return_on_common_eur500": -0.002077419595386,
+              "slippage_cost": "0.2301804272988558857142857143",
+              "spread_cost": "0.1438626728265982276852712070",
+              "win_rate": 0.0
+            }
+          }
+        },
+        "recorded_failed_breakout_exits": 1,
+        "recorded_failed_breakout_exit_fraction": 0.5,
+        "false_breakout_frequency_limitation": "This counts recorded FAILED_BREAKOUT exit predicates, not every economically false breakout; other stops may fire first.",
+        "regimes_not_represented": [
+          "LIQUIDITY_STRESS"
+        ],
+        "rejections": {
+          "data_quality_or_history": 1053,
+          "regime_or_signal_ineligible": 29939
+        },
+        "source_report_sha256": "1e2b0ffb036a6d57046858faefefe1c5bea0ef9086660b2e55687ad72a76500b"
+      }
+    },
+    "verdict": "NO STRATEGY PASSED VALIDATION"
+  }
+}

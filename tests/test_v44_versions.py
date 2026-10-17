@@ -114,6 +114,7 @@ def test_api_changes_do_not_change_native_execution_identity(tmp_path, monkeypat
             target = tmp_path / file.relative_to(versions.ROOT)
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(file, target)
+    shutil.copy(versions.ROOT / "shadow/v45-boundary.json", tmp_path / "shadow/v45-boundary.json")
     monkeypatch.setattr(versions, "ROOT", tmp_path)
     assert versions.execution_fingerprint() == original
     (tmp_path / "api/main.py").write_text("# API-only upgrade\n")

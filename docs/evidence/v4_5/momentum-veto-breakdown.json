@@ -1,0 +1,499 @@
+{
+  "component_evidence_limitations": {
+    "extension_falling_volume_spread_regime": "Exact stored feature/context/signal values",
+    "bearish_benchmark": "Reconstructed final timestamps can include peers observed later; exact native V4.4 component frequency NOT_VERIFIED. See parity discrepancies.",
+    "justification": "All five OR components exist in the immutable original D2 implementation. No component disabled or threshold lowered."
+  },
+  "accounts": {
+    "9b18cabcc94c45fe84a59917226ebb58": {
+      "components": {
+        "falling_close_weakening_volume": {
+          "count": 78,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 285,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "adverse_regime": {
+          "count": 210,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "extended_above_ema21": {
+          "count": 3,
+          "symbols": [
+            "BTC-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "otherwise_eligible": 0,
+      "intersections": {
+        "previous_breakout & range_held": 296,
+        "momentum_veto & previous_breakout": 292,
+        "higher_timeframe_bullish & previous_breakout": 290,
+        "higher_timeframe_bullish & range_held": 283,
+        "momentum_veto & range_held": 283,
+        "higher_timeframe_bullish & momentum_veto": 280,
+        "breakout_volume & previous_breakout": 243,
+        "breakout_volume & range_held": 234,
+        "breakout_volume & momentum_veto": 231,
+        "breakout_volume & higher_timeframe_bullish": 230,
+        "market_regime & momentum_veto": 210,
+        "market_regime & previous_breakout": 210,
+        "market_regime & range_held": 209,
+        "higher_timeframe_bullish & market_regime": 208,
+        "breakout_volume & market_regime": 162,
+        "no_close_reversal & previous_breakout": 157,
+        "momentum_veto & no_close_reversal": 153,
+        "no_close_reversal & range_held": 153,
+        "higher_timeframe_bullish & no_close_reversal": 152,
+        "breakout_volume & no_close_reversal": 130,
+        "market_regime & no_close_reversal": 105
+      },
+      "first_blockers": {
+        "strategy:higher_timeframe_bullish": 291,
+        "strategy:previous_breakout": 15
+      }
+    },
+    "39cddc6d7e584a369ce223945f06e629": {
+      "components": {
+        "falling_close_weakening_volume": {
+          "count": 11,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 15,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "otherwise_eligible": 0,
+      "intersections": {
+        "previous_breakout & range_held": 36,
+        "breakout_volume & previous_breakout": 33,
+        "breakout_volume & range_held": 33,
+        "higher_timeframe_bullish & previous_breakout": 30,
+        "higher_timeframe_bullish & range_held": 30,
+        "breakout_volume & higher_timeframe_bullish": 27,
+        "momentum_veto & previous_breakout": 23,
+        "momentum_veto & range_held": 23,
+        "no_close_reversal & previous_breakout": 21,
+        "no_close_reversal & range_held": 21,
+        "breakout_volume & momentum_veto": 20,
+        "higher_timeframe_bullish & momentum_veto": 19,
+        "higher_timeframe_bullish & no_close_reversal": 19,
+        "breakout_volume & no_close_reversal": 18,
+        "momentum_veto & no_close_reversal": 16
+      },
+      "first_blockers": {
+        "strategy:higher_timeframe_bullish": 30,
+        "strategy:previous_breakout": 6
+      }
+    },
+    "52746de1116e4852b61cb16988917545": {
+      "components": {
+        "falling_close_weakening_volume": {
+          "count": 78,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 285,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "adverse_regime": {
+          "count": 210,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "extended_above_ema21": {
+          "count": 3,
+          "symbols": [
+            "BTC-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "otherwise_eligible": 0,
+      "intersections": {
+        "higher_timeframe_bullish & momentum_veto": 280,
+        "ema9_recovery & momentum_veto": 246,
+        "ema9_recovery & higher_timeframe_bullish": 245,
+        "higher_timeframe_bullish & previous_high_reclaimed": 217,
+        "momentum_veto & previous_high_reclaimed": 216,
+        "market_regime & momentum_veto": 210,
+        "higher_timeframe_bullish & market_regime": 208,
+        "ema9_recovery & previous_high_reclaimed": 205,
+        "close_recovery & higher_timeframe_bullish": 171,
+        "close_recovery & previous_high_reclaimed": 171,
+        "ema9_recovery & market_regime": 170,
+        "close_recovery & momentum_veto": 168,
+        "close_recovery & ema9_recovery": 165,
+        "market_regime & previous_high_reclaimed": 151,
+        "close_recovery & market_regime": 115
+      },
+      "first_blockers": {
+        "strategy:higher_timeframe_bullish": 291,
+        "strategy:ema9_recovery": 12,
+        "strategy:previous_high_reclaimed": 2,
+        "strategy:market_regime": 1
+      }
+    },
+    "2f12b0257a3b453a8e2a61ab695d8146": {
+      "components": {
+        "bearish_benchmark": {
+          "count": 9,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "falling_close_weakening_volume": {
+          "count": 1,
+          "symbols": [
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "otherwise_eligible": 0,
+      "intersections": {
+        "breakout_volume & momentum_veto": 9,
+        "breakout_volume & previous_breakout": 9,
+        "breakout_volume & range_held": 9,
+        "momentum_veto & previous_breakout": 9,
+        "momentum_veto & range_held": 9,
+        "previous_breakout & range_held": 9,
+        "breakout_volume & higher_timeframe_bullish": 6,
+        "higher_timeframe_bullish & momentum_veto": 6,
+        "higher_timeframe_bullish & previous_breakout": 6,
+        "higher_timeframe_bullish & range_held": 6,
+        "breakout_volume & no_close_reversal": 3,
+        "momentum_veto & no_close_reversal": 3,
+        "no_close_reversal & previous_breakout": 3,
+        "no_close_reversal & range_held": 3,
+        "higher_timeframe_bullish & no_close_reversal": 2
+      },
+      "first_blockers": {
+        "strategy:higher_timeframe_bullish": 6,
+        "strategy:previous_breakout": 3
+      }
+    },
+    "40f3f37036f848d0a417b06b6a6fc201": {
+      "components": {
+        "falling_close_weakening_volume": {
+          "count": 107,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 219,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "extended_above_ema21": {
+          "count": 29,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "adverse_regime": {
+          "count": 20,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "otherwise_eligible": 0,
+      "intersections": {
+        "higher_timeframe_bullish & previous_breakout": 357,
+        "breakout_volume & previous_breakout": 335,
+        "breakout_volume & higher_timeframe_bullish": 302,
+        "previous_breakout & range_held": 280,
+        "momentum_veto & previous_breakout": 276,
+        "higher_timeframe_bullish & momentum_veto": 258,
+        "higher_timeframe_bullish & range_held": 251,
+        "breakout_volume & range_held": 244,
+        "breakout_volume & momentum_veto": 231,
+        "momentum_veto & range_held": 203,
+        "no_close_reversal & previous_breakout": 188,
+        "higher_timeframe_bullish & no_close_reversal": 175,
+        "breakout_volume & no_close_reversal": 159,
+        "momentum_veto & no_close_reversal": 153,
+        "no_close_reversal & range_held": 138,
+        "higher_timeframe_bullish & market_regime": 20,
+        "market_regime & momentum_veto": 20,
+        "market_regime & previous_breakout": 20,
+        "market_regime & range_held": 20,
+        "breakout_volume & market_regime": 18,
+        "market_regime & no_close_reversal": 6
+      },
+      "first_blockers": {
+        "strategy:higher_timeframe_bullish": 363,
+        "strategy:previous_breakout": 48
+      }
+    },
+    "dc1edd63598e4caeb476864bee8851e3": {
+      "components": {
+        "falling_close_weakening_volume": {
+          "count": 107,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 219,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 1
+        },
+        "extended_above_ema21": {
+          "count": 29,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 1
+        },
+        "adverse_regime": {
+          "count": 20,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "otherwise_eligible": 6,
+      "intersections": {
+        "higher_timeframe_bullish & momentum_veto": 258,
+        "higher_timeframe_bullish & previous_high_reclaimed": 258,
+        "ema9_recovery & higher_timeframe_bullish": 251,
+        "ema9_recovery & previous_high_reclaimed": 230,
+        "close_recovery & previous_high_reclaimed": 221,
+        "ema9_recovery & momentum_veto": 217,
+        "close_recovery & higher_timeframe_bullish": 208,
+        "momentum_veto & previous_high_reclaimed": 208,
+        "close_recovery & ema9_recovery": 199,
+        "close_recovery & momentum_veto": 175,
+        "higher_timeframe_bullish & market_regime": 20,
+        "market_regime & momentum_veto": 20,
+        "ema9_recovery & market_regime": 15,
+        "market_regime & previous_high_reclaimed": 12,
+        "close_recovery & market_regime": 8
+      },
+      "first_blockers": {
+        "strategy:higher_timeframe_bullish": 363,
+        "strategy:ema9_recovery": 35,
+        "strategy:previous_high_reclaimed": 4,
+        "execution:unobserved_pre_order_outcome": 4,
+        "strategy:close_recovery": 3,
+        "momentum_veto": 2
+      }
+    },
+    "baac318a9797469c8f3693c042eb2855": {
+      "components": {
+        "falling_close_weakening_volume": {
+          "count": 107,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 219,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "extended_above_ema21": {
+          "count": 29,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "adverse_regime": {
+          "count": 20,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "otherwise_eligible": 0,
+      "intersections": {
+        "higher_timeframe_bullish & previous_breakout": 357,
+        "previous_breakout & range_held": 357,
+        "previous_breakout & relative_volume": 332,
+        "higher_timeframe_bullish & range_held": 319,
+        "range_held & relative_volume": 303,
+        "higher_timeframe_bullish & relative_volume": 301,
+        "previous_breakout & previous_high_reclaimed": 288,
+        "momentum_veto & previous_breakout": 276,
+        "previous_high_reclaimed & range_held": 273,
+        "higher_timeframe_bullish & momentum_veto": 258,
+        "higher_timeframe_bullish & previous_high_reclaimed": 258,
+        "momentum_veto & relative_volume": 247,
+        "previous_high_reclaimed & relative_volume": 247,
+        "momentum_veto & range_held": 244,
+        "close_recovery & previous_breakout": 227,
+        "close_recovery & previous_high_reclaimed": 221,
+        "close_recovery & range_held": 216,
+        "close_recovery & higher_timeframe_bullish": 208,
+        "momentum_veto & previous_high_reclaimed": 208,
+        "close_recovery & relative_volume": 196,
+        "close_recovery & momentum_veto": 175,
+        "higher_timeframe_bullish & market_regime": 20,
+        "market_regime & momentum_veto": 20,
+        "market_regime & previous_breakout": 20,
+        "market_regime & range_held": 20,
+        "market_regime & relative_volume": 18,
+        "market_regime & previous_high_reclaimed": 12,
+        "close_recovery & market_regime": 8
+      },
+      "first_blockers": {
+        "strategy:higher_timeframe_bullish": 363,
+        "strategy:previous_breakout": 48
+      }
+    },
+    "b97173b5abec41208c8541015d30003c": {
+      "components": {
+        "falling_close_weakening_volume": {
+          "count": 107,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 219,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "extended_above_ema21": {
+          "count": 29,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "adverse_regime": {
+          "count": 20,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "otherwise_eligible": 0,
+      "intersections": {
+        "market_regime & relative_outperformance": 411,
+        "higher_timeframe_bullish & market_regime": 363,
+        "higher_timeframe_bullish & relative_outperformance": 363,
+        "market_regime & relative_volume": 337,
+        "relative_outperformance & relative_volume": 337,
+        "higher_timeframe_bullish & relative_volume": 301,
+        "market_regime & momentum_veto": 281,
+        "momentum_veto & relative_outperformance": 281,
+        "absolute_benchmarks_bullish & market_regime": 273,
+        "absolute_benchmarks_bullish & relative_outperformance": 273,
+        "higher_timeframe_bullish & momentum_veto": 258,
+        "absolute_benchmarks_bullish & higher_timeframe_bullish": 257,
+        "momentum_veto & relative_volume": 247,
+        "absolute_benchmarks_bullish & momentum_veto": 238,
+        "close_recovery & market_regime": 232,
+        "close_recovery & relative_outperformance": 232,
+        "absolute_benchmarks_bullish & relative_volume": 229,
+        "close_recovery & higher_timeframe_bullish": 208,
+        "close_recovery & relative_volume": 196,
+        "close_recovery & momentum_veto": 175,
+        "absolute_benchmarks_bullish & close_recovery": 161
+      },
+      "first_blockers": {
+        "strategy:higher_timeframe_bullish": 363,
+        "strategy:relative_outperformance": 32,
+        "strategy:absolute_benchmarks_bullish": 16
+      }
+    }
+  }
+}

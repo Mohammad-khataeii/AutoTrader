@@ -1,0 +1,10 @@
+{
+  "source_changed_during_completed_study": false,
+  "snapshot_source_fingerprint": "44685708f4d160cec1666cb2357894caa4f132b9ed3ab0a14fbe917bfe144ca1",
+  "files_changed_in_release_since_snapshot": [
+    "api/v44.py"
+  ],
+  "explanation": "Only API monitoring incident classification changed; strategy, indicators, context, decision, simulation, risk, pricing, execution and frozen runtime bytes match the research snapshot. The research artifact keeps its own source identity and is not rebound to the release.",
+  "research_execution_fingerprint": "646ddd909a7ef8f3db204567951483d6f6005597946d914c7b7013e59dc036e4",
+  "release_execution_fingerprint_matches": true
+}

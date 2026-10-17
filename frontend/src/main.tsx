@@ -20,6 +20,7 @@ import {
 } from "./api";
 import { systemStatus } from "./model";
 import { Badge, ResourceState } from "./ui";
+import { TradeGates } from "./TradeGates";
 import { Overview } from "./Overview";
 import { Experiments } from "./Experiments";
 import { Trades } from "./Trades";
@@ -37,6 +38,7 @@ const navigation = [
   { name: "Experiments", icon: FlaskConical },
   { name: "Trades", icon: ArrowRightLeft },
   { name: "Research", icon: BarChart3 },
+  { name: "Trade Gate Diagnostics", icon: Activity },
 ];
 function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
   const api = useApi();
@@ -100,7 +102,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
               ))}
             </div>
           </details>
-          <p className="build-label">Interface 4.4 · Paper trading</p>
+          <p className="build-label">Interface 4.5 · Paper trading</p>
         </div>
       </aside>
       <main id="workspace" className="workspace">
@@ -169,6 +171,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
             successful update.
           </div>
         )}
+        {active === "Trade Gate Diagnostics" && <TradeGates />}
         {active === "Overview" && (
           <Overview
             system={system}

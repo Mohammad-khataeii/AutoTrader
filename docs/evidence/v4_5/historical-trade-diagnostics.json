@@ -1,0 +1,4 @@
+{
+  "status": "NOT_VERIFIED",
+  "reason": "Existing generic post-trade analyzer raises StopIteration for experimental strategy fills; its original-registry attribution cannot be applied to A2/B2. No fabricated classifications substituted. Direct recorded FAILED_BREAKOUT exit counts are in historical-execution-liveness.json."
+}

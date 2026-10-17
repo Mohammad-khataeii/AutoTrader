@@ -51,6 +51,9 @@ async def page(
         query = query.where(
             model.quantity > 0 if status == "open" else model.closed_at.is_not(None)
         )
+    if kind == "orders" and status:
+        active = model.status.in_(["PENDING", "ACCEPTED"])
+        query = query.where(active if status == "open" else ~active)
     if cursor:
         try:
             value = json.loads(base64.urlsafe_b64decode(cursor.encode()))
@@ -191,6 +194,8 @@ async def account_summary(repo: Any) -> dict[str, Any]:
             else None
         )
         reconciliation = await session.get(m.SystemStateModel, "shadow_reconciliation")
+        health = await session.get(m.SystemStateModel, "runtime_health")
+        scan_observation = await session.get(m.SystemStateModel, "shadow_scan_observation")
         return {
             "portfolio": {
                 "equity": str(equity) if equity is not None else "",
@@ -198,12 +203,14 @@ async def account_summary(repo: Any) -> dict[str, Any]:
                 "positions": str(len(positions)),
                 "valuation_degraded": str(bool(missing)).lower(),
                 "control": account.control if account else None,
+                "risk_state": health.state if health else "UNKNOWN",
             },
             "performance": {
                 "net_pnl": str(equity - 500) if equity is not None else "",
                 "closed_trades": closed,
                 "fees": str(fees),
             },
+            "scan_observation": json.loads(scan_observation.payload_json) if scan_observation else None,
             "last_evaluation_at": aware(last.created_at).isoformat() if last else None,
             "latest_decision": json.loads(explanation.payload_json)
             if explanation
@@ -244,6 +251,7 @@ async def summaries(lab: Any, archived: bool = False) -> dict[str, Any]:
                     k: manifest.get(k)
                     for k in ("strategy_id", "strategy_version", "source_fingerprint", "data_kind")
                 },
+                "archive_enabled": lab.settings.shadow_archive_enabled,
                 "runtime_compatibility": compatible,
                 "source_matches": compatible["compatible"],
                 **(
@@ -265,7 +273,8 @@ async def summaries(lab: Any, archived: bool = False) -> dict[str, Any]:
         ],
         "as_of": utc_now().isoformat(),
         "history_included": False,
-        "archive_policy": "Deleting a paused/stopped flat account archives all history and releases a workspace slot; identity, database and funding are retained, never reused.",
+        "archive_enabled": lab.settings.shadow_archive_enabled,
+        "archive_policy": "Archiving requires separately approved configuration. Deleting a paused/stopped flat account archives all history and releases a workspace slot; identity, database and funding are retained, never reused.",
     }
 
 
@@ -326,6 +335,7 @@ async def experiment_view(lab: Any, identity: str) -> dict[str, Any]:
     reconciliation = summary["reconciliation_status"]
     return {
         **record,
+        "archive_enabled": lab.settings.shadow_archive_enabled,
         **summary,
         "source_matches": compatibility(record["manifest"])["compatible"],
         "runtime_compatibility": compatibility(record["manifest"]),

@@ -1,0 +1,420 @@
+{
+  "accounts": {
+    "9b18cabcc94c45fe84a59917226ebb58": {
+      "data_quality": {
+        "GOOD": 306
+      },
+      "context_15m_ready": 306,
+      "context_1h_ready": 306,
+      "missing_required_metadata": {},
+      "sources": [
+        {
+          "source": "revolut-x",
+          "symbol": "SOL-EUR",
+          "timeframe": "5m",
+          "count": 821,
+          "min": "2026-10-14 00:30:00+00:00",
+          "max": "2026-10-16 20:50:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "ETH-EUR",
+          "timeframe": "5m",
+          "count": 821,
+          "min": "2026-10-14 00:30:00+00:00",
+          "max": "2026-10-16 20:50:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "BTC-EUR",
+          "timeframe": "5m",
+          "count": 821,
+          "min": "2026-10-14 00:30:00+00:00",
+          "max": "2026-10-16 20:50:00+00:00"
+        }
+      ],
+      "prestrategy_skip_counts": "NOT_VERIFIED; old completed scans were overwritten; latest scanner snapshot preserved separately."
+    },
+    "39cddc6d7e584a369ce223945f06e629": {
+      "data_quality": {
+        "GOOD": 36
+      },
+      "context_15m_ready": 36,
+      "context_1h_ready": 36,
+      "missing_required_metadata": {},
+      "sources": [
+        {
+          "source": "revolut-x",
+          "symbol": "SOL-EUR",
+          "timeframe": "5m",
+          "count": 731,
+          "min": "2026-10-14 00:30:00+00:00",
+          "max": "2026-10-16 13:20:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "ETH-EUR",
+          "timeframe": "5m",
+          "count": 731,
+          "min": "2026-10-14 00:30:00+00:00",
+          "max": "2026-10-16 13:20:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "BTC-EUR",
+          "timeframe": "5m",
+          "count": 731,
+          "min": "2026-10-14 00:30:00+00:00",
+          "max": "2026-10-16 13:20:00+00:00"
+        }
+      ],
+      "prestrategy_skip_counts": "NOT_VERIFIED; old completed scans were overwritten; latest scanner snapshot preserved separately."
+    },
+    "52746de1116e4852b61cb16988917545": {
+      "data_quality": {
+        "GOOD": 306
+      },
+      "context_15m_ready": 306,
+      "context_1h_ready": 306,
+      "missing_required_metadata": {},
+      "sources": [
+        {
+          "source": "revolut-x",
+          "symbol": "SOL-EUR",
+          "timeframe": "5m",
+          "count": 821,
+          "min": "2026-10-14 00:30:00+00:00",
+          "max": "2026-10-16 20:50:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "ETH-EUR",
+          "timeframe": "5m",
+          "count": 821,
+          "min": "2026-10-14 00:30:00+00:00",
+          "max": "2026-10-16 20:50:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "BTC-EUR",
+          "timeframe": "5m",
+          "count": 821,
+          "min": "2026-10-14 00:30:00+00:00",
+          "max": "2026-10-16 20:50:00+00:00"
+        }
+      ],
+      "prestrategy_skip_counts": "NOT_VERIFIED; old completed scans were overwritten; latest scanner snapshot preserved separately."
+    },
+    "2f12b0257a3b453a8e2a61ab695d8146": {
+      "data_quality": {
+        "GOOD": 9
+      },
+      "context_15m_ready": 9,
+      "context_1h_ready": 9,
+      "missing_required_metadata": {},
+      "sources": [
+        {
+          "source": "revolut-x",
+          "symbol": "SOL-EUR",
+          "timeframe": "5m",
+          "count": 722,
+          "min": "2026-10-14 01:15:00+00:00",
+          "max": "2026-10-16 13:20:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "ETH-EUR",
+          "timeframe": "5m",
+          "count": 722,
+          "min": "2026-10-14 01:15:00+00:00",
+          "max": "2026-10-16 13:20:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "BTC-EUR",
+          "timeframe": "5m",
+          "count": 722,
+          "min": "2026-10-14 01:15:00+00:00",
+          "max": "2026-10-16 13:20:00+00:00"
+        }
+      ],
+      "prestrategy_skip_counts": "NOT_VERIFIED; old completed scans were overwritten; latest scanner snapshot preserved separately."
+    },
+    "40f3f37036f848d0a417b06b6a6fc201": {
+      "data_quality": {
+        "GOOD": 411
+      },
+      "context_15m_ready": 411,
+      "context_1h_ready": 411,
+      "missing_required_metadata": {},
+      "sources": [
+        {
+          "source": "revolut-x",
+          "symbol": "SOL-EUR",
+          "timeframe": "5m",
+          "count": 856,
+          "min": "2026-10-14 09:00:00+00:00",
+          "max": "2026-10-17 08:15:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "ETH-EUR",
+          "timeframe": "5m",
+          "count": 856,
+          "min": "2026-10-14 09:00:00+00:00",
+          "max": "2026-10-17 08:15:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "BTC-EUR",
+          "timeframe": "5m",
+          "count": 856,
+          "min": "2026-10-14 09:00:00+00:00",
+          "max": "2026-10-17 08:15:00+00:00"
+        }
+      ],
+      "prestrategy_skip_counts": "NOT_VERIFIED; old completed scans were overwritten; latest scanner snapshot preserved separately."
+    },
+    "dc1edd63598e4caeb476864bee8851e3": {
+      "data_quality": {
+        "GOOD": 411
+      },
+      "context_15m_ready": 411,
+      "context_1h_ready": 411,
+      "missing_required_metadata": {},
+      "sources": [
+        {
+          "source": "revolut-x",
+          "symbol": "SOL-EUR",
+          "timeframe": "5m",
+          "count": 856,
+          "min": "2026-10-14 09:00:00+00:00",
+          "max": "2026-10-17 08:15:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "ETH-EUR",
+          "timeframe": "5m",
+          "count": 856,
+          "min": "2026-10-14 09:00:00+00:00",
+          "max": "2026-10-17 08:15:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "BTC-EUR",
+          "timeframe": "5m",
+          "count": 856,
+          "min": "2026-10-14 09:00:00+00:00",
+          "max": "2026-10-17 08:15:00+00:00"
+        }
+      ],
+      "prestrategy_skip_counts": "NOT_VERIFIED; old completed scans were overwritten; latest scanner snapshot preserved separately."
+    },
+    "baac318a9797469c8f3693c042eb2855": {
+      "data_quality": {
+        "GOOD": 411
+      },
+      "context_15m_ready": 411,
+      "context_1h_ready": 411,
+      "missing_required_metadata": {},
+      "sources": [
+        {
+          "source": "revolut-x",
+          "symbol": "SOL-EUR",
+          "timeframe": "5m",
+          "count": 856,
+          "min": "2026-10-14 09:00:00+00:00",
+          "max": "2026-10-17 08:15:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "ETH-EUR",
+          "timeframe": "5m",
+          "count": 856,
+          "min": "2026-10-14 09:00:00+00:00",
+          "max": "2026-10-17 08:15:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "BTC-EUR",
+          "timeframe": "5m",
+          "count": 856,
+          "min": "2026-10-14 09:00:00+00:00",
+          "max": "2026-10-17 08:15:00+00:00"
+        }
+      ],
+      "prestrategy_skip_counts": "NOT_VERIFIED; old completed scans were overwritten; latest scanner snapshot preserved separately."
+    },
+    "b97173b5abec41208c8541015d30003c": {
+      "data_quality": {
+        "GOOD": 411
+      },
+      "context_15m_ready": 411,
+      "context_1h_ready": 411,
+      "missing_required_metadata": {},
+      "sources": [
+        {
+          "source": "revolut-x",
+          "symbol": "SOL-EUR",
+          "timeframe": "5m",
+          "count": 856,
+          "min": "2026-10-14 09:00:00+00:00",
+          "max": "2026-10-17 08:15:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "ETH-EUR",
+          "timeframe": "5m",
+          "count": 856,
+          "min": "2026-10-14 09:00:00+00:00",
+          "max": "2026-10-17 08:15:00+00:00"
+        },
+        {
+          "source": "revolut-x",
+          "symbol": "BTC-EUR",
+          "timeframe": "5m",
+          "count": 856,
+          "min": "2026-10-14 09:00:00+00:00",
+          "max": "2026-10-17 08:15:00+00:00"
+        }
+      ],
+      "prestrategy_skip_counts": "NOT_VERIFIED; old completed scans were overwritten; latest scanner snapshot preserved separately."
+    }
+  },
+  "selection_limitation": "Stored strategy features are post-validation survivors. Historical pre-strategy rejections were overwritten; no all-request success or zero-stale-data claim follows.",
+  "worker_http_log_measurement": {
+    "source": "Read-only docker logs; retained worker lifetime is shorter than requested 24h",
+    "start_utc": "2026-10-16T20:57:54.224000",
+    "end_utc": "2026-10-17T08:26:32.909000",
+    "seconds": 41318.685,
+    "endpoint_symbol_status_counts": {
+      "1.0/public/configuration/pairs:200": 138,
+      "2.0/public/order-book/BTC-EUR:200": 688,
+      "2.0/public/order-book/ETH-EUR:200": 688,
+      "2.0/public/order-book/SOL-EUR:200": 688,
+      "2.0/public/order-book/SOL-EUR:429": 27,
+      "1.0/public/candles/BTC-EUR:200": 138,
+      "1.0/public/candles/ETH-EUR:429": 20,
+      "1.0/public/candles/ETH-EUR:200": 138,
+      "1.0/public/candles/SOL-EUR:200": 138,
+      "1.0/public/candles/BTC-EUR:429": 15,
+      "2.0/public/order-book/BTC-EUR:429": 30,
+      "1.0/public/candles/SOL-EUR:429": 20,
+      "2.0/public/order-book/ETH-EUR:429": 26
+    },
+    "counts_per_minute": {
+      "1.0/public/configuration/pairs:200": 0.20039,
+      "2.0/public/order-book/BTC-EUR:200": 0.99906,
+      "2.0/public/order-book/ETH-EUR:200": 0.99906,
+      "2.0/public/order-book/SOL-EUR:200": 0.99906,
+      "2.0/public/order-book/SOL-EUR:429": 0.03921,
+      "1.0/public/candles/BTC-EUR:200": 0.20039,
+      "1.0/public/candles/ETH-EUR:429": 0.02904,
+      "1.0/public/candles/ETH-EUR:200": 0.20039,
+      "1.0/public/candles/SOL-EUR:200": 0.20039,
+      "1.0/public/candles/BTC-EUR:429": 0.02178,
+      "2.0/public/order-book/BTC-EUR:429": 0.04356,
+      "1.0/public/candles/SOL-EUR:429": 0.02904,
+      "2.0/public/order-book/ETH-EUR:429": 0.03776
+    },
+    "limitation": "HTTP observations, not all shared-counter history. Cache hits have no HTTP line; retries are separate requests."
+  },
+  "production_market_health_snapshot": {
+    "request_latency_ms": 3103394.665816799,
+    "observed_at": "2026-10-17T08:23:32.546059+00:00",
+    "request_success": 4761,
+    "last_successful_refresh": "2026-10-17T08:23:32.540692+00:00",
+    "candle_refresh": 756,
+    "candles_downloaded": 4416,
+    "candle_cache_hit": 3003,
+    "request_429": 253,
+    "request_429:order-book:SOL-EUR": 27,
+    "request_429:candles:ETH-EUR": 20,
+    "request_429:candles:BTC-EUR": 14,
+    "request_429:order-book:BTC-EUR": 30,
+    "request_429:candles:SOL-EUR": 20,
+    "request_429:order-book:ETH-EUR": 26,
+    "requests": 5014,
+    "mean_request_latency_ms": 618.9458846862383,
+    "caches": [
+      {
+        "key": "BTC-EUR:5:720",
+        "bucket": 5974084,
+        "observations": 720,
+        "refreshed_at": "2026-10-17T08:20:30.542843+00:00",
+        "age_seconds": 187.583776
+      },
+      {
+        "key": "ETH-EUR:5:720",
+        "bucket": 5974084,
+        "observations": 720,
+        "refreshed_at": "2026-10-17T08:20:31.559677+00:00",
+        "age_seconds": 186.569867
+      },
+      {
+        "key": "SOL-EUR:5:720",
+        "bucket": 5974084,
+        "observations": 720,
+        "refreshed_at": "2026-10-17T08:20:32.568252+00:00",
+        "age_seconds": 185.563405
+      }
+    ],
+    "measurement_windows": [
+      {
+        "started_at": "2026-10-17T08:15:29.611777+00:00",
+        "bucket_seconds": 900,
+        "request_latency_ms": 23584.24531854689,
+        "observed_until": "2026-10-17T08:23:32.546070+00:00",
+        "request_success": 35,
+        "candle_refresh": 6,
+        "candles_downloaded": 18,
+        "request_429": 2,
+        "request_429:candles:SOL-EUR": 1,
+        "candle_cache_hit": 21,
+        "request_429:order-book:BTC-EUR": 1
+      },
+      {
+        "started_at": "2026-10-17T08:00:27.647638+00:00",
+        "bucket_seconds": 900,
+        "request_latency_ms": 36643.01151037216,
+        "observed_until": "2026-10-17T08:14:31.297862+00:00",
+        "request_success": 57,
+        "candle_refresh": 9,
+        "candles_downloaded": 27,
+        "candle_cache_hit": 36,
+        "request_429": 2,
+        "request_429:order-book:BTC-EUR": 2
+      },
+      {
+        "started_at": "2026-10-17T07:45:25.579826+00:00",
+        "bucket_seconds": 900,
+        "request_latency_ms": 36955.11442050338,
+        "observed_until": "2026-10-17T07:59:29.251403+00:00",
+        "request_success": 57,
+        "candle_refresh": 9,
+        "candles_downloaded": 27,
+        "request_429": 3,
+        "request_429:candles:SOL-EUR": 1,
+        "candle_cache_hit": 36,
+        "request_429:order-book:BTC-EUR": 1,
+        "request_429:order-book:ETH-EUR": 1
+      },
+      {
+        "started_at": "2026-10-17T07:30:23.700610+00:00",
+        "bucket_seconds": 900,
+        "request_latency_ms": 37903.981583192945,
+        "observed_until": "2026-10-17T07:44:27.282509+00:00",
+        "request_success": 57,
+        "candle_refresh": 9,
+        "candles_downloaded": 27,
+        "request_429": 4,
+        "request_429:candles:SOL-EUR": 1,
+        "candle_cache_hit": 36,
+        "request_429:order-book:BTC-EUR": 1,
+        "request_429:order-book:ETH-EUR": 1,
+        "request_429:candles:BTC-EUR": 1
+      }
+    ],
+    "policy": "public REST, one request/second/family; provider Retry-After milliseconds; completed-candle incremental cache; protective book priority"
+  }
+}

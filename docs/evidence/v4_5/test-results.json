@@ -1,0 +1,74 @@
+{
+  "status": "PASS",
+  "backend": {
+    "tests": 209.0,
+    "failures": 0.0,
+    "errors": 0.0,
+    "skipped": 0.0,
+    "time": 517.961
+  },
+  "focused": {
+    "tests": 25.0,
+    "failures": 0.0,
+    "errors": 0.0,
+    "skipped": 0.0,
+    "time": 38.349
+  },
+  "compiled_frontend_lifecycle": {
+    "tests": 2.0,
+    "failures": 0.0,
+    "errors": 0.0,
+    "skipped": 0.0,
+    "time": 54.887
+  },
+  "browser": {
+    "startTime": "2026-10-17T08:46:33.943Z",
+    "duration": 52627.431,
+    "expected": 23,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "frontend_unit": {
+    "status": "PASS",
+    "tests": 12
+  },
+  "typescript": "PASS",
+  "frontend_build": "PASS",
+  "python_ruff": "PASS",
+  "python_mypy": {
+    "status": "PASS",
+    "source_files": 78
+  },
+  "docker_backend": {
+    "status": "PASS",
+    "architecture": "arm64",
+    "image": "autotrader-v45:stage-a",
+    "verification": {
+      "version": "4.5.0",
+      "frozen_files": 71,
+      "execution_fingerprint": "646ddd909a7ef8f3db204567951483d6f6005597946d914c7b7013e59dc036e4"
+    }
+  },
+  "docker_frontend": {
+    "status": "PASS",
+    "architecture": "arm64",
+    "image": "autotrader-v45-frontend:stage-a"
+  },
+  "production_amd64_container_execution": "NOT_VERIFIED",
+  "frontend_lint": "NOT_CONFIGURED: repository provides TypeScript/build/unit/browser checks, no ESLint script",
+  "warnings": [
+    "Starlette AnyIO BlockingPortal deprecation",
+    "Existing frontend bundle exceeds Vite 500 kB advisory"
+  ],
+  "earlier_attempts": [
+    "Two full-suite attempts were invalidated by editing the execution closure while their parent pytest process remained loaded. Native child manifests differed; after freezing source, all 209 passed.",
+    "Initial browser harness lacked its isolated research fixture; rerun with separate copied store passed 23 tests.",
+    "The compiled browser proof needed a scoped technical-details locator after accepted explanations became visible; both scenarios then passed."
+  ],
+  "production_mutations": false,
+  "frozen_files_verified": 71,
+  "original_frozen_source": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+  "application_source_fingerprint": "e94ddcd1cfc8fbb0983254b7075c12fe0ce18304b274cceabcb4b3b137c31c38",
+  "execution_fingerprint": "646ddd909a7ef8f3db204567951483d6f6005597946d914c7b7013e59dc036e4"
+}

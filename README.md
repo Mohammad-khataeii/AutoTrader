@@ -58,3 +58,5 @@ An earlier authorized rollout completed while the later local-first instruction 
 [Release notes](docs/V4_2_RELEASE_NOTES.md) · [Completion matrix](docs/V4_2_COMPLETION_MATRIX.md) · [Security](docs/V4_2_SECURITY_EVIDENCE.md) · [Shadow financial integrity](docs/V4_2_SHADOW_FINANCIAL_INTEGRITY.md) · [Architecture](docs/V4_2_SHADOW_TRADING_ARCHITECTURE.md)
 
 Earlier V1–V4.1 reports remain historical evidence. Thirty prospective days and a defensible net advantage require future observations under a frozen configuration; failed gates are never lowered to force trades.
+
+V4.5 Stage A trade-gate investigation and deployment limitations: [report](docs/V4_5_TRADE_GATE_INVESTIGATION.md). Production deployment requires separate exact-release approval.

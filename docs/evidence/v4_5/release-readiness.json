@@ -1,0 +1,35 @@
+{
+  "stage_a": "IMPLEMENTED_AND_TESTED; immutable delivery status is recorded in the post-commit sidecar",
+  "deployment_readiness": "BLOCKED",
+  "release_version": "4.5.0",
+  "candidate_tag": "v4.5.0-rc.1",
+  "branch": "feature/autotrader-v45-trade-gate-recovery",
+  "baseline_commit": "ab742ee56c4774fb9a7b111f1f1043575f1743c9",
+  "commit_identity": "The immutable release-manifest.json and Stage A delivery sidecar record the final full commit; this pre-commit document does not invent a self-referential commit.",
+  "tests": "test-results.json",
+  "application_source_fingerprint": "e94ddcd1cfc8fbb0983254b7075c12fe0ce18304b274cceabcb4b3b137c31c38",
+  "execution_fingerprint": "646ddd909a7ef8f3db204567951483d6f6005597946d914c7b7013e59dc036e4",
+  "blockers": [
+    "Four production native V4.4 manifests use execution fingerprint 34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890. V4.5 correctly rejects their entry identity. No migration or rebind performed; a separately reviewed and approved compatibility design is required.",
+    "Four captured accepted A2 BUY decisions have accepted allocations but no orders; their exact production preflight refusal was lost by the V4.4 diagnostic bug. A local cost refusal is not proof of the original preflight reason.",
+    "Historical proxy results failed validation. No profitable or complete 30-day result is claimed."
+  ],
+  "not_verified": [
+    "Exact historical native benchmark scan-batch timestamps; two reconstructed D2 discrepancies per active account",
+    "Generic post-trade classification for experimental fills",
+    "Historical liquidity-stress performance and frictionless gross backtest",
+    "Production AMD64 runtime, backup/restore verification and deployment; Stage B not authorized"
+  ],
+  "safety": {
+    "live_trading_enabled": false,
+    "production_source_modified": false,
+    "production_restart": false,
+    "production_database_mutation": false,
+    "accounts_created_funded_archived_or_deleted": false,
+    "all_eight_production_manifest_hashes_unchanged": true,
+    "native_manifest_migration": false,
+    "new_strategy_thresholds_or_veto_changes": false
+  },
+  "package_status": "Post-commit delivery sidecar and immutable release manifest are authoritative",
+  "rollback_plan": "docs/V4_5_TRADE_GATE_INVESTIGATION.md; no financial restore over newer transactions; preserve all eight databases and required rollback images."
+}

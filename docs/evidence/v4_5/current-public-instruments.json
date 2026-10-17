@@ -1,0 +1,39 @@
+{
+  "source": "Revolut X public configuration, one local read-only request",
+  "limitation": "Current metadata, historical validity at decision time not yet proven.",
+  "pairs": [
+    {
+      "symbol": "BTC-EUR",
+      "base_asset": "BTC",
+      "quote_asset": "EUR",
+      "price_step": "0.01",
+      "quantity_step": "1E-8",
+      "min_order_quote": "0.1",
+      "min_order_base": "1E-8",
+      "max_order_base": "200",
+      "status": "active"
+    },
+    {
+      "symbol": "SOL-EUR",
+      "base_asset": "SOL",
+      "quote_asset": "EUR",
+      "price_step": "0.001",
+      "quantity_step": "0.000001",
+      "min_order_quote": "0.1",
+      "min_order_base": "0.000001",
+      "max_order_base": "20000",
+      "status": "active"
+    },
+    {
+      "symbol": "ETH-EUR",
+      "base_asset": "ETH",
+      "quote_asset": "EUR",
+      "price_step": "0.01",
+      "quantity_step": "1E-8",
+      "min_order_quote": "0.1",
+      "min_order_base": "1E-8",
+      "max_order_base": "5000",
+      "status": "active"
+    }
+  ]
+}

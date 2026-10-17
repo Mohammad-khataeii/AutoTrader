@@ -227,7 +227,7 @@ export function Experiments() {
             and complete exports are preserved; this account cannot resume.
           </p>
         )}
-        {!experiment.archived_at &&
+        {experiment.archive_enabled === true && !experiment.archived_at &&
           ["PAUSED", "STOPPED"].includes(experiment.state) && (
             <details className="action-menu">
               <summary>Manage experiment</summary>
@@ -461,7 +461,7 @@ export function Experiments() {
         <div className="slot-note">
           {experiments.length} of {maximum} experiment slots used. Existing
           experiment histories are preserved, including stopped experiments.
-          Delete a paused or stopped flat account to archive its history and
+          Archiving is disabled during this investigation. Preserve existing history and
           free a slot.
         </div>
       )}

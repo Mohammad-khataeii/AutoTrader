@@ -36,6 +36,17 @@ EXECUTION_FILES = (
     "position_manager.py",
     "allocation.py",
     "shadow/runtime.py",
+    "shadow/lab.py",
+    "shadow/views.py",
+    "worker/runner.py",
+    "research/data.py",
+    "research/artifacts.py",
+    "market_data/replay.py",
+    "shadow/legacy.py",
+    "shadow/diagnostics.py",
+    "shadow/gates.py",
+    "market_data/revolut.py",
+    "market_data/scheduling.py",
     "shadow/repository.py",
     "shadow/versions.py",
     "research/context.py",
@@ -52,6 +63,7 @@ def execution_fingerprint() -> str:
         for folder in ("execution", "persistence")
         for p in (ROOT / folder).rglob("*.py")
     )
+    paths.add("shadow/v45-boundary.json")
     return digest(canonical({p: digest((ROOT / p).read_bytes()) for p in sorted(paths)}))
 
 
@@ -65,6 +77,14 @@ def verify_legacy() -> dict[str, str]:
     return actual
 
 
+def verify_boundary() -> None:
+    """Review-pinned bridge closure, separate from immutable V4.2 strategy bytes."""
+    manifest = json.loads((ROOT / "shadow/v45-boundary.json").read_text())
+    actual = {name: digest((ROOT / name).read_bytes()) for name in manifest["files"]}
+    if actual != manifest["files"]:
+        raise ValueError("legacy_observation_boundary_integrity_failed")
+
+
 def compatibility(manifest: dict[str, Any]) -> dict[str, Any]:
     if manifest.get("execution_fingerprint"):
         valid = manifest["execution_fingerprint"] == execution_fingerprint()
@@ -76,6 +96,7 @@ def compatibility(manifest: dict[str, Any]) -> dict[str, Any]:
     if manifest.get("source_fingerprint") == LEGACY_SOURCE:
         try:
             verify_legacy()
+            verify_boundary()
             return {"compatible": True, "runner": "verified-v42", "reason": None}
         except ValueError as exc:
             return {"compatible": False, "runner": "verified-v42", "reason": str(exc)}

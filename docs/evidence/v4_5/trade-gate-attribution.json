@@ -1,0 +1,2273 @@
+{
+  "window_hours_requested": 24,
+  "accounts": {
+    "9b18cabcc94c45fe84a59917226ebb58": {
+      "counts": {
+        "evaluations": 306,
+        "eligible_signals": 0,
+        "accepted_buy_decisions": 0,
+        "allocation_attempts": 0,
+        "allocation_refusals": 0,
+        "execution_attempts": 0,
+        "accepted_paper_orders": 0,
+        "execution_refusals": 0
+      },
+      "condition_observations": {
+        "context_ready": {
+          "pass": 306,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_15m_ready": {
+          "pass": 306,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_1h_ready": {
+          "pass": 306,
+          "fail": 0,
+          "unknown": 0
+        },
+        "higher_timeframe_bullish": {
+          "pass": 15,
+          "fail": 291,
+          "unknown": 0
+        },
+        "retest_available": {
+          "pass": 306,
+          "fail": 0,
+          "unknown": 0
+        },
+        "prebreak_compression": {
+          "pass": 306,
+          "fail": 0,
+          "unknown": 0
+        },
+        "previous_breakout": {
+          "pass": 1,
+          "fail": 305,
+          "unknown": 0
+        },
+        "range_held": {
+          "pass": 10,
+          "fail": 296,
+          "unknown": 0
+        },
+        "no_close_reversal": {
+          "pass": 148,
+          "fail": 158,
+          "unknown": 0
+        },
+        "breakout_volume": {
+          "pass": 62,
+          "fail": 244,
+          "unknown": 0
+        }
+      },
+      "independent_failures": {
+        "previous_breakout": {
+          "count": 305,
+          "percent_of_evaluations": 99.673
+        },
+        "range_held": {
+          "count": 296,
+          "percent_of_evaluations": 96.732
+        },
+        "momentum_veto": {
+          "count": 293,
+          "percent_of_evaluations": 95.752
+        },
+        "higher_timeframe_bullish": {
+          "count": 291,
+          "percent_of_evaluations": 95.098
+        },
+        "breakout_volume": {
+          "count": 244,
+          "percent_of_evaluations": 79.739
+        },
+        "market_regime": {
+          "count": 210,
+          "percent_of_evaluations": 68.627
+        },
+        "no_close_reversal": {
+          "count": 158,
+          "percent_of_evaluations": 51.634
+        }
+      },
+      "causal_first_blockers": {
+        "strategy:higher_timeframe_bullish": 291,
+        "strategy:previous_breakout": 15
+      },
+      "pairwise_intersections": {
+        "previous_breakout & range_held": 296,
+        "momentum_veto & previous_breakout": 292,
+        "higher_timeframe_bullish & previous_breakout": 290,
+        "higher_timeframe_bullish & range_held": 283,
+        "momentum_veto & range_held": 283,
+        "higher_timeframe_bullish & momentum_veto": 280,
+        "breakout_volume & previous_breakout": 243,
+        "breakout_volume & range_held": 234,
+        "breakout_volume & momentum_veto": 231,
+        "breakout_volume & higher_timeframe_bullish": 230,
+        "market_regime & momentum_veto": 210,
+        "market_regime & previous_breakout": 210,
+        "market_regime & range_held": 209,
+        "higher_timeframe_bullish & market_regime": 208,
+        "breakout_volume & market_regime": 162,
+        "no_close_reversal & previous_breakout": 157,
+        "momentum_veto & no_close_reversal": 153,
+        "no_close_reversal & range_held": 153,
+        "higher_timeframe_bullish & no_close_reversal": 152,
+        "breakout_volume & no_close_reversal": 130,
+        "market_regime & no_close_reversal": 105
+      },
+      "momentum_components": {
+        "falling_close_weakening_volume": {
+          "count": 78,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 285,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "adverse_regime": {
+          "count": 210,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "extended_above_ema21": {
+          "count": 3,
+          "symbols": [
+            "BTC-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "diagnostic_mismatches": 0,
+      "unannotated_or_legacy_schema": 0,
+      "limitation": "Counts cover this bounded decision window only. Pre-strategy skips, fills and positions are separate records; absent telemetry is unknown, never zero. Independent failures overlap.",
+      "state": "STOPPED",
+      "strategy": "B2_CONFIRMED_COMPRESSION",
+      "recorded_decisions": 306,
+      "window_decision_counts": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "rejected_reason": "Entry conditions not met.",
+          "count": 306
+        }
+      ],
+      "first_evaluation": "2026-10-16 12:34:21.087484+00:00",
+      "last_evaluation": "2026-10-16 20:55:15.082910+00:00",
+      "lifetime_financial_counts": {
+        "trading_decisions": 306,
+        "orders": 0,
+        "fills": 0,
+        "positions": 0,
+        "financial_journal": 1
+      },
+      "allocation_attempts_observed": 0,
+      "allocation_inference": "BUY allocation uses separately persisted alloc records. WAIT allocation calls are not trade attempts. Entry invocation after accepted allocation is control-flow inference; missing refusal reasons remain NOT_VERIFIED."
+    },
+    "39cddc6d7e584a369ce223945f06e629": {
+      "counts": {
+        "evaluations": 36,
+        "eligible_signals": 0,
+        "accepted_buy_decisions": 0,
+        "allocation_attempts": 0,
+        "allocation_refusals": 0,
+        "execution_attempts": 0,
+        "accepted_paper_orders": 0,
+        "execution_refusals": 0
+      },
+      "condition_observations": {
+        "context_ready": {
+          "pass": 36,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_15m_ready": {
+          "pass": 36,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_1h_ready": {
+          "pass": 36,
+          "fail": 0,
+          "unknown": 0
+        },
+        "higher_timeframe_bullish": {
+          "pass": 6,
+          "fail": 30,
+          "unknown": 0
+        },
+        "retest_available": {
+          "pass": 36,
+          "fail": 0,
+          "unknown": 0
+        },
+        "prebreak_compression": {
+          "pass": 36,
+          "fail": 0,
+          "unknown": 0
+        },
+        "previous_breakout": {
+          "pass": 0,
+          "fail": 36,
+          "unknown": 0
+        },
+        "range_held": {
+          "pass": 0,
+          "fail": 36,
+          "unknown": 0
+        },
+        "no_close_reversal": {
+          "pass": 15,
+          "fail": 21,
+          "unknown": 0
+        },
+        "breakout_volume": {
+          "pass": 3,
+          "fail": 33,
+          "unknown": 0
+        }
+      },
+      "independent_failures": {
+        "previous_breakout": {
+          "count": 36,
+          "percent_of_evaluations": 100.0
+        },
+        "range_held": {
+          "count": 36,
+          "percent_of_evaluations": 100.0
+        },
+        "breakout_volume": {
+          "count": 33,
+          "percent_of_evaluations": 91.667
+        },
+        "higher_timeframe_bullish": {
+          "count": 30,
+          "percent_of_evaluations": 83.333
+        },
+        "momentum_veto": {
+          "count": 23,
+          "percent_of_evaluations": 63.889
+        },
+        "no_close_reversal": {
+          "count": 21,
+          "percent_of_evaluations": 58.333
+        }
+      },
+      "causal_first_blockers": {
+        "strategy:higher_timeframe_bullish": 30,
+        "strategy:previous_breakout": 6
+      },
+      "pairwise_intersections": {
+        "previous_breakout & range_held": 36,
+        "breakout_volume & previous_breakout": 33,
+        "breakout_volume & range_held": 33,
+        "higher_timeframe_bullish & previous_breakout": 30,
+        "higher_timeframe_bullish & range_held": 30,
+        "breakout_volume & higher_timeframe_bullish": 27,
+        "momentum_veto & previous_breakout": 23,
+        "momentum_veto & range_held": 23,
+        "no_close_reversal & previous_breakout": 21,
+        "no_close_reversal & range_held": 21,
+        "breakout_volume & momentum_veto": 20,
+        "higher_timeframe_bullish & momentum_veto": 19,
+        "higher_timeframe_bullish & no_close_reversal": 19,
+        "breakout_volume & no_close_reversal": 18,
+        "momentum_veto & no_close_reversal": 16
+      },
+      "momentum_components": {
+        "falling_close_weakening_volume": {
+          "count": 11,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 15,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "diagnostic_mismatches": 0,
+      "unannotated_or_legacy_schema": 0,
+      "limitation": "Counts cover this bounded decision window only. Pre-strategy skips, fills and positions are separate records; absent telemetry is unknown, never zero. Independent failures overlap.",
+      "state": "STOPPED",
+      "strategy": "B2_CONFIRMED_COMPRESSION",
+      "recorded_decisions": 36,
+      "window_decision_counts": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "rejected_reason": "Entry conditions not met.",
+          "count": 36
+        }
+      ],
+      "first_evaluation": "2026-10-16 12:34:21.756999+00:00",
+      "last_evaluation": "2026-10-16 13:25:28.641002+00:00",
+      "lifetime_financial_counts": {
+        "trading_decisions": 36,
+        "orders": 0,
+        "fills": 0,
+        "positions": 0,
+        "financial_journal": 1
+      },
+      "allocation_attempts_observed": 0,
+      "allocation_inference": "BUY allocation uses separately persisted alloc records. WAIT allocation calls are not trade attempts. Entry invocation after accepted allocation is control-flow inference; missing refusal reasons remain NOT_VERIFIED."
+    },
+    "52746de1116e4852b61cb16988917545": {
+      "counts": {
+        "evaluations": 306,
+        "eligible_signals": 0,
+        "accepted_buy_decisions": 0,
+        "allocation_attempts": 0,
+        "allocation_refusals": 0,
+        "execution_attempts": 0,
+        "accepted_paper_orders": 0,
+        "execution_refusals": 0
+      },
+      "condition_observations": {
+        "context_ready": {
+          "pass": 306,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_15m_ready": {
+          "pass": 306,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_1h_ready": {
+          "pass": 306,
+          "fail": 0,
+          "unknown": 0
+        },
+        "higher_timeframe_bullish": {
+          "pass": 15,
+          "fail": 291,
+          "unknown": 0
+        },
+        "ema9_recovery": {
+          "pass": 49,
+          "fail": 257,
+          "unknown": 0
+        },
+        "close_recovery": {
+          "pass": 128,
+          "fail": 178,
+          "unknown": 0
+        },
+        "previous_high_reclaimed": {
+          "pass": 80,
+          "fail": 226,
+          "unknown": 0
+        }
+      },
+      "independent_failures": {
+        "momentum_veto": {
+          "count": 293,
+          "percent_of_evaluations": 95.752
+        },
+        "higher_timeframe_bullish": {
+          "count": 291,
+          "percent_of_evaluations": 95.098
+        },
+        "ema9_recovery": {
+          "count": 257,
+          "percent_of_evaluations": 83.987
+        },
+        "previous_high_reclaimed": {
+          "count": 226,
+          "percent_of_evaluations": 73.856
+        },
+        "market_regime": {
+          "count": 210,
+          "percent_of_evaluations": 68.627
+        },
+        "close_recovery": {
+          "count": 178,
+          "percent_of_evaluations": 58.17
+        }
+      },
+      "causal_first_blockers": {
+        "strategy:higher_timeframe_bullish": 291,
+        "strategy:ema9_recovery": 12,
+        "strategy:previous_high_reclaimed": 2,
+        "strategy:market_regime": 1
+      },
+      "pairwise_intersections": {
+        "higher_timeframe_bullish & momentum_veto": 280,
+        "ema9_recovery & momentum_veto": 246,
+        "ema9_recovery & higher_timeframe_bullish": 245,
+        "higher_timeframe_bullish & previous_high_reclaimed": 217,
+        "momentum_veto & previous_high_reclaimed": 216,
+        "market_regime & momentum_veto": 210,
+        "higher_timeframe_bullish & market_regime": 208,
+        "ema9_recovery & previous_high_reclaimed": 205,
+        "close_recovery & higher_timeframe_bullish": 171,
+        "close_recovery & previous_high_reclaimed": 171,
+        "ema9_recovery & market_regime": 170,
+        "close_recovery & momentum_veto": 168,
+        "close_recovery & ema9_recovery": 165,
+        "market_regime & previous_high_reclaimed": 151,
+        "close_recovery & market_regime": 115
+      },
+      "momentum_components": {
+        "falling_close_weakening_volume": {
+          "count": 78,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 285,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "adverse_regime": {
+          "count": 210,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "extended_above_ema21": {
+          "count": 3,
+          "symbols": [
+            "BTC-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "diagnostic_mismatches": 0,
+      "unannotated_or_legacy_schema": 0,
+      "limitation": "Counts cover this bounded decision window only. Pre-strategy skips, fills and positions are separate records; absent telemetry is unknown, never zero. Independent failures overlap.",
+      "state": "STOPPED",
+      "strategy": "A2_CONFIRMED_PULLBACK",
+      "recorded_decisions": 306,
+      "window_decision_counts": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "rejected_reason": "Entry conditions not met.",
+          "count": 306
+        }
+      ],
+      "first_evaluation": "2026-10-16 12:34:22.494975+00:00",
+      "last_evaluation": "2026-10-16 20:55:15.494530+00:00",
+      "lifetime_financial_counts": {
+        "trading_decisions": 306,
+        "orders": 0,
+        "fills": 0,
+        "positions": 0,
+        "financial_journal": 1
+      },
+      "allocation_attempts_observed": 0,
+      "allocation_inference": "BUY allocation uses separately persisted alloc records. WAIT allocation calls are not trade attempts. Entry invocation after accepted allocation is control-flow inference; missing refusal reasons remain NOT_VERIFIED."
+    },
+    "2f12b0257a3b453a8e2a61ab695d8146": {
+      "counts": {
+        "evaluations": 9,
+        "eligible_signals": 0,
+        "accepted_buy_decisions": 0,
+        "allocation_attempts": 0,
+        "allocation_refusals": 0,
+        "execution_attempts": 0,
+        "accepted_paper_orders": 0,
+        "execution_refusals": 0
+      },
+      "condition_observations": {
+        "context_ready": {
+          "pass": 9,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_15m_ready": {
+          "pass": 9,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_1h_ready": {
+          "pass": 9,
+          "fail": 0,
+          "unknown": 0
+        },
+        "higher_timeframe_bullish": {
+          "pass": 3,
+          "fail": 6,
+          "unknown": 0
+        },
+        "retest_available": {
+          "pass": 9,
+          "fail": 0,
+          "unknown": 0
+        },
+        "prebreak_compression": {
+          "pass": 9,
+          "fail": 0,
+          "unknown": 0
+        },
+        "previous_breakout": {
+          "pass": 0,
+          "fail": 9,
+          "unknown": 0
+        },
+        "range_held": {
+          "pass": 0,
+          "fail": 9,
+          "unknown": 0
+        },
+        "no_close_reversal": {
+          "pass": 6,
+          "fail": 3,
+          "unknown": 0
+        },
+        "breakout_volume": {
+          "pass": 0,
+          "fail": 9,
+          "unknown": 0
+        }
+      },
+      "independent_failures": {
+        "previous_breakout": {
+          "count": 9,
+          "percent_of_evaluations": 100.0
+        },
+        "momentum_veto": {
+          "count": 9,
+          "percent_of_evaluations": 100.0
+        },
+        "breakout_volume": {
+          "count": 9,
+          "percent_of_evaluations": 100.0
+        },
+        "range_held": {
+          "count": 9,
+          "percent_of_evaluations": 100.0
+        },
+        "higher_timeframe_bullish": {
+          "count": 6,
+          "percent_of_evaluations": 66.667
+        },
+        "no_close_reversal": {
+          "count": 3,
+          "percent_of_evaluations": 33.333
+        }
+      },
+      "causal_first_blockers": {
+        "strategy:higher_timeframe_bullish": 6,
+        "strategy:previous_breakout": 3
+      },
+      "pairwise_intersections": {
+        "breakout_volume & momentum_veto": 9,
+        "breakout_volume & previous_breakout": 9,
+        "breakout_volume & range_held": 9,
+        "momentum_veto & previous_breakout": 9,
+        "momentum_veto & range_held": 9,
+        "previous_breakout & range_held": 9,
+        "breakout_volume & higher_timeframe_bullish": 6,
+        "higher_timeframe_bullish & momentum_veto": 6,
+        "higher_timeframe_bullish & previous_breakout": 6,
+        "higher_timeframe_bullish & range_held": 6,
+        "breakout_volume & no_close_reversal": 3,
+        "momentum_veto & no_close_reversal": 3,
+        "no_close_reversal & previous_breakout": 3,
+        "no_close_reversal & range_held": 3,
+        "higher_timeframe_bullish & no_close_reversal": 2
+      },
+      "momentum_components": {
+        "bearish_benchmark": {
+          "count": 9,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "falling_close_weakening_volume": {
+          "count": 1,
+          "symbols": [
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "diagnostic_mismatches": 0,
+      "unannotated_or_legacy_schema": 0,
+      "limitation": "Counts cover this bounded decision window only. Pre-strategy skips, fills and positions are separate records; absent telemetry is unknown, never zero. Independent failures overlap.",
+      "state": "STOPPED",
+      "strategy": "B2_CONFIRMED_COMPRESSION",
+      "recorded_decisions": 9,
+      "window_decision_counts": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "rejected_reason": "Entry conditions not met.",
+          "count": 9
+        }
+      ],
+      "first_evaluation": "2026-10-16 13:17:26.509517+00:00",
+      "last_evaluation": "2026-10-16 13:25:29.251165+00:00",
+      "lifetime_financial_counts": {
+        "trading_decisions": 9,
+        "orders": 0,
+        "fills": 0,
+        "positions": 0,
+        "financial_journal": 1
+      },
+      "allocation_attempts_observed": 0,
+      "allocation_inference": "BUY allocation uses separately persisted alloc records. WAIT allocation calls are not trade attempts. Entry invocation after accepted allocation is control-flow inference; missing refusal reasons remain NOT_VERIFIED."
+    },
+    "40f3f37036f848d0a417b06b6a6fc201": {
+      "counts": {
+        "evaluations": 411,
+        "eligible_signals": 0,
+        "accepted_buy_decisions": 0,
+        "allocation_attempts": 0,
+        "allocation_refusals": 0,
+        "execution_attempts": 0,
+        "accepted_paper_orders": 0,
+        "execution_refusals": 0
+      },
+      "condition_observations": {
+        "context_ready": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_15m_ready": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_1h_ready": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "higher_timeframe_bullish": {
+          "pass": 48,
+          "fail": 363,
+          "unknown": 0
+        },
+        "retest_available": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "prebreak_compression": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "previous_breakout": {
+          "pass": 6,
+          "fail": 405,
+          "unknown": 0
+        },
+        "range_held": {
+          "pass": 130,
+          "fail": 281,
+          "unknown": 0
+        },
+        "no_close_reversal": {
+          "pass": 218,
+          "fail": 193,
+          "unknown": 0
+        },
+        "breakout_volume": {
+          "pass": 72,
+          "fail": 339,
+          "unknown": 0
+        }
+      },
+      "independent_failures": {
+        "previous_breakout": {
+          "count": 405,
+          "percent_of_evaluations": 98.54
+        },
+        "higher_timeframe_bullish": {
+          "count": 363,
+          "percent_of_evaluations": 88.321
+        },
+        "breakout_volume": {
+          "count": 339,
+          "percent_of_evaluations": 82.482
+        },
+        "momentum_veto": {
+          "count": 281,
+          "percent_of_evaluations": 68.37
+        },
+        "range_held": {
+          "count": 281,
+          "percent_of_evaluations": 68.37
+        },
+        "no_close_reversal": {
+          "count": 193,
+          "percent_of_evaluations": 46.959
+        },
+        "market_regime": {
+          "count": 20,
+          "percent_of_evaluations": 4.866
+        }
+      },
+      "causal_first_blockers": {
+        "strategy:higher_timeframe_bullish": 363,
+        "strategy:previous_breakout": 48
+      },
+      "pairwise_intersections": {
+        "higher_timeframe_bullish & previous_breakout": 357,
+        "breakout_volume & previous_breakout": 335,
+        "breakout_volume & higher_timeframe_bullish": 302,
+        "previous_breakout & range_held": 280,
+        "momentum_veto & previous_breakout": 276,
+        "higher_timeframe_bullish & momentum_veto": 258,
+        "higher_timeframe_bullish & range_held": 251,
+        "breakout_volume & range_held": 244,
+        "breakout_volume & momentum_veto": 231,
+        "momentum_veto & range_held": 203,
+        "no_close_reversal & previous_breakout": 188,
+        "higher_timeframe_bullish & no_close_reversal": 175,
+        "breakout_volume & no_close_reversal": 159,
+        "momentum_veto & no_close_reversal": 153,
+        "no_close_reversal & range_held": 138,
+        "higher_timeframe_bullish & market_regime": 20,
+        "market_regime & momentum_veto": 20,
+        "market_regime & previous_breakout": 20,
+        "market_regime & range_held": 20,
+        "breakout_volume & market_regime": 18,
+        "market_regime & no_close_reversal": 6
+      },
+      "momentum_components": {
+        "falling_close_weakening_volume": {
+          "count": 107,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 219,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "extended_above_ema21": {
+          "count": 29,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "adverse_regime": {
+          "count": 20,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "diagnostic_mismatches": 0,
+      "unannotated_or_legacy_schema": 0,
+      "limitation": "Counts cover this bounded decision window only. Pre-strategy skips, fills and positions are separate records; absent telemetry is unknown, never zero. Independent failures overlap.",
+      "state": "SHADOW_ACTIVE",
+      "strategy": "B2_CONFIRMED_COMPRESSION",
+      "recorded_decisions": 411,
+      "window_decision_counts": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "rejected_reason": "Entry conditions not met.",
+          "count": 411
+        }
+      ],
+      "first_evaluation": "2026-10-16 21:01:56.258461+00:00",
+      "last_evaluation": "2026-10-17 08:20:33.254573+00:00",
+      "lifetime_financial_counts": {
+        "trading_decisions": 411,
+        "orders": 0,
+        "fills": 0,
+        "positions": 0,
+        "financial_journal": 1
+      },
+      "allocation_attempts_observed": 0,
+      "allocation_inference": "BUY allocation uses separately persisted alloc records. WAIT allocation calls are not trade attempts. Entry invocation after accepted allocation is control-flow inference; missing refusal reasons remain NOT_VERIFIED."
+    },
+    "dc1edd63598e4caeb476864bee8851e3": {
+      "counts": {
+        "evaluations": 411,
+        "eligible_signals": 6,
+        "accepted_buy_decisions": 4,
+        "allocation_attempts": 4,
+        "allocation_refusals": 0,
+        "execution_attempts": 4,
+        "accepted_paper_orders": 0,
+        "execution_refusals": 0
+      },
+      "condition_observations": {
+        "context_ready": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_15m_ready": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_1h_ready": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "higher_timeframe_bullish": {
+          "pass": 48,
+          "fail": 363,
+          "unknown": 0
+        },
+        "ema9_recovery": {
+          "pass": 125,
+          "fail": 286,
+          "unknown": 0
+        },
+        "close_recovery": {
+          "pass": 179,
+          "fail": 232,
+          "unknown": 0
+        },
+        "previous_high_reclaimed": {
+          "pass": 118,
+          "fail": 293,
+          "unknown": 0
+        }
+      },
+      "independent_failures": {
+        "higher_timeframe_bullish": {
+          "count": 363,
+          "percent_of_evaluations": 88.321
+        },
+        "previous_high_reclaimed": {
+          "count": 293,
+          "percent_of_evaluations": 71.29
+        },
+        "ema9_recovery": {
+          "count": 286,
+          "percent_of_evaluations": 69.586
+        },
+        "momentum_veto": {
+          "count": 281,
+          "percent_of_evaluations": 68.37
+        },
+        "close_recovery": {
+          "count": 232,
+          "percent_of_evaluations": 56.448
+        },
+        "market_regime": {
+          "count": 20,
+          "percent_of_evaluations": 4.866
+        }
+      },
+      "causal_first_blockers": {
+        "strategy:higher_timeframe_bullish": 363,
+        "strategy:ema9_recovery": 35,
+        "strategy:previous_high_reclaimed": 4,
+        "execution:unobserved_pre_order_outcome": 4,
+        "strategy:close_recovery": 3,
+        "momentum_veto": 2
+      },
+      "pairwise_intersections": {
+        "higher_timeframe_bullish & momentum_veto": 258,
+        "higher_timeframe_bullish & previous_high_reclaimed": 258,
+        "ema9_recovery & higher_timeframe_bullish": 251,
+        "ema9_recovery & previous_high_reclaimed": 230,
+        "close_recovery & previous_high_reclaimed": 221,
+        "ema9_recovery & momentum_veto": 217,
+        "close_recovery & higher_timeframe_bullish": 208,
+        "momentum_veto & previous_high_reclaimed": 208,
+        "close_recovery & ema9_recovery": 199,
+        "close_recovery & momentum_veto": 175,
+        "higher_timeframe_bullish & market_regime": 20,
+        "market_regime & momentum_veto": 20,
+        "ema9_recovery & market_regime": 15,
+        "market_regime & previous_high_reclaimed": 12,
+        "close_recovery & market_regime": 8
+      },
+      "momentum_components": {
+        "falling_close_weakening_volume": {
+          "count": 107,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 219,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 1
+        },
+        "extended_above_ema21": {
+          "count": 29,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 1
+        },
+        "adverse_regime": {
+          "count": 20,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "diagnostic_mismatches": 0,
+      "unannotated_or_legacy_schema": 0,
+      "limitation": "Counts cover this bounded decision window only. Pre-strategy skips, fills and positions are separate records; absent telemetry is unknown, never zero. Independent failures overlap.",
+      "state": "SHADOW_ACTIVE",
+      "strategy": "A2_CONFIRMED_PULLBACK",
+      "recorded_decisions": 411,
+      "window_decision_counts": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "rejected_reason": "Entry conditions not met.",
+          "count": 407
+        },
+        {
+          "action": "BUY",
+          "accepted": true,
+          "rejected_reason": null,
+          "count": 4
+        }
+      ],
+      "first_evaluation": "2026-10-16 21:02:57.516742+00:00",
+      "last_evaluation": "2026-10-17 08:20:33.708051+00:00",
+      "lifetime_financial_counts": {
+        "trading_decisions": 411,
+        "orders": 4,
+        "fills": 0,
+        "positions": 0,
+        "financial_journal": 1
+      },
+      "allocation_attempts_observed": 4,
+      "allocation_inference": "BUY allocation uses separately persisted alloc records. WAIT allocation calls are not trade attempts. Entry invocation after accepted allocation is control-flow inference; missing refusal reasons remain NOT_VERIFIED."
+    },
+    "baac318a9797469c8f3693c042eb2855": {
+      "counts": {
+        "evaluations": 411,
+        "eligible_signals": 0,
+        "accepted_buy_decisions": 0,
+        "allocation_attempts": 0,
+        "allocation_refusals": 0,
+        "execution_attempts": 0,
+        "accepted_paper_orders": 0,
+        "execution_refusals": 0
+      },
+      "condition_observations": {
+        "context_ready": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_15m_ready": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_1h_ready": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "higher_timeframe_bullish": {
+          "pass": 48,
+          "fail": 363,
+          "unknown": 0
+        },
+        "retest_available": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "previous_breakout": {
+          "pass": 6,
+          "fail": 405,
+          "unknown": 0
+        },
+        "retest_touched": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "range_held": {
+          "pass": 53,
+          "fail": 358,
+          "unknown": 0
+        },
+        "close_recovery": {
+          "pass": 179,
+          "fail": 232,
+          "unknown": 0
+        },
+        "previous_high_reclaimed": {
+          "pass": 118,
+          "fail": 293,
+          "unknown": 0
+        },
+        "relative_volume": {
+          "pass": 74,
+          "fail": 337,
+          "unknown": 0
+        }
+      },
+      "independent_failures": {
+        "previous_breakout": {
+          "count": 405,
+          "percent_of_evaluations": 98.54
+        },
+        "higher_timeframe_bullish": {
+          "count": 363,
+          "percent_of_evaluations": 88.321
+        },
+        "range_held": {
+          "count": 358,
+          "percent_of_evaluations": 87.105
+        },
+        "relative_volume": {
+          "count": 337,
+          "percent_of_evaluations": 81.995
+        },
+        "previous_high_reclaimed": {
+          "count": 293,
+          "percent_of_evaluations": 71.29
+        },
+        "momentum_veto": {
+          "count": 281,
+          "percent_of_evaluations": 68.37
+        },
+        "close_recovery": {
+          "count": 232,
+          "percent_of_evaluations": 56.448
+        },
+        "market_regime": {
+          "count": 20,
+          "percent_of_evaluations": 4.866
+        }
+      },
+      "causal_first_blockers": {
+        "strategy:higher_timeframe_bullish": 363,
+        "strategy:previous_breakout": 48
+      },
+      "pairwise_intersections": {
+        "higher_timeframe_bullish & previous_breakout": 357,
+        "previous_breakout & range_held": 357,
+        "previous_breakout & relative_volume": 332,
+        "higher_timeframe_bullish & range_held": 319,
+        "range_held & relative_volume": 303,
+        "higher_timeframe_bullish & relative_volume": 301,
+        "previous_breakout & previous_high_reclaimed": 288,
+        "momentum_veto & previous_breakout": 276,
+        "previous_high_reclaimed & range_held": 273,
+        "higher_timeframe_bullish & momentum_veto": 258,
+        "higher_timeframe_bullish & previous_high_reclaimed": 258,
+        "momentum_veto & relative_volume": 247,
+        "previous_high_reclaimed & relative_volume": 247,
+        "momentum_veto & range_held": 244,
+        "close_recovery & previous_breakout": 227,
+        "close_recovery & previous_high_reclaimed": 221,
+        "close_recovery & range_held": 216,
+        "close_recovery & higher_timeframe_bullish": 208,
+        "momentum_veto & previous_high_reclaimed": 208,
+        "close_recovery & relative_volume": 196,
+        "close_recovery & momentum_veto": 175,
+        "higher_timeframe_bullish & market_regime": 20,
+        "market_regime & momentum_veto": 20,
+        "market_regime & previous_breakout": 20,
+        "market_regime & range_held": 20,
+        "market_regime & relative_volume": 18,
+        "market_regime & previous_high_reclaimed": 12,
+        "close_recovery & market_regime": 8
+      },
+      "momentum_components": {
+        "falling_close_weakening_volume": {
+          "count": 107,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 219,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "extended_above_ema21": {
+          "count": 29,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "adverse_regime": {
+          "count": 20,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "diagnostic_mismatches": 0,
+      "unannotated_or_legacy_schema": 0,
+      "limitation": "Counts cover this bounded decision window only. Pre-strategy skips, fills and positions are separate records; absent telemetry is unknown, never zero. Independent failures overlap.",
+      "state": "SHADOW_ACTIVE",
+      "strategy": "C2_LIQUID_RETEST",
+      "recorded_decisions": 411,
+      "window_decision_counts": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "rejected_reason": "Entry conditions not met.",
+          "count": 411
+        }
+      ],
+      "first_evaluation": "2026-10-16 21:02:58.484659+00:00",
+      "last_evaluation": "2026-10-17 08:20:34.514629+00:00",
+      "lifetime_financial_counts": {
+        "trading_decisions": 411,
+        "orders": 0,
+        "fills": 0,
+        "positions": 0,
+        "financial_journal": 1
+      },
+      "allocation_attempts_observed": 0,
+      "allocation_inference": "BUY allocation uses separately persisted alloc records. WAIT allocation calls are not trade attempts. Entry invocation after accepted allocation is control-flow inference; missing refusal reasons remain NOT_VERIFIED."
+    },
+    "b97173b5abec41208c8541015d30003c": {
+      "counts": {
+        "evaluations": 411,
+        "eligible_signals": 0,
+        "accepted_buy_decisions": 0,
+        "allocation_attempts": 0,
+        "allocation_refusals": 0,
+        "execution_attempts": 0,
+        "accepted_paper_orders": 0,
+        "execution_refusals": 0
+      },
+      "condition_observations": {
+        "context_ready": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_15m_ready": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "context_1h_ready": {
+          "pass": 411,
+          "fail": 0,
+          "unknown": 0
+        },
+        "higher_timeframe_bullish": {
+          "pass": 48,
+          "fail": 363,
+          "unknown": 0
+        },
+        "absolute_benchmarks_bullish": {
+          "pass": 138,
+          "fail": 273,
+          "unknown": 0
+        },
+        "relative_outperformance": {
+          "pass": 0,
+          "fail": 411,
+          "unknown": 0
+        },
+        "close_recovery": {
+          "pass": 179,
+          "fail": 232,
+          "unknown": 0
+        },
+        "relative_volume": {
+          "pass": 74,
+          "fail": 337,
+          "unknown": 0
+        }
+      },
+      "independent_failures": {
+        "relative_outperformance": {
+          "count": 411,
+          "percent_of_evaluations": 100.0
+        },
+        "market_regime": {
+          "count": 411,
+          "percent_of_evaluations": 100.0
+        },
+        "higher_timeframe_bullish": {
+          "count": 363,
+          "percent_of_evaluations": 88.321
+        },
+        "relative_volume": {
+          "count": 337,
+          "percent_of_evaluations": 81.995
+        },
+        "momentum_veto": {
+          "count": 281,
+          "percent_of_evaluations": 68.37
+        },
+        "absolute_benchmarks_bullish": {
+          "count": 273,
+          "percent_of_evaluations": 66.423
+        },
+        "close_recovery": {
+          "count": 232,
+          "percent_of_evaluations": 56.448
+        }
+      },
+      "causal_first_blockers": {
+        "strategy:higher_timeframe_bullish": 363,
+        "strategy:relative_outperformance": 32,
+        "strategy:absolute_benchmarks_bullish": 16
+      },
+      "pairwise_intersections": {
+        "market_regime & relative_outperformance": 411,
+        "higher_timeframe_bullish & market_regime": 363,
+        "higher_timeframe_bullish & relative_outperformance": 363,
+        "market_regime & relative_volume": 337,
+        "relative_outperformance & relative_volume": 337,
+        "higher_timeframe_bullish & relative_volume": 301,
+        "market_regime & momentum_veto": 281,
+        "momentum_veto & relative_outperformance": 281,
+        "absolute_benchmarks_bullish & market_regime": 273,
+        "absolute_benchmarks_bullish & relative_outperformance": 273,
+        "higher_timeframe_bullish & momentum_veto": 258,
+        "absolute_benchmarks_bullish & higher_timeframe_bullish": 257,
+        "momentum_veto & relative_volume": 247,
+        "absolute_benchmarks_bullish & momentum_veto": 238,
+        "close_recovery & market_regime": 232,
+        "close_recovery & relative_outperformance": 232,
+        "absolute_benchmarks_bullish & relative_volume": 229,
+        "close_recovery & higher_timeframe_bullish": 208,
+        "close_recovery & relative_volume": 196,
+        "close_recovery & momentum_veto": 175,
+        "absolute_benchmarks_bullish & close_recovery": 161
+      },
+      "momentum_components": {
+        "falling_close_weakening_volume": {
+          "count": 107,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "bearish_benchmark": {
+          "count": 219,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "extended_above_ema21": {
+          "count": 29,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "otherwise_eligible": 0
+        },
+        "adverse_regime": {
+          "count": 20,
+          "symbols": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "otherwise_eligible": 0
+        }
+      },
+      "diagnostic_mismatches": 0,
+      "unannotated_or_legacy_schema": 0,
+      "limitation": "Counts cover this bounded decision window only. Pre-strategy skips, fills and positions are separate records; absent telemetry is unknown, never zero. Independent failures overlap.",
+      "state": "SHADOW_ACTIVE",
+      "strategy": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+      "recorded_decisions": 411,
+      "window_decision_counts": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "rejected_reason": "Entry conditions not met.",
+          "count": 411
+        }
+      ],
+      "first_evaluation": "2026-10-16 21:03:56.999622+00:00",
+      "last_evaluation": "2026-10-17 08:20:35.109773+00:00",
+      "lifetime_financial_counts": {
+        "trading_decisions": 411,
+        "orders": 0,
+        "fills": 0,
+        "positions": 0,
+        "financial_journal": 1
+      },
+      "allocation_attempts_observed": 0,
+      "allocation_inference": "BUY allocation uses separately persisted alloc records. WAIT allocation calls are not trade attempts. Entry invocation after accepted allocation is control-flow inference; missing refusal reasons remain NOT_VERIFIED."
+    }
+  },
+  "decision_examples": [
+    {
+      "schema": "shadow-decision-explanation/2",
+      "action": "WAIT",
+      "diagnostic_parity": true,
+      "momentum_components": {
+        "extended_above_ema21": false,
+        "falling_close_weakening_volume": true,
+        "bearish_benchmark": false,
+        "spread_above_25bps": false,
+        "adverse_regime": false
+      },
+      "momentum_component_parity": true,
+      "inputs": {
+        "last_close": "73097.23",
+        "previous_close": "73115.42",
+        "last_low": "73097.23",
+        "last_high": "73150.69",
+        "retest_level": "73590.95",
+        "last_open": "73145.93",
+        "previous_high": "73131.93",
+        "prebreak_width": "0.01112942486885972428554620676",
+        "breakout_relative_volume": "0.3388939406341043454719305913",
+        "current_volume": "0.17275061",
+        "previous_volume": "0.46733113",
+        "ema_9": "73147.39248468573500703292254",
+        "ema_21": "73144.96000374000266077424095",
+        "ema_50": "73087.66176555628374160075764",
+        "atr": "93.88357142857142857142857143",
+        "relative_volume": "0.1306919601735303940981716447",
+        "spread_bps": "2.257747674475451438425265441"
+      },
+      "allocation": {
+        "reached": false,
+        "accepted": null,
+        "reason": null
+      },
+      "decision_id": "dec_afe56e06b54a415fb38517ea4c896283",
+      "symbol": "BTC-EUR",
+      "completed_candle_at": "2026-10-16T12:25:00+00:00",
+      "evaluated_at": "2026-10-16T12:34:21.087484+00:00",
+      "strategy_id": "B2_CONFIRMED_COMPRESSION",
+      "strategy_version": "4.2.0-experimental.1",
+      "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+      "execution_fingerprint": null,
+      "runner": "verified-v42",
+      "data_quality": "GOOD",
+      "regime": "COMPRESSION",
+      "context": {
+        "ready": true,
+        "15m": {
+          "available_at": "2026-10-16T12:30:00+00:00",
+          "bear": false,
+          "bull": false,
+          "complete_bars": 240,
+          "ready": true
+        },
+        "60m": {
+          "available_at": "2026-10-16T12:00:00+00:00",
+          "bear": false,
+          "bull": false,
+          "complete_bars": 59,
+          "ready": true
+        }
+      },
+      "entry_conditions": {
+        "context_ready": true,
+        "context_15m_ready": true,
+        "context_1h_ready": true,
+        "higher_timeframe_bullish": false,
+        "retest_available": true,
+        "prebreak_compression": true,
+        "previous_breakout": false,
+        "range_held": false,
+        "no_close_reversal": false,
+        "breakout_volume": false
+      },
+      "independently_failed": [
+        "higher_timeframe_bullish",
+        "previous_breakout",
+        "range_held",
+        "no_close_reversal",
+        "breakout_volume"
+      ],
+      "unknown_conditions": [],
+      "volume_confirmation": false,
+      "signal_entry_eligible": false,
+      "momentum_veto": true,
+      "allowed_regimes": [
+        "STRONG_BULL",
+        "MODERATE_BULL",
+        "COMPRESSION",
+        "EXPANSION"
+      ],
+      "regime_eligible": true,
+      "regime_veto": false,
+      "risk": {
+        "reached": false,
+        "rejection": null
+      },
+      "execution": {
+        "reached": false,
+        "reason": null,
+        "quality": {
+          "reached": false,
+          "rejection": null
+        }
+      },
+      "decision_accepted": false,
+      "final_state": "REJECTED",
+      "reason_code": "RECORDED_DECISION_REJECTION",
+      "reason": "Entry conditions not met.",
+      "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached."
+    },
+    {
+      "schema": "shadow-decision-explanation/2",
+      "action": "WAIT",
+      "diagnostic_parity": true,
+      "momentum_components": {
+        "extended_above_ema21": false,
+        "falling_close_weakening_volume": true,
+        "bearish_benchmark": false,
+        "spread_above_25bps": false,
+        "adverse_regime": false
+      },
+      "momentum_component_parity": true,
+      "inputs": {
+        "last_close": "73097.23",
+        "previous_close": "73115.42",
+        "last_low": "73097.23",
+        "last_high": "73150.69",
+        "retest_level": "73590.95",
+        "last_open": "73145.93",
+        "previous_high": "73131.93",
+        "prebreak_width": "0.01112942486885972428554620676",
+        "breakout_relative_volume": "0.3388939406341043454719305913",
+        "current_volume": "0.17275061",
+        "previous_volume": "0.46733113",
+        "ema_9": "73147.39248468573500703292254",
+        "ema_21": "73144.96000374000266077424095",
+        "ema_50": "73087.66176555628374160075764",
+        "atr": "93.88357142857142857142857143",
+        "relative_volume": "0.1306919601735303940981716447",
+        "spread_bps": "2.257747674475451438425265441"
+      },
+      "allocation": {
+        "reached": false,
+        "accepted": null,
+        "reason": null
+      },
+      "decision_id": "dec_251a1bd27b2d425781fb5422e9768e87",
+      "symbol": "BTC-EUR",
+      "completed_candle_at": "2026-10-16T12:25:00+00:00",
+      "evaluated_at": "2026-10-16T12:34:21.756999+00:00",
+      "strategy_id": "B2_CONFIRMED_COMPRESSION",
+      "strategy_version": "4.2.0-experimental.1",
+      "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+      "execution_fingerprint": null,
+      "runner": "verified-v42",
+      "data_quality": "GOOD",
+      "regime": "COMPRESSION",
+      "context": {
+        "ready": true,
+        "15m": {
+          "available_at": "2026-10-16T12:30:00+00:00",
+          "bear": false,
+          "bull": false,
+          "complete_bars": 240,
+          "ready": true
+        },
+        "60m": {
+          "available_at": "2026-10-16T12:00:00+00:00",
+          "bear": false,
+          "bull": false,
+          "complete_bars": 59,
+          "ready": true
+        }
+      },
+      "entry_conditions": {
+        "context_ready": true,
+        "context_15m_ready": true,
+        "context_1h_ready": true,
+        "higher_timeframe_bullish": false,
+        "retest_available": true,
+        "prebreak_compression": true,
+        "previous_breakout": false,
+        "range_held": false,
+        "no_close_reversal": false,
+        "breakout_volume": false
+      },
+      "independently_failed": [
+        "higher_timeframe_bullish",
+        "previous_breakout",
+        "range_held",
+        "no_close_reversal",
+        "breakout_volume"
+      ],
+      "unknown_conditions": [],
+      "volume_confirmation": false,
+      "signal_entry_eligible": false,
+      "momentum_veto": true,
+      "allowed_regimes": [
+        "STRONG_BULL",
+        "MODERATE_BULL",
+        "COMPRESSION",
+        "EXPANSION"
+      ],
+      "regime_eligible": true,
+      "regime_veto": false,
+      "risk": {
+        "reached": false,
+        "rejection": null
+      },
+      "execution": {
+        "reached": false,
+        "reason": null,
+        "quality": {
+          "reached": false,
+          "rejection": null
+        }
+      },
+      "decision_accepted": false,
+      "final_state": "REJECTED",
+      "reason_code": "RECORDED_DECISION_REJECTION",
+      "reason": "Entry conditions not met.",
+      "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached."
+    },
+    {
+      "schema": "shadow-decision-explanation/2",
+      "action": "WAIT",
+      "diagnostic_parity": true,
+      "momentum_components": {
+        "extended_above_ema21": false,
+        "falling_close_weakening_volume": true,
+        "bearish_benchmark": false,
+        "spread_above_25bps": false,
+        "adverse_regime": false
+      },
+      "momentum_component_parity": true,
+      "inputs": {
+        "last_close": "73097.23",
+        "previous_close": "73115.42",
+        "last_low": "73097.23",
+        "last_high": "73150.69",
+        "retest_level": "73590.95",
+        "last_open": "73145.93",
+        "previous_high": "73131.93",
+        "prebreak_width": "0.01112942486885972428554620676",
+        "breakout_relative_volume": "0.3388939406341043454719305913",
+        "current_volume": "0.17275061",
+        "previous_volume": "0.46733113",
+        "ema_9": "73147.39248468573500703292254",
+        "ema_21": "73144.96000374000266077424095",
+        "ema_50": "73087.66176555628374160075764",
+        "atr": "93.88357142857142857142857143",
+        "relative_volume": "0.1306919601735303940981716447",
+        "spread_bps": "2.257747674475451438425265441"
+      },
+      "allocation": {
+        "reached": false,
+        "accepted": null,
+        "reason": null
+      },
+      "decision_id": "dec_86dfa44102c2414bbabaaa51ebfe0354",
+      "symbol": "BTC-EUR",
+      "completed_candle_at": "2026-10-16T12:25:00+00:00",
+      "evaluated_at": "2026-10-16T12:34:22.494975+00:00",
+      "strategy_id": "A2_CONFIRMED_PULLBACK",
+      "strategy_version": "4.2.0-experimental.1",
+      "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+      "execution_fingerprint": null,
+      "runner": "verified-v42",
+      "data_quality": "GOOD",
+      "regime": "COMPRESSION",
+      "context": {
+        "ready": true,
+        "15m": {
+          "available_at": "2026-10-16T12:30:00+00:00",
+          "bear": false,
+          "bull": false,
+          "complete_bars": 240,
+          "ready": true
+        },
+        "60m": {
+          "available_at": "2026-10-16T12:00:00+00:00",
+          "bear": false,
+          "bull": false,
+          "complete_bars": 59,
+          "ready": true
+        }
+      },
+      "entry_conditions": {
+        "context_ready": true,
+        "context_15m_ready": true,
+        "context_1h_ready": true,
+        "higher_timeframe_bullish": false,
+        "ema9_recovery": false,
+        "close_recovery": false,
+        "previous_high_reclaimed": false
+      },
+      "independently_failed": [
+        "higher_timeframe_bullish",
+        "ema9_recovery",
+        "close_recovery",
+        "previous_high_reclaimed"
+      ],
+      "unknown_conditions": [],
+      "volume_confirmation": null,
+      "signal_entry_eligible": false,
+      "momentum_veto": true,
+      "allowed_regimes": [
+        "STRONG_BULL",
+        "MODERATE_BULL",
+        "COMPRESSION",
+        "EXPANSION"
+      ],
+      "regime_eligible": true,
+      "regime_veto": false,
+      "risk": {
+        "reached": false,
+        "rejection": null
+      },
+      "execution": {
+        "reached": false,
+        "reason": null,
+        "quality": {
+          "reached": false,
+          "rejection": null
+        }
+      },
+      "decision_accepted": false,
+      "final_state": "REJECTED",
+      "reason_code": "RECORDED_DECISION_REJECTION",
+      "reason": "Entry conditions not met.",
+      "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached."
+    },
+    {
+      "schema": "shadow-decision-explanation/2",
+      "action": "WAIT",
+      "diagnostic_parity": true,
+      "momentum_components": {
+        "extended_above_ema21": false,
+        "falling_close_weakening_volume": false,
+        "bearish_benchmark": true,
+        "spread_above_25bps": false,
+        "adverse_regime": false
+      },
+      "momentum_component_parity": true,
+      "inputs": {
+        "last_close": "72893.4",
+        "previous_close": "72808.57",
+        "last_low": "72812.55",
+        "last_high": "72893.4",
+        "retest_level": "73590.95",
+        "last_open": "72812.55",
+        "previous_high": "72857.93",
+        "prebreak_width": "0.01066437593208347153884600433",
+        "breakout_relative_volume": "0.1542380089163417159858636485",
+        "current_volume": "0.02758564",
+        "previous_volume": "0.17406099",
+        "ema_9": "72931.33989657879414665402464",
+        "ema_21": "73017.79155027622343676851453",
+        "ema_50": "73042.41889590568522356334635",
+        "atr": "91.65428571428571428571428571",
+        "relative_volume": "0.02774801335497746855751013620",
+        "spread_bps": "1.585901377942336213975580826"
+      },
+      "allocation": {
+        "reached": false,
+        "accepted": null,
+        "reason": null
+      },
+      "decision_id": "dec_46eed57ed004487898b522a4d0a67622",
+      "symbol": "BTC-EUR",
+      "completed_candle_at": "2026-10-16T13:10:00+00:00",
+      "evaluated_at": "2026-10-16T13:17:26.509517+00:00",
+      "strategy_id": "B2_CONFIRMED_COMPRESSION",
+      "strategy_version": "4.2.0-experimental.1",
+      "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+      "execution_fingerprint": null,
+      "runner": "verified-v42",
+      "data_quality": "GOOD",
+      "regime": "COMPRESSION",
+      "context": {
+        "ready": true,
+        "15m": {
+          "available_at": "2026-10-16T13:15:00+00:00",
+          "bear": true,
+          "bull": false,
+          "complete_bars": 240,
+          "ready": true
+        },
+        "60m": {
+          "available_at": "2026-10-16T13:00:00+00:00",
+          "bear": true,
+          "bull": false,
+          "complete_bars": 59,
+          "ready": true
+        }
+      },
+      "entry_conditions": {
+        "context_ready": true,
+        "context_15m_ready": true,
+        "context_1h_ready": true,
+        "higher_timeframe_bullish": false,
+        "retest_available": true,
+        "prebreak_compression": true,
+        "previous_breakout": false,
+        "range_held": false,
+        "no_close_reversal": true,
+        "breakout_volume": false
+      },
+      "independently_failed": [
+        "higher_timeframe_bullish",
+        "previous_breakout",
+        "range_held",
+        "breakout_volume"
+      ],
+      "unknown_conditions": [],
+      "volume_confirmation": false,
+      "signal_entry_eligible": false,
+      "momentum_veto": true,
+      "allowed_regimes": [
+        "STRONG_BULL",
+        "MODERATE_BULL",
+        "COMPRESSION",
+        "EXPANSION"
+      ],
+      "regime_eligible": true,
+      "regime_veto": false,
+      "risk": {
+        "reached": false,
+        "rejection": null
+      },
+      "execution": {
+        "reached": false,
+        "reason": null,
+        "quality": {
+          "reached": false,
+          "rejection": null
+        }
+      },
+      "decision_accepted": false,
+      "final_state": "REJECTED",
+      "reason_code": "RECORDED_DECISION_REJECTION",
+      "reason": "Entry conditions not met.",
+      "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached."
+    },
+    {
+      "schema": "shadow-decision-explanation/2",
+      "action": "WAIT",
+      "diagnostic_parity": true,
+      "momentum_components": {
+        "extended_above_ema21": false,
+        "falling_close_weakening_volume": true,
+        "bearish_benchmark": true,
+        "spread_above_25bps": false,
+        "adverse_regime": false
+      },
+      "momentum_component_parity": true,
+      "inputs": {
+        "last_close": "92.504",
+        "previous_close": "92.609",
+        "last_low": "92.461",
+        "last_high": "92.605",
+        "retest_level": "92.489",
+        "last_open": "92.605",
+        "previous_high": "92.609",
+        "prebreak_width": "0.01022072967344642168614469746",
+        "breakout_relative_volume": "0.1256555444840807716615308301",
+        "current_volume": "3.554002",
+        "previous_volume": "5.269686",
+        "ema_9": "92.33125688546508729337408412",
+        "ema_21": "92.18982393434741485549799233",
+        "ema_50": "92.29860887759383741998609611",
+        "atr": "0.1942857142857142857142857143",
+        "relative_volume": "0.09262992754953251293054352739",
+        "spread_bps": "7.355804595214400069231102073"
+      },
+      "allocation": {
+        "reached": false,
+        "accepted": null,
+        "reason": null
+      },
+      "decision_id": "dec_3ab0c395cff54aeeb6474a62252b6c30",
+      "symbol": "SOL-EUR",
+      "completed_candle_at": "2026-10-16T20:55:00+00:00",
+      "evaluated_at": "2026-10-16T21:01:56.258461+00:00",
+      "strategy_id": "B2_CONFIRMED_COMPRESSION",
+      "strategy_version": "4.2.0-experimental.1",
+      "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+      "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+      "runner": "native-v44",
+      "data_quality": "GOOD",
+      "regime": "COMPRESSION",
+      "context": {
+        "ready": true,
+        "15m": {
+          "available_at": "2026-10-16T21:00:00+00:00",
+          "bear": false,
+          "bull": false,
+          "complete_bars": 240,
+          "ready": true
+        },
+        "60m": {
+          "available_at": "2026-10-16T21:00:00+00:00",
+          "bear": true,
+          "bull": false,
+          "complete_bars": 60,
+          "ready": true
+        }
+      },
+      "entry_conditions": {
+        "context_ready": true,
+        "context_15m_ready": true,
+        "context_1h_ready": true,
+        "higher_timeframe_bullish": false,
+        "retest_available": true,
+        "prebreak_compression": true,
+        "previous_breakout": true,
+        "range_held": true,
+        "no_close_reversal": false,
+        "breakout_volume": false
+      },
+      "independently_failed": [
+        "higher_timeframe_bullish",
+        "no_close_reversal",
+        "breakout_volume"
+      ],
+      "unknown_conditions": [],
+      "volume_confirmation": false,
+      "signal_entry_eligible": false,
+      "momentum_veto": true,
+      "allowed_regimes": [
+        "STRONG_BULL",
+        "MODERATE_BULL",
+        "COMPRESSION",
+        "EXPANSION"
+      ],
+      "regime_eligible": true,
+      "regime_veto": false,
+      "risk": {
+        "reached": false,
+        "rejection": null
+      },
+      "execution": {
+        "reached": false,
+        "reason": null,
+        "quality": {
+          "reached": false,
+          "rejection": null
+        }
+      },
+      "decision_accepted": false,
+      "final_state": "REJECTED",
+      "reason_code": "RECORDED_DECISION_REJECTION",
+      "reason": "Entry conditions not met.",
+      "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached."
+    },
+    {
+      "schema": "shadow-decision-explanation/2",
+      "action": "WAIT",
+      "diagnostic_parity": true,
+      "momentum_components": {
+        "extended_above_ema21": false,
+        "falling_close_weakening_volume": true,
+        "bearish_benchmark": true,
+        "spread_above_25bps": false,
+        "adverse_regime": false
+      },
+      "momentum_component_parity": true,
+      "inputs": {
+        "last_close": "92.504",
+        "previous_close": "92.609",
+        "last_low": "92.461",
+        "last_high": "92.605",
+        "retest_level": "92.489",
+        "last_open": "92.605",
+        "previous_high": "92.609",
+        "prebreak_width": "0.01022072967344642168614469746",
+        "breakout_relative_volume": "0.1256555444840807716615308301",
+        "current_volume": "3.554002",
+        "previous_volume": "5.269686",
+        "ema_9": "92.33125688546508729337408412",
+        "ema_21": "92.18982393434741485549799233",
+        "ema_50": "92.29860887759383741998609611",
+        "atr": "0.1942857142857142857142857143",
+        "relative_volume": "0.09262992754953251293054352739",
+        "spread_bps": "8.337709728591306042673914338"
+      },
+      "allocation": {
+        "reached": false,
+        "accepted": null,
+        "reason": null
+      },
+      "decision_id": "dec_a6e5744cd1444131b930ed44793ffa6a",
+      "symbol": "SOL-EUR",
+      "completed_candle_at": "2026-10-16T20:55:00+00:00",
+      "evaluated_at": "2026-10-16T21:02:57.516742+00:00",
+      "strategy_id": "A2_CONFIRMED_PULLBACK",
+      "strategy_version": "4.2.0-experimental.1",
+      "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+      "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+      "runner": "native-v44",
+      "data_quality": "GOOD",
+      "regime": "COMPRESSION",
+      "context": {
+        "ready": true,
+        "15m": {
+          "available_at": "2026-10-16T21:00:00+00:00",
+          "bear": false,
+          "bull": false,
+          "complete_bars": 240,
+          "ready": true
+        },
+        "60m": {
+          "available_at": "2026-10-16T21:00:00+00:00",
+          "bear": true,
+          "bull": false,
+          "complete_bars": 60,
+          "ready": true
+        }
+      },
+      "entry_conditions": {
+        "context_ready": true,
+        "context_15m_ready": true,
+        "context_1h_ready": true,
+        "higher_timeframe_bullish": false,
+        "ema9_recovery": false,
+        "close_recovery": false,
+        "previous_high_reclaimed": false
+      },
+      "independently_failed": [
+        "higher_timeframe_bullish",
+        "ema9_recovery",
+        "close_recovery",
+        "previous_high_reclaimed"
+      ],
+      "unknown_conditions": [],
+      "volume_confirmation": null,
+      "signal_entry_eligible": false,
+      "momentum_veto": true,
+      "allowed_regimes": [
+        "STRONG_BULL",
+        "MODERATE_BULL",
+        "COMPRESSION",
+        "EXPANSION"
+      ],
+      "regime_eligible": true,
+      "regime_veto": false,
+      "risk": {
+        "reached": false,
+        "rejection": null
+      },
+      "execution": {
+        "reached": false,
+        "reason": null,
+        "quality": {
+          "reached": false,
+          "rejection": null
+        }
+      },
+      "decision_accepted": false,
+      "final_state": "REJECTED",
+      "reason_code": "RECORDED_DECISION_REJECTION",
+      "reason": "Entry conditions not met.",
+      "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached."
+    },
+    {
+      "schema": "shadow-decision-explanation/2",
+      "action": "WAIT",
+      "diagnostic_parity": true,
+      "momentum_components": {
+        "extended_above_ema21": false,
+        "falling_close_weakening_volume": true,
+        "bearish_benchmark": true,
+        "spread_above_25bps": false,
+        "adverse_regime": false
+      },
+      "momentum_component_parity": true,
+      "inputs": {
+        "last_close": "92.504",
+        "previous_close": "92.609",
+        "last_low": "92.461",
+        "last_high": "92.605",
+        "retest_level": "92.489",
+        "last_open": "92.605",
+        "previous_high": "92.609",
+        "prebreak_width": "0.01022072967344642168614469746",
+        "breakout_relative_volume": "0.1256555444840807716615308301",
+        "current_volume": "3.554002",
+        "previous_volume": "5.269686",
+        "ema_9": "92.33125688546508729337408412",
+        "ema_21": "92.18982393434741485549799233",
+        "ema_50": "92.29860887759383741998609611",
+        "atr": "0.1942857142857142857142857143",
+        "relative_volume": "0.09262992754953251293054352739",
+        "spread_bps": "8.337709728591306042673914338"
+      },
+      "allocation": {
+        "reached": false,
+        "accepted": null,
+        "reason": null
+      },
+      "decision_id": "dec_431500da058f40cdbd38228ed799fa96",
+      "symbol": "SOL-EUR",
+      "completed_candle_at": "2026-10-16T20:55:00+00:00",
+      "evaluated_at": "2026-10-16T21:02:58.484659+00:00",
+      "strategy_id": "C2_LIQUID_RETEST",
+      "strategy_version": "4.2.0-experimental.1",
+      "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+      "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+      "runner": "native-v44",
+      "data_quality": "GOOD",
+      "regime": "COMPRESSION",
+      "context": {
+        "ready": true,
+        "15m": {
+          "available_at": "2026-10-16T21:00:00+00:00",
+          "bear": false,
+          "bull": false,
+          "complete_bars": 240,
+          "ready": true
+        },
+        "60m": {
+          "available_at": "2026-10-16T21:00:00+00:00",
+          "bear": true,
+          "bull": false,
+          "complete_bars": 60,
+          "ready": true
+        }
+      },
+      "entry_conditions": {
+        "context_ready": true,
+        "context_15m_ready": true,
+        "context_1h_ready": true,
+        "higher_timeframe_bullish": false,
+        "retest_available": true,
+        "previous_breakout": true,
+        "retest_touched": true,
+        "range_held": true,
+        "close_recovery": false,
+        "previous_high_reclaimed": false,
+        "relative_volume": false
+      },
+      "independently_failed": [
+        "higher_timeframe_bullish",
+        "close_recovery",
+        "previous_high_reclaimed",
+        "relative_volume"
+      ],
+      "unknown_conditions": [],
+      "volume_confirmation": null,
+      "signal_entry_eligible": false,
+      "momentum_veto": true,
+      "allowed_regimes": [
+        "STRONG_BULL",
+        "MODERATE_BULL",
+        "COMPRESSION",
+        "EXPANSION"
+      ],
+      "regime_eligible": true,
+      "regime_veto": false,
+      "risk": {
+        "reached": false,
+        "rejection": null
+      },
+      "execution": {
+        "reached": false,
+        "reason": null,
+        "quality": {
+          "reached": false,
+          "rejection": null
+        }
+      },
+      "decision_accepted": false,
+      "final_state": "REJECTED",
+      "reason_code": "RECORDED_DECISION_REJECTION",
+      "reason": "Entry conditions not met.",
+      "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached."
+    },
+    {
+      "schema": "shadow-decision-explanation/2",
+      "action": "WAIT",
+      "diagnostic_parity": true,
+      "momentum_components": {
+        "extended_above_ema21": false,
+        "falling_close_weakening_volume": true,
+        "bearish_benchmark": true,
+        "spread_above_25bps": false,
+        "adverse_regime": false
+      },
+      "momentum_component_parity": true,
+      "inputs": {
+        "last_close": "92.504",
+        "previous_close": "92.609",
+        "last_low": "92.461",
+        "last_high": "92.605",
+        "retest_level": "92.489",
+        "last_open": "92.605",
+        "previous_high": "92.609",
+        "prebreak_width": "0.01022072967344642168614469746",
+        "breakout_relative_volume": "0.1256555444840807716615308301",
+        "current_volume": "3.554002",
+        "previous_volume": "5.269686",
+        "ema_9": "92.33125688546508729337408412",
+        "ema_21": "92.18982393434741485549799233",
+        "ema_50": "92.29860887759383741998609611",
+        "atr": "0.1942857142857142857142857143",
+        "relative_volume": "0.09262992754953251293054352739",
+        "spread_bps": "8.876572344064604126523631168"
+      },
+      "allocation": {
+        "reached": false,
+        "accepted": null,
+        "reason": null
+      },
+      "decision_id": "dec_750647e5f8c04598b04327ede3f3a006",
+      "symbol": "SOL-EUR",
+      "completed_candle_at": "2026-10-16T20:55:00+00:00",
+      "evaluated_at": "2026-10-16T21:03:56.999622+00:00",
+      "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+      "strategy_version": "4.2.0-experimental.1",
+      "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+      "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+      "runner": "native-v44",
+      "data_quality": "GOOD",
+      "regime": "COMPRESSION",
+      "context": {
+        "ready": true,
+        "15m": {
+          "available_at": "2026-10-16T21:00:00+00:00",
+          "bear": false,
+          "bull": false,
+          "complete_bars": 240,
+          "ready": true
+        },
+        "60m": {
+          "available_at": "2026-10-16T21:00:00+00:00",
+          "bear": true,
+          "bull": false,
+          "complete_bars": 60,
+          "ready": true
+        }
+      },
+      "entry_conditions": {
+        "context_ready": true,
+        "context_15m_ready": true,
+        "context_1h_ready": true,
+        "higher_timeframe_bullish": false,
+        "absolute_benchmarks_bullish": false,
+        "relative_outperformance": false,
+        "close_recovery": false,
+        "relative_volume": false
+      },
+      "independently_failed": [
+        "higher_timeframe_bullish",
+        "absolute_benchmarks_bullish",
+        "relative_outperformance",
+        "close_recovery",
+        "relative_volume"
+      ],
+      "unknown_conditions": [],
+      "volume_confirmation": null,
+      "signal_entry_eligible": false,
+      "momentum_veto": true,
+      "allowed_regimes": [
+        "STRONG_BULL",
+        "MODERATE_BULL"
+      ],
+      "regime_eligible": false,
+      "regime_veto": true,
+      "risk": {
+        "reached": false,
+        "rejection": null
+      },
+      "execution": {
+        "reached": false,
+        "reason": null,
+        "quality": {
+          "reached": false,
+          "rejection": null
+        }
+      },
+      "decision_accepted": false,
+      "final_state": "REJECTED",
+      "reason_code": "RECORDED_DECISION_REJECTION",
+      "reason": "Entry conditions not met.",
+      "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached."
+    }
+  ]
+}

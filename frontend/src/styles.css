@@ -1337,3 +1337,7 @@ dialog h2 {
 .decision-item p { overflow-wrap: anywhere; }
 .historical-experiment { padding: 12px 0; border-top: 1px solid var(--border, #e5eae6); }
 .historical-experiment > div { min-width: 0; overflow-wrap: anywhere; }
+
+.trade-gates { display: grid; gap: 20px; }
+.trade-gates h3 { margin-top: 18px; margin-bottom: 10px; }
+.trade-gates details > summary { cursor: pointer; }

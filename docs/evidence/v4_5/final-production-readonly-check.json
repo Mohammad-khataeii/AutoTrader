@@ -1,0 +1,148 @@
+{
+  "captured_at": "2026-10-17T08:49:52.452475+00:00",
+  "read_only": true,
+  "/healthz": {
+    "http_status": 200,
+    "data": {
+      "status": "ok",
+      "mode": "paper",
+      "version": "4.4.0"
+    }
+  },
+  "/readyz": {
+    "http_status": 200,
+    "data": {
+      "ready": true,
+      "live_trading_enabled": false
+    }
+  },
+  "/api/release/compatibility": {
+    "http_status": 200,
+    "data": {
+      "status": "COMPATIBLE",
+      "legacy_snapshot_verified": true,
+      "application_source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+      "native_execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+      "accounts": [
+        {
+          "experiment_id": "9b18cabcc94c45fe84a59917226ebb58",
+          "state": "STOPPED",
+          "archived_at": "2026-10-16T21:01:16.071240+00:00",
+          "manifest_hash": "40145fb5d355888da29b8495608d8e280e163cc77113217e30d61d92420e012a",
+          "original_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+          "runtime": {
+            "compatible": true,
+            "runner": "verified-v42",
+            "reason": null
+          },
+          "reconciliation": []
+        },
+        {
+          "experiment_id": "39cddc6d7e584a369ce223945f06e629",
+          "state": "STOPPED",
+          "archived_at": "2026-10-16T21:01:24.641367+00:00",
+          "manifest_hash": "cd088d4951a2dcb50b85fbd28b09fd40fc7fa92283873c81d84b5af42fa0e799",
+          "original_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+          "runtime": {
+            "compatible": true,
+            "runner": "verified-v42",
+            "reason": null
+          },
+          "reconciliation": []
+        },
+        {
+          "experiment_id": "52746de1116e4852b61cb16988917545",
+          "state": "STOPPED",
+          "archived_at": "2026-10-16T21:01:34.540271+00:00",
+          "manifest_hash": "cdaf4e5cd875ab1639db5436ab3460b6289d838f5ad578ae01664c05f0832651",
+          "original_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+          "runtime": {
+            "compatible": true,
+            "runner": "verified-v42",
+            "reason": null
+          },
+          "reconciliation": []
+        },
+        {
+          "experiment_id": "2f12b0257a3b453a8e2a61ab695d8146",
+          "state": "STOPPED",
+          "archived_at": "2026-10-16T21:01:29.701960+00:00",
+          "manifest_hash": "8dc0b0560b110277214f4491c5e63ecb40e30c5680255a170ea13a257b515927",
+          "original_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+          "runtime": {
+            "compatible": true,
+            "runner": "verified-v42",
+            "reason": null
+          },
+          "reconciliation": []
+        },
+        {
+          "experiment_id": "40f3f37036f848d0a417b06b6a6fc201",
+          "state": "SHADOW_ACTIVE",
+          "archived_at": null,
+          "manifest_hash": "dfd924ca4a65319f13527ccc31f1e8a155a33ac70bb58cdb6383c285eeb116a6",
+          "original_source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+          "runtime": {
+            "compatible": true,
+            "runner": "native-v44",
+            "reason": null
+          },
+          "reconciliation": []
+        },
+        {
+          "experiment_id": "dc1edd63598e4caeb476864bee8851e3",
+          "state": "SHADOW_ACTIVE",
+          "archived_at": null,
+          "manifest_hash": "3d9db0caede98736082f7215e7be25e55f0115ada5d3d10999ac343327b239a9",
+          "original_source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+          "runtime": {
+            "compatible": true,
+            "runner": "native-v44",
+            "reason": null
+          },
+          "reconciliation": []
+        },
+        {
+          "experiment_id": "baac318a9797469c8f3693c042eb2855",
+          "state": "SHADOW_ACTIVE",
+          "archived_at": null,
+          "manifest_hash": "5d391ec5170a08dd60feddc1ce0381abc9d0b8885222c60f50cc23af42c82f4e",
+          "original_source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+          "runtime": {
+            "compatible": true,
+            "runner": "native-v44",
+            "reason": null
+          },
+          "reconciliation": []
+        },
+        {
+          "experiment_id": "b97173b5abec41208c8541015d30003c",
+          "state": "SHADOW_ACTIVE",
+          "archived_at": null,
+          "manifest_hash": "5c99b88c763f420fe033481d7ec92c4ed3b2f04e9e60e9f35999ea28e1f624af",
+          "original_source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+          "runtime": {
+            "compatible": true,
+            "runner": "native-v44",
+            "reason": null
+          },
+          "reconciliation": []
+        }
+      ],
+      "occupied_slots": 4,
+      "registry_records_preserved": 8,
+      "financial_databases_deleted": false,
+      "migration_required": false,
+      "real_money_enabled": false
+    }
+  },
+  "containers": [
+    "autotrader-v41-worker-1 Up 12 hours (healthy)",
+    "autotrader-v41-frontend-1 Up 12 hours (healthy)",
+    "autotrader-v41-backend-1 Up 12 hours (healthy)",
+    "autotrader-v41-redis-1 Up 26 hours (healthy)",
+    "autotrader-v41-postgres-1 Up 26 hours (healthy)"
+  ],
+  "all_eight_manifest_hashes_unchanged": true,
+  "no_production_mutations_or_restarts_requested": true
+}

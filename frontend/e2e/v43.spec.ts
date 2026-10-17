@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { fixture, ids, mockApi, signIn } from "./fixtures/v43";
-test("four primary routes, authentic status language and no default technical payloads", async ({
+test("five primary routes, authentic status language and no default technical payloads", async ({
   page,
 }) => {
   const api = await mockApi(page);
@@ -10,7 +10,7 @@ test("four primary routes, authentic status language and no default technical pa
       .getByRole("navigation", { name: "Primary navigation" })
       .getByRole("button")
       .allTextContents(),
-  ).toEqual(["Overview", "Experiments", "Trades", "Research"]);
+  ).toEqual(["Overview", "Experiments", "Trades", "Research", "Trade Gate Diagnostics"]);
   await expect(
     page.getByText("The official portfolio is in research mode.", {
       exact: false,
@@ -311,7 +311,7 @@ for (const width of [1440, 1024, 768, 375])
       ),
     ).toBe(true);
     await page.screenshot({
-      path: `../docs/evidence/v4_4/acceptance-overview-${width}.png`,
+      path: `../docs/evidence/v4_5/acceptance-overview-${width}.png`,
       fullPage: true,
     });
     await page
@@ -325,7 +325,7 @@ for (const width of [1440, 1024, 768, 375])
     ).toBe(true);
     await expect(page.locator("pre:visible")).toHaveCount(0);
     await page.screenshot({
-      path: `../docs/evidence/v4_4/acceptance-experiments-${width}.png`,
+      path: `../docs/evidence/v4_5/acceptance-experiments-${width}.png`,
       fullPage: true,
     });
     await page.getByRole("button", { name: "Research", exact: true }).focus();

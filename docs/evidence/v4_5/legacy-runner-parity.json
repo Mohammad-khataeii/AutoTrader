@@ -1,0 +1,91 @@
+{
+  "status": "PARTIAL",
+  "legacy_v42_status": "PASS",
+  "accounts": {
+    "9b18cabcc94c45fe84a59917226ebb58": {
+      "recorded_evaluations_replayed": 306,
+      "primary_strategy_mismatches": [],
+      "signal_eligibility_veto_regime_mismatches": [],
+      "full_decision_execution_replay": "NOT_VERIFIED; controlled database lifecycle and reconstructed accepted inputs tested separately. Historical L2 and exact benchmark batch membership were not retained.",
+      "diagnostic_condition_mismatches": 0,
+      "momentum_component_mismatches": 0,
+      "benchmark_reconstruction_limitation": "V4.4 did not retain the benchmark timestamps actually available in each scan batch. Matching final candle timestamps can add a benchmark observed in a later scan. Two active-window veto discrepancies are NOT_VERIFIED, not demonstrated indicator bugs."
+    },
+    "39cddc6d7e584a369ce223945f06e629": {
+      "recorded_evaluations_replayed": 36,
+      "primary_strategy_mismatches": [],
+      "signal_eligibility_veto_regime_mismatches": [],
+      "full_decision_execution_replay": "NOT_VERIFIED; controlled database lifecycle and reconstructed accepted inputs tested separately. Historical L2 and exact benchmark batch membership were not retained.",
+      "diagnostic_condition_mismatches": 0,
+      "momentum_component_mismatches": 0,
+      "benchmark_reconstruction_limitation": "V4.4 did not retain the benchmark timestamps actually available in each scan batch. Matching final candle timestamps can add a benchmark observed in a later scan. Two active-window veto discrepancies are NOT_VERIFIED, not demonstrated indicator bugs."
+    },
+    "52746de1116e4852b61cb16988917545": {
+      "recorded_evaluations_replayed": 306,
+      "primary_strategy_mismatches": [],
+      "signal_eligibility_veto_regime_mismatches": [],
+      "full_decision_execution_replay": "NOT_VERIFIED; controlled database lifecycle and reconstructed accepted inputs tested separately. Historical L2 and exact benchmark batch membership were not retained.",
+      "diagnostic_condition_mismatches": 0,
+      "momentum_component_mismatches": 0,
+      "benchmark_reconstruction_limitation": "V4.4 did not retain the benchmark timestamps actually available in each scan batch. Matching final candle timestamps can add a benchmark observed in a later scan. Two active-window veto discrepancies are NOT_VERIFIED, not demonstrated indicator bugs."
+    },
+    "2f12b0257a3b453a8e2a61ab695d8146": {
+      "recorded_evaluations_replayed": 9,
+      "primary_strategy_mismatches": [],
+      "signal_eligibility_veto_regime_mismatches": [],
+      "full_decision_execution_replay": "NOT_VERIFIED; controlled database lifecycle and reconstructed accepted inputs tested separately. Historical L2 and exact benchmark batch membership were not retained.",
+      "diagnostic_condition_mismatches": 0,
+      "momentum_component_mismatches": 0,
+      "benchmark_reconstruction_limitation": "V4.4 did not retain the benchmark timestamps actually available in each scan batch. Matching final candle timestamps can add a benchmark observed in a later scan. Two active-window veto discrepancies are NOT_VERIFIED, not demonstrated indicator bugs."
+    },
+    "40f3f37036f848d0a417b06b6a6fc201": {
+      "recorded_evaluations_replayed": 411,
+      "primary_strategy_mismatches": [],
+      "signal_eligibility_veto_regime_mismatches": [
+        "dec_f8a60779f91f4880b65943bf0c67bede",
+        "dec_df1e75b77dda49bfabbfd96b0149e5d1"
+      ],
+      "full_decision_execution_replay": "NOT_VERIFIED; controlled database lifecycle and reconstructed accepted inputs tested separately. Historical L2 and exact benchmark batch membership were not retained.",
+      "diagnostic_condition_mismatches": 0,
+      "momentum_component_mismatches": 2,
+      "benchmark_reconstruction_limitation": "V4.4 did not retain the benchmark timestamps actually available in each scan batch. Matching final candle timestamps can add a benchmark observed in a later scan. Two active-window veto discrepancies are NOT_VERIFIED, not demonstrated indicator bugs."
+    },
+    "dc1edd63598e4caeb476864bee8851e3": {
+      "recorded_evaluations_replayed": 411,
+      "primary_strategy_mismatches": [],
+      "signal_eligibility_veto_regime_mismatches": [
+        "dec_cad5652c208c40d38ac217f3869b0f27",
+        "dec_43635e7aae954f7b9f2b3272eee9dcfa"
+      ],
+      "full_decision_execution_replay": "NOT_VERIFIED; controlled database lifecycle and reconstructed accepted inputs tested separately. Historical L2 and exact benchmark batch membership were not retained.",
+      "diagnostic_condition_mismatches": 0,
+      "momentum_component_mismatches": 2,
+      "benchmark_reconstruction_limitation": "V4.4 did not retain the benchmark timestamps actually available in each scan batch. Matching final candle timestamps can add a benchmark observed in a later scan. Two active-window veto discrepancies are NOT_VERIFIED, not demonstrated indicator bugs."
+    },
+    "baac318a9797469c8f3693c042eb2855": {
+      "recorded_evaluations_replayed": 411,
+      "primary_strategy_mismatches": [],
+      "signal_eligibility_veto_regime_mismatches": [
+        "dec_c9ebd6b973054a31b8df46b53bd7becb",
+        "dec_d800bf92667f4a968edd11a7101b90d5"
+      ],
+      "full_decision_execution_replay": "NOT_VERIFIED; controlled database lifecycle and reconstructed accepted inputs tested separately. Historical L2 and exact benchmark batch membership were not retained.",
+      "diagnostic_condition_mismatches": 0,
+      "momentum_component_mismatches": 2,
+      "benchmark_reconstruction_limitation": "V4.4 did not retain the benchmark timestamps actually available in each scan batch. Matching final candle timestamps can add a benchmark observed in a later scan. Two active-window veto discrepancies are NOT_VERIFIED, not demonstrated indicator bugs."
+    },
+    "b97173b5abec41208c8541015d30003c": {
+      "recorded_evaluations_replayed": 411,
+      "primary_strategy_mismatches": [],
+      "signal_eligibility_veto_regime_mismatches": [
+        "dec_6900fe91ac094b2eb98fa83c0baa12ca",
+        "dec_b8c7dbfbda134493b5057ce807dbdbd2"
+      ],
+      "full_decision_execution_replay": "NOT_VERIFIED; controlled database lifecycle and reconstructed accepted inputs tested separately. Historical L2 and exact benchmark batch membership were not retained.",
+      "diagnostic_condition_mismatches": 0,
+      "momentum_component_mismatches": 2,
+      "benchmark_reconstruction_limitation": "V4.4 did not retain the benchmark timestamps actually available in each scan batch. Matching final candle timestamps can add a benchmark observed in a later scan. Two active-window veto discrepancies are NOT_VERIFIED, not demonstrated indicator bugs."
+    }
+  },
+  "scope": "Offline exact frozen strategy on recorded decimal feature/context inputs; not a prospective return estimate."
+}

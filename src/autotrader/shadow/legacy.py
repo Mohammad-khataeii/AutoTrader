@@ -6,7 +6,13 @@ import inspect
 from dataclasses import asdict
 from typing import Any
 
-from autotrader.shadow.versions import LEGACY_SOURCE, convert, legacy_module, verify_legacy
+from autotrader.shadow.versions import (
+    LEGACY_SOURCE,
+    convert,
+    legacy_module,
+    verify_boundary,
+    verify_legacy,
+)
 
 
 class ObservationBoundary:
@@ -45,6 +51,7 @@ class ObservationBoundary:
 class LegacyRunner:
     def __init__(self, lab: Any, market_data: Any, risk: Any, owner: str):
         verify_legacy()
+        verify_boundary()
         repository = legacy_module("persistence.repository").PersistentTradingRepository(
             lab.official.session_factory
         )
@@ -85,14 +92,17 @@ class LegacyRunner:
 
     async def renew(self) -> None:
         verify_legacy()
+        verify_boundary()
         await self.runtime.renew()
 
     async def monitor(self) -> None:
         verify_legacy()
+        verify_boundary()
         await self.runtime.monitor()
 
     async def scan(self, record: dict[str, Any], candidates: list[Any]) -> None:
         verify_legacy()
+        verify_boundary()
         copied = convert(candidates)
         # Recompute features from shared raw observations with the frozen
         # indicator implementation. No current strategy/indicator code executes.
@@ -100,6 +110,7 @@ class LegacyRunner:
 
         indicators = legacy_module("indicators")
         prepared = []
+        repo = await self.lab.repository(record["experiment_id"])
         for candidate in copied:
             market = candidate.market
             validator = legacy_module("market_data.service").MarketDataService(
@@ -111,12 +122,17 @@ class LegacyRunner:
             reasons, _ = validator.validate_order_book(
                 market.order_book, market.metrics.provider_latency_ms
             )
-            if (
-                reasons
-                or validator.validate_pair(market.pair)
-                or validator.validate_candles(market.candles, 5)
-                or len(market.candles) < 50
-            ):
+            # Preserve the original short-circuit order, including invalid data.
+            failures = reasons
+            if not failures:
+                failures = validator.validate_pair(market.pair)
+            if not failures:
+                failures = validator.validate_candles(market.candles, 5)
+            if not failures and len(market.candles) < 50:
+                failures = ["insufficient_candle_history"]
+            if failures:
+                if hasattr(repo, "_diagnostic_scan"):
+                    repo._diagnostic_scan["skips"].append({"symbol": market.pair.symbol, "stage": "frozen_market_validation", "reasons": failures})
                 continue
             f = indicators.calculate_features(
                 market.candles[-240:], market.metrics.imbalance, market.metrics.spread_bps
@@ -140,6 +156,10 @@ class LegacyRunner:
             )
             prepared.append(replace(candidate, features=f))
         copied = prepared
+        repo = await self.lab.repository(record["experiment_id"])
+        repo._diagnostic_benchmarks = {
+            c.features.symbol: c.features for c in copied if c.features.symbol in {"BTC-EUR", "ETH-EUR"}
+        }
         await self.runtime._scan_experiment(
             record, copied, {c.features.symbol: c.features for c in copied}
         )

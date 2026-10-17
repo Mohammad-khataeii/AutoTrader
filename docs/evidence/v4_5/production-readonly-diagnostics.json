@@ -1,0 +1,725 @@
+{
+  "captured_at": "2026-10-17T08:19:53.526876+00:00",
+  "read_only": true,
+  "production_services_changed": false,
+  "production_financial_records_changed": false,
+  "api": {
+    "/healthz": {
+      "http_status": 200,
+      "data": {
+        "status": "ok",
+        "mode": "paper",
+        "version": "4.4.0"
+      }
+    },
+    "/readyz": {
+      "http_status": 200,
+      "data": {
+        "ready": true,
+        "live_trading_enabled": false
+      }
+    },
+    "/api/release/compatibility": {
+      "http_status": 200,
+      "data": {
+        "status": "COMPATIBLE",
+        "legacy_snapshot_verified": true,
+        "application_source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "native_execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "accounts": [
+          {
+            "experiment_id": "9b18cabcc94c45fe84a59917226ebb58",
+            "state": "STOPPED",
+            "archived_at": "2026-10-16T21:01:16.071240+00:00",
+            "manifest_hash": "40145fb5d355888da29b8495608d8e280e163cc77113217e30d61d92420e012a",
+            "original_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+            "runtime": {
+              "compatible": true,
+              "runner": "verified-v42",
+              "reason": null
+            },
+            "reconciliation": []
+          },
+          {
+            "experiment_id": "39cddc6d7e584a369ce223945f06e629",
+            "state": "STOPPED",
+            "archived_at": "2026-10-16T21:01:24.641367+00:00",
+            "manifest_hash": "cd088d4951a2dcb50b85fbd28b09fd40fc7fa92283873c81d84b5af42fa0e799",
+            "original_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+            "runtime": {
+              "compatible": true,
+              "runner": "verified-v42",
+              "reason": null
+            },
+            "reconciliation": []
+          },
+          {
+            "experiment_id": "52746de1116e4852b61cb16988917545",
+            "state": "STOPPED",
+            "archived_at": "2026-10-16T21:01:34.540271+00:00",
+            "manifest_hash": "cdaf4e5cd875ab1639db5436ab3460b6289d838f5ad578ae01664c05f0832651",
+            "original_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+            "runtime": {
+              "compatible": true,
+              "runner": "verified-v42",
+              "reason": null
+            },
+            "reconciliation": []
+          },
+          {
+            "experiment_id": "2f12b0257a3b453a8e2a61ab695d8146",
+            "state": "STOPPED",
+            "archived_at": "2026-10-16T21:01:29.701960+00:00",
+            "manifest_hash": "8dc0b0560b110277214f4491c5e63ecb40e30c5680255a170ea13a257b515927",
+            "original_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+            "runtime": {
+              "compatible": true,
+              "runner": "verified-v42",
+              "reason": null
+            },
+            "reconciliation": []
+          },
+          {
+            "experiment_id": "40f3f37036f848d0a417b06b6a6fc201",
+            "state": "SHADOW_ACTIVE",
+            "archived_at": null,
+            "manifest_hash": "dfd924ca4a65319f13527ccc31f1e8a155a33ac70bb58cdb6383c285eeb116a6",
+            "original_source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+            "runtime": {
+              "compatible": true,
+              "runner": "native-v44",
+              "reason": null
+            },
+            "reconciliation": []
+          },
+          {
+            "experiment_id": "dc1edd63598e4caeb476864bee8851e3",
+            "state": "SHADOW_ACTIVE",
+            "archived_at": null,
+            "manifest_hash": "3d9db0caede98736082f7215e7be25e55f0115ada5d3d10999ac343327b239a9",
+            "original_source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+            "runtime": {
+              "compatible": true,
+              "runner": "native-v44",
+              "reason": null
+            },
+            "reconciliation": []
+          },
+          {
+            "experiment_id": "baac318a9797469c8f3693c042eb2855",
+            "state": "SHADOW_ACTIVE",
+            "archived_at": null,
+            "manifest_hash": "5d391ec5170a08dd60feddc1ce0381abc9d0b8885222c60f50cc23af42c82f4e",
+            "original_source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+            "runtime": {
+              "compatible": true,
+              "runner": "native-v44",
+              "reason": null
+            },
+            "reconciliation": []
+          },
+          {
+            "experiment_id": "b97173b5abec41208c8541015d30003c",
+            "state": "SHADOW_ACTIVE",
+            "archived_at": null,
+            "manifest_hash": "5c99b88c763f420fe033481d7ec92c4ed3b2f04e9e60e9f35999ea28e1f624af",
+            "original_source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+            "runtime": {
+              "compatible": true,
+              "runner": "native-v44",
+              "reason": null
+            },
+            "reconciliation": []
+          }
+        ],
+        "occupied_slots": 4,
+        "registry_records_preserved": 8,
+        "financial_databases_deleted": false,
+        "migration_required": false,
+        "real_money_enabled": false
+      }
+    },
+    "/api/monitoring/summary": {
+      "http_status": 200,
+      "data": {
+        "as_of": "2026-10-17T08:23:38.095742+00:00",
+        "service": {
+          "api": "ok",
+          "worker": "ok",
+          "worker_heartbeat": "2026-10-17T08:23:33.023471+00:00",
+          "worker_age_seconds": 5.071604,
+          "postgresql": "ok"
+        },
+        "market_data": {
+          "state": "OK",
+          "fresh": true,
+          "last_scan_at": "2026-10-17T08:23:32.770315+00:00"
+        },
+        "official": {
+          "control": "RUNNING",
+          "approval": {
+            "allowed_strategy_ids": [],
+            "execution_assumptions_hash": "c6e57b1c1ff868aff39bbd2cc238a8e99a37f1f54378141f2f1b61a3863e5c48",
+            "execution_costs": {
+              "fee_bps": "10",
+              "slippage_bps": "8",
+              "spread_bps": "10",
+              "volume_participation": ".01"
+            },
+            "failure": null,
+            "live_timeframe": "5m",
+            "members": {},
+            "mode": "VALIDATED_ONLY",
+            "policy_version": "4.1.0",
+            "promotion_requirement": "Matching timeframe, frozen per-member parameters, source, dataset, costs, validation and durable explicit approval",
+            "require_validation": true,
+            "required_parameters": {
+              "breakout_buffer": "0.001",
+              "compression_width": "0.06",
+              "relative_return": "0.02",
+              "relative_volume": "1.5",
+              "stop_atr": "1.5",
+              "target_atr": "1.5"
+            },
+            "research_run_id": "research-20261016T044934",
+            "research_verdict": "NO STRATEGY PASSED VALIDATION",
+            "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+            "source_matches": false,
+            "status": "NO VALIDATED STRATEGY",
+            "research_only": true
+          }
+        },
+        "shadows": [
+          {
+            "experiment_id": "40f3f37036f848d0a417b06b6a6fc201",
+            "strategy_id": "B2_CONFIRMED_COMPRESSION",
+            "state": "SHADOW_ACTIVE",
+            "last_evaluation_at": "2026-10-17T08:20:33.254573+00:00",
+            "latest_decision": {
+              "allowed_regimes": [
+                "STRONG_BULL",
+                "MODERATE_BULL",
+                "COMPRESSION",
+                "EXPANSION"
+              ],
+              "completed_candle_at": "2026-10-17T08:15:00+00:00",
+              "context": {
+                "15m": {
+                  "available_at": "2026-10-17T08:15:00+00:00",
+                  "bear": false,
+                  "bull": true,
+                  "complete_bars": 239,
+                  "ready": true
+                },
+                "60m": {
+                  "available_at": "2026-10-17T08:00:00+00:00",
+                  "bear": false,
+                  "bull": true,
+                  "complete_bars": 59,
+                  "ready": true
+                },
+                "ready": true
+              },
+              "data_quality": "GOOD",
+              "decision_accepted": false,
+              "decision_id": "dec_90c828e4074349c99d1e1cb4437a6bf6",
+              "entry_conditions": {
+                "breakout_volume": false,
+                "context_ready": true,
+                "higher_timeframe_bullish": true,
+                "no_close_reversal": false,
+                "prebreak_compression": true,
+                "previous_breakout": false,
+                "range_held": false,
+                "retest_available": true
+              },
+              "evaluated_at": "2026-10-17T08:20:33.254573+00:00",
+              "execution": {
+                "quality": {
+                  "reached": false,
+                  "rejection": null
+                },
+                "reached": false,
+                "reason": null
+              },
+              "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+              "final_state": "REJECTED",
+              "independently_failed": [
+                "previous_breakout",
+                "range_held",
+                "no_close_reversal",
+                "breakout_volume"
+              ],
+              "momentum_veto": false,
+              "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached.",
+              "reason": "Entry conditions not met.",
+              "reason_code": "RECORDED_DECISION_REJECTION",
+              "regime": "COMPRESSION",
+              "regime_eligible": true,
+              "regime_veto": false,
+              "risk": {
+                "reached": false,
+                "rejection": null
+              },
+              "runner": "native-v44",
+              "schema": "shadow-decision-explanation/1",
+              "signal_entry_eligible": false,
+              "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+              "strategy_id": "B2_CONFIRMED_COMPRESSION",
+              "strategy_version": "4.2.0-experimental.1",
+              "symbol": "SOL-EUR",
+              "unknown_conditions": [],
+              "volume_confirmation": false
+            },
+            "runtime_compatibility": {
+              "compatible": true,
+              "runner": "native-v44",
+              "reason": null
+            }
+          },
+          {
+            "experiment_id": "dc1edd63598e4caeb476864bee8851e3",
+            "strategy_id": "A2_CONFIRMED_PULLBACK",
+            "state": "SHADOW_ACTIVE",
+            "last_evaluation_at": "2026-10-17T08:20:33.708051+00:00",
+            "latest_decision": {
+              "allowed_regimes": [
+                "STRONG_BULL",
+                "MODERATE_BULL",
+                "COMPRESSION",
+                "EXPANSION"
+              ],
+              "completed_candle_at": "2026-10-17T08:15:00+00:00",
+              "context": {
+                "15m": {
+                  "available_at": "2026-10-17T08:15:00+00:00",
+                  "bear": false,
+                  "bull": true,
+                  "complete_bars": 239,
+                  "ready": true
+                },
+                "60m": {
+                  "available_at": "2026-10-17T08:00:00+00:00",
+                  "bear": false,
+                  "bull": true,
+                  "complete_bars": 59,
+                  "ready": true
+                },
+                "ready": true
+              },
+              "data_quality": "GOOD",
+              "decision_accepted": false,
+              "decision_id": "dec_d2d45ee33d5f4c9dbdf08d08e10a727b",
+              "entry_conditions": {
+                "close_recovery": false,
+                "context_ready": true,
+                "ema9_recovery": false,
+                "higher_timeframe_bullish": true,
+                "previous_high_reclaimed": false
+              },
+              "evaluated_at": "2026-10-17T08:20:33.708051+00:00",
+              "execution": {
+                "quality": {
+                  "reached": false,
+                  "rejection": null
+                },
+                "reached": false,
+                "reason": null
+              },
+              "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+              "final_state": "REJECTED",
+              "independently_failed": [
+                "ema9_recovery",
+                "close_recovery",
+                "previous_high_reclaimed"
+              ],
+              "momentum_veto": false,
+              "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached.",
+              "reason": "Entry conditions not met.",
+              "reason_code": "RECORDED_DECISION_REJECTION",
+              "regime": "COMPRESSION",
+              "regime_eligible": true,
+              "regime_veto": false,
+              "risk": {
+                "reached": false,
+                "rejection": null
+              },
+              "runner": "native-v44",
+              "schema": "shadow-decision-explanation/1",
+              "signal_entry_eligible": false,
+              "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+              "strategy_id": "A2_CONFIRMED_PULLBACK",
+              "strategy_version": "4.2.0-experimental.1",
+              "symbol": "SOL-EUR",
+              "unknown_conditions": [],
+              "volume_confirmation": null
+            },
+            "runtime_compatibility": {
+              "compatible": true,
+              "runner": "native-v44",
+              "reason": null
+            }
+          },
+          {
+            "experiment_id": "baac318a9797469c8f3693c042eb2855",
+            "strategy_id": "C2_LIQUID_RETEST",
+            "state": "SHADOW_ACTIVE",
+            "last_evaluation_at": "2026-10-17T08:20:34.514629+00:00",
+            "latest_decision": {
+              "allowed_regimes": [
+                "STRONG_BULL",
+                "MODERATE_BULL",
+                "COMPRESSION",
+                "EXPANSION"
+              ],
+              "completed_candle_at": "2026-10-17T08:15:00+00:00",
+              "context": {
+                "15m": {
+                  "available_at": "2026-10-17T08:15:00+00:00",
+                  "bear": false,
+                  "bull": true,
+                  "complete_bars": 239,
+                  "ready": true
+                },
+                "60m": {
+                  "available_at": "2026-10-17T08:00:00+00:00",
+                  "bear": false,
+                  "bull": true,
+                  "complete_bars": 59,
+                  "ready": true
+                },
+                "ready": true
+              },
+              "data_quality": "GOOD",
+              "decision_accepted": false,
+              "decision_id": "dec_61a7544789fc4403bd3b1a85d73c4fd0",
+              "entry_conditions": {
+                "context_ready": true,
+                "higher_timeframe_bullish": true
+              },
+              "evaluated_at": "2026-10-17T08:20:34.514629+00:00",
+              "execution": {
+                "quality": {
+                  "reached": false,
+                  "rejection": null
+                },
+                "reached": false,
+                "reason": null
+              },
+              "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+              "final_state": "REJECTED",
+              "independently_failed": [],
+              "momentum_veto": false,
+              "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached.",
+              "reason": "Entry conditions not met.",
+              "reason_code": "RECORDED_DECISION_REJECTION",
+              "regime": "COMPRESSION",
+              "regime_eligible": true,
+              "regime_veto": false,
+              "risk": {
+                "reached": false,
+                "rejection": null
+              },
+              "runner": "native-v44",
+              "schema": "shadow-decision-explanation/1",
+              "signal_entry_eligible": false,
+              "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+              "strategy_id": "C2_LIQUID_RETEST",
+              "strategy_version": "4.2.0-experimental.1",
+              "symbol": "SOL-EUR",
+              "unknown_conditions": [],
+              "volume_confirmation": null
+            },
+            "runtime_compatibility": {
+              "compatible": true,
+              "runner": "native-v44",
+              "reason": null
+            }
+          },
+          {
+            "experiment_id": "b97173b5abec41208c8541015d30003c",
+            "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+            "state": "SHADOW_ACTIVE",
+            "last_evaluation_at": "2026-10-17T08:20:35.109773+00:00",
+            "latest_decision": {
+              "allowed_regimes": [
+                "STRONG_BULL",
+                "MODERATE_BULL"
+              ],
+              "completed_candle_at": "2026-10-17T08:15:00+00:00",
+              "context": {
+                "15m": {
+                  "available_at": "2026-10-17T08:15:00+00:00",
+                  "bear": false,
+                  "bull": true,
+                  "complete_bars": 239,
+                  "ready": true
+                },
+                "60m": {
+                  "available_at": "2026-10-17T08:00:00+00:00",
+                  "bear": false,
+                  "bull": true,
+                  "complete_bars": 59,
+                  "ready": true
+                },
+                "ready": true
+              },
+              "data_quality": "GOOD",
+              "decision_accepted": false,
+              "decision_id": "dec_b584c17b89d34b0b8d3df8f188ad14f7",
+              "entry_conditions": {
+                "context_ready": true,
+                "higher_timeframe_bullish": true
+              },
+              "evaluated_at": "2026-10-17T08:20:35.109773+00:00",
+              "execution": {
+                "quality": {
+                  "reached": false,
+                  "rejection": null
+                },
+                "reached": false,
+                "reason": null
+              },
+              "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+              "final_state": "REJECTED",
+              "independently_failed": [],
+              "momentum_veto": false,
+              "notes": "A concurrent veto does not prove it alone caused rejection. Null means unobserved; risk/execution stages are reported only if reached.",
+              "reason": "Entry conditions not met.",
+              "reason_code": "RECORDED_DECISION_REJECTION",
+              "regime": "COMPRESSION",
+              "regime_eligible": false,
+              "regime_veto": true,
+              "risk": {
+                "reached": false,
+                "rejection": null
+              },
+              "runner": "native-v44",
+              "schema": "shadow-decision-explanation/1",
+              "signal_entry_eligible": false,
+              "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+              "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+              "strategy_version": "4.2.0-experimental.1",
+              "symbol": "SOL-EUR",
+              "unknown_conditions": [],
+              "volume_confirmation": null
+            },
+            "runtime_compatibility": {
+              "compatible": true,
+              "runner": "native-v44",
+              "reason": null
+            }
+          }
+        ],
+        "protective_monitoring": {
+          "heartbeat": "2026-10-17T08:23:37.138203+00:00"
+        },
+        "research_jobs": [],
+        "last_scan": {
+          "status": "OK",
+          "markets": [
+            "BTC-EUR",
+            "ETH-EUR",
+            "SOL-EUR"
+          ],
+          "completed_at": "2026-10-17T08:23:32.770315+00:00",
+          "operation": {
+            "observed_at": "2026-10-17T08:23:33.054621+00:00",
+            "last_completed_scan": "2026-10-17T08:23:33.051570+00:00",
+            "scan_duration_seconds": 2.737198308110237,
+            "schedule_overrun_seconds": 0,
+            "markets_scanned": 3,
+            "successful_observations": 3,
+            "data_failures": 0,
+            "strategies_evaluated": 24,
+            "qualified_signals": 1,
+            "rejected_signals": 3,
+            "paper_entries_filled": 0,
+            "execution_outcomes": [
+              {
+                "symbol": "BTC-EUR",
+                "accepted": false,
+                "reason": "decision_not_accepted",
+                "order_id": null
+              },
+              {
+                "symbol": "ETH-EUR",
+                "accepted": false,
+                "reason": "decision_not_accepted",
+                "order_id": null
+              },
+              {
+                "symbol": "SOL-EUR",
+                "accepted": false,
+                "reason": "decision_not_accepted",
+                "order_id": null
+              }
+            ],
+            "next_scan_at": "2026-10-17T08:24:30.314428+00:00"
+          }
+        },
+        "historical_operator_actions": [
+          {
+            "message": "operator_stop",
+            "severity": "ERROR",
+            "state": "STOPPED",
+            "created_at": "2026-10-16T13:19:50.606844+00:00"
+          }
+        ],
+        "current_system_errors": [],
+        "risk_state": "HEALTHY",
+        "official_reconciliation": {
+          "status": "CONSISTENT",
+          "observed": {
+            "checked_at": "2026-10-17T08:22:33.711158+00:00",
+            "problems": []
+          },
+          "stale": false
+        }
+      }
+    },
+    "/api/market-data/health": {
+      "http_status": 200,
+      "data": {
+        "request_latency_ms": 3103394.665816799,
+        "observed_at": "2026-10-17T08:23:32.546059+00:00",
+        "request_success": 4761,
+        "last_successful_refresh": "2026-10-17T08:23:32.540692+00:00",
+        "candle_refresh": 756,
+        "candles_downloaded": 4416,
+        "candle_cache_hit": 3003,
+        "request_429": 253,
+        "request_429:order-book:SOL-EUR": 27,
+        "request_429:candles:ETH-EUR": 20,
+        "request_429:candles:BTC-EUR": 14,
+        "request_429:order-book:BTC-EUR": 30,
+        "request_429:candles:SOL-EUR": 20,
+        "request_429:order-book:ETH-EUR": 26,
+        "requests": 5014,
+        "mean_request_latency_ms": 618.9458846862383,
+        "caches": [
+          {
+            "key": "BTC-EUR:5:720",
+            "bucket": 5974084,
+            "observations": 720,
+            "refreshed_at": "2026-10-17T08:20:30.542843+00:00",
+            "age_seconds": 187.583776
+          },
+          {
+            "key": "ETH-EUR:5:720",
+            "bucket": 5974084,
+            "observations": 720,
+            "refreshed_at": "2026-10-17T08:20:31.559677+00:00",
+            "age_seconds": 186.569867
+          },
+          {
+            "key": "SOL-EUR:5:720",
+            "bucket": 5974084,
+            "observations": 720,
+            "refreshed_at": "2026-10-17T08:20:32.568252+00:00",
+            "age_seconds": 185.563405
+          }
+        ],
+        "measurement_windows": [
+          {
+            "started_at": "2026-10-17T08:15:29.611777+00:00",
+            "bucket_seconds": 900,
+            "request_latency_ms": 23584.24531854689,
+            "observed_until": "2026-10-17T08:23:32.546070+00:00",
+            "request_success": 35,
+            "candle_refresh": 6,
+            "candles_downloaded": 18,
+            "request_429": 2,
+            "request_429:candles:SOL-EUR": 1,
+            "candle_cache_hit": 21,
+            "request_429:order-book:BTC-EUR": 1
+          },
+          {
+            "started_at": "2026-10-17T08:00:27.647638+00:00",
+            "bucket_seconds": 900,
+            "request_latency_ms": 36643.01151037216,
+            "observed_until": "2026-10-17T08:14:31.297862+00:00",
+            "request_success": 57,
+            "candle_refresh": 9,
+            "candles_downloaded": 27,
+            "candle_cache_hit": 36,
+            "request_429": 2,
+            "request_429:order-book:BTC-EUR": 2
+          },
+          {
+            "started_at": "2026-10-17T07:45:25.579826+00:00",
+            "bucket_seconds": 900,
+            "request_latency_ms": 36955.11442050338,
+            "observed_until": "2026-10-17T07:59:29.251403+00:00",
+            "request_success": 57,
+            "candle_refresh": 9,
+            "candles_downloaded": 27,
+            "request_429": 3,
+            "request_429:candles:SOL-EUR": 1,
+            "candle_cache_hit": 36,
+            "request_429:order-book:BTC-EUR": 1,
+            "request_429:order-book:ETH-EUR": 1
+          },
+          {
+            "started_at": "2026-10-17T07:30:23.700610+00:00",
+            "bucket_seconds": 900,
+            "request_latency_ms": 37903.981583192945,
+            "observed_until": "2026-10-17T07:44:27.282509+00:00",
+            "request_success": 57,
+            "candle_refresh": 9,
+            "candles_downloaded": 27,
+            "request_429": 4,
+            "request_429:candles:SOL-EUR": 1,
+            "candle_cache_hit": 36,
+            "request_429:order-book:BTC-EUR": 1,
+            "request_429:order-book:ETH-EUR": 1,
+            "request_429:candles:BTC-EUR": 1
+          }
+        ],
+        "policy": "public REST, one request/second/family; provider Retry-After milliseconds; completed-candle incremental cache; protective book priority"
+      }
+    }
+  },
+  "whitelisted_configuration": {
+    "market_data_max_staleness_seconds": 90,
+    "worker_scan_interval_seconds": 60,
+    "scanner_max_pairs": 3,
+    "worker_position_interval_seconds": 5,
+    "allocation_profile": "balanced",
+    "live_trading_enabled": false,
+    "paper_trading_enabled": true,
+    "shadow_enabled": true
+  },
+  "backend_and_worker_image_id": "sha256:b6c4c62383c1b05ebd468164cf3bac5a55a41641b79300192d82ba15a269e019",
+  "baseline_commit": "ab742ee56c4774fb9a7b111f1f1043575f1743c9",
+  "source_comparison": {
+    "all_baseline_execution_source_file_hashes_match": true,
+    "only_application_source_difference": "__init__.py: installed package says V1.0 / 1.0.0 while API and metadata say V4.4; fixed local version reporting and Docker verification planned."
+  },
+  "collection_notes": [
+    "Snapshots are per database; worker continued; they are not an atomic cross-account snapshot. Requested window 24h; original accounts began less than 24h earlier, replacements have about 11h history.",
+    "Initial large collector exited 137 during output; retried with bounded streaming per-account exports. Containers remained healthy; no restart requested."
+  ],
+  "worker_error_summary": [
+    {
+      "timestamp": "2026-10-17 06:10:16,624",
+      "message": "shadow_diagnostic_observation_failed",
+      "error": "StringDataRightTruncationError: diagnostic state longer than VARCHAR(32)"
+    },
+    {
+      "timestamp": "2026-10-17 06:55:21,924",
+      "message": "shadow_diagnostic_observation_failed",
+      "error": "StringDataRightTruncationError: diagnostic state longer than VARCHAR(32)"
+    },
+    {
+      "timestamp": "2026-10-17 07:15:25,149",
+      "message": "shadow_diagnostic_observation_failed",
+      "error": "StringDataRightTruncationError: diagnostic state longer than VARCHAR(32)"
+    },
+    {
+      "timestamp": "2026-10-17 07:25:27,268",
+      "message": "shadow_diagnostic_observation_failed",
+      "error": "StringDataRightTruncationError: diagnostic state longer than VARCHAR(32)"
+    }
+  ]
+}

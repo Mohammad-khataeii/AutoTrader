@@ -66,13 +66,15 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
             "registry_records_preserved": len(rows),
             "financial_databases_deleted": False,
             "migration_required": False,
-            "real_money_enabled": False,
+            "real_money_enabled": settings.live_trading_enabled,
+            "paper_trading_enabled": settings.paper_trading_enabled,
+            "configuration_verified": True,
         }
 
     @app.get("/api/overview/summary", dependencies=auth)
     async def overview_summary() -> dict[str, Any]:
         summary = await views.account_summary(repository)
-        return {"application_version": "4.4.0", **summary, "health": {"mode": "paper", "api": "ok"}}
+        return {"application_version": "4.5.0", **summary, "health": {"mode": "paper", "api": "ok", "risk": (await repository.get_runtime_health()).value, "reconciliation": summary["reconciliation_status"]}}
 
     @app.get("/api/shadow/summary", dependencies=auth)
     async def shadow_summary(archived: bool = False) -> dict[str, Any]:
@@ -80,6 +82,8 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
 
     @app.delete("/api/shadow/{identity}", dependencies=auth)
     async def archive_shadow(identity: str, confirm: str = "") -> dict[str, Any]:
+        if not settings.shadow_archive_enabled:
+            raise HTTPException(409, detail="archiving_disabled_during_v45_investigation")
         if confirm != identity:
             raise HTTPException(409, detail="explicit_experiment_identity_confirmation_required")
         try:
@@ -343,6 +347,7 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
             incidents = (
                 await session.scalars(
                     select(m.SystemIncidentModel)
+                    .where(m.SystemIncidentModel.severity.in_(["WARNING", "ERROR", "CRITICAL"]))
                     .order_by(m.SystemIncidentModel.created_at.desc())
                     .limit(20)
                 )
@@ -377,6 +382,19 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
             for r in incidents
             if r.message.startswith("operator_")
         ]
+        # Incidents are append-only. A fresh state transition can resolve a
+        # known risk/operation incident; unrelated alerts need their own evidence.
+        from autotrader.domain import RuntimeHealth
+        known_states = {r.value for r in RuntimeHealth} | {
+            "SYSTEM_ERROR", "DATA_SYNCING", "DATA_DEGRADED", "RECOVERY_REQUIRED"
+        }
+        operation_state = states["operation"].state if "operation" in states else "UNKNOWN"
+
+        def unresolved(incident: Any) -> bool:
+            if incident.status in known_states:
+                return incident.status in {risk_state, operation_state}
+            return incident.status not in {"HEALTHY", "RESOLVED", "CLOSED"}
+
         errors = [
             {
                 "message": r.message,
@@ -385,16 +403,22 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
                 "created_at": aware(r.created_at).isoformat(),
             }
             for r in incidents
-            if r.severity == "ERROR"
+            if r.severity in {"WARNING", "ERROR", "CRITICAL"}
             and not r.message.startswith("operator_")
-            and r.status == risk_state
-            and risk_state not in {"HEALTHY", "STOPPED"}
+            and unresolved(r)
         ]
         scan = payload("scanner")
+        try:
+            from redis.asyncio import Redis
+            async with Redis.from_url(settings.redis_url, socket_connect_timeout=1, socket_timeout=1) as redis:
+                redis_status = "ok" if await redis.ping() else "unavailable"
+        except Exception:
+            redis_status = "unavailable"
         return {
             "as_of": utc_now().isoformat(),
             "service": {
                 "api": "ok",
+                "redis": redis_status,
                 "worker": worker,
                 "worker_heartbeat": heartbeat,
                 "worker_age_seconds": age,
@@ -428,6 +452,9 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
                     "last_evaluation_at": e.get("last_evaluation_at"),
                     "latest_decision": e.get("latest_decision"),
                     "runtime_compatibility": e["runtime_compatibility"],
+                    "reconciliation": e["reconciliation_status"],
+                    "scan_observation": e["scan_observation"],
+                    "risk_state": e["portfolio"]["risk_state"],
                 }
                 for e in summary["experiments"]
             ],
@@ -448,6 +475,9 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
             "current_system_errors": errors,
             "risk_state": risk_state,
             "official_reconciliation": account["reconciliation_status"],
+            "incident_resolution": "Known risk/operation incidents resolve when their current state changes. Other warning/error/critical incidents remain conservatively visible because explicit resolution links are absent.",
+            "live_trading_enabled": settings.live_trading_enabled,
+            "market_data_quality": await repository.market_data_health(),
         }
 
     @app.get("/api/research/summary", dependencies=auth)

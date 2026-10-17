@@ -110,15 +110,29 @@ class ShadowRuntime:
         for record in await self.lab.records():
             if record["state"] != "SHADOW_ACTIVE" or record.get("archived_at"):
                 continue
+            observation: dict[str, Any] = {"discovered_candidates": len(candidates), "evaluated": 0, "skips": []}
+            observed_repo: Any = None
             try:
+                if self.pinned_legacy(record):
+                    observed_repo = await self.legacy().lab.repository(record["experiment_id"])
+                else:
+                    observed_repo = await self.lab.repository(record["experiment_id"])
+                observed_repo._diagnostic_scan = observation
                 if self.pinned_legacy(record):
                     await self.legacy().scan(record, candidates)
                 else:
                     await self._scan_experiment(record, candidates, context)
-            except Exception:
+            except Exception as exc:
+                observation["exception"] = type(exc).__name__
                 logger.exception(
                     "shadow_scan_unavailable", extra={"experiment_id": record["experiment_id"]}
                 )
+            finally:
+                if observed_repo is not None:
+                    from autotrader.domain import utc_now
+                    from autotrader.shadow.diagnostics import record_scan
+                    observation["completed_at"] = utc_now().isoformat()
+                    await record_scan(observed_repo, observation)
 
     async def _scan_experiment(self, record: dict[str, Any], candidates: list[ScanCandidate], context: dict[str, Any]) -> None:
         repo = await self.lab.repository(record["experiment_id"])
@@ -126,6 +140,7 @@ class ShadowRuntime:
         observe_repository(repo, "native-v44")
         if not await repo.claim_coordinator(self.owner):
             return
+        repo._diagnostic_benchmarks = {k: v for k, v in context.items() if k in {"BTC-EUR", "ETH-EUR"}}  # type: ignore[attr-defined]
         m = record["manifest"]
         parameters = StrategyParameters(**{k: Decimal(v) for k, v in m["parameters"].items()})
         engine = (

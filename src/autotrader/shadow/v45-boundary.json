@@ -1,0 +1,22 @@
+{
+  "schema": "reviewed-legacy-boundary/1",
+  "purpose": "Explicit V4.5 bridge review. V4.2 strategy bytes remain independently hash-verified. Update only after local parity and safety tests; never edit account manifests automatically.",
+  "files": {
+    "shadow/legacy.py": "d2b5c001b45088ba96c355c0bd1124b8810096c43484afcf85dcf6f0dd7140c9",
+    "shadow/diagnostics.py": "c86ebaf49133d68882ae842f4158a8253952e7b9deb5962b8d1b58f9baaf4bb6",
+    "shadow/versions.py": "d21b0296c8c12de5c1b9b4f73b4a518bf97c41686cfd8ac1969060d9a043d3f0",
+    "shadow/gates.py": "ce299a8c7ae8a2fe68f1e5ef2eef118ddb58afbd49b720dafeac2c471f07124c",
+    "shadow/runtime.py": "45292cd0d29a8b3964c8427eece82efb1ad4e8ad7bbf2e4b1c0c896bd64701fe",
+    "market_data/service.py": "bafd58334c7341d6782d569768a474a639c99dfd1d0a000eacc9e77ff3081ff7",
+    "market_data/revolut.py": "6eececc825d21ae796eb3457ed7cb3cca8c5ca5588b3d7b1991bdda575932d9b",
+    "market_data/scheduling.py": "3d8be924a69d19afc2b699321b800492ce1685e1ba70ffd40b26d09679d3e234",
+    "domain.py": "e714cc381e06114e6da4a75cf7c0662faf0f172bae6f5d172d2a0abc80064d73",
+    "research/context.py": "adb0bdd92d4a94d57a9e373ff6e89a3c10c9edc8a6811e3a470c30b1f5954524",
+    "worker/runner.py": "92e12e0128942260f347d640593474b7485a279bd6a880da00008b4dd22b9fcd",
+    "shadow/lab.py": "7d2b789225feaf2eb3259beb4d2cb76da2dddb7131baf11b98925061a40c52cb",
+    "shadow/views.py": "113a3c6d6d8270259e1b799752605e02fa8f8e062f643730e8abb3e7abc46b03",
+    "research/data.py": "470ab1728811a29ceaa729b1a564d2d1b21566ed689d4f9b1c441aae8a1f99ff",
+    "research/artifacts.py": "130253c9921d540f998f1b91ce1cd5e09ec199f2b767214caaedee2747d21af3",
+    "market_data/replay.py": "c667af1f0a2aa85b7f03ac8600c358c8c8070ebd30b0e3e933c8c851f6972228"
+  }
+}

@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test";
-import { fixture, ids, mockApi, signIn } from "./fixtures/v43";
+import { fixture, ids, mockApi as baseMockApi, signIn } from "./fixtures/v43";
+// Explicit archival opt-in exercises the separately gated legacy UI.
+async function mockApi(page: any, data = fixture()) {
+  for (const experiment of data.shadow.experiments) (experiment as any).archive_enabled = true;
+  return baseMockApi(page, data);
+}
 async function open(page: any, id: string) {
   await page.getByRole("button", { name: "Experiments", exact: true }).click();
   await page

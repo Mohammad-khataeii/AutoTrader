@@ -128,6 +128,11 @@ export function systemStatus(system?: Row, control?: string, failed = false) {
     if (system.service.worker !== "ok") return "Offline";
     if (
       system.service.postgresql !== "ok" ||
+      (system.service.redis !== undefined && system.service.redis !== "ok") ||
+      (system.risk_state !== undefined && !["HEALTHY", "STOPPED"].includes(system.risk_state)) ||
+      system.official_reconciliation?.stale === true ||
+      system.official_reconciliation?.status === "INCONSISTENT" ||
+      system.shadows?.some((s: Row) => s.scan_observation?.exception || (s.risk_state !== undefined && !["HEALTHY", "STOPPED"].includes(s.risk_state)) || s.runtime_compatibility?.compatible === false || s.reconciliation?.stale === true || s.reconciliation?.status === "INCONSISTENT") ||
       system.market_data?.state !== "OK" ||
       system.market_data?.fresh === false ||
       system.current_system_errors?.length

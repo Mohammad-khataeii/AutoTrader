@@ -103,10 +103,10 @@ try {
       .getByRole("cell", { name: "Closed", exact: true }),
   ).toBeVisible();
   await page.screenshot({
-    path: `docs/evidence/v4_4/${runner}-shadow-lifecycle.png`,
+    path: `docs/evidence/v4_5/${runner}-shadow-lifecycle.png`,
     fullPage: true,
   });
-  await page.getByText("Technical details", { exact: true }).click();
+  await page.getByText("Technical details", { exact: true }).last().click();
   for (const fill of body.fills)
     await expect(page.locator("pre:visible")).toContainText(fill.fill_id);
   await page.getByRole("button", { name: "Trades", exact: true }).click();
@@ -130,7 +130,7 @@ try {
   ).toHaveCount(5);
   await expect(page.locator("pre:visible")).toHaveCount(0);
   await page.screenshot({
-    path: `docs/evidence/v4_4/${runner}-trade-lifecycle.png`,
+    path: `docs/evidence/v4_5/${runner}-trade-lifecycle.png`,
     fullPage: true,
   });
   await page.getByRole("button", { name: "Overview", exact: true }).click();
@@ -139,7 +139,7 @@ try {
   ).toBeVisible();
   if (errors.length) throw new Error(errors.join("\n"));
   fs.writeFileSync(
-    `docs/evidence/v4_4/${runner}-frontend-lifecycle.json`,
+    `docs/evidence/v4_5/${runner}-frontend-lifecycle.json`,
     JSON.stringify(
       {
         data_kind: body.manifest.data_kind,
