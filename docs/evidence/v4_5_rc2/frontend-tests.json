@@ -1,0 +1,97 @@
+{
+  "engineering_status": "PASS",
+  "evidence_class": "SYNTHETIC_DETERMINISTIC_ENGINEERING_TEST",
+  "unit_tests_passed": 12,
+  "browser": {
+    "startTime": "2026-10-18T13:11:57.910Z",
+    "duration": 31905.453999999998,
+    "expected": 25,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "typescript": "PASS",
+  "production_build": "PASS",
+  "commands": [
+    {
+      "kind": "frontend-unit",
+      "argv": [
+        "npm",
+        "test"
+      ],
+      "cwd": "frontend",
+      "started_at": "2026-10-18T13:16:55.263024+00:00",
+      "duration_seconds": 0.686,
+      "exit_code": 0,
+      "log_sha256": "ca7b1d8c158b6e6957601908a768c0fec78489bcfd484bc665c73d77605c7e97"
+    },
+    {
+      "kind": "frontend-types",
+      "argv": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "frontend",
+      "started_at": "2026-10-18T13:16:55.949364+00:00",
+      "duration_seconds": 1.196,
+      "exit_code": 0,
+      "log_sha256": "0f24e6f3fd8f621cbbeee069ec69ff77391d0e1886d33b1394ed298687bf1e72"
+    },
+    {
+      "kind": "frontend-build",
+      "argv": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "frontend",
+      "started_at": "2026-10-18T13:16:57.145089+00:00",
+      "duration_seconds": 1.781,
+      "exit_code": 0,
+      "log_sha256": "2ef2bfd6a07a3ee4cfbe9eae4309317657e957f812740c37929664732ff9c902"
+    }
+  ],
+  "build_warning": "Main JavaScript bundle exceeds the 500 kB advisory threshold; build passes.",
+  "compiled_browser_lifecycles": {
+    "legacy": {
+      "data_kind": "SYNTHETIC_ACCEPTANCE",
+      "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+      "real_test_api": true,
+      "actual_react_build": true,
+      "persisted_fills_displayed": 5,
+      "closed_trades_displayed": 1,
+      "net_pnl": "0.273417762120",
+      "fees": "0.149796346379",
+      "official_equity": 500,
+      "reconciliation": [],
+      "page_errors": []
+    },
+    "frozen-v44": {
+      "data_kind": "SYNTHETIC_ACCEPTANCE",
+      "source_fingerprint": "d7aec58e3c62595d77b96cd74dd11248dab40bdf9575eb50bb6c2b6e49ef8064",
+      "real_test_api": true,
+      "actual_react_build": true,
+      "persisted_fills_displayed": 5,
+      "closed_trades_displayed": 1,
+      "net_pnl": "0.273417762120",
+      "fees": "0.149796346379",
+      "official_equity": 500,
+      "reconciliation": [],
+      "page_errors": []
+    },
+    "native": {
+      "data_kind": "SYNTHETIC_ACCEPTANCE",
+      "source_fingerprint": "ae00122e325e0b59871e666925554ff8b144026502cf09c5bd8135e5c2c30b1d",
+      "real_test_api": true,
+      "actual_react_build": true,
+      "persisted_fills_displayed": 5,
+      "closed_trades_displayed": 1,
+      "net_pnl": "0.273417762120",
+      "fees": "0.149796346379",
+      "official_equity": 500,
+      "reconciliation": [],
+      "page_errors": []
+    }
+  }
+}

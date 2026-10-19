@@ -99,6 +99,10 @@ class LegacyRunner:
         verify_legacy()
         verify_boundary()
         await self.runtime.monitor()
+        from autotrader.shadow.trace import recover_traces
+        for record in await self.lab.records():
+            if record["state"] != "CREATING":
+                await recover_traces(await self.lab.repository(record["experiment_id"]))
 
     async def scan(self, record: dict[str, Any], candidates: list[Any]) -> None:
         verify_legacy()

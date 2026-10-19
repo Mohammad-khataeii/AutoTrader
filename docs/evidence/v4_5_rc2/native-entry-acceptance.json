@@ -1,0 +1,41 @@
+{
+  "engineering_status": "PASS",
+  "evidence_class": "SYNTHETIC_DETERMINISTIC_ENGINEERING_TEST_WITH_PRODUCTION_IDENTICAL_MANIFEST_FIXTURES",
+  "accounts": [
+    {
+      "identity": "40f3f37036f848d0a417b06b6a6fc201",
+      "strategy": "B2_CONFIRMED_COMPRESSION",
+      "manifest_unchanged": true,
+      "entry_fill_and_protective_exit_fills": 2,
+      "evidence": "lifecycles/40f3f37036f848d0a417b06b6a6fc201-lifecycle.json",
+      "sha256": "3cba2e331bd6c001b0f50878ef5623e74652a2511a31ddc04c152dafe0016848"
+    },
+    {
+      "identity": "b97173b5abec41208c8541015d30003c",
+      "strategy": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+      "manifest_unchanged": true,
+      "entry_fill_and_protective_exit_fills": 2,
+      "evidence": "lifecycles/b97173b5abec41208c8541015d30003c-lifecycle.json",
+      "sha256": "b0dac60fc580820ccba3e07ba04a982e887197d0e32f0d000e8a47dc9953b3bb"
+    },
+    {
+      "identity": "baac318a9797469c8f3693c042eb2855",
+      "strategy": "C2_LIQUID_RETEST",
+      "manifest_unchanged": true,
+      "entry_fill_and_protective_exit_fills": 2,
+      "evidence": "lifecycles/baac318a9797469c8f3693c042eb2855-lifecycle.json",
+      "sha256": "abfe747785f4f544bcb2c6855bd541590280319e5a285727ee74a7a51fd3372e"
+    },
+    {
+      "identity": "dc1edd63598e4caeb476864bee8851e3",
+      "strategy": "A2_CONFIRMED_PULLBACK",
+      "manifest_unchanged": true,
+      "entry_fill_and_protective_exit_fills": 2,
+      "evidence": "lifecycles/dc1edd63598e4caeb476864bee8851e3-lifecycle.json",
+      "sha256": "e3f06732536bd67519f4e5dcf826864eb9f108e33068a6b91fd60138e57ace5e"
+    }
+  ],
+  "outbound_production_network_refused": true,
+  "current_financial_implementations_poisoned_to_raise": true,
+  "scope": "Original V44 raw-candle calculations, valid order/fill/protect/close, duplicate-candle suppression, reconstructed runner, original immutable parameters and funding isolation. Separate refused-cost/stale/risk tests retain exact reasons. No original financial database writes."
+}

@@ -1,0 +1,13 @@
+{
+  "engineering_status": "PASS",
+  "evidence_class": "ISOLATED_PRODUCTION_DERIVED_CLONE",
+  "known_good_image_id": "sha256:b6c4c62383c1b05ebd468164cf3bac5a55a41641b79300192d82ba15a269e019",
+  "database_count": 9,
+  "candidate_and_old_image_reconciliation": "PASS",
+  "schema_change": false,
+  "financial_seals_unchanged": true,
+  "newer_transactions_restored_over": false,
+  "production_container_rollback": "NOT_EXECUTED; separate Stage B approval required",
+  "limits": "Proof covers the retained V42/V44 production identities and current schema. A future separately created V45 account requires a new rollback compatibility assessment. Retain latest financial history, never blindly restore prior dumps.",
+  "plan": "docs/V4_5_RC2_RELEASE.md"
+}

@@ -19,6 +19,9 @@ LEGACY_SOURCE = "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23
 PREFIX = "autotrader._frozen.v42"
 ROOT = Path(__file__).parents[1]
 FROZEN = ROOT / "_frozen" / "v42"
+V44_EXECUTION = "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890"
+V44_PACKAGE = "d7aec58e3c62595d77b96cd74dd11248dab40bdf9575eb50bb6c2b6e49ef8064"
+FROZEN_V44 = ROOT / "_frozen" / "v44"
 # Conservative closure: execution, accounting, indicators and persistence all matter.
 # API, diagnostics, transport scheduling and research publication do not authorize orders.
 EXECUTION_FILES = (
@@ -43,6 +46,8 @@ EXECUTION_FILES = (
     "research/artifacts.py",
     "market_data/replay.py",
     "shadow/legacy.py",
+    "shadow/frozen.py",
+    "shadow/trace.py",
     "shadow/diagnostics.py",
     "shadow/gates.py",
     "market_data/revolut.py",
@@ -77,35 +82,71 @@ def verify_legacy() -> dict[str, str]:
     return actual
 
 
+BOUNDARY_FILES = ('config.py', 'domain.py', 'indicators.py', 'market_data/replay.py', 'market_data/revolut.py', 'market_data/scheduling.py', 'market_data/service.py', 'research/artifacts.py', 'research/context.py', 'research/data.py', 'scanner.py', 'shadow/diagnostics.py', 'shadow/frozen.py', 'shadow/gates.py', 'shadow/lab.py', 'shadow/legacy.py', 'shadow/runtime.py', 'shadow/trace.py', 'shadow/versions.py', 'shadow/views.py', 'worker/runner.py')
+
+
 def verify_boundary() -> None:
     """Review-pinned bridge closure, separate from immutable V4.2 strategy bytes."""
     manifest = json.loads((ROOT / "shadow/v45-boundary.json").read_text())
-    actual = {name: digest((ROOT / name).read_bytes()) for name in manifest["files"]}
+    if set(manifest["files"]) != set(BOUNDARY_FILES):
+        raise ValueError("legacy_observation_boundary_integrity_failed")
+    actual = {name: digest((ROOT / name).read_bytes()) for name in BOUNDARY_FILES}
     if actual != manifest["files"]:
         raise ValueError("legacy_observation_boundary_integrity_failed")
 
 
+def verify_v44() -> dict[str, str]:
+    """Prove both the historical algorithm's closure and all imported dependencies."""
+    manifest = json.loads((FROZEN_V44.parent / "v44-manifest.json").read_text())
+    actual = {str(p.relative_to(FROZEN_V44)): digest(p.read_bytes())
+              for p in sorted(FROZEN_V44.rglob("*.py"))}
+    if actual != manifest["files"] or digest(canonical(actual)) != V44_PACKAGE:
+        raise ValueError("v44_runtime_integrity_failed")
+    execution = {name: actual[name] for name in manifest["execution_files"]}
+    if execution != manifest["execution_files"] or digest(canonical(execution)) != V44_EXECUTION:
+        raise ValueError("v44_execution_integrity_failed")
+    return actual
+
+
+def generation(manifest: dict[str, Any]) -> str | None:
+    """Identity selects code; a user-facing version label never grants admission."""
+    fingerprint = manifest.get("execution_fingerprint")
+    if fingerprint == V44_EXECUTION:
+        return "v44"
+    if fingerprint:
+        return "v45" if fingerprint == execution_fingerprint() else None
+    return "v42" if manifest.get("source_fingerprint") == LEGACY_SOURCE else None
+
+
 def compatibility(manifest: dict[str, Any]) -> dict[str, Any]:
-    if manifest.get("execution_fingerprint"):
-        valid = manifest["execution_fingerprint"] == execution_fingerprint()
-        return {
-            "compatible": valid,
-            "runner": "native-v44",
-            "reason": None if valid else "execution_implementation_changed",
-        }
-    if manifest.get("source_fingerprint") == LEGACY_SOURCE:
+    selected = generation(manifest)
+    runner = {"v42": "verified-v42", "v44": "verified-v44", "v45": "native-v45"}.get(selected or "")
+    if selected:
         try:
-            verify_legacy()
+            if selected == "v44":
+                verify_v44()
+            elif selected == "v42":
+                verify_legacy()
             verify_boundary()
-            return {"compatible": True, "runner": "verified-v42", "reason": None}
-        except ValueError as exc:
-            return {"compatible": False, "runner": "verified-v42", "reason": str(exc)}
+            return {"compatible": True, "runner": runner, "reason": None}
+        except (ValueError, OSError, KeyError) as exc:
+            return {"compatible": False, "runner": runner, "reason": str(exc)}
     return {"compatible": False, "runner": None, "reason": "unknown_frozen_runtime"}
 
 
+def verify_generation(selected: str) -> None:
+    if selected == "v42":
+        verify_legacy()
+    elif selected == "v44":
+        verify_v44()
+    else:
+        raise ValueError("unknown_frozen_runtime")
+    verify_boundary()
+
+
 class _FrozenLoader(importlib.abc.Loader):
-    def __init__(self, path: Path):
-        self.path = path
+    def __init__(self, path: Path, prefix: str = PREFIX):
+        self.path, self.prefix = path, prefix
 
     def create_module(self, spec: Any) -> Any:
         return None
@@ -117,9 +158,9 @@ class _FrozenLoader(importlib.abc.Loader):
             name: str, globals: Any = None, locals: Any = None, fromlist: Any = (), level: int = 0
         ) -> Any:
             if level == 0 and (name == "autotrader" or name.startswith("autotrader.")):
-                mapped = PREFIX + name[len("autotrader") :]
+                mapped = self.prefix + name[len("autotrader") :]
                 result = original(mapped, globals, locals, fromlist, level)
-                return result if fromlist else sys.modules[PREFIX]
+                return result if fromlist else sys.modules[self.prefix]
             return original(name, globals, locals, fromlist, level)
 
         module.__dict__["__builtins__"] = {**vars(builtins), "__import__": scoped_import}
@@ -130,17 +171,21 @@ class _FrozenLoader(importlib.abc.Loader):
 
 class _FrozenFinder(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname: str, path: Any = None, target: Any = None) -> Any:
-        if fullname != PREFIX and not fullname.startswith(PREFIX + "."):
+        selected = next((g for g in ("v42", "v44")
+                         if fullname == "autotrader._frozen." + g
+                         or fullname.startswith("autotrader._frozen." + g + ".")), None)
+        if selected is None:
             return None
-        relative = fullname[len(PREFIX) :].lstrip(".").replace(".", "/")
-        directory = FROZEN / relative
+        prefix = "autotrader._frozen." + selected
+        relative = fullname[len(prefix) :].lstrip(".").replace(".", "/")
+        directory = (FROZEN if selected == "v42" else FROZEN_V44) / relative
         file = directory / "__init__.py" if directory.is_dir() else directory.with_suffix(".py")
         if not file.is_file():
             raise ImportError("Missing verified runtime module: " + fullname)
         return importlib.util.spec_from_file_location(
             fullname,
             file,
-            loader=_FrozenLoader(file),
+            loader=_FrozenLoader(file, prefix),
             submodule_search_locations=[str(directory)] if directory.is_dir() else None,
         )
 
@@ -149,22 +194,32 @@ _finder = _FrozenFinder()
 
 
 def legacy_module(name: str) -> Any:
-    verify_legacy()
+    return frozen_module(name, "v42")
+
+
+def frozen_module(name: str, selected: str) -> Any:
+    if selected == "v42":
+        verify_legacy()
+    elif selected == "v44":
+        verify_v44()
+    else:
+        raise ValueError("unknown_frozen_runtime")
     if _finder not in sys.meta_path:
         sys.meta_path.insert(0, _finder)
-    return importlib.import_module(PREFIX + "." + name)
+    return importlib.import_module("autotrader._frozen." + selected + "." + name)
 
 
-def convert(value: Any, legacy: bool = True) -> Any:
+def convert(value: Any, legacy: bool = True, selected: str = "v42") -> Any:
     """Copy shared observations across the isolated type boundary; no network I/O."""
     module = type(value).__module__
-    prefix = "autotrader" if legacy else PREFIX
+    frozen_prefix = "autotrader._frozen." + selected
+    prefix = "autotrader" if legacy else frozen_prefix
     if (is_dataclass(value) or isinstance(value, Enum)) and (
         module == prefix or module.startswith(prefix + ".")
     ):
         suffix = module[len(prefix) :].lstrip(".")
         target = (
-            (sys.modules.get(PREFIX + "." + suffix) or legacy_module(suffix))
+            (sys.modules.get(frozen_prefix + "." + suffix) or frozen_module(suffix, selected))
             if legacy
             else importlib.import_module("autotrader." + suffix)
         )
@@ -172,12 +227,12 @@ def convert(value: Any, legacy: bool = True) -> Any:
         if isinstance(value, Enum):
             return cls(value.value)
         return cls(
-            **{f.name: convert(getattr(value, f.name), legacy) for f in fields(value) if f.init}
+            **{f.name: convert(getattr(value, f.name), legacy, selected) for f in fields(value) if f.init}
         )
     if isinstance(value, dict):
-        return {k: convert(v, legacy) for k, v in value.items()}
+        return {k: convert(v, legacy, selected) for k, v in value.items()}
     if isinstance(value, list):
-        return [convert(v, legacy) for v in value]
+        return [convert(v, legacy, selected) for v in value]
     if isinstance(value, tuple):
-        return tuple(convert(v, legacy) for v in value)
+        return tuple(convert(v, legacy, selected) for v in value)
     return value

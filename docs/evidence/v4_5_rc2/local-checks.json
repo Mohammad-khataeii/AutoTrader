@@ -1,0 +1,124 @@
+{
+  "evidence_class": "EXECUTED_LOCAL_ENGINEERING_CHECKS",
+  "environment": {
+    "os": "macOS-26.6.2-arm64-arm-64bit",
+    "host_architecture": "arm64",
+    "python": "3.12.0",
+    "postgres": "16-alpine local isolated verification cluster",
+    "container_target": "linux/amd64",
+    "node": "v22.13.0"
+  },
+  "commands": [
+    {
+      "kind": "ruff",
+      "argv": [
+        "python3",
+        "-m",
+        "ruff",
+        "check",
+        "src",
+        "tests",
+        "scripts",
+        "alembic",
+        "deploy"
+      ],
+      "cwd": ".",
+      "started_at": "2026-10-18T13:16:54.609741+00:00",
+      "duration_seconds": 0.057,
+      "exit_code": 0,
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "kind": "mypy",
+      "argv": [
+        "python3",
+        "-m",
+        "mypy",
+        "src/autotrader"
+      ],
+      "cwd": ".",
+      "started_at": "2026-10-18T13:16:54.668877+00:00",
+      "duration_seconds": 0.594,
+      "exit_code": 0,
+      "log_sha256": "2ee1bfc13507fda246a3220aaeaa3f3dd56dcc26a996aa35567c2871279b5ecd"
+    },
+    {
+      "kind": "frontend-unit",
+      "argv": [
+        "npm",
+        "test"
+      ],
+      "cwd": "frontend",
+      "started_at": "2026-10-18T13:16:55.263024+00:00",
+      "duration_seconds": 0.686,
+      "exit_code": 0,
+      "log_sha256": "ca7b1d8c158b6e6957601908a768c0fec78489bcfd484bc665c73d77605c7e97"
+    },
+    {
+      "kind": "frontend-types",
+      "argv": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "frontend",
+      "started_at": "2026-10-18T13:16:55.949364+00:00",
+      "duration_seconds": 1.196,
+      "exit_code": 0,
+      "log_sha256": "0f24e6f3fd8f621cbbeee069ec69ff77391d0e1886d33b1394ed298687bf1e72"
+    },
+    {
+      "kind": "frontend-build",
+      "argv": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "frontend",
+      "started_at": "2026-10-18T13:16:57.145089+00:00",
+      "duration_seconds": 1.781,
+      "exit_code": 0,
+      "log_sha256": "2ef2bfd6a07a3ee4cfbe9eae4309317657e957f812740c37929664732ff9c902"
+    },
+    {
+      "kind": "amd64-backend-build",
+      "argv": [
+        "docker",
+        "buildx",
+        "build",
+        "--platform",
+        "linux/amd64",
+        "--load",
+        "-t",
+        "autotrader-v45-rc2:amd64",
+        "-f",
+        "Dockerfile.backend",
+        "."
+      ],
+      "cwd": ".",
+      "started_at": "2026-10-18T13:16:58.926192+00:00",
+      "duration_seconds": 2.267,
+      "exit_code": 0,
+      "log_sha256": "bfe8096c2a0e26e2366cc1072e497fa088efc6c3dc7fde7dda5fec0296a151ff"
+    },
+    {
+      "kind": "amd64-frontend-build",
+      "argv": [
+        "docker",
+        "buildx",
+        "build",
+        "--platform",
+        "linux/amd64",
+        "--load",
+        "-t",
+        "autotrader-v45-rc2-frontend:amd64",
+        "frontend"
+      ],
+      "cwd": ".",
+      "started_at": "2026-10-18T13:17:01.192938+00:00",
+      "duration_seconds": 1.717,
+      "exit_code": 0,
+      "log_sha256": "06165b7161f6fc014aa7ab0296368ae00129846de9b5dd5a2b71af5d8327eaca"
+    }
+  ]
+}

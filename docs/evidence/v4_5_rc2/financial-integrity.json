@@ -1,0 +1,956 @@
+{
+  "engineering_status": "PASS",
+  "evidence_class": "REAL_PRODUCTION_READ_ONLY_OBSERVATION",
+  "start": "2026-10-17T13:25:57.831779+00:00",
+  "finish": "2026-10-18T13:08:18.780337+00:00",
+  "database_count": 9,
+  "accounts": [
+    {
+      "identity": "official",
+      "database": "autotrader",
+      "core_financial_seals_unchanged": true,
+      "manifest_unchanged": true,
+      "archive_unchanged": true,
+      "funding_count": 1,
+      "funding_eur": 500,
+      "reconciliation": [],
+      "open_positions": 0,
+      "open_orders": 0,
+      "fills": 0,
+      "concurrent_existing_worker_changes": {
+        "risk_periods": {
+          "before": {
+            "rows": 3,
+            "sha256": "470cb69d2b9196e39b2582082d14f121f89247bf947842810837453bfc62904d"
+          },
+          "after": {
+            "rows": 4,
+            "sha256": "8ae33be22b53342b90e22cc5ed790c8dd6da72a15cd8ef4c5608cca1428fc23f"
+          }
+        },
+        "equity_snapshots": {
+          "before": {
+            "rows": 29469,
+            "sha256": "4b32d56ad3ac9c0a12673e1af4a93d9311beea5b1cd6b91f27f0834cabf1d8c6"
+          },
+          "after": {
+            "rows": 50784,
+            "sha256": "7f2abc4827b0a0bd04106776ed4b170dacc95ec6fd4012cb60d5b3494f652b77"
+          }
+        }
+      },
+      "final_financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "2d6de0552098d26d20128d3065de7ee609d6d9cf6e39616371ee29674c6820a4"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "ffc37186f6f3f941620e1d77e32613ba23c1cac4c3c6731455a1974040e6c5ab"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "7b6ab426c85e4b06a7fb3442c0bc789d18930ca06d8aca88479c3e97ef66b1fd"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 4,
+          "sha256": "8ae33be22b53342b90e22cc5ed790c8dd6da72a15cd8ef4c5608cca1428fc23f"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 50784,
+          "sha256": "7f2abc4827b0a0bd04106776ed4b170dacc95ec6fd4012cb60d5b3494f652b77"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "513c19befd3865e67f44310bab0af06e011dd9158375d10905464ccf4210a7d0"
+        }
+      }
+    },
+    {
+      "identity": "2f12b0257a3b453a8e2a61ab695d8146",
+      "database": "autotrader_shadow_c76d01fe85f2d630ea79ea72f901a213",
+      "core_financial_seals_unchanged": true,
+      "manifest_unchanged": true,
+      "archive_unchanged": true,
+      "funding_count": 1,
+      "funding_eur": 500,
+      "reconciliation": [],
+      "open_positions": 0,
+      "open_orders": 0,
+      "fills": 0,
+      "concurrent_existing_worker_changes": {},
+      "final_financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "12cd29d6cb85872dc654a9bd4026cf0d016ed7063c09b72789dd8c1cc0853e08"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "779a7a2c028869eb8e9155cbcddeaec52f158fd8764e4f5e09f5a3a1c8f0aba0"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "dd0ce8b2c01fbd886736e41b9c7b4f25dd663638a8ddaee1c10db2c3a65a760b"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 2,
+          "sha256": "02868827a8160222f279f68c36e22db004bb2d56ea2d01590edd31e89ba1bf57"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 5919,
+          "sha256": "330d3f8bb390dd7485936e8a4388fa264c6f35a3a774f27dd98f9ef7b3f858d0"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "aafce057773ada82dba27b3faf9c43d3391b0a9d8c1eb4754e1a7db7d534e33a"
+        }
+      }
+    },
+    {
+      "identity": "39cddc6d7e584a369ce223945f06e629",
+      "database": "autotrader_shadow_6586961c826144cc7274d9666eb7d374",
+      "core_financial_seals_unchanged": true,
+      "manifest_unchanged": true,
+      "archive_unchanged": true,
+      "funding_count": 1,
+      "funding_eur": 500,
+      "reconciliation": [],
+      "open_positions": 0,
+      "open_orders": 0,
+      "fills": 0,
+      "concurrent_existing_worker_changes": {},
+      "final_financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "14eeaf0211e6cc144e94241457dcd17826240bd2d711b7c1bcfcb2c8dee27470"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "6c93d3ebeb824eeb315fe31312f8154e870569c4bd99f7a536d4b46a7df1f76b"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "f176b079bd577524fdf5ea056f63a1b1027b72b8ae64cfeaab25951529b759e1"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 2,
+          "sha256": "c96faa7402cbda99e5dcf71b945e363823bdc077fa6876548994acd83b1d36fa"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 6491,
+          "sha256": "6427d0d74e95c33eb3eb83694c151440868c26e43e20e3c929e3c4c2144dd1cd"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "aafce057773ada82dba27b3faf9c43d3391b0a9d8c1eb4754e1a7db7d534e33a"
+        }
+      }
+    },
+    {
+      "identity": "40f3f37036f848d0a417b06b6a6fc201",
+      "database": "autotrader_shadow_a6e7df2be43bab0b6c016d26295c6094",
+      "core_financial_seals_unchanged": true,
+      "manifest_unchanged": true,
+      "archive_unchanged": true,
+      "funding_count": 1,
+      "funding_eur": 500,
+      "reconciliation": [],
+      "open_positions": 0,
+      "open_orders": 0,
+      "fills": 0,
+      "concurrent_existing_worker_changes": {
+        "risk_periods": {
+          "before": {
+            "rows": 3,
+            "sha256": "254cc91372b0eefccc0a92408a7cd0a4b96fc02f1fbbd0797fcc72402d511b2b"
+          },
+          "after": {
+            "rows": 4,
+            "sha256": "69cc7562a6c8a8e30065dbc8cd2346af939591837133634246a456859ea1a20c"
+          }
+        },
+        "equity_snapshots": {
+          "before": {
+            "rows": 12401,
+            "sha256": "7705ccb878eb7cd5dea5cf58bcc9972140ec5547bf95f4ab3d5d68fd882d922e"
+          },
+          "after": {
+            "rows": 30311,
+            "sha256": "7d84591e540e044832a59cc437e160569d512520b92b7a3688e0f2d17bf83414"
+          }
+        }
+      },
+      "final_financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "cbc525d42a2c9c1e3b67d49723299e4a0ffe4301741cbdc6ceabc7a6baeae536"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "9f3da8a10a9dd2f02e69639eeb6d3c8f304beff00ffc7ef1fd615d5791cce3c7"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "d0f93841855295affea843e0be284474eefcd213aaca1d65dbbfd6d3ae9b7e91"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 4,
+          "sha256": "69cc7562a6c8a8e30065dbc8cd2346af939591837133634246a456859ea1a20c"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 30311,
+          "sha256": "7d84591e540e044832a59cc437e160569d512520b92b7a3688e0f2d17bf83414"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "4489f7c8c218e3fdea77dac677553ff2fca90fffec93219b878ea848ad2409ec"
+        }
+      }
+    },
+    {
+      "identity": "52746de1116e4852b61cb16988917545",
+      "database": "autotrader_shadow_824feeb25abce7c6de5034b06290c76d",
+      "core_financial_seals_unchanged": true,
+      "manifest_unchanged": true,
+      "archive_unchanged": true,
+      "funding_count": 1,
+      "funding_eur": 500,
+      "reconciliation": [],
+      "open_positions": 0,
+      "open_orders": 0,
+      "fills": 0,
+      "concurrent_existing_worker_changes": {},
+      "final_financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "92ea56aaa65e724477216dd50150e8906b066cb96533654142893741aa5e7a41"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "346bea3e2199bb688def99908163f66104f744ef24121e6896e405f842454581"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "9baa07efb3d6cf3ab483135f761f4fefb64a98499e976a772ed8a9e8e40bccc5"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 2,
+          "sha256": "a6ac24b1fd63a9114b1a0e8788fbeb97e96b89700b76753a53b06e06cd5dcae1"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 6758,
+          "sha256": "1b4dacded8d9a3b17c71a7c1a277a505be0c62b1a280ca65d38e794f413cc831"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "e5462ad73c42fbc9fc4f600994ff0a9ed6d193023e8af39f77dabf8ab5610907"
+        }
+      }
+    },
+    {
+      "identity": "9b18cabcc94c45fe84a59917226ebb58",
+      "database": "autotrader_shadow_cfdd3d916c4c5107aa49a40d724451a6",
+      "core_financial_seals_unchanged": true,
+      "manifest_unchanged": true,
+      "archive_unchanged": true,
+      "funding_count": 1,
+      "funding_eur": 500,
+      "reconciliation": [],
+      "open_positions": 0,
+      "open_orders": 0,
+      "fills": 0,
+      "concurrent_existing_worker_changes": {},
+      "final_financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "61a07444eedbb9a103cdefda7ecf2c440cd63ac038741504c05f01099b860a85"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "bbc6f7c2af9008390f48bedb370caaa7bc47921893557a86c6bd54d760cf4e96"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "672f0be569342028d431ac5acdef8a31c252282e3458a494832c613706ae01b9"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 2,
+          "sha256": "482ffbf50372cb9a717197831e223a356e7dc6d917fea9d1d0e6347f91280575"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 6768,
+          "sha256": "aa856d507fc372fad4483da10f388cfeb85156dcc0a26e5a3e46956200814270"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "e5462ad73c42fbc9fc4f600994ff0a9ed6d193023e8af39f77dabf8ab5610907"
+        }
+      }
+    },
+    {
+      "identity": "b97173b5abec41208c8541015d30003c",
+      "database": "autotrader_shadow_7d01d84930078baab2700418b243db74",
+      "core_financial_seals_unchanged": true,
+      "manifest_unchanged": true,
+      "archive_unchanged": true,
+      "funding_count": 1,
+      "funding_eur": 500,
+      "reconciliation": [],
+      "open_positions": 0,
+      "open_orders": 0,
+      "fills": 0,
+      "concurrent_existing_worker_changes": {
+        "risk_periods": {
+          "before": {
+            "rows": 3,
+            "sha256": "10df467b6473f7a088c33c258cdc797838e9089df49e24fa6643957cef8b78dc"
+          },
+          "after": {
+            "rows": 4,
+            "sha256": "88d7cbeaecfc229f327075978805ff0bd5f39e35c866baeb5e46c978ea45c289"
+          }
+        },
+        "equity_snapshots": {
+          "before": {
+            "rows": 12384,
+            "sha256": "397f5c3c2fa6521e59a8b5f8a91b1f6405ea57876a8887187a01bd7fb9dda09c"
+          },
+          "after": {
+            "rows": 30295,
+            "sha256": "f991214f9867c3ac8dc01dd2f43d0efa12f62175c62ca7f89d98fe01fa2acdb4"
+          }
+        }
+      },
+      "final_financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "2527a4ea0745d5d6811893afb459f292ce208ecec239001dcbf81d0cec6520d1"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "fa110c07b501f9996dfd5a29f6e2dd412cc9d8695432b000a2064955222051d7"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "6fb2b88d432cd8dfa9b78a7de0728f24fe9f658d5cf92a702baec46765601411"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 4,
+          "sha256": "88d7cbeaecfc229f327075978805ff0bd5f39e35c866baeb5e46c978ea45c289"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 30295,
+          "sha256": "f991214f9867c3ac8dc01dd2f43d0efa12f62175c62ca7f89d98fe01fa2acdb4"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "4489f7c8c218e3fdea77dac677553ff2fca90fffec93219b878ea848ad2409ec"
+        }
+      }
+    },
+    {
+      "identity": "baac318a9797469c8f3693c042eb2855",
+      "database": "autotrader_shadow_36372df7dcedc418e13556763997d1cf",
+      "core_financial_seals_unchanged": true,
+      "manifest_unchanged": true,
+      "archive_unchanged": true,
+      "funding_count": 1,
+      "funding_eur": 500,
+      "reconciliation": [],
+      "open_positions": 0,
+      "open_orders": 0,
+      "fills": 0,
+      "concurrent_existing_worker_changes": {
+        "risk_periods": {
+          "before": {
+            "rows": 3,
+            "sha256": "745cd49fca08d822acf8c491867f5a5bd792ed42adebd56c32f720b30e698402"
+          },
+          "after": {
+            "rows": 4,
+            "sha256": "8e19550896a91755fa419606251e9a6fc70f332f0eed104c1b54ac5d40898be3"
+          }
+        },
+        "equity_snapshots": {
+          "before": {
+            "rows": 12388,
+            "sha256": "7dd7e7773f1ebf63764e940db869fe142c5aa1839576c501ab3fb0b3cc10d2fb"
+          },
+          "after": {
+            "rows": 30299,
+            "sha256": "45d05cc8dd427f3a171002e3dd4d1263affc8464c52a84532ee2f56e5f17c3a1"
+          }
+        }
+      },
+      "final_financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "697cd00082a6c6511279966c15b23641863fce4c3fc30e3fce97e02c6cc43292"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "9d8beec61e32cf258d679b15b9f32a0a9c65f6334812f634ad38ea712264d681"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "ce235f82a6aa20a682b41e80327a7e00f17819364f8eb6b5279c43a33ce94bf0"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 4,
+          "sha256": "8e19550896a91755fa419606251e9a6fc70f332f0eed104c1b54ac5d40898be3"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 30299,
+          "sha256": "45d05cc8dd427f3a171002e3dd4d1263affc8464c52a84532ee2f56e5f17c3a1"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "4489f7c8c218e3fdea77dac677553ff2fca90fffec93219b878ea848ad2409ec"
+        }
+      }
+    },
+    {
+      "identity": "dc1edd63598e4caeb476864bee8851e3",
+      "database": "autotrader_shadow_702481a99cfbc24d32479efc589fba9b",
+      "core_financial_seals_unchanged": true,
+      "manifest_unchanged": true,
+      "archive_unchanged": true,
+      "funding_count": 1,
+      "funding_eur": 500,
+      "reconciliation": [],
+      "open_positions": 0,
+      "open_orders": 0,
+      "fills": 0,
+      "concurrent_existing_worker_changes": {
+        "orders": {
+          "before": {
+            "rows": 12,
+            "sha256": "c3266065495e1ebac02b655f8d9a730936f10c63a35c7dfde15e1a6d969d57be"
+          },
+          "after": {
+            "rows": 13,
+            "sha256": "03f2e65b646690578c723e5835cadee47c54ac51d548e914bb5235dcb922f0c9"
+          }
+        },
+        "risk_periods": {
+          "before": {
+            "rows": 3,
+            "sha256": "4d7a9f5298bb9c1cb39e8511e3b51784c298dc579d9eeade391c274a149d4ae5"
+          },
+          "after": {
+            "rows": 4,
+            "sha256": "029991334fa39a9fed27765b18acac8482a4d11fa39c5054a4880c0b258ba487"
+          }
+        },
+        "equity_snapshots": {
+          "before": {
+            "rows": 12404,
+            "sha256": "9312d19e2bd3bc368211a815a4e7cd1ce2fe914e1d9410d6fff8b742572e1aff"
+          },
+          "after": {
+            "rows": 30316,
+            "sha256": "851d8b441d33616408ae72645457c46e3f82a60d22fb40665cefc9f3c784284f"
+          }
+        }
+      },
+      "final_financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "92567a9bab74a82b1784c7f2ba2890238fc36a7ced71d263dd42e1b0986c67be"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "d4c45762d9f046b7250917f7c364de1fc714fcea99a68d02ce16dbb40bd98bcc"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "719bfe05724dd2477b72cf72372a394324d5b165de4415fbd0b9d6c2247a8dbe"
+        },
+        "orders": {
+          "rows": 13,
+          "sha256": "03f2e65b646690578c723e5835cadee47c54ac51d548e914bb5235dcb922f0c9"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 4,
+          "sha256": "029991334fa39a9fed27765b18acac8482a4d11fa39c5054a4880c0b258ba487"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 30316,
+          "sha256": "851d8b441d33616408ae72645457c46e3f82a60d22fb40665cefc9f3c784284f"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 13,
+          "sha256": "d7ed38d6ed7cf73558f6e27fa4c9c9847a503be300a66111e63247b497322ed5"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "4489f7c8c218e3fdea77dac677553ff2fca90fffec93219b878ea848ad2409ec"
+        }
+      }
+    }
+  ],
+  "earlier_saved_orders_byte_equivalent_in_final_export": 12,
+  "new_worker_rejected_orders": 1,
+  "production_mutation_by_stage_a": false,
+  "scope": "Dated live snapshots, not a coordinated cross-account cut. Existing workers continued valuations/risk-period rollovers and one rejected order. Initial snapshot seals cover 15 tables; final and isolated restore cover 19. No financial history overwrite claim from merely equal row counts."
+}

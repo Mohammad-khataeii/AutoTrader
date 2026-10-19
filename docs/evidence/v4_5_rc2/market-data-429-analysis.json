@@ -1,0 +1,106 @@
+{
+  "evidence_class": "REAL_PRODUCTION_READ_ONLY_OBSERVATION",
+  "captured_at": "2026-10-18T13:08:18.780337+00:00",
+  "market_health": {
+    "request_latency_ms": 7333245.414795354,
+    "observed_at": "2026-10-18T13:07:39.655695+00:00",
+    "request_success": 11300,
+    "last_successful_refresh": "2026-10-18T13:07:39.650488+00:00",
+    "candle_refresh": 1791,
+    "candles_downloaded": 7521,
+    "candle_cache_hit": 7128,
+    "request_429": 567,
+    "request_429:order-book:SOL-EUR": 83,
+    "request_429:candles:ETH-EUR": 63,
+    "request_429:candles:BTC-EUR": 55,
+    "request_429:order-book:BTC-EUR": 96,
+    "request_429:candles:SOL-EUR": 62,
+    "request_429:order-book:ETH-EUR": 92,
+    "requests": 11867,
+    "mean_request_latency_ms": 617.952761000704,
+    "caches": [
+      {
+        "key": "SOL-EUR:5:720",
+        "bucket": 5974429,
+        "observations": 720,
+        "refreshed_at": "2026-10-18T13:05:37.392284+00:00",
+        "age_seconds": 162.688089
+      },
+      {
+        "key": "BTC-EUR:5:720",
+        "bucket": 5974429,
+        "observations": 720,
+        "refreshed_at": "2026-10-18T13:05:39.397502+00:00",
+        "age_seconds": 160.685618
+      },
+      {
+        "key": "ETH-EUR:5:720",
+        "bucket": 5974429,
+        "observations": 720,
+        "refreshed_at": "2026-10-18T13:05:40.395782+00:00",
+        "age_seconds": 159.689584
+      }
+    ],
+    "measurement_windows": [
+      {
+        "started_at": "2026-10-18T13:00:36.450751+00:00",
+        "bucket_seconds": 900,
+        "request_latency_ms": 20118.176890537143,
+        "observed_until": "2026-10-18T13:07:39.655707+00:00",
+        "request_success": 32,
+        "candle_refresh": 6,
+        "candles_downloaded": 18,
+        "candle_cache_hit": 18,
+        "request_429": 2,
+        "request_429:order-book:SOL-EUR": 1,
+        "request_429:candles:BTC-EUR": 1
+      },
+      {
+        "started_at": "2026-10-18T12:45:34.422848+00:00",
+        "bucket_seconds": 900,
+        "request_latency_ms": 35754.445765167475,
+        "observed_until": "2026-10-18T12:59:38.201266+00:00",
+        "request_success": 57,
+        "candle_refresh": 9,
+        "candles_downloaded": 27,
+        "candle_cache_hit": 36,
+        "request_429": 3,
+        "request_429:order-book:BTC-EUR": 1,
+        "request_429:order-book:ETH-EUR": 1,
+        "request_429:order-book:SOL-EUR": 1
+      },
+      {
+        "started_at": "2026-10-18T12:30:32.096545+00:00",
+        "bucket_seconds": 900,
+        "request_latency_ms": 39129.30432148278,
+        "observed_until": "2026-10-18T12:44:36.125001+00:00",
+        "request_success": 57,
+        "candle_refresh": 9,
+        "candles_downloaded": 27,
+        "candle_cache_hit": 36,
+        "request_429": 2,
+        "request_429:order-book:ETH-EUR": 1,
+        "request_429:order-book:SOL-EUR": 1
+      },
+      {
+        "started_at": "2026-10-18T12:15:29.894722+00:00",
+        "bucket_seconds": 900,
+        "request_latency_ms": 35473.778719082475,
+        "observed_until": "2026-10-18T12:29:33.843581+00:00",
+        "request_success": 57,
+        "candle_refresh": 9,
+        "candles_downloaded": 27,
+        "request_429": 4,
+        "request_429:candles:ETH-EUR": 2,
+        "candle_cache_hit": 36,
+        "request_429:candles:BTC-EUR": 1,
+        "request_429:candles:SOL-EUR": 1
+      }
+    ],
+    "policy": "public REST, one request/second/family; provider Retry-After milliseconds; completed-candle incremental cache; protective book priority"
+  },
+  "retained_request_429_fraction": 0.04777955675402376,
+  "causal_assessment": "Rate limits are real. No attribution of the stored A2 rejections to 429s: their actual durable reason is the execution-cost gate. Retained successful strategy inputs omit pre-strategy failures; request counters are not opportunities.",
+  "policy": "Existing one-request/second/family scheduler, provider Retry-After, completed-candle cache and protective-book priority retained. No rate-limit thresholds weakened.",
+  "measurement_limit": "Lifetime counters and four explicitly dated retained windows, not a complete 24-hour all-request export or proof that every market was fresh."
+}

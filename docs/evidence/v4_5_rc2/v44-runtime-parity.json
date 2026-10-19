@@ -1,0 +1,48 @@
+{
+  "evidence_class": "REAL_PRODUCTION_READ_ONLY_RECORDED_INPUT_REPLAY",
+  "engineering_status": "PASS",
+  "generation": "v44",
+  "package_files": 76,
+  "independent_original_git_signal_comparisons": 1644,
+  "independent_original_git_full_signal_mismatches": 0,
+  "accounts": {
+    "40f3f37036f848d0a417b06b6a6fc201": {
+      "recorded_evaluations_replayed": 411,
+      "primary_eligibility_veto_regime_mismatches": [],
+      "nonprimary_benchmark_dependent_mismatches": [
+        "dec_f8a60779f91f4880b65943bf0c67bede",
+        "dec_df1e75b77dda49bfabbfd96b0149e5d1"
+      ]
+    },
+    "dc1edd63598e4caeb476864bee8851e3": {
+      "recorded_evaluations_replayed": 411,
+      "primary_eligibility_veto_regime_mismatches": [],
+      "nonprimary_benchmark_dependent_mismatches": [
+        "dec_cad5652c208c40d38ac217f3869b0f27",
+        "dec_43635e7aae954f7b9f2b3272eee9dcfa"
+      ]
+    },
+    "baac318a9797469c8f3693c042eb2855": {
+      "recorded_evaluations_replayed": 411,
+      "primary_eligibility_veto_regime_mismatches": [],
+      "nonprimary_benchmark_dependent_mismatches": [
+        "dec_c9ebd6b973054a31b8df46b53bd7becb",
+        "dec_d800bf92667f4a968edd11a7101b90d5"
+      ]
+    },
+    "b97173b5abec41208c8541015d30003c": {
+      "recorded_evaluations_replayed": 411,
+      "primary_eligibility_veto_regime_mismatches": [],
+      "nonprimary_benchmark_dependent_mismatches": [
+        "dec_6900fe91ac094b2eb98fa83c0baa12ca",
+        "dec_b8c7dbfbda134493b5057ce807dbdbd2"
+      ]
+    }
+  },
+  "limits": [
+    "Exact saved decimal features/context; does not reconstruct missing historical raw-candle scan batches.",
+    "Historical benchmark batch membership was not retained. Nonprimary D2 differences remain unverified; no historical full decision/order replay claim.",
+    "Stored execution books for rejected A2 orders are replayed separately in execution-cost-analysis.json.",
+    "Synthetic raw-candle liveness and restart proofs are separate engineering evidence; no profitability claim."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "evidence_class": "LOCAL_COMMITTED_SOURCE_RELEASE_METADATA",
+  "branch": "feature/autotrader-v45-trade-gate-recovery",
+  "parent_commit": "08e9590e207f7113d66d2f072fce75551a05df2e",
+  "intended_immutable_tag": "v4.5.0-rc.2",
+  "commit_authority": "Post-commit release-manifest.json and delivery.json record full SHA and archive hash; a commit cannot embed its own SHA.",
+  "application_source_fingerprint": "ae00122e325e0b59871e666925554ff8b144026502cf09c5bd8135e5c2c30b1d",
+  "v42_source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+  "v44_execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+  "v44_package_fingerprint": "d7aec58e3c62595d77b96cd74dd11248dab40bdf9575eb50bb6c2b6e49ef8064",
+  "v45_execution_fingerprint": "f3761999cc5a6114e5fe6cf79d7b939d3c14e65ee7063b033e11337ddefcebd2",
+  "frozen_manifests": {
+    "v42-manifest.json": "4b4764075cb54e14934fdbaa2f16a1f40f33c6860a15dbf9f110ca9dc29c8c0b",
+    "v44-manifest.json": "597ba13ab484862c0f62602ee4efb880c960e3257c46312b00d303967fcbfcea"
+  },
+  "prepared_at": "2026-10-19T07:45:36.093696+00:00",
+  "environment": "macOS-26.6.2-arm64-arm-64bit",
+  "deployment_performed": false
+}

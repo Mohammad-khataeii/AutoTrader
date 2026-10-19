@@ -18,7 +18,7 @@ from autotrader.research.strategies import StrategyParameters, V4StrategyEngine
 from autotrader.scanner import ScanCandidate
 from autotrader.shadow.lab import ShadowLab
 from autotrader.shadow.repository import ShadowTradingRepository
-from autotrader.shadow.versions import LEGACY_SOURCE
+from autotrader.shadow.versions import LEGACY_SOURCE, V44_EXECUTION, compatibility
 
 
 class ShadowExecutionGateway(PaperExecutionGateway):
@@ -35,6 +35,7 @@ class ShadowRuntime:
     def __init__(self, lab: ShadowLab, market_data: Any, risk: Any, owner: str):
         self.lab, self.market_data, self.risk, self.owner = lab, market_data, risk, owner
         self._legacy: Any = None
+        self._v44: Any = None
 
     def legacy(self) -> Any:
         if self._legacy is None:
@@ -43,12 +44,25 @@ class ShadowRuntime:
             self.lab._legacy_runner = self._legacy
         return self._legacy
 
+    def frozen_v44(self) -> Any:
+        if self._v44 is None:
+            from autotrader.shadow.frozen import FrozenV44Runner
+            self._v44 = FrozenV44Runner(self.lab, self.market_data, self.risk, self.owner)
+            self.lab._v44_runner = self._v44
+        return self._v44
+
+    @staticmethod
+    def pinned_v44(record: dict[str, Any]) -> bool:
+        return bool(record["manifest"].get("execution_fingerprint") == V44_EXECUTION)
+
     @staticmethod
     def pinned_legacy(record: dict[str, Any]) -> bool:
-        return not record["manifest"].get("execution_fingerprint") and record["manifest"]["source_fingerprint"] == LEGACY_SOURCE
+        return bool(not record["manifest"].get("execution_fingerprint") and record["manifest"]["source_fingerprint"] == LEGACY_SOURCE)
 
     def gateway(self, repo: ShadowTradingRepository) -> ShadowExecutionGateway:
         from autotrader.shadow.diagnostics import observe_gateway
+        if compatibility(repo.scope.manifest)["runner"] != "native-v45" or not compatibility(repo.scope.manifest)["compatible"]:
+            raise ValueError("frozen_runtime_mismatch")
         return cast(ShadowExecutionGateway, observe_gateway(ShadowExecutionGateway(
             repo,
             market_data=self.market_data,
@@ -59,11 +73,27 @@ class ShadowRuntime:
             allocation_profile=self.lab.settings.allocation_profile,
         ), repo))
 
+    async def _operate_frozen(self, method: str) -> None:
+        from autotrader.shadow.trace import runtime_incident
+        records = await self.lab.records()
+        for predicate, factory in ((self.pinned_legacy, self.legacy), (self.pinned_v44, self.frozen_v44)):
+            selected = [r for r in records if predicate(r) and not r.get("archived_at") and r["state"] != "CREATING"]
+            if not selected:
+                continue
+            try:
+                await getattr(factory(), method)()
+            except Exception as exc:
+                logger.exception("frozen_runtime_operation_failed", extra={"phase": method})
+                for record in selected:
+                    try:
+                        await runtime_incident(await self.lab.repository(record["experiment_id"]), method, type(exc).__name__)
+                    except Exception:
+                        logger.exception("frozen_runtime_incident_unavailable")
+
     async def renew(self) -> None:
-        if any(self.pinned_legacy(r) and not r.get("archived_at") for r in await self.lab.records()):
-            await self.legacy().renew()
+        await self._operate_frozen("renew")
         for record in await self.lab.records():
-            if record["state"] == "CREATING" or record.get("archived_at") or self.pinned_legacy(record):
+            if record["state"] == "CREATING" or record.get("archived_at") or self.pinned_legacy(record) or self.pinned_v44(record):
                 continue
             try:
                 repo = await self.lab.repository(record["experiment_id"])
@@ -74,14 +104,17 @@ class ShadowRuntime:
                 )
 
     async def monitor(self) -> None:
-        if any(self.pinned_legacy(r) and not r.get("archived_at") for r in await self.lab.records()):
-            await self.legacy().monitor()
+        await self._operate_frozen("monitor")
         for record in await self.lab.records():
-            if record["state"] == "CREATING" or record.get("archived_at") or self.pinned_legacy(record):
+            if record["state"] == "CREATING" or record.get("archived_at") or self.pinned_legacy(record) or self.pinned_v44(record):
                 continue
             try:
                 repo = await self.lab.repository(record["experiment_id"])
                 if not await repo.claim_coordinator(self.owner):
+                    continue
+                if not compatibility(record["manifest"])["compatible"]:
+                    from autotrader.shadow.trace import runtime_incident
+                    await runtime_incident(repo, "position_monitor", "frozen_runtime_mismatch")
                     continue
                 await repo.recover_pending_orders()
                 await PositionManager(
@@ -91,6 +124,8 @@ class ShadowRuntime:
                 ).monitor_once()
                 await repo.snapshot()
                 await repo.worker_heartbeat()
+                from autotrader.shadow.trace import recover_traces
+                await recover_traces(repo)
             except Exception:
                 logger.exception(
                     "shadow_protection_unavailable",
@@ -113,17 +148,29 @@ class ShadowRuntime:
             observation: dict[str, Any] = {"discovered_candidates": len(candidates), "evaluated": 0, "skips": []}
             observed_repo: Any = None
             try:
+                observed_repo = await self.lab.repository(record["experiment_id"])
+                status = compatibility(record["manifest"])
+                if not status["compatible"]:
+                    from autotrader.shadow.trace import runtime_incident
+                    await runtime_incident(observed_repo, "scan", "frozen_runtime_mismatch")
+                    observation["skips"].append({"stage": "runtime_identity", "reasons": ["frozen_runtime_mismatch"], "detail": status["reason"]})
+                    continue
                 if self.pinned_legacy(record):
                     observed_repo = await self.legacy().lab.repository(record["experiment_id"])
-                else:
-                    observed_repo = await self.lab.repository(record["experiment_id"])
+                elif self.pinned_v44(record):
+                    observed_repo = await self.frozen_v44().lab.repository(record["experiment_id"])
                 observed_repo._diagnostic_scan = observation
                 if self.pinned_legacy(record):
                     await self.legacy().scan(record, candidates)
+                elif self.pinned_v44(record):
+                    await self.frozen_v44().scan(record, candidates)
                 else:
                     await self._scan_experiment(record, candidates, context)
             except Exception as exc:
                 observation["exception"] = type(exc).__name__
+                if observed_repo is not None:
+                    from autotrader.shadow.trace import runtime_incident
+                    await runtime_incident(observed_repo, "scan", type(exc).__name__)
                 logger.exception(
                     "shadow_scan_unavailable", extra={"experiment_id": record["experiment_id"]}
                 )
@@ -137,7 +184,7 @@ class ShadowRuntime:
     async def _scan_experiment(self, record: dict[str, Any], candidates: list[ScanCandidate], context: dict[str, Any]) -> None:
         repo = await self.lab.repository(record["experiment_id"])
         from autotrader.shadow.diagnostics import observe_repository
-        observe_repository(repo, "native-v44")
+        observe_repository(repo, "native-v45")
         if not await repo.claim_coordinator(self.owner):
             return
         repo._diagnostic_benchmarks = {k: v for k, v in context.items() if k in {"BTC-EUR", "ETH-EUR"}}  # type: ignore[attr-defined]

@@ -1,0 +1,333 @@
+{
+  "evidence_class": "SYNTHETIC_DETERMINISTIC_ENGINEERING_TEST",
+  "status": "PASS",
+  "manifest": {
+    "data_kind": "LIVE_MARKET_SHADOW",
+    "database_name": "autotrader_shadow_7d01d84930078baab2700418b243db74",
+    "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+    "execution_runtime": "native-v44",
+    "experiment_id": "b97173b5abec41208c8541015d30003c",
+    "fee_bps": "10",
+    "frozen_at": "2026-10-16T21:03:08.104215+00:00",
+    "initial_cash_eur": "500",
+    "minimum_prospective_days": 30,
+    "official_database": "autotrader",
+    "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+    "parameters": {
+      "breakout_buffer": "0.001",
+      "compression_width": "0.06",
+      "relative_return": "0.02",
+      "relative_volume": "1.5",
+      "stop_atr": "2",
+      "target_atr": "2"
+    },
+    "promotion_state": "UNVALIDATED_EXPERIMENT",
+    "slippage_bps": "8",
+    "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+    "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+    "strategy_version": "4.2.0-experimental.1"
+  },
+  "manifest_unchanged": true,
+  "runner": "autotrader._frozen.v44.shadow.repository",
+  "parameters": {
+    "breakout_buffer": "0.001",
+    "compression_width": "0.06",
+    "relative_return": "0.02",
+    "relative_volume": "1.5",
+    "stop_atr": "2",
+    "target_atr": "2"
+  },
+  "fills": [
+    {
+      "fill_id": "fill_184032752fdb4011b940badd8da0ffe1",
+      "order_id": "ord_184032752fdb4011b940badd8da0ffe1",
+      "position_id": "pos_1137e997672946d9a747fc2229641fe6",
+      "exit_intent_id": "",
+      "exit_target_id": "",
+      "created_at": "2026-10-18T13:15:50.293575+00:00",
+      "attribution_status": "CONFIRMED",
+      "symbol": "SOL-EUR",
+      "side": "BUY",
+      "quantity": "0.559547610000",
+      "price": "133.476696000000",
+      "fee": "0.074686566237",
+      "simulated": "True"
+    },
+    {
+      "fill_id": "fill_bf8d74045be44e94818bd322f421b989",
+      "order_id": "ord_bf8d74045be44e94818bd322f421b989",
+      "position_id": "pos_1137e997672946d9a747fc2229641fe6",
+      "exit_intent_id": "exit_9e9187697da1478bbfc5b6f728bc9921",
+      "exit_target_id": "",
+      "created_at": "2026-10-18T13:15:51.548566+00:00",
+      "attribution_status": "CONFIRMED",
+      "symbol": "SOL-EUR",
+      "side": "SELL",
+      "quantity": "0.559547610000",
+      "price": "126.898400000000",
+      "fee": "0.071005696432",
+      "simulated": "True"
+    }
+  ],
+  "orders": [
+    {
+      "order_id": "ord_184032752fdb4011b940badd8da0ffe1",
+      "symbol": "SOL-EUR",
+      "side": "BUY",
+      "status": "FILLED",
+      "quantity": "0.559547610000",
+      "filled_quantity": "0.559547610000",
+      "average_fill_price": "133.476696000000"
+    },
+    {
+      "order_id": "ord_bf8d74045be44e94818bd322f421b989",
+      "symbol": "SOL-EUR",
+      "side": "SELL",
+      "status": "FILLED",
+      "quantity": "0.559547610000",
+      "filled_quantity": "0.559547610000",
+      "average_fill_price": "126.898400000000"
+    }
+  ],
+  "positions": [
+    "Position(position_id='pos_1137e997672946d9a747fc2229641fe6', symbol='SOL-EUR', quantity=Decimal('0E-12'), average_entry_price=Decimal('133.476696000000'), opened_at=datetime.datetime(2026, 10, 18, 13, 15, 50, 260723, tzinfo=datetime.timezone.utc), realized_pnl=Decimal('-3.826562067341'), protective_stop=Decimal('127.370000000000'), take_profit_targets=[Decimal('139.370000000000'), Decimal('145.370000000000'), Decimal('151.370000000000')], original_quantity=Decimal('0.559547610000'), target_quantities=[Decimal('0.167864280000'), Decimal('0.223819040000'), Decimal('0.167864290000')], target_filled_quantities=[Decimal('0E-12'), Decimal('0E-12'), Decimal('0E-12')], closed_at=datetime.datetime(2026, 10, 18, 13, 15, 51, 553312, tzinfo=datetime.timezone.utc), target_ids=['tp_23f7050b1608469eb494baf7ea7e5ccf', 'tp_bfffec202280450499fcbd92851b9f7b', 'tp_f270ca9bd4e44791ac19062cfda8ce81'], exit_plan_id='plan_1f0cd1bbe96c4a8e977a5672d7c884fa', cost_basis=Decimal('0E-12'), highest_price=Decimal('133.360000000000'), initial_stop=Decimal('127.370000000000'), trailing_distance=None, expires_at=datetime.datetime(2026, 10, 18, 14, 5, 50, 294680, tzinfo=datetime.timezone.utc), last_monitored_at=datetime.datetime(2026, 10, 18, 13, 15, 51, 520308, tzinfo=datetime.timezone.utc), account_id='shadow:b97173b5abec41208c8541015d30003c')"
+  ],
+  "reconciliation": [],
+  "trace": [
+    {
+      "candle_at": "2026-10-18T13:10:00+00:00",
+      "decision_id": "dec_476bea8637f6409c96ea867f187274b6",
+      "events": {
+        "DECISION_ACCEPTED": {
+          "completed_at": "2026-10-18T13:15:50.027595+00:00",
+          "entered_at": "2026-10-18T13:15:50.027595+00:00",
+          "processing_at": "2026-10-18T13:15:50.027595+00:00",
+          "reason": "Entry conditions not met.",
+          "reason_code": "Entry conditions not met.",
+          "related": {},
+          "stage": "DECISION_ACCEPTED",
+          "status": "REJECTED"
+        },
+        "SIGNAL_ELIGIBLE": {
+          "completed_at": "2026-10-18T13:15:50.023961+00:00",
+          "entered_at": "2026-10-18T13:15:50.023961+00:00",
+          "processing_at": "2026-10-18T13:15:50.023961+00:00",
+          "reason": "recorded_signal_eligibility",
+          "reason_code": "recorded_signal_eligibility",
+          "related": {},
+          "stage": "SIGNAL_ELIGIBLE",
+          "status": "REJECTED"
+        }
+      },
+      "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+      "experiment_id": "b97173b5abec41208c8541015d30003c",
+      "runtime": "verified-v44",
+      "schema": "execution-trace/1",
+      "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+      "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+      "symbol": "BTC-EUR"
+    },
+    {
+      "candle_at": "2026-10-18T13:10:00+00:00",
+      "decision_id": "dec_6322b1690ca04310bdf3695421b1a4e6",
+      "events": {
+        "DECISION_ACCEPTED": {
+          "completed_at": "2026-10-18T13:15:50.110863+00:00",
+          "entered_at": "2026-10-18T13:15:50.110863+00:00",
+          "processing_at": "2026-10-18T13:15:50.110863+00:00",
+          "reason": "Entry conditions not met.",
+          "reason_code": "Entry conditions not met.",
+          "related": {},
+          "stage": "DECISION_ACCEPTED",
+          "status": "REJECTED"
+        },
+        "SIGNAL_ELIGIBLE": {
+          "completed_at": "2026-10-18T13:15:50.107864+00:00",
+          "entered_at": "2026-10-18T13:15:50.107864+00:00",
+          "processing_at": "2026-10-18T13:15:50.107864+00:00",
+          "reason": "recorded_signal_eligibility",
+          "reason_code": "recorded_signal_eligibility",
+          "related": {},
+          "stage": "SIGNAL_ELIGIBLE",
+          "status": "REJECTED"
+        }
+      },
+      "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+      "experiment_id": "b97173b5abec41208c8541015d30003c",
+      "runtime": "verified-v44",
+      "schema": "execution-trace/1",
+      "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+      "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+      "symbol": "ETH-EUR"
+    },
+    {
+      "candle_at": "2026-10-18T13:10:00+00:00",
+      "decision_id": "dec_c139b8ced9334d0499f405307c26c4bc",
+      "events": {
+        "ALLOCATION_ACCEPTED": {
+          "completed_at": "2026-10-18T13:15:50.214795+00:00",
+          "entered_at": "2026-10-18T13:15:50.203676+00:00",
+          "processing_at": "2026-10-18T13:15:50.214795+00:00",
+          "reason": "allocation_accepted",
+          "reason_code": "allocation_accepted",
+          "related": {},
+          "stage": "ALLOCATION_ACCEPTED",
+          "status": "SUCCEEDED"
+        },
+        "DECISION_ACCEPTED": {
+          "completed_at": "2026-10-18T13:15:50.191740+00:00",
+          "entered_at": "2026-10-18T13:15:50.191740+00:00",
+          "processing_at": "2026-10-18T13:15:50.191740+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {},
+          "stage": "DECISION_ACCEPTED",
+          "status": "SUCCEEDED"
+        },
+        "ENTRY_PREFLIGHT": {
+          "completed_at": "2026-10-18T13:15:50.309453+00:00",
+          "entered_at": "2026-10-18T13:15:50.219743+00:00",
+          "processing_at": "2026-10-18T13:15:50.309453+00:00",
+          "reason": "FILLED",
+          "reason_code": "FILLED",
+          "related": {
+            "order_id": "ord_184032752fdb4011b940badd8da0ffe1"
+          },
+          "stage": "ENTRY_PREFLIGHT",
+          "status": "SUCCEEDED"
+        },
+        "ORDER_FILLED:ord_184032752fdb4011b940badd8da0ffe1": {
+          "completed_at": "2026-10-18T13:15:50.319661+00:00",
+          "entered_at": "2026-10-18T13:15:50.319661+00:00",
+          "processing_at": "2026-10-18T13:15:50.319661+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "fill_ids": [
+              "fill_184032752fdb4011b940badd8da0ffe1"
+            ],
+            "order_id": "ord_184032752fdb4011b940badd8da0ffe1",
+            "position_id": "pos_1137e997672946d9a747fc2229641fe6"
+          },
+          "stage": "ORDER_FILLED",
+          "status": "SUCCEEDED"
+        },
+        "ORDER_FILLED:ord_bf8d74045be44e94818bd322f421b989": {
+          "completed_at": "2026-10-18T13:15:51.569670+00:00",
+          "entered_at": "2026-10-18T13:15:51.569670+00:00",
+          "processing_at": "2026-10-18T13:15:51.569670+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "fill_ids": [
+              "fill_bf8d74045be44e94818bd322f421b989"
+            ],
+            "order_id": "ord_bf8d74045be44e94818bd322f421b989",
+            "position_id": "pos_1137e997672946d9a747fc2229641fe6"
+          },
+          "stage": "ORDER_FILLED",
+          "status": "SUCCEEDED"
+        },
+        "PAPER_ORDER_CREATED:ord_184032752fdb4011b940badd8da0ffe1": {
+          "completed_at": "2026-10-18T13:15:50.317355+00:00",
+          "entered_at": "2026-10-18T13:15:50.317355+00:00",
+          "processing_at": "2026-10-18T13:15:50.317355+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "fill_ids": [
+              "fill_184032752fdb4011b940badd8da0ffe1"
+            ],
+            "order_id": "ord_184032752fdb4011b940badd8da0ffe1",
+            "position_id": "pos_1137e997672946d9a747fc2229641fe6"
+          },
+          "stage": "PAPER_ORDER_CREATED",
+          "status": "SUCCEEDED"
+        },
+        "PAPER_ORDER_CREATED:ord_bf8d74045be44e94818bd322f421b989": {
+          "completed_at": "2026-10-18T13:15:51.565623+00:00",
+          "entered_at": "2026-10-18T13:15:51.565623+00:00",
+          "processing_at": "2026-10-18T13:15:51.565623+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "fill_ids": [
+              "fill_bf8d74045be44e94818bd322f421b989"
+            ],
+            "order_id": "ord_bf8d74045be44e94818bd322f421b989",
+            "position_id": "pos_1137e997672946d9a747fc2229641fe6"
+          },
+          "stage": "PAPER_ORDER_CREATED",
+          "status": "SUCCEEDED"
+        },
+        "POSITION_CLOSED": {
+          "completed_at": "2026-10-18T13:15:51.572138+00:00",
+          "entered_at": "2026-10-18T13:15:51.572138+00:00",
+          "processing_at": "2026-10-18T13:15:51.572138+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "fill_ids": [
+              "fill_bf8d74045be44e94818bd322f421b989"
+            ],
+            "order_id": "ord_bf8d74045be44e94818bd322f421b989",
+            "position_id": "pos_1137e997672946d9a747fc2229641fe6"
+          },
+          "stage": "POSITION_CLOSED",
+          "status": "SUCCEEDED"
+        },
+        "POSITION_OPENED": {
+          "completed_at": "2026-10-18T13:15:50.321910+00:00",
+          "entered_at": "2026-10-18T13:15:50.321910+00:00",
+          "processing_at": "2026-10-18T13:15:50.321910+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "fill_ids": [
+              "fill_184032752fdb4011b940badd8da0ffe1"
+            ],
+            "order_id": "ord_184032752fdb4011b940badd8da0ffe1",
+            "position_id": "pos_1137e997672946d9a747fc2229641fe6"
+          },
+          "stage": "POSITION_OPENED",
+          "status": "SUCCEEDED"
+        },
+        "POSITION_PROTECTED": {
+          "completed_at": "2026-10-18T13:15:50.324341+00:00",
+          "entered_at": "2026-10-18T13:15:50.324341+00:00",
+          "processing_at": "2026-10-18T13:15:50.324341+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "exit_plan_id": "plan_1f0cd1bbe96c4a8e977a5672d7c884fa",
+            "fill_ids": [
+              "fill_184032752fdb4011b940badd8da0ffe1"
+            ],
+            "order_id": "ord_184032752fdb4011b940badd8da0ffe1",
+            "position_id": "pos_1137e997672946d9a747fc2229641fe6"
+          },
+          "stage": "POSITION_PROTECTED",
+          "status": "SUCCEEDED"
+        },
+        "SIGNAL_ELIGIBLE": {
+          "completed_at": "2026-10-18T13:15:50.189091+00:00",
+          "entered_at": "2026-10-18T13:15:50.189091+00:00",
+          "processing_at": "2026-10-18T13:15:50.189091+00:00",
+          "reason": "recorded_signal_eligibility",
+          "reason_code": "recorded_signal_eligibility",
+          "related": {},
+          "stage": "SIGNAL_ELIGIBLE",
+          "status": "SUCCEEDED"
+        }
+      },
+      "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+      "experiment_id": "b97173b5abec41208c8541015d30003c",
+      "runtime": "verified-v44",
+      "schema": "execution-trace/1",
+      "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+      "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+      "symbol": "SOL-EUR"
+    }
+  ],
+  "original_accounts_mutated": false
+}

@@ -157,6 +157,11 @@ async def test_authenticated_paginated_gate_api_joins_allocation_without_inventi
                                             action='BUY', accepted=True, payload_json='{}'))
             session.add(SystemStateModel(key='alloc:old-buy-'+str(i), state='ACCEPTED',
                                          reason='portfolio_allocation',payload_json='{"accepted":true,"reasons":[]}'))
+    async with repo.session_factory() as session, session.begin():
+        session.add(OrderModel(order_id='durable-rejected-order', client_order_id='durable-rejected-order',
+            decision_id='old-buy-0', account_id=repo.account_id, symbol='ETH-EUR', side='BUY', order_type='MARKET',
+            status='REJECTED', quantity=D(1), quote_amount=D(75), filled_quantity=D(0),
+            execution_json='{"rejection_reason":"execution_quality:first_target_destroyed_by_execution_costs"}'))
     monkeypatch.setenv('DATABASE_URL', lab.official.test_database_url)
     monkeypatch.setenv('ENVIRONMENT', 'test')
     monkeypatch.setenv('SHADOW_ENABLED', 'true')
@@ -177,6 +182,12 @@ async def test_authenticated_paginated_gate_api_joins_allocation_without_inventi
             assert data['lifetime_financial_counts']['paper_fills'] == 0
             second = client.get(url + '&cursor=' + data['next_cursor'], auth=('admin','change-me')).json()
             assert len(second['decisions']) == 1
+            combined = data['decisions'] + second['decisions']
+            rejected = next(r for r in combined if r['decision_id'] == 'old-buy-0')
+            assert rejected['execution_trace'] is None
+            assert rejected['execution_evidence_status'] == 'Historical execution outcome not verified'
+            assert rejected['recorded_order_outcomes'][0]['reason'] == 'execution_quality:first_target_destroyed_by_execution_costs'
+            assert client.get('/api/trade-gates/'+record['experiment_id']+'/traces/old-buy-0', auth=('admin','change-me')).status_code == 404
             assert client.delete('/api/shadow/'+record['experiment_id']+'?confirm='+record['experiment_id'], auth=('admin','change-me')).json()['detail'] == 'archiving_disabled_during_v45_investigation'
     await asyncio.to_thread(browser)
 
@@ -195,3 +206,40 @@ def test_legacy_bridge_tampering_and_diagnostic_code_are_in_integrity_closure(tm
     with pytest.raises(ValueError, match='boundary_integrity'):
         versions.verify_boundary()
     assert versions.compatibility({'source_fingerprint': versions.LEGACY_SOURCE})['compatible'] is False
+
+
+async def test_durable_trace_api_authentication_scope_and_bounded_pagination(lab, monkeypatch):
+    import asyncio
+
+    from fastapi.testclient import TestClient
+
+    from autotrader.api.main import create_app
+    from autotrader.shadow.trace import event
+
+    record = await lab.create('trace-page', 'Synthetic trace pagination', 'A2_CONFIRMED_PULLBACK')
+    repo = await lab.repository(record['experiment_id'])
+    for i in range(55):
+        await event(repo, 'synthetic-paginated-trace', 'ORDER_FILLED', 'SUCCEEDED',
+                    reason='synthetic_pagination_fixture', discriminator=str(i))
+    monkeypatch.setenv('DATABASE_URL', lab.official.test_database_url)
+    monkeypatch.setenv('ENVIRONMENT', 'test')
+    monkeypatch.setenv('SHADOW_ENABLED', 'true')
+    monkeypatch.setenv('DASHBOARD_PASSWORD', 'change-me')
+
+    def browser():
+        with TestClient(create_app()) as client:
+            url = '/api/trade-gates/' + record['experiment_id'] + '/traces/synthetic-paginated-trace'
+            auth = ('admin', 'change-me')
+            assert client.get(url).status_code == 401
+            first = client.get(url, auth=auth).json()
+            assert len(first['events']) == 50 and first['total'] == 55 and first['next_cursor'] == 50
+            last = client.get(url + '?cursor=50', auth=auth).json()
+            assert len(last['events']) == 5 and last['next_cursor'] is None
+            assert all(e['reason'] == 'synthetic_pagination_fixture' for e in first['events'] + last['events'])
+            assert client.get(url + '?limit=51', auth=auth).status_code == 422
+            assert client.get(url + '?cursor=-1', auth=auth).status_code == 422
+            assert client.get(url.replace(record['experiment_id'], 'unknown-account'), auth=auth).status_code == 404
+
+    await asyncio.to_thread(browser)
+    assert not await repo.list_fills() and not await repo.list_orders()
+    assert await repo.verify_invariants(D(500)) == []

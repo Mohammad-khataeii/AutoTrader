@@ -45,6 +45,7 @@ class ShadowLab:
         self._opened: dict[str, tuple[Any, ShadowTradingRepository]] = {}
         self._provision_lock = asyncio.Lock()
         self._legacy_runner: Any = None
+        self._v44_runner: Any = None
 
     async def records(self) -> list[dict[str, Any]]:
         async with self.official.session_factory() as session:
@@ -173,7 +174,7 @@ class ShadowLab:
                         "parameter_hash": digest(canonical(params.payload())),
                         "source_fingerprint": source_fingerprint()[0],
                         "execution_fingerprint": execution_fingerprint(),
-                        "execution_runtime": "native-v44",
+                        "execution_runtime": "native-v45",
                         "fee_bps": str(self.settings.default_fee_bps),
                         "slippage_bps": str(self.settings.default_slippage_bps),
                         "initial_cash_eur": "500",
@@ -376,6 +377,9 @@ class ShadowLab:
         }
 
     async def close(self) -> None:
+        if self._v44_runner is not None:
+            await self._v44_runner.close()
+            self._v44_runner = None
         if self._legacy_runner is not None:
             await self._legacy_runner.close()
             self._legacy_runner = None

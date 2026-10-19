@@ -1,0 +1,11 @@
+{
+  "engineering_status": "PASS",
+  "evidence_class": "LOCAL_AND_ACTUAL_AMD64_CONTAINER_SOURCE_VERIFICATION",
+  "execution_fingerprint": "f3761999cc5a6114e5fe6cf79d7b939d3c14e65ee7063b033e11337ddefcebd2",
+  "application_source_fingerprint": "ae00122e325e0b59871e666925554ff8b144026502cf09c5bd8135e5c2c30b1d",
+  "boundary_manifest_sha256": "e94d0eff02b43d051168241baa632077dc5e7fd3fe24466a2cf040a3efe319f0",
+  "new_accounts_created_in_production": false,
+  "manifest_rebinding": false,
+  "runtime": "native-v45",
+  "unknown_or_tampered_generation": "BLOCKED; actual scan/monitor refusal tested"
+}

@@ -1,0 +1,29 @@
+{
+  "engineering_status": "PASS",
+  "evidence_class": "SYNTHETIC_DETERMINISTIC_ENGINEERING_TEST",
+  "successful_stage_names": [
+    "ALLOCATION_ACCEPTED",
+    "DECISION_ACCEPTED",
+    "ENTRY_PREFLIGHT",
+    "ORDER_FILLED",
+    "PAPER_ORDER_CREATED",
+    "POSITION_CLOSED",
+    "POSITION_OPENED",
+    "POSITION_PROTECTED",
+    "SIGNAL_ELIGIBLE"
+  ],
+  "event_count_in_four_identity_proofs": 57,
+  "historical_production_trace_status": "NOT_RECORDED",
+  "historical_phrase": "Historical execution outcome not verified",
+  "actual_historical_refusal_orders": 13,
+  "durable_production_order_evidence": "execution-cost-analysis.json",
+  "trace_api_pagination_authentication": {
+    "tests": 1,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "duration_seconds": 2.76
+  },
+  "dedup_failure_exception_cases": "tests/test_v45_rc2_safety.py",
+  "scope": "Actual synthetic persisted events and separate real durable rejected-order records; historical traces are never fabricated."
+}

@@ -1,0 +1,1738 @@
+{
+  "evidence_class": "REAL_PRODUCTION_READ_ONLY_OBSERVATION",
+  "captured_at": "2026-10-18T08:55:41.797671+00:00",
+  "read_only": true,
+  "live_trading_enabled": false,
+  "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+  "accounts": [
+    {
+      "identity": "official",
+      "state": "OFFICIAL",
+      "database_name": "autotrader",
+      "manifest": null,
+      "manifest_hash": null,
+      "archive": null,
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "2d6de0552098d26d20128d3065de7ee609d6d9cf6e39616371ee29674c6820a4"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "ffc37186f6f3f941620e1d77e32613ba23c1cac4c3c6731455a1974040e6c5ab"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "7b6ab426c85e4b06a7fb3442c0bc789d18930ca06d8aca88479c3e97ef66b1fd"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 4,
+          "sha256": "8ae33be22b53342b90e22cc5ed790c8dd6da72a15cd8ef4c5608cca1428fc23f"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 46998,
+          "sha256": "4a063932b44df58aa3aca987d1e0b00a3f2782e974b94b5d4d1a6daa78400a5d"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "4d66a9bb056c2b92813f65053cac523a723a6025d113f1b6cbb7a491e2c2c3e8"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "decision_summary": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "count": 8946
+        }
+      ],
+      "order_refusals": [],
+      "recent_orders": [],
+      "latest_accepted_buys": [],
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "HEALTHY",
+          "reason": "fresh_portfolio_valuation",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 13:49:13.967445+00:00"
+        },
+        {
+          "key": "scanner",
+          "state": "OK",
+          "reason": "worker_scan",
+          "payload_json": "{\"ai\": {\"assessment\": \"No high-value or material-change AI event.\", \"assessment_id\": \"ai_df1c370a41c24e32bc2c3be5bc649b4d\", \"contradicting_evidence\": [], \"estimated_cost_usd\": \"0\", \"explanation\": \"Failed safely; deterministic non-AI monitoring may continue.\", \"failed\": false, \"identified_risks\": [\"No high-value or material-change AI event.\"], \"model\": \"mock-v1\", \"potential_catalyst_interpretation\": \"\", \"provider\": \"event-gate\", \"suggested_action\": \"WAIT\", \"suggested_entry_conditions\": [], \"suggested_invalidation_conditions\": [\"AI unavailable.\"], \"supporting_evidence\": [], \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:55:02.091163+00:00\", \"tokens_used\": 0, \"uncertainty\": \"high\"}, \"candidates\": [{\"decision\": {\"accepted\": false, \"action\": \"WAIT\", \"ai_assessment_id\": \"ai_df1c370a41c24e32bc2c3be5bc649b4d\", \"decision_id\": \"dec_91007e0118ff448ba8a501ca7b339093\", \"entry_price\": \"2143.45\", \"explanation\": \"aggregate_signal_score=0; explicit_eligible_strategies=[]\", \"proposed_quantity\": \"0.03481623\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": \"Entry conditions not met.\", \"signal_ids\": [\"sig_8fd015e67326401583edd792fdee21a2\", \"sig_f3c9a45db48b4996ba48f0b8f8155e35\", \"sig_d161286e240e48a089651efa36647f0c\", \"sig_df390582dc934b68bfdd8ed0193c36c8\", \"sig_ea500cb41ece4d63a51722b52bb04201\", \"sig_32dd2dda4e6f40d893ded7c8ef2d8587\", \"sig_2949dab8812c45e5ab32103e46c7bc75\", \"sig_983d0756e1cb45489d702d91c49b2f8c\"], \"stop_loss\": \"2140.55\", \"symbol\": \"ETH-EUR\", \"take_profit_targets\": [\"2146.34\", \"2149.23\", \"2152.12\"], \"timestamp\": \"2026-10-18 08:55:02.091348+00:00\"}, \"market\": {\"age_seconds\": \"0.075638\", \"ask_depth\": \"3248.60330404\", \"best_ask\": \"2143.45\", \"best_bid\": \"2141.65\", \"bid_depth\": \"3050.06330424\", \"imbalance\": \"-0.03152095707669405385021858978\", \"liquidity_quote\": \"13497192.7376824080\", \"mid\": \"2142.55\", \"provider_latency_ms\": \"157.648\", \"spread\": \"1.80\", \"spread_bps\": \"8.401204172598072390375953887\"}, \"score\": \"0\", \"signals\": [{\"data_quality\": \"GOOD\", \"entry_conditions\": [\"bull trend, low touches EMA9, close recovers EMA9\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A pullback that holds trend can resume upward\", \"invalidation_conditions\": [\"close loses EMA21 or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_8fd015e67326401583edd792fdee21a2\", \"strategy_id\": \"A_TREND_PULLBACK\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"prior width below threshold, completed close breaks resistance, elevated volume\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A narrow prior range can expand with confirmed demand\", \"invalidation_conditions\": [\"failed breakout or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_f3c9a45db48b4996ba48f0b8f8155e35\", \"strategy_id\": \"B_COMPRESSION_BREAKOUT\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"previous close above resistance, current retest holds\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A completed breakout holding its prior boundary can continue\", \"invalidation_conditions\": [\"close below retest level\"], \"score\": \"0\", \"signal_id\": \"sig_d161286e240e48a089651efa36647f0c\", \"strategy_id\": \"C_BREAKOUT_RETEST\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"relative volume above threshold, close above VWAP, upward EMA trend\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 8, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Elevated demand above VWAP in an upward trend can persist\", \"invalidation_conditions\": [\"VWAP/trend failure or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_df390582dc934b68bfdd8ed0193c36c8\", \"strategy_id\": \"D_VOLUME_ACCUMULATION\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"20-bar excess return positive above threshold with upward trend\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"An established trend outperforming BTC/ETH may persist\", \"invalidation_conditions\": [\"relative strength reversal or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_ea500cb41ece4d63a51722b52bb04201\", \"strategy_id\": \"E_RELATIVE_STRENGTH\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"range/compression, near lower band, RSI below35, close recovers previous close\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 4, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A contained range dip can revert when selling slows\", \"invalidation_conditions\": [\"downtrend classification or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_32dd2dda4e6f40d893ded7c8ef2d8587\", \"strategy_id\": \"F_MEAN_REVERSION\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Resistance rejection invalidates a proposed long breakout\", \"invalidation_conditions\": [\"high exceeds prior resistance but close loses it\"], \"score\": \"0\", \"signal_id\": \"sig_2949dab8812c45e5ab32103e46c7bc75\", \"strategy_id\": \"G_FAILED_BREAKOUT_FILTER\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Uncertain, bearish or illiquid markets require cash preservation\", \"invalidation_conditions\": [\"bear, liquidity stress, uncertainty or completed higher-timeframe veto\"], \"score\": \"0\", \"signal_id\": \"sig_983d0756e1cb45489d702d91c49b2f8c\", \"strategy_id\": \"H_RISK_OFF_FILTER\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}], \"symbol\": \"ETH-EUR\"}, {\"decision\": {\"accepted\": false, \"action\": \"WAIT\", \"ai_assessment_id\": \"ai_cb4019441cda4a37803900c3742a8f8c\", \"decision_id\": \"dec_0fdead0fa1b74dd5b1e9b842984db641\", \"entry_price\": \"91.803\", \"explanation\": \"aggregate_signal_score=0; explicit_eligible_strategies=[]; strategy_regime_or_failed_breakout_veto\", \"proposed_quantity\": \"0.812902\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": \"Entry conditions not met.\", \"signal_ids\": [\"sig_2e48ba595173479eb5b9767bccf42024\", \"sig_7edf7ffabfd84a9994947da197c62f63\", \"sig_7f3a9ee306754eb1b662f8c56ae764a7\", \"sig_d1b30051b86349efbfc38ea9370d977e\", \"sig_d92ebf00baf249c99e07d8ec21876a79\", \"sig_3c183b9552bf4c28a6cf36782fca2948\", \"sig_474e2898e0c342f9bf9621d21a101d95\", \"sig_350b109f9b604cbfb50064f20f47920c\"], \"stop_loss\": \"91.617\", \"symbol\": \"SOL-EUR\", \"take_profit_targets\": [\"91.988\", \"92.173\", \"92.359\"], \"timestamp\": \"2026-10-18 08:55:02.338482+00:00\"}, \"market\": {\"age_seconds\": \"0.289658\", \"ask_depth\": \"41968.648064\", \"best_ask\": \"91.803\", \"best_bid\": \"91.705\", \"bid_depth\": \"41941.455834\", \"imbalance\": \"-0.0003240638342321028596469680419\", \"liquidity_quote\": \"7697929.406002860\", \"mid\": \"91.754\", \"provider_latency_ms\": \"958.108\", \"spread\": \"0.098\", \"spread_bps\": \"10.68073326503476687664842950\"}, \"score\": \"0\", \"signals\": [{\"data_quality\": \"GOOD\", \"entry_conditions\": [\"bull trend, low touches EMA9, close recovers EMA9\"], \"estimated_cost_bps\": \"10.68073326503476687664842950\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.00423157129031048057475265365\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A pullback that holds trend can resume upward\", \"invalidation_conditions\": [\"close loses EMA21 or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_2e48ba595173479eb5b9767bccf42024\", \"strategy_id\": \"A_TREND_PULLBACK\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"prior width below threshold, completed close breaks resistance, elevated volume\"], \"estimated_cost_bps\": \"10.68073326503476687664842950\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.00423157129031048057475265365\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A narrow prior range can expand with confirmed demand\", \"invalidation_conditions\": [\"failed breakout or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_7edf7ffabfd84a9994947da197c62f63\", \"strategy_id\": \"B_COMPRESSION_BREAKOUT\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"previous close above resistance, current retest holds\"], \"estimated_cost_bps\": \"10.68073326503476687664842950\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.00423157129031048057475265365\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A completed breakout holding its prior boundary can continue\", \"invalidation_conditions\": [\"close below retest level\"], \"score\": \"0\", \"signal_id\": \"sig_7f3a9ee306754eb1b662f8c56ae764a7\", \"strategy_id\": \"C_BREAKOUT_RETEST\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"relative volume above threshold, close above VWAP, upward EMA trend\"], \"estimated_cost_bps\": \"10.68073326503476687664842950\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 8, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.00423157129031048057475265365\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Elevated demand above VWAP in an upward trend can persist\", \"invalidation_conditions\": [\"VWAP/trend failure or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_d1b30051b86349efbfc38ea9370d977e\", \"strategy_id\": \"D_VOLUME_ACCUMULATION\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"20-bar excess return positive above threshold with upward trend\"], \"estimated_cost_bps\": \"10.68073326503476687664842950\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.00423157129031048057475265365\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"An established trend outperforming BTC/ETH may persist\", \"invalidation_conditions\": [\"relative strength reversal or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_d92ebf00baf249c99e07d8ec21876a79\", \"strategy_id\": \"E_RELATIVE_STRENGTH\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"range/compression, near lower band, RSI below35, close recovers previous close\"], \"estimated_cost_bps\": \"10.68073326503476687664842950\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 4, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.00423157129031048057475265365\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A contained range dip can revert when selling slows\", \"invalidation_conditions\": [\"downtrend classification or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_3c183b9552bf4c28a6cf36782fca2948\", \"strategy_id\": \"F_MEAN_REVERSION\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"10.68073326503476687664842950\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.00423157129031048057475265365\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Resistance rejection invalidates a proposed long breakout\", \"invalidation_conditions\": [\"high exceeds prior resistance but close loses it\"], \"score\": \"0\", \"signal_id\": \"sig_474e2898e0c342f9bf9621d21a101d95\", \"strategy_id\": \"G_FAILED_BREAKOUT_FILTER\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"10.68073326503476687664842950\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": true, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": true, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.00423157129031048057475265365\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": true}, \"explanation\": \"Uncertain, bearish or illiquid markets require cash preservation\", \"invalidation_conditions\": [\"bear, liquidity stress, uncertainty or completed higher-timeframe veto\"], \"score\": \"0\", \"signal_id\": \"sig_350b109f9b604cbfb50064f20f47920c\", \"strategy_id\": \"H_RISK_OFF_FILTER\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}], \"symbol\": \"SOL-EUR\"}, {\"decision\": {\"accepted\": false, \"action\": \"WAIT\", \"ai_assessment_id\": \"ai_1328ef17e5c7461ea203bd2e7e5132e3\", \"decision_id\": \"dec_25ca5597102a46ee8240f2f3d7019970\", \"entry_price\": \"72672.62\", \"explanation\": \"aggregate_signal_score=0; explicit_eligible_strategies=[]; strategy_regime_or_failed_breakout_veto\", \"proposed_quantity\": \"0.00102689\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": \"Entry conditions not met.\", \"signal_ids\": [\"sig_0cc13052b0cb4fe5858f2fc580d047fa\", \"sig_0e37065e7b5d4be0a930a8acb299aec3\", \"sig_898f2613e48b4b3daa8c79a2c56770a9\", \"sig_dc1f6a0d0d8f469d85a5266577ef023b\", \"sig_ae9d65b93a60433f9b4bcb4fc7da8ee4\", \"sig_df79387e46d74631801e127eb770fd89\", \"sig_f883c9a32847450c86546b5264ea82dc\", \"sig_2eca44da479c4c2b85ebc73cf04e430d\"], \"stop_loss\": \"72616.75\", \"symbol\": \"BTC-EUR\", \"take_profit_targets\": [\"72728.48\", \"72784.35\", \"72840.21\"], \"timestamp\": \"2026-10-18 08:55:02.463718+00:00\"}, \"market\": {\"age_seconds\": \"0.284926\", \"ask_depth\": \"88.38893923\", \"best_ask\": \"72672.62\", \"best_bid\": \"72614.94\", \"bid_depth\": \"90.00799639\", \"imbalance\": \"0.009075588402755547287242130488\", \"liquidity_quote\": \"12953893.3894291723\", \"mid\": \"72643.78\", \"provider_latency_ms\": \"785.037\", \"spread\": \"57.68\", \"spread_bps\": \"7.940115451040680977779515328\"}, \"score\": \"0\", \"signals\": [{\"data_quality\": \"GOOD\", \"entry_conditions\": [\"bull trend, low touches EMA9, close recovers EMA9\"], \"estimated_cost_bps\": \"7.940115451040680977779515328\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0000042596521995838516120129\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A pullback that holds trend can resume upward\", \"invalidation_conditions\": [\"close loses EMA21 or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_0cc13052b0cb4fe5858f2fc580d047fa\", \"strategy_id\": \"A_TREND_PULLBACK\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"prior width below threshold, completed close breaks resistance, elevated volume\"], \"estimated_cost_bps\": \"7.940115451040680977779515328\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0000042596521995838516120129\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A narrow prior range can expand with confirmed demand\", \"invalidation_conditions\": [\"failed breakout or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_0e37065e7b5d4be0a930a8acb299aec3\", \"strategy_id\": \"B_COMPRESSION_BREAKOUT\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"previous close above resistance, current retest holds\"], \"estimated_cost_bps\": \"7.940115451040680977779515328\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0000042596521995838516120129\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A completed breakout holding its prior boundary can continue\", \"invalidation_conditions\": [\"close below retest level\"], \"score\": \"0\", \"signal_id\": \"sig_898f2613e48b4b3daa8c79a2c56770a9\", \"strategy_id\": \"C_BREAKOUT_RETEST\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"relative volume above threshold, close above VWAP, upward EMA trend\"], \"estimated_cost_bps\": \"7.940115451040680977779515328\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 8, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0000042596521995838516120129\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Elevated demand above VWAP in an upward trend can persist\", \"invalidation_conditions\": [\"VWAP/trend failure or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_dc1f6a0d0d8f469d85a5266577ef023b\", \"strategy_id\": \"D_VOLUME_ACCUMULATION\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"20-bar excess return positive above threshold with upward trend\"], \"estimated_cost_bps\": \"7.940115451040680977779515328\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0000042596521995838516120129\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"An established trend outperforming BTC/ETH may persist\", \"invalidation_conditions\": [\"relative strength reversal or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_ae9d65b93a60433f9b4bcb4fc7da8ee4\", \"strategy_id\": \"E_RELATIVE_STRENGTH\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"range/compression, near lower band, RSI below35, close recovers previous close\"], \"estimated_cost_bps\": \"7.940115451040680977779515328\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 4, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0000042596521995838516120129\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A contained range dip can revert when selling slows\", \"invalidation_conditions\": [\"downtrend classification or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_df79387e46d74631801e127eb770fd89\", \"strategy_id\": \"F_MEAN_REVERSION\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"7.940115451040680977779515328\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0000042596521995838516120129\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Resistance rejection invalidates a proposed long breakout\", \"invalidation_conditions\": [\"high exceeds prior resistance but close loses it\"], \"score\": \"0\", \"signal_id\": \"sig_f883c9a32847450c86546b5264ea82dc\", \"strategy_id\": \"G_FAILED_BREAKOUT_FILTER\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"7.940115451040680977779515328\", \"evidence\": {\"as_of\": \"2026-10-18T08:50:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": true, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": true, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0000042596521995838516120129\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": true}, \"explanation\": \"Uncertain, bearish or illiquid markets require cash preservation\", \"invalidation_conditions\": [\"bear, liquidity stress, uncertainty or completed higher-timeframe veto\"], \"score\": \"0\", \"signal_id\": \"sig_2eca44da479c4c2b85ebc73cf04e430d\", \"strategy_id\": \"H_RISK_OFF_FILTER\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-18 08:50:00+00:00\"}], \"symbol\": \"BTC-EUR\"}], \"decision\": {\"accepted\": false, \"action\": \"WAIT\", \"ai_assessment_id\": \"ai_df1c370a41c24e32bc2c3be5bc649b4d\", \"decision_id\": \"dec_91007e0118ff448ba8a501ca7b339093\", \"entry_price\": \"2143.45\", \"explanation\": \"aggregate_signal_score=0; explicit_eligible_strategies=[]\", \"proposed_quantity\": \"0.03481623\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": \"Entry conditions not met.\", \"signal_ids\": [\"sig_8fd015e67326401583edd792fdee21a2\", \"sig_f3c9a45db48b4996ba48f0b8f8155e35\", \"sig_d161286e240e48a089651efa36647f0c\", \"sig_df390582dc934b68bfdd8ed0193c36c8\", \"sig_ea500cb41ece4d63a51722b52bb04201\", \"sig_32dd2dda4e6f40d893ded7c8ef2d8587\", \"sig_2949dab8812c45e5ab32103e46c7bc75\", \"sig_983d0756e1cb45489d702d91c49b2f8c\"], \"stop_loss\": \"2140.55\", \"symbol\": \"ETH-EUR\", \"take_profit_targets\": [\"2146.34\", \"2149.23\", \"2152.12\"], \"timestamp\": \"2026-10-18 08:55:02.091348+00:00\"}, \"duration_ms\": \"2884.555\", \"features\": {\"adx\": \"4.510108864696734059097978240\", \"atr\": \"1.927857142857142857142857143\", \"bollinger_lower\": \"2139.886170918570644\", \"bollinger_mid\": \"2142.7215\", \"bollinger_upper\": \"2145.556829081429356\", \"breakout_distance\": \"-0.001174119061263855303803307102\", \"data_quality\": \"GOOD\", \"ema_200\": \"2143.960619506081977173792870\", \"ema_21\": \"2143.398241724089118070458967\", \"ema_50\": \"2144.114101591157406019204305\", \"ema_9\": \"2143.635694813644039606635612\", \"macd\": \"-0.072914671408656895045288\", \"macd_signal\": \"-0.5096963608059565123855446970\", \"metadata\": {\"ask_depth\": \"3248.60330404\", \"best_ask\": \"2143.45\", \"best_bid\": \"2141.65\", \"bid_depth\": \"3050.06330424\", \"drawdown_50\": \"-0.0028327425971923753174625324\", \"higher_timeframe_confirmation\": {\"available\": true, \"ema_21\": \"2143.853749257654437336046184\", \"ema_50\": \"2143.318768678878065441012732\", \"momentum\": \"0.001774299735255802660515760918\", \"observations\": 59, \"timeframe\": \"20m\", \"timestamp\": \"2026-10-18T08:20:00+00:00\", \"veto\": false}, \"last_close\": \"2143.77\", \"last_high\": \"2143.77\", \"last_low\": \"2143.77\", \"last_price\": \"2142.55\", \"last_volume\": \"0.00816319\", \"liquidity_quote\": \"13497192.7376824080\", \"missing\": [], \"observations\": 240, \"order_book_age_seconds\": \"0.075638\", \"previous_close\": \"2144.99\", \"prior_bollinger_width\": \"0.002686483274689909557621285402\", \"provider\": \"revolut-x\", \"provider_latency_ms\": \"157.648\", \"regime_assessment\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"evidence\": {\"atr_fraction\": \"0.0008992835718650521544488714475\", \"benchmark_bear\": false, \"benchmark_symbols\": [], \"bollinger_width\": \"0.002646474664513662648178963062\", \"drawdown_50\": \"-0.0028327425971923753174625324\", \"ema_trend_fraction\": \"-0.0003338720950237885624114357\", \"history_contiguous\": true, \"label_source\": \"causal rules on observed data; no retrospective labels\", \"relative_volume\": \"0.01510433231987559056613354811\", \"spread_bps\": \"8.401204172598072390375953887\"}, \"regime\": \"COMPRESSION\", \"version\": \"regimes-4.0.0\"}, \"retest_level\": \"2146.29\", \"return_20\": \"-0.0002238544945785239594263729\", \"return_history_20\": [\"0.000153899965022735222105631\", \"-0.0010258418897872776953995654\", \"0.000247388418487849961258040\", \"-0.0004153230886971454704117298\", \"0.000154060186179400752560667\", \"-0.0015216934674539641048381450\", \"0.001996175943976176785455497\", \"-0.0002052851597491788593610033\", \"-0.0005273178653426166165792470\", \"0.000112055803790287563206477\", \"-0.0002567657782570738971909824\", \"0.000322207071744774641836487\", \"-0.0004154665596101149768692494\", \"0.000191474258387506538145408\", \"0.000588320438532187197960489\", \"0.000060664037891691360041065\", \"0.000475950501147880620415477\", \"0.000648290658084977379786391\", \"-0.0002330469962572652401083202\", \"-0.0005687672203600016783295027\"], \"source\": \"revolut-x\", \"spread_bps\": \"8.401204172598072390375953887\"}, \"momentum\": \"-0.0005687672203600016783295027016\", \"order_book_imbalance\": \"-0.03152095707669405385021858978\", \"relative_volume\": \"0.01510433231987559056613354811\", \"resistance\": \"2146.29\", \"rsi\": \"66.54879773691654879773691655\", \"spread_bps\": \"8.401204172598072390375953887\", \"support\": \"2138.26\", \"symbol\": \"ETH-EUR\", \"timeframe\": \"5m\", \"timestamp\": \"2026-10-18 08:45:00+00:00\", \"volatility\": \"1.417664540714678\", \"volume_acceleration\": \"0.05354716269585939109008714623\", \"vwap\": \"2141.764200921953363151369273\"}, \"provider_errors\": [], \"rejected\": [], \"scanned\": 3, \"signals\": [{\"data_quality\": \"GOOD\", \"entry_conditions\": [\"bull trend, low touches EMA9, close recovers EMA9\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A pullback that holds trend can resume upward\", \"invalidation_conditions\": [\"close loses EMA21 or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_8fd015e67326401583edd792fdee21a2\", \"strategy_id\": \"A_TREND_PULLBACK\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"prior width below threshold, completed close breaks resistance, elevated volume\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A narrow prior range can expand with confirmed demand\", \"invalidation_conditions\": [\"failed breakout or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_f3c9a45db48b4996ba48f0b8f8155e35\", \"strategy_id\": \"B_COMPRESSION_BREAKOUT\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"previous close above resistance, current retest holds\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A completed breakout holding its prior boundary can continue\", \"invalidation_conditions\": [\"close below retest level\"], \"score\": \"0\", \"signal_id\": \"sig_d161286e240e48a089651efa36647f0c\", \"strategy_id\": \"C_BREAKOUT_RETEST\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"relative volume above threshold, close above VWAP, upward EMA trend\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 8, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Elevated demand above VWAP in an upward trend can persist\", \"invalidation_conditions\": [\"VWAP/trend failure or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_df390582dc934b68bfdd8ed0193c36c8\", \"strategy_id\": \"D_VOLUME_ACCUMULATION\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"20-bar excess return positive above threshold with upward trend\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"An established trend outperforming BTC/ETH may persist\", \"invalidation_conditions\": [\"relative strength reversal or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_ea500cb41ece4d63a51722b52bb04201\", \"strategy_id\": \"E_RELATIVE_STRENGTH\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"range/compression, near lower band, RSI below35, close recovers previous close\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 4, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A contained range dip can revert when selling slows\", \"invalidation_conditions\": [\"downtrend classification or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_32dd2dda4e6f40d893ded7c8ef2d8587\", \"strategy_id\": \"F_MEAN_REVERSION\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Resistance rejection invalidates a proposed long breakout\", \"invalidation_conditions\": [\"high exceeds prior resistance but close loses it\"], \"score\": \"0\", \"signal_id\": \"sig_2949dab8812c45e5ab32103e46c7bc75\", \"strategy_id\": \"G_FAILED_BREAKOUT_FILTER\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"8.401204172598072390375953887\", \"evidence\": {\"as_of\": \"2026-10-18T08:45:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"COMPRESSION\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"None\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Uncertain, bearish or illiquid markets require cash preservation\", \"invalidation_conditions\": [\"bear, liquidity stress, uncertainty or completed higher-timeframe veto\"], \"score\": \"0\", \"signal_id\": \"sig_983d0756e1cb45489d702d91c49b2f8c\", \"strategy_id\": \"H_RISK_OFF_FILTER\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-18 08:45:00+00:00\"}], \"status\": \"OK\"}",
+          "updated_at": "2026-10-18 08:55:02.537799+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-18T08:55:02.565816+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-18 08:55:02.565861+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-18T08:55:03.944253+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-18 08:55:03.944313+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "2f12b0257a3b453a8e2a61ab695d8146",
+      "state": "STOPPED",
+      "database_name": "autotrader_shadow_c76d01fe85f2d630ea79ea72f901a213",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_c76d01fe85f2d630ea79ea72f901a213",
+        "experiment_id": "2f12b0257a3b453a8e2a61ab695d8146",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T13:17:09.680968+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "8dc0b0560b110277214f4491c5e63ecb40e30c5680255a170ea13a257b515927",
+      "archive": {
+        "archived_at": "2026-10-16T21:01:29.701960+00:00",
+        "experiment_id": "2f12b0257a3b453a8e2a61ab695d8146",
+        "history_preserved": true,
+        "slot_released": true
+      },
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "12cd29d6cb85872dc654a9bd4026cf0d016ed7063c09b72789dd8c1cc0853e08"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "779a7a2c028869eb8e9155cbcddeaec52f158fd8764e4f5e09f5a3a1c8f0aba0"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "dd0ce8b2c01fbd886736e41b9c7b4f25dd663638a8ddaee1c10db2c3a65a760b"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 2,
+          "sha256": "02868827a8160222f279f68c36e22db004bb2d56ea2d01590edd31e89ba1bf57"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 5919,
+          "sha256": "330d3f8bb390dd7485936e8a4388fa264c6f35a3a774f27dd98f9ef7b3f858d0"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "aafce057773ada82dba27b3faf9c43d3391b0a9d8c1eb4754e1a7db7d534e33a"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "decision_summary": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "count": 9
+        }
+      ],
+      "order_refusals": [],
+      "recent_orders": [],
+      "latest_accepted_buys": [],
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "STOPPED",
+          "reason": "operator_stop",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 14:14:47.317275+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-16T21:00:57.502506+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-16 21:00:57.502561+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-16T21:01:28.301748+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-16 21:01:28.301802+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "39cddc6d7e584a369ce223945f06e629",
+      "state": "STOPPED",
+      "database_name": "autotrader_shadow_6586961c826144cc7274d9666eb7d374",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_6586961c826144cc7274d9666eb7d374",
+        "experiment_id": "39cddc6d7e584a369ce223945f06e629",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T12:33:54.725073+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "cd088d4951a2dcb50b85fbd28b09fd40fc7fa92283873c81d84b5af42fa0e799",
+      "archive": {
+        "archived_at": "2026-10-16T21:01:24.641367+00:00",
+        "experiment_id": "39cddc6d7e584a369ce223945f06e629",
+        "history_preserved": true,
+        "slot_released": true
+      },
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "14eeaf0211e6cc144e94241457dcd17826240bd2d711b7c1bcfcb2c8dee27470"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "6c93d3ebeb824eeb315fe31312f8154e870569c4bd99f7a536d4b46a7df1f76b"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "f176b079bd577524fdf5ea056f63a1b1027b72b8ae64cfeaab25951529b759e1"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 2,
+          "sha256": "c96faa7402cbda99e5dcf71b945e363823bdc077fa6876548994acd83b1d36fa"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 6491,
+          "sha256": "6427d0d74e95c33eb3eb83694c151440868c26e43e20e3c929e3c4c2144dd1cd"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "aafce057773ada82dba27b3faf9c43d3391b0a9d8c1eb4754e1a7db7d534e33a"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "decision_summary": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "count": 36
+        }
+      ],
+      "order_refusals": [],
+      "recent_orders": [],
+      "latest_accepted_buys": [],
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "STOPPED",
+          "reason": "operator_stop",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 14:13:13.630020+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-16T21:00:57.457047+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-16 21:00:57.457091+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-16T21:01:23.259563+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-16 21:01:23.259675+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "40f3f37036f848d0a417b06b6a6fc201",
+      "state": "SHADOW_ACTIVE",
+      "database_name": "autotrader_shadow_a6e7df2be43bab0b6c016d26295c6094",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_a6e7df2be43bab0b6c016d26295c6094",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "40f3f37036f848d0a417b06b6a6fc201",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T21:01:43.195534+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "dfd924ca4a65319f13527ccc31f1e8a155a33ac70bb58cdb6383c285eeb116a6",
+      "archive": null,
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "cbc525d42a2c9c1e3b67d49723299e4a0ffe4301741cbdc6ceabc7a6baeae536"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "9f3da8a10a9dd2f02e69639eeb6d3c8f304beff00ffc7ef1fd615d5791cce3c7"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "d0f93841855295affea843e0be284474eefcd213aaca1d65dbbfd6d3ae9b7e91"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 4,
+          "sha256": "69cc7562a6c8a8e30065dbc8cd2346af939591837133634246a456859ea1a20c"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 27131,
+          "sha256": "7f7a9213af4769b26ecdb4341d3dee88f34e12212dc587c6890845a798550c86"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "f308cb2334d2e25efa10a769b20e2ee5869bf7588434f8a1a9b35e1144f43302"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "decision_summary": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "count": 1295
+        }
+      ],
+      "order_refusals": [],
+      "recent_orders": [],
+      "latest_accepted_buys": [],
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "HEALTHY",
+          "reason": "fresh_portfolio_valuation",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 21:01:45.727782+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-18T08:55:02.621582+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-18 08:55:02.621661+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-18T08:55:42.406315+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-18 08:55:42.406370+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "52746de1116e4852b61cb16988917545",
+      "state": "STOPPED",
+      "database_name": "autotrader_shadow_824feeb25abce7c6de5034b06290c76d",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_824feeb25abce7c6de5034b06290c76d",
+        "experiment_id": "52746de1116e4852b61cb16988917545",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T12:34:06.656736+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "A2_CONFIRMED_PULLBACK",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "cdaf4e5cd875ab1639db5436ab3460b6289d838f5ad578ae01664c05f0832651",
+      "archive": {
+        "archived_at": "2026-10-16T21:01:34.540271+00:00",
+        "experiment_id": "52746de1116e4852b61cb16988917545",
+        "history_preserved": true,
+        "slot_released": true
+      },
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "92ea56aaa65e724477216dd50150e8906b066cb96533654142893741aa5e7a41"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "346bea3e2199bb688def99908163f66104f744ef24121e6896e405f842454581"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "9baa07efb3d6cf3ab483135f761f4fefb64a98499e976a772ed8a9e8e40bccc5"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 2,
+          "sha256": "a6ac24b1fd63a9114b1a0e8788fbeb97e96b89700b76753a53b06e06cd5dcae1"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 6758,
+          "sha256": "1b4dacded8d9a3b17c71a7c1a277a505be0c62b1a280ca65d38e794f413cc831"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "e5462ad73c42fbc9fc4f600994ff0a9ed6d193023e8af39f77dabf8ab5610907"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "decision_summary": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "count": 306
+        }
+      ],
+      "order_refusals": [],
+      "recent_orders": [],
+      "latest_accepted_buys": [],
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "STOPPED",
+          "reason": "operator_stop",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 20:58:49.037939+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-16T21:00:57.478841+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-16 21:00:57.478907+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-16T21:01:33.273611+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-16 21:01:33.273672+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "9b18cabcc94c45fe84a59917226ebb58",
+      "state": "STOPPED",
+      "database_name": "autotrader_shadow_cfdd3d916c4c5107aa49a40d724451a6",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_cfdd3d916c4c5107aa49a40d724451a6",
+        "experiment_id": "9b18cabcc94c45fe84a59917226ebb58",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T12:33:25.979051+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "40145fb5d355888da29b8495608d8e280e163cc77113217e30d61d92420e012a",
+      "archive": {
+        "archived_at": "2026-10-16T21:01:16.071240+00:00",
+        "experiment_id": "9b18cabcc94c45fe84a59917226ebb58",
+        "history_preserved": true,
+        "slot_released": true
+      },
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "61a07444eedbb9a103cdefda7ecf2c440cd63ac038741504c05f01099b860a85"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "bbc6f7c2af9008390f48bedb370caaa7bc47921893557a86c6bd54d760cf4e96"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "672f0be569342028d431ac5acdef8a31c252282e3458a494832c613706ae01b9"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 2,
+          "sha256": "482ffbf50372cb9a717197831e223a356e7dc6d917fea9d1d0e6347f91280575"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 6768,
+          "sha256": "aa856d507fc372fad4483da10f388cfeb85156dcc0a26e5a3e46956200814270"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "e5462ad73c42fbc9fc4f600994ff0a9ed6d193023e8af39f77dabf8ab5610907"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "decision_summary": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "count": 306
+        }
+      ],
+      "order_refusals": [],
+      "recent_orders": [],
+      "latest_accepted_buys": [],
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "STOPPED",
+          "reason": "operator_stop",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 20:58:30.996240+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-16T21:00:57.433507+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-16 21:00:57.433653+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-16T21:01:13.256481+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-16 21:01:13.256545+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "b97173b5abec41208c8541015d30003c",
+      "state": "SHADOW_ACTIVE",
+      "database_name": "autotrader_shadow_7d01d84930078baab2700418b243db74",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_7d01d84930078baab2700418b243db74",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "b97173b5abec41208c8541015d30003c",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T21:03:08.104215+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "5c99b88c763f420fe033481d7ec92c4ed3b2f04e9e60e9f35999ea28e1f624af",
+      "archive": null,
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "2527a4ea0745d5d6811893afb459f292ce208ecec239001dcbf81d0cec6520d1"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "fa110c07b501f9996dfd5a29f6e2dd412cc9d8695432b000a2064955222051d7"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "6fb2b88d432cd8dfa9b78a7de0728f24fe9f658d5cf92a702baec46765601411"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 4,
+          "sha256": "88d7cbeaecfc229f327075978805ff0bd5f39e35c866baeb5e46c978ea45c289"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 27114,
+          "sha256": "281a77f4a46df19bea0b3fa867f775445be84b3fe8b0bf64aa48966d4606a2e5"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "f308cb2334d2e25efa10a769b20e2ee5869bf7588434f8a1a9b35e1144f43302"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "decision_summary": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "count": 1295
+        }
+      ],
+      "order_refusals": [],
+      "recent_orders": [],
+      "latest_accepted_buys": [],
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "HEALTHY",
+          "reason": "fresh_portfolio_valuation",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 21:03:10.602869+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-18T08:55:02.748143+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-18 08:55:02.748193+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-18T08:55:42.534098+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-18 08:55:42.534150+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "baac318a9797469c8f3693c042eb2855",
+      "state": "SHADOW_ACTIVE",
+      "database_name": "autotrader_shadow_36372df7dcedc418e13556763997d1cf",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_36372df7dcedc418e13556763997d1cf",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "baac318a9797469c8f3693c042eb2855",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T21:02:49.043851+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "strategy_id": "C2_LIQUID_RETEST",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "5d391ec5170a08dd60feddc1ce0381abc9d0b8885222c60f50cc23af42c82f4e",
+      "archive": null,
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "697cd00082a6c6511279966c15b23641863fce4c3fc30e3fce97e02c6cc43292"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "9d8beec61e32cf258d679b15b9f32a0a9c65f6334812f634ad38ea712264d681"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "ce235f82a6aa20a682b41e80327a7e00f17819364f8eb6b5279c43a33ce94bf0"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 4,
+          "sha256": "8e19550896a91755fa419606251e9a6fc70f332f0eed104c1b54ac5d40898be3"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 27118,
+          "sha256": "c116ad5e4e876c9c66947e816c286e5e8febc927f62b0d7ecae43cdfa7195065"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "f308cb2334d2e25efa10a769b20e2ee5869bf7588434f8a1a9b35e1144f43302"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "decision_summary": [
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "count": 1295
+        }
+      ],
+      "order_refusals": [],
+      "recent_orders": [],
+      "latest_accepted_buys": [],
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "HEALTHY",
+          "reason": "fresh_portfolio_valuation",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 21:02:51.327467+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-18T08:55:02.715992+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-18 08:55:02.716043+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-18T08:55:42.493182+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-18 08:55:42.493248+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "dc1edd63598e4caeb476864bee8851e3",
+      "state": "SHADOW_ACTIVE",
+      "database_name": "autotrader_shadow_702481a99cfbc24d32479efc589fba9b",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_702481a99cfbc24d32479efc589fba9b",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "dc1edd63598e4caeb476864bee8851e3",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T21:02:26.456888+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "strategy_id": "A2_CONFIRMED_PULLBACK",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "3d9db0caede98736082f7215e7be25e55f0115ada5d3d10999ac343327b239a9",
+      "archive": null,
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "92567a9bab74a82b1784c7f2ba2890238fc36a7ced71d263dd42e1b0986c67be"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "d4c45762d9f046b7250917f7c364de1fc714fcea99a68d02ce16dbb40bd98bcc"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "719bfe05724dd2477b72cf72372a394324d5b165de4415fbd0b9d6c2247a8dbe"
+        },
+        "orders": {
+          "rows": 12,
+          "sha256": "c3266065495e1ebac02b655f8d9a730936f10c63a35c7dfde15e1a6d969d57be"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 4,
+          "sha256": "029991334fa39a9fed27765b18acac8482a4d11fa39c5054a4880c0b258ba487"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 27134,
+          "sha256": "11f63ff9d8285e8bcedbe53bf49631de57bf26e28bc8dd3eeb6ea399f05a1306"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 12,
+          "sha256": "30b8f7ad8b3eead3b631d37ac69b966c5dce10bd42ce3eaba8712289e8a02340"
+        },
+        "risk_evaluations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "portfolio_snapshots": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "market_marks": {
+          "rows": 3,
+          "sha256": "f308cb2334d2e25efa10a769b20e2ee5869bf7588434f8a1a9b35e1144f43302"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "decision_summary": [
+        {
+          "action": "BUY",
+          "accepted": true,
+          "count": 12
+        },
+        {
+          "action": "WAIT",
+          "accepted": false,
+          "count": 1283
+        }
+      ],
+      "order_refusals": [
+        {
+          "side": "BUY",
+          "status": "REJECTED",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "count": 12
+        }
+      ],
+      "recent_orders": [
+        {
+          "order_id": "ord_1b23c0f953464ed0917cec95b4516b0e",
+          "decision_id": "dec_6f42f68979504b32af4c1ea91e2f002c",
+          "symbol": "SOL-EUR",
+          "side": "BUY",
+          "status": "REJECTED",
+          "quantity": "0.799319000000",
+          "quote_amount": "75.000000000000",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "execution_json": "{\"fee_bps\": \"10\", \"slippage_bps\": \"8\", \"rejection_reason\": \"execution_quality:first_target_destroyed_by_execution_costs\", \"quantity_step\": \"0.000001\", \"limit_price\": null, \"stop_loss\": \"93.177\", \"targets\": [\"93.548\", \"93.733\", \"93.918\"], \"book\": {\"timestamp\": \"2026-10-17T09:50:46.671000+00:00\", \"source\": \"revolut-x\", \"bids\": [[\"93.300\", \"28.597819\"], [\"93.299\", \"65.853759\"], [\"93.288\", \"131.707519\"], [\"93.267\", \"263.415038\"], [\"93.252\", \"658.537594\"], [\"93.204\", \"6585.37594\"], [\"93.187\", \"6585.37594\"], [\"93.152\", \"6585.37594\"], [\"93.133\", \"6585.37594\"], [\"93.121\", \"6585.37594\"], [\"93.100\", \"1.161117\"], [\"93.023\", \"6585.37594\"], [\"92.810\", \"0.026182\"], [\"92.694\", \"0.103555\"], [\"92.607\", \"0.016197\"], [\"92.600\", \"0.227991\"], [\"92.547\", \"0.02161\"], [\"92.515\", \"2.161811\"], [\"92.500\", \"3.324324\"], [\"92.420\", \"0.026293\"], [\"92.366\", \"0.10349\"], [\"92.210\", \"0.162672\"], [\"92.180\", \"0.12\"], [\"92.030\", \"0.026404\"], [\"92.000\", \"19.380868\"], [\"91.900\", \"3.264417\"], [\"91.895\", \"0.102606\"], [\"91.770\", \"0.12\"], [\"91.700\", \"0.596401\"], [\"91.610\", \"0.026525\"], [\"91.600\", \"10.91703\"], [\"91.560\", \"0.102326\"], [\"91.555\", \"1.092239\"], [\"91.526\", \"15.241242\"], [\"91.510\", \"1.639165\"], [\"91.500\", \"109.124042\"], [\"91.309\", \"1\"], [\"91.300\", \"0.361444\"], [\"91.295\", \"0.105361\"], [\"91.290\", \"0.164311\"], [\"91.260\", \"0.026627\"], [\"91.250\", \"5.479452\"], [\"91.125\", \"30\"], [\"91.121\", \"0.032923\"], [\"91.100\", \"5.488474\"], [\"91.000\", \"66.605268\"], [\"90.950\", \"1.099505\"], [\"90.880\", \"1.12709\"], [\"90.750\", \"40\"], [\"90.595\", \"0.011038\"]], \"asks\": [[\"93.363\", \"7.965492\"], [\"93.385\", \"28.599106\"], [\"93.388\", \"65.853759\"], [\"93.396\", \"131.707519\"], [\"93.406\", \"263.415038\"], [\"93.425\", \"658.537594\"], [\"93.431\", \"6585.37594\"], [\"93.460\", \"0.322117\"], [\"93.463\", \"6585.37594\"], [\"93.469\", \"6585.37594\"], [\"93.490\", \"6585.37594\"], [\"93.500\", \"6585.37594\"], [\"93.530\", \"6585.37594\"], [\"93.590\", \"0.143328\"], [\"93.606\", \"0.1395\"], [\"93.652\", \"0.102243\"], [\"93.700\", \"20\"], [\"93.857\", \"0.184218\"], [\"93.980\", \"0.0259\"], [\"94.000\", \"554.976976\"], [\"94.090\", \"0.16103\"], [\"94.113\", \"0.101178\"], [\"94.200\", \"10.649627\"], [\"94.360\", \"0.0258\"], [\"94.370\", \"0.12\"], [\"94.390\", \"0.099928\"], [\"94.403\", \"0.341093\"], [\"94.479\", \"0.015876\"], [\"94.500\", \"14.280765\"], [\"94.708\", \"0.097925\"], [\"94.736\", \"0.078347\"], [\"94.780\", \"0.0256\"], [\"94.901\", \"0.339301\"], [\"94.908\", \"0.358496\"], [\"94.998\", \"0.338958\"], [\"95.000\", \"418.869644\"], [\"95.100\", \"0.159421\"], [\"95.110\", \"185.976367\"], [\"95.157\", \"0.420831\"], [\"95.160\", \"0.12\"], [\"95.180\", \"0.0255\"], [\"95.500\", \"21.74936\"], [\"95.529\", \"481.45483\"], [\"95.580\", \"0.550104\"], [\"95.601\", \"0.336818\"], [\"95.650\", \"0.104652\"], [\"95.696\", \"10.815569\"], [\"95.737\", \"0.107067\"], [\"95.800\", \"8.37403\"], [\"95.951\", \"0.335588\"]]}, \"admission_quality\": {\"entry\": {\"side\": \"BUY\", \"requested_quantity\": \"0.799319\", \"fillable_quantity\": \"0.799319\", \"unfilled_quantity\": \"0.000000\", \"best_bid\": \"93.300\", \"best_ask\": \"93.363\", \"midpoint_mark\": \"93.3315\", \"spread_bps\": \"6.750132591890197843171919448\", \"bid_depth\": \"40980.957369\", \"ask_depth\": \"42400.662135\", \"book_age_seconds\": \"1.574379\", \"vwap\": \"93.437690400000\", \"gross_notional\": \"74.686521252837\", \"fee\": \"0.074686521252\", \"net_cash_change\": \"-74.761207774089\", \"net_unit_proceeds\": \"0\", \"depth_impact_bps\": \"0\", \"slippage_bps\": \"8\", \"participation\": \"1\", \"allocations\": [[0, \"0.799319\"]]}, \"rejection_reasons\": [\"first_target_destroyed_by_execution_costs\"], \"breakeven_bid\": \"93.69971261333210859879143220\", \"immediate_round_trip_net\": \"-0.318923045778\", \"target_net_scenarios\": [\"-0.1210485911955503999999999966\", \"0.02655936887666160000000000342\", \"0.1741673289488736000000000034\"], \"policy\": \"execution-quality-4.0.0\", \"probability_estimate\": null}, \"strategy_id\": \"A2_CONFIRMED_PULLBACK\", \"holding_hours\": 24, \"holding_seconds\": 3600, \"strategy_evidence\": {\"as_of\": \"2026-10-17T09:45:00+00:00\", \"entry_eligible\": true, \"execution_quality_required\": true, \"experimental_context\": {\"15m\": {\"available_at\": \"2026-10-17T09:45:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 239, \"ready\": true}, \"60m\": {\"available_at\": \"2026-10-17T09:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 59, \"ready\": true}, \"as_of\": \"2026-10-17T09:50:46.671000+00:00\", \"breakout_relative_volume\": \"0.6014206229344261609811156215\", \"current_volume\": \"2.937088\", \"last_open\": \"93.341\", \"prebreak_width\": \"0.002327314419823422970261819810\", \"previous_high\": \"93.342\", \"previous_volume\": \"4.409778\", \"ready\": true}, \"holding_bars\": 12, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"2\", \"target_atr\": \"2\"}, \"qualified\": true, \"regime\": \"COMPRESSION\", \"relative_return\": \"-0.00094702940388390539272991175\", \"strategy_version\": \"4.2.0-experimental.1\", \"timeframe\": \"5m\", \"unvalidated\": true, \"veto\": false}}",
+          "decision_payload": "{\"accepted\": true, \"action\": \"BUY\", \"ai_assessment_id\": null, \"decision_id\": \"dec_6f42f68979504b32af4c1ea91e2f002c\", \"entry_price\": \"93.363\", \"explanation\": \"aggregate_signal_score=1; explicit_eligible_strategies=['A2_CONFIRMED_PULLBACK']; risk_paper_only=True; risk_quote_amount_positive=True; risk_entry_price_positive=True; risk_stop_loss_positive=True; risk_long_stop_below_entry=True; risk_minimum_order_size=True; risk_position_size=True; risk_cash_available=True; risk_reserve_preserved=True; risk_total_exposure=True; risk_allocated_capital=True; risk_position_count=True; risk_planned_loss=True; risk_daily_loss_budget=True; risk_weekly_loss_budget=True; risk_entry_frequency=True\", \"proposed_quantity\": \"0.799319\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": null, \"signal_ids\": [\"sig_4b3ffdb3426647f3b67fd4afe92227da\", \"sig_069ce68d03324d4a9c81529ae6ce1e23\", \"sig_297648230fbf417a8d5209d0178f82cd\", \"sig_de25128afbba4c33b1c5c26d9aba9f1c\", \"sig_ff9b76fe890b408cabe0270eedda847c\", \"sig_7c2bd6b732a94907aefe064f33e91f5f\"], \"stop_loss\": \"93.177\", \"symbol\": \"SOL-EUR\", \"take_profit_targets\": [\"93.548\", \"93.733\", \"93.918\"], \"timestamp\": \"2026-10-17 09:50:48.110997+00:00\"}",
+          "created_at": "2026-10-17 09:50:48.248930+00:00"
+        },
+        {
+          "order_id": "ord_40aaa216d611410ab9ecbaa261f726c5",
+          "decision_id": "dec_b1ff7eef88ca490993a9fd048e907297",
+          "symbol": "ETH-EUR",
+          "side": "BUY",
+          "status": "REJECTED",
+          "quantity": "0.034448360000",
+          "quote_amount": "75.000000000000",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "execution_json": "{\"fee_bps\": \"10\", \"slippage_bps\": \"8\", \"rejection_reason\": \"execution_quality:first_target_destroyed_by_execution_costs\", \"quantity_step\": \"1E-8\", \"limit_price\": null, \"stop_loss\": \"2163.24\", \"targets\": [\"2169.43\", \"2172.53\", \"2175.63\"], \"book\": {\"timestamp\": \"2026-10-17T09:50:44.675000+00:00\", \"source\": \"revolut-x\", \"bids\": [[\"2164.63\", \"2.05445805\"], [\"2164.61\", \"3.063\"], [\"2164.18\", \"30.15086\"], [\"2163.45\", \"0.00184889\"], [\"2163.38\", \"5.45812108\"], [\"2163.00\", \"0.1\"], [\"2162.55\", \"0.0184394\"], [\"2162.50\", \"0.1\"], [\"2162.00\", \"0.1\"], [\"2160.06\", \"500\"], [\"2160.00\", \"0.47916665\"], [\"2156.28\", \"0.09275233\"], [\"2153.74\", \"0.13929257\"], [\"2153.05\", \"0.00460277\"], [\"2152.61\", \"0.00464552\"], [\"2151.85\", \"0.00113855\"], [\"2150.00\", \"0.09302324\"], [\"2148.69\", \"0.01163499\"], [\"2148.67\", \"500\"], [\"2146.68\", \"0.01\"], [\"2146.38\", \"500\"], [\"2145.46\", \"0.02563552\"], [\"2143.22\", \"500\"], [\"2143.15\", \"0.00114317\"], [\"2142.23\", \"0.01167008\"], [\"2141.90\", \"0.00466875\"], [\"2140.77\", \"0.00700682\"], [\"2140.00\", \"1.02336448\"], [\"2139.65\", \"500\"], [\"2139.00\", \"0.0116877\"], [\"2138.66\", \"500\"], [\"2137.16\", \"0.01\"], [\"2137.00\", \"4\"], [\"2135.00\", \"1.01326463\"], [\"2134.84\", \"0.01132018\"], [\"2134.25\", \"0.00114794\"], [\"2132.00\", \"0.76228424\"], [\"2131.52\", \"0.00070372\"], [\"2131.29\", \"0.00469199\"], [\"2130.00\", \"0.23192957\"], [\"2129.00\", \"0.00032409\"], [\"2128.98\", \"1\"], [\"2127.14\", \"0.01\"], [\"2127.00\", \"0.02822284\"], [\"2126.92\", \"0.00195901\"], [\"2125.60\", \"0.00115261\"], [\"2125.00\", \"1.47576467\"], [\"2122.00\", \"0.1\"], [\"2121.33\", \"0.02357011\"], [\"2121.00\", \"0.48573785\"]], \"asks\": [[\"2166.34\", \"3.063\"], [\"2166.57\", \"2.0544591\"], [\"2166.63\", \"30.15086\"], [\"2167.00\", \"0.5\"], [\"2167.91\", \"0.01847174\"], [\"2168.00\", \"0.64372659\"], [\"2168.87\", \"0.03713623\"], [\"2169.00\", \"0.1\"], [\"2169.34\", \"500\"], [\"2169.60\", \"0.0011\"], [\"2170.00\", \"0.30671169\"], [\"2171.59\", \"0.01\"], [\"2171.64\", \"0.01132018\"], [\"2171.84\", \"0.02338579\"], [\"2174.14\", \"0.00462252\"], [\"2174.59\", \"0.00068978\"], [\"2175.00\", \"2\"], [\"2175.04\", \"0.00323\"], [\"2175.77\", \"1.50299677\"], [\"2176.00\", \"0.03724082\"], [\"2176.30\", \"0.04147847\"], [\"2177.43\", \"500\"], [\"2177.82\", \"500\"], [\"2178.60\", \"0.0011\"], [\"2180.00\", \"0.00458716\"], [\"2180.67\", \"0.0006906\"], [\"2181.00\", \"0.00063646\"], [\"2181.18\", \"500\"], [\"2181.38\", \"500\"], [\"2183.01\", \"500\"], [\"2183.60\", \"0.03688556\"], [\"2185.00\", \"0.2\"], [\"2185.02\", \"0.00459951\"], [\"2186.00\", \"1.00300817\"], [\"2186.24\", \"0.0414093\"], [\"2186.30\", \"0.04157309\"], [\"2186.52\", \"0.01\"], [\"2186.67\", \"0.02303741\"], [\"2187.05\", \"0.01598043\"], [\"2187.60\", \"0.0011\"], [\"2189.63\", \"0.04126282\"], [\"2190.00\", \"1.8694004\"], [\"2190.04\", \"0.01132018\"], [\"2191.19\", \"0.89914\"], [\"2192.16\", \"0.007136\"], [\"2192.94\", \"0.04120041\"], [\"2195.00\", \"0.94645794\"], [\"2195.89\", \"0.00457674\"], [\"2196.45\", \"0.0011\"], [\"2198.43\", \"0.03663674\"]]}, \"admission_quality\": {\"entry\": {\"side\": \"BUY\", \"requested_quantity\": \"0.03444836\", \"fillable_quantity\": \"0.03444836\", \"unfilled_quantity\": \"0E-8\", \"best_bid\": \"2164.63\", \"best_ask\": \"2166.34\", \"midpoint_mark\": \"2165.485\", \"spread_bps\": \"7.896614384306517939399256979\", \"bid_depth\": \"3052.13023401\", \"ask_depth\": \"3045.75326860\", \"book_age_seconds\": \"3.364398\", \"vwap\": \"2168.073072000000\", \"gross_notional\": \"74.686561690561\", \"fee\": \"0.074686561690\", \"net_cash_change\": \"-74.761248252251\", \"net_unit_proceeds\": \"0\", \"depth_impact_bps\": \"0\", \"slippage_bps\": \"8\", \"participation\": \"1\", \"allocations\": [[0, \"0.03444836\"]]}, \"rejection_reasons\": [\"first_target_destroyed_by_execution_costs\"], \"breakeven_bid\": \"2174.152880935335837645463458\", \"immediate_round_trip_net\": \"-0.327457407400\", \"target_net_scenarios\": [\"-0.1624027809491321599999999933\", \"-0.05580500136599935999999999335\", \"0.05079277821713344000000000665\"], \"policy\": \"execution-quality-4.0.0\", \"probability_estimate\": null}, \"strategy_id\": \"A2_CONFIRMED_PULLBACK\", \"holding_hours\": 24, \"holding_seconds\": 3600, \"strategy_evidence\": {\"as_of\": \"2026-10-17T09:45:00+00:00\", \"entry_eligible\": true, \"execution_quality_required\": true, \"experimental_context\": {\"15m\": {\"available_at\": \"2026-10-17T09:45:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 239, \"ready\": true}, \"60m\": {\"available_at\": \"2026-10-17T09:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 59, \"ready\": true}, \"as_of\": \"2026-10-17T09:50:44.675000+00:00\", \"breakout_relative_volume\": \"0.3307845789961553691287072449\", \"current_volume\": \"0.70756163\", \"last_open\": \"2164.99\", \"prebreak_width\": \"0.001562427943838142561079932996\", \"previous_high\": \"2164.56\", \"previous_volume\": \"0.19762654\", \"ready\": true}, \"holding_bars\": 12, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"2\", \"target_atr\": \"2\"}, \"qualified\": true, \"regime\": \"COMPRESSION\", \"relative_return\": \"0.0012767233936291287271872409\", \"strategy_version\": \"4.2.0-experimental.1\", \"timeframe\": \"5m\", \"unvalidated\": true, \"veto\": false}}",
+          "decision_payload": "{\"accepted\": true, \"action\": \"BUY\", \"ai_assessment_id\": null, \"decision_id\": \"dec_b1ff7eef88ca490993a9fd048e907297\", \"entry_price\": \"2166.34\", \"explanation\": \"aggregate_signal_score=1; explicit_eligible_strategies=['A2_CONFIRMED_PULLBACK']; risk_paper_only=True; risk_quote_amount_positive=True; risk_entry_price_positive=True; risk_stop_loss_positive=True; risk_long_stop_below_entry=True; risk_minimum_order_size=True; risk_position_size=True; risk_cash_available=True; risk_reserve_preserved=True; risk_total_exposure=True; risk_allocated_capital=True; risk_position_count=True; risk_planned_loss=True; risk_daily_loss_budget=True; risk_weekly_loss_budget=True; risk_entry_frequency=True\", \"proposed_quantity\": \"0.03444836\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": null, \"signal_ids\": [\"sig_aee16bd7cc474a5d98f76b6e022aa531\", \"sig_e0d68bc6f12e4bbda676c6f242cc21a4\", \"sig_e5ad87938fb24fbb883493bfc16a9119\", \"sig_fd0412aece754d19b717ecf288612ca4\", \"sig_a002d5db37434c07a7a6162012aa00f0\", \"sig_4fa1fafe729f45a28df81ccaed7f56d2\"], \"stop_loss\": \"2163.24\", \"symbol\": \"ETH-EUR\", \"take_profit_targets\": [\"2169.43\", \"2172.53\", \"2175.63\"], \"timestamp\": \"2026-10-17 09:50:47.903112+00:00\"}",
+          "created_at": "2026-10-17 09:50:48.042716+00:00"
+        },
+        {
+          "order_id": "ord_06e1839d74964c04bcc9586056187938",
+          "decision_id": "dec_ba64391444334447bf1e0902c0a17a20",
+          "symbol": "ETH-EUR",
+          "side": "BUY",
+          "status": "REJECTED",
+          "quantity": "0.034469840000",
+          "quote_amount": "75.000000000000",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "execution_json": "{\"fee_bps\": \"10\", \"slippage_bps\": \"8\", \"rejection_reason\": \"execution_quality:first_target_destroyed_by_execution_costs\", \"quantity_step\": \"1E-8\", \"limit_price\": null, \"stop_loss\": \"2162.16\", \"targets\": [\"2167.81\", \"2170.64\", \"2173.46\"], \"book\": {\"timestamp\": \"2026-10-17T09:45:43.027000+00:00\", \"source\": \"revolut-x\", \"bids\": [[\"2163.51\", \"2.05587911\"], [\"2163.45\", \"0.00184889\"], [\"2163.38\", \"5.45812108\"], [\"2163.28\", \"3.063\"], [\"2163.00\", \"0.1\"], [\"2162.90\", \"30.15086\"], [\"2162.55\", \"0.0184394\"], [\"2162.50\", \"0.1\"], [\"2162.00\", \"0.1\"], [\"2160.06\", \"500\"], [\"2160.00\", \"0.47916665\"], [\"2156.28\", \"0.09275233\"], [\"2153.74\", \"0.13929257\"], [\"2153.05\", \"0.00460277\"], [\"2152.61\", \"0.00464552\"], [\"2151.85\", \"0.00113855\"], [\"2150.00\", \"0.09302324\"], [\"2148.69\", \"0.01163499\"], [\"2148.67\", \"500\"], [\"2146.68\", \"0.01\"], [\"2146.38\", \"500\"], [\"2145.46\", \"0.02563552\"], [\"2143.22\", \"500\"], [\"2143.15\", \"0.00114317\"], [\"2142.23\", \"0.01167008\"], [\"2141.90\", \"0.00466875\"], [\"2140.77\", \"0.00700682\"], [\"2140.00\", \"1.02336448\"], [\"2139.65\", \"500\"], [\"2139.00\", \"0.0116877\"], [\"2138.66\", \"500\"], [\"2137.16\", \"0.01\"], [\"2137.00\", \"4\"], [\"2135.00\", \"1.01326463\"], [\"2134.84\", \"0.01132018\"], [\"2134.25\", \"0.00114794\"], [\"2132.00\", \"0.76228424\"], [\"2131.52\", \"0.00070372\"], [\"2131.29\", \"0.00469199\"], [\"2130.00\", \"0.23192957\"], [\"2129.00\", \"0.00032409\"], [\"2128.98\", \"1\"], [\"2127.14\", \"0.01\"], [\"2127.00\", \"0.02822284\"], [\"2126.92\", \"0.00195901\"], [\"2125.60\", \"0.00115261\"], [\"2125.00\", \"1.47576467\"], [\"2122.00\", \"0.1\"], [\"2121.33\", \"0.02357011\"], [\"2121.00\", \"0.48573785\"]], \"asks\": [[\"2164.99\", \"3.063\"], [\"2165.13\", \"2.05584398\"], [\"2165.23\", \"30.15086\"], [\"2167.00\", \"0.5\"], [\"2167.91\", \"0.01847174\"], [\"2168.00\", \"0.64372659\"], [\"2168.87\", \"0.03713623\"], [\"2169.00\", \"0.1\"], [\"2169.34\", \"500\"], [\"2169.60\", \"0.0011\"], [\"2170.00\", \"0.30671169\"], [\"2171.59\", \"0.01\"], [\"2171.64\", \"0.01132018\"], [\"2171.84\", \"0.02338579\"], [\"2174.14\", \"0.00462252\"], [\"2174.59\", \"0.00068978\"], [\"2175.00\", \"2\"], [\"2175.04\", \"0.00323\"], [\"2175.77\", \"1.50299677\"], [\"2176.00\", \"0.03724082\"], [\"2176.30\", \"0.04147847\"], [\"2177.43\", \"500\"], [\"2177.82\", \"500\"], [\"2178.60\", \"0.0011\"], [\"2180.00\", \"0.00458716\"], [\"2180.67\", \"0.0006906\"], [\"2181.00\", \"0.00063646\"], [\"2181.18\", \"500\"], [\"2181.38\", \"500\"], [\"2183.01\", \"500\"], [\"2183.60\", \"0.03688556\"], [\"2185.00\", \"0.2\"], [\"2185.02\", \"0.00459951\"], [\"2186.00\", \"1.00300817\"], [\"2186.24\", \"0.0414093\"], [\"2186.30\", \"0.04157309\"], [\"2186.52\", \"0.01\"], [\"2186.67\", \"0.02303741\"], [\"2187.05\", \"0.01598043\"], [\"2187.60\", \"0.0011\"], [\"2189.63\", \"0.04126282\"], [\"2190.00\", \"1.8694004\"], [\"2190.04\", \"0.01132018\"], [\"2191.19\", \"0.89914\"], [\"2192.16\", \"0.007136\"], [\"2192.94\", \"0.04120041\"], [\"2195.00\", \"0.94645794\"], [\"2195.89\", \"0.00457674\"], [\"2196.45\", \"0.0011\"], [\"2198.43\", \"0.03663674\"]]}, \"admission_quality\": {\"entry\": {\"side\": \"BUY\", \"requested_quantity\": \"0.03446984\", \"fillable_quantity\": \"0.03446984\", \"unfilled_quantity\": \"0E-8\", \"best_bid\": \"2163.51\", \"best_ask\": \"2164.99\", \"midpoint_mark\": \"2164.25\", \"spread_bps\": \"6.838396673212429248007392861\", \"bid_depth\": \"3052.13165507\", \"ask_depth\": \"3045.75465348\", \"book_age_seconds\": \"4.120384\", \"vwap\": \"2166.721992000000\", \"gross_notional\": \"74.686560388721\", \"fee\": \"0.074686560388\", \"net_cash_change\": \"-74.761246949109\", \"net_unit_proceeds\": \"0\", \"depth_impact_bps\": \"0\", \"slippage_bps\": \"8\", \"participation\": \"1\", \"allocations\": [[0, \"0.03446984\"]]}, \"rejection_reasons\": [\"first_target_destroyed_by_execution_costs\"], \"breakeven_bid\": \"2172.798012175477070342416403\", \"immediate_round_trip_net\": \"-0.319580268403\", \"target_net_scenarios\": [\"-0.1716266343886396799999999987\", \"-0.07425249851388191999999999868\", \"0.02277755914223712000000000132\"], \"policy\": \"execution-quality-4.0.0\", \"probability_estimate\": null}, \"strategy_id\": \"A2_CONFIRMED_PULLBACK\", \"holding_hours\": 24, \"holding_seconds\": 3600, \"strategy_evidence\": {\"as_of\": \"2026-10-17T09:40:00+00:00\", \"entry_eligible\": true, \"execution_quality_required\": true, \"experimental_context\": {\"15m\": {\"available_at\": \"2026-10-17T09:45:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 240, \"ready\": true}, \"60m\": {\"available_at\": \"2026-10-17T09:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 59, \"ready\": true}, \"as_of\": \"2026-10-17T09:45:43.027000+00:00\", \"breakout_relative_volume\": \"0.01962168423087991667430758822\", \"current_volume\": \"0.19762654\", \"last_open\": \"2163.45\", \"prebreak_width\": \"0.001526398155694040488721830565\", \"previous_high\": \"2164.34\", \"previous_volume\": \"0.01183151\", \"ready\": true}, \"holding_bars\": 12, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"2\", \"target_atr\": \"2\"}, \"qualified\": true, \"regime\": \"COMPRESSION\", \"relative_return\": \"0.0009357320301121553813181537\", \"strategy_version\": \"4.2.0-experimental.1\", \"timeframe\": \"5m\", \"unvalidated\": true, \"veto\": false}}",
+          "decision_payload": "{\"accepted\": true, \"action\": \"BUY\", \"ai_assessment_id\": null, \"decision_id\": \"dec_ba64391444334447bf1e0902c0a17a20\", \"entry_price\": \"2164.99\", \"explanation\": \"aggregate_signal_score=1; explicit_eligible_strategies=['A2_CONFIRMED_PULLBACK']; risk_paper_only=True; risk_quote_amount_positive=True; risk_entry_price_positive=True; risk_stop_loss_positive=True; risk_long_stop_below_entry=True; risk_minimum_order_size=True; risk_position_size=True; risk_cash_available=True; risk_reserve_preserved=True; risk_total_exposure=True; risk_allocated_capital=True; risk_position_count=True; risk_planned_loss=True; risk_daily_loss_budget=True; risk_weekly_loss_budget=True; risk_entry_frequency=True\", \"proposed_quantity\": \"0.03446984\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": null, \"signal_ids\": [\"sig_cf5944b52cea4a6a9bca903b58cad2ff\", \"sig_46594263a7f54ce5a231112ed4e7276c\", \"sig_e7927445211a425cbae84aa6e537b529\", \"sig_92fadf60113142a0a9cea2dd11a06c5a\", \"sig_e02a697f6e7841dc84198fd965aef571\", \"sig_17c5f86887dc4e749785976a4ceee01e\"], \"stop_loss\": \"2162.16\", \"symbol\": \"ETH-EUR\", \"take_profit_targets\": [\"2167.81\", \"2170.64\", \"2173.46\"], \"timestamp\": \"2026-10-17 09:45:47.023081+00:00\"}",
+          "created_at": "2026-10-17 09:45:47.150649+00:00"
+        },
+        {
+          "order_id": "ord_4dfc1cedc5df44b0be4410cd4dd2969d",
+          "decision_id": "dec_9819e81fe60c4888868649574032a57a",
+          "symbol": "ETH-EUR",
+          "side": "BUY",
+          "status": "REJECTED",
+          "quantity": "0.034479230000",
+          "quote_amount": "75.000000000000",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "execution_json": "{\"fee_bps\": \"10\", \"slippage_bps\": \"8\", \"rejection_reason\": \"execution_quality:first_target_destroyed_by_execution_costs\", \"quantity_step\": \"1E-8\", \"limit_price\": null, \"stop_loss\": \"2161.96\", \"targets\": [\"2166.84\", \"2169.28\", \"2171.72\"], \"book\": {\"timestamp\": \"2026-10-17T09:25:42.414000+00:00\", \"source\": \"revolut-x\", \"bids\": [[\"2163.74\", \"2.05636962\"], [\"2163.00\", \"4.59673601\"], [\"2162.58\", \"3.063\"], [\"2162.55\", \"0.0184394\"], [\"2162.50\", \"0.1\"], [\"2162.34\", \"30.15086\"], [\"2162.00\", \"0.1\"], [\"2160.06\", \"500\"], [\"2160.00\", \"0.47916665\"], [\"2156.28\", \"0.09275233\"], [\"2153.74\", \"0.13929257\"], [\"2153.05\", \"0.00460277\"], [\"2152.61\", \"0.00464552\"], [\"2151.85\", \"0.00113855\"], [\"2150.00\", \"0.09302324\"], [\"2148.69\", \"0.01163499\"], [\"2148.67\", \"500\"], [\"2146.68\", \"0.01\"], [\"2146.38\", \"500\"], [\"2145.46\", \"0.02563552\"], [\"2143.22\", \"500\"], [\"2143.15\", \"0.00114317\"], [\"2142.23\", \"0.01167008\"], [\"2141.90\", \"0.00466875\"], [\"2140.77\", \"0.00700682\"], [\"2140.00\", \"1.02336448\"], [\"2139.65\", \"500\"], [\"2139.00\", \"0.0116877\"], [\"2138.66\", \"500\"], [\"2137.16\", \"0.01\"], [\"2137.00\", \"4\"], [\"2135.00\", \"1.01326463\"], [\"2134.84\", \"0.01132018\"], [\"2134.25\", \"0.00114794\"], [\"2132.00\", \"0.76228424\"], [\"2131.52\", \"0.00070372\"], [\"2131.29\", \"0.00469199\"], [\"2130.00\", \"0.23192957\"], [\"2129.00\", \"0.00032409\"], [\"2128.98\", \"1\"], [\"2127.14\", \"0.01\"], [\"2127.00\", \"0.02822284\"], [\"2126.92\", \"0.00195901\"], [\"2125.60\", \"0.00115261\"], [\"2125.00\", \"1.47576467\"], [\"2122.00\", \"0.1\"], [\"2121.33\", \"0.02357011\"], [\"2121.00\", \"0.48573785\"], [\"2120.69\", \"0.00471544\"], [\"2120.00\", \"1.94895751\"]], \"asks\": [[\"2164.40\", \"3.063\"], [\"2164.48\", \"2.05618826\"], [\"2164.84\", \"30.15086\"], [\"2167.00\", \"0.5\"], [\"2167.91\", \"0.01847174\"], [\"2168.00\", \"0.64372659\"], [\"2168.87\", \"0.03713623\"], [\"2169.00\", \"0.1\"], [\"2169.34\", \"500\"], [\"2169.60\", \"0.0011\"], [\"2170.00\", \"0.30671169\"], [\"2171.59\", \"0.01\"], [\"2171.64\", \"0.01132018\"], [\"2171.84\", \"0.02338579\"], [\"2174.14\", \"0.00462252\"], [\"2174.59\", \"0.00068978\"], [\"2175.00\", \"2\"], [\"2175.04\", \"0.00323\"], [\"2175.77\", \"1.50299677\"], [\"2176.00\", \"0.03724082\"], [\"2176.30\", \"0.04147847\"], [\"2177.43\", \"500\"], [\"2177.82\", \"500\"], [\"2178.60\", \"0.0011\"], [\"2180.00\", \"0.00458716\"], [\"2180.67\", \"0.0006906\"], [\"2181.00\", \"0.00063646\"], [\"2181.18\", \"500\"], [\"2181.38\", \"500\"], [\"2183.01\", \"500\"], [\"2183.60\", \"0.03688556\"], [\"2185.00\", \"0.2\"], [\"2185.02\", \"0.00459951\"], [\"2186.00\", \"1.00300817\"], [\"2186.24\", \"0.0414093\"], [\"2186.30\", \"0.04157309\"], [\"2186.52\", \"0.01\"], [\"2186.67\", \"0.02303741\"], [\"2187.05\", \"0.01598043\"], [\"2187.60\", \"0.0011\"], [\"2189.63\", \"0.04126282\"], [\"2190.00\", \"1.8694004\"], [\"2190.04\", \"0.01132018\"], [\"2191.19\", \"0.89914\"], [\"2192.16\", \"0.007136\"], [\"2192.94\", \"0.04120041\"], [\"2195.00\", \"0.94645794\"], [\"2195.89\", \"0.00457674\"], [\"2196.45\", \"0.0011\"], [\"2198.43\", \"0.03663674\"]]}, \"admission_quality\": {\"entry\": {\"side\": \"BUY\", \"requested_quantity\": \"0.03447923\", \"fillable_quantity\": \"0.03447923\", \"unfilled_quantity\": \"0E-8\", \"best_bid\": \"2163.74\", \"best_ask\": \"2164.40\", \"midpoint_mark\": \"2164.07\", \"spread_bps\": \"3.049808924849935538129542945\", \"bid_depth\": \"3053.12258457\", \"ask_depth\": \"3045.75499776\", \"book_age_seconds\": \"1.917469\", \"vwap\": \"2166.131520000000\", \"gross_notional\": \"74.686546888329\", \"fee\": \"0.074686546888\", \"net_cash_change\": \"-74.761233435217\", \"net_unit_proceeds\": \"0\", \"depth_impact_bps\": \"0\", \"slippage_bps\": \"8\", \"participation\": \"1\", \"allocations\": [[0, \"0.03447923\"]]}, \"rejection_reasons\": [\"first_target_destroyed_by_execution_costs\"], \"breakeven_bid\": \"2172.205884347090323751558410\", \"immediate_round_trip_net\": \"-0.291371992162\", \"target_net_scenarios\": [\"-0.1846786877569734399999999951\", \"-0.1007007320316764799999999951\", \"-0.01672277630637951999999999513\"], \"policy\": \"execution-quality-4.0.0\", \"probability_estimate\": null}, \"strategy_id\": \"A2_CONFIRMED_PULLBACK\", \"holding_hours\": 24, \"holding_seconds\": 3600, \"strategy_evidence\": {\"as_of\": \"2026-10-17T09:20:00+00:00\", \"entry_eligible\": true, \"execution_quality_required\": true, \"experimental_context\": {\"15m\": {\"available_at\": \"2026-10-17T09:15:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 239, \"ready\": true}, \"60m\": {\"available_at\": \"2026-10-17T09:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 59, \"ready\": true}, \"as_of\": \"2026-10-17T09:25:42.414000+00:00\", \"breakout_relative_volume\": \"0.7795796602900735114218711805\", \"current_volume\": \"0.04503256\", \"last_open\": \"2164.32\", \"prebreak_width\": \"0.001615870130367799410953565408\", \"previous_high\": \"2165.06\", \"previous_volume\": \"0.48446805\", \"ready\": true}, \"holding_bars\": 12, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"2\", \"target_atr\": \"2\"}, \"qualified\": true, \"regime\": \"COMPRESSION\", \"relative_return\": \"0.0005124770734307364415811404\", \"strategy_version\": \"4.2.0-experimental.1\", \"timeframe\": \"5m\", \"unvalidated\": true, \"veto\": false}}",
+          "decision_payload": "{\"accepted\": true, \"action\": \"BUY\", \"ai_assessment_id\": null, \"decision_id\": \"dec_9819e81fe60c4888868649574032a57a\", \"entry_price\": \"2164.40\", \"explanation\": \"aggregate_signal_score=1; explicit_eligible_strategies=['A2_CONFIRMED_PULLBACK']; risk_paper_only=True; risk_quote_amount_positive=True; risk_entry_price_positive=True; risk_stop_loss_positive=True; risk_long_stop_below_entry=True; risk_minimum_order_size=True; risk_position_size=True; risk_cash_available=True; risk_reserve_preserved=True; risk_total_exposure=True; risk_allocated_capital=True; risk_position_count=True; risk_planned_loss=True; risk_daily_loss_budget=True; risk_weekly_loss_budget=True; risk_entry_frequency=True\", \"proposed_quantity\": \"0.03447923\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": null, \"signal_ids\": [\"sig_1b9ff661f7e84aeb9f3151a6c3897886\", \"sig_84769ce252374f0385baa42be3a80398\", \"sig_59203aa02af6411f92d41968dc87bbeb\", \"sig_7106d52631b54c3e9f05479588babae2\", \"sig_5a0b813238c6401c9ee2f42113592ca6\", \"sig_94756b4c27044f6caa0dfda8bd32d1f6\"], \"stop_loss\": \"2161.96\", \"symbol\": \"ETH-EUR\", \"take_profit_targets\": [\"2166.84\", \"2169.28\", \"2171.72\"], \"timestamp\": \"2026-10-17 09:25:44.128994+00:00\"}",
+          "created_at": "2026-10-17 09:25:44.335964+00:00"
+        },
+        {
+          "order_id": "ord_891638cfabfb4dd59e352efc636152f8",
+          "decision_id": "dec_616682ad80044fab9004981aa724b201",
+          "symbol": "SOL-EUR",
+          "side": "BUY",
+          "status": "REJECTED",
+          "quantity": "0.798908000000",
+          "quote_amount": "75.000000000000",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "execution_json": "{\"fee_bps\": \"10\", \"slippage_bps\": \"8\", \"rejection_reason\": \"execution_quality:first_target_destroyed_by_execution_costs\", \"quantity_step\": \"0.000001\", \"limit_price\": null, \"stop_loss\": \"93.238\", \"targets\": [\"93.584\", \"93.757\", \"93.930\"], \"book\": {\"timestamp\": \"2026-10-17T09:15:39.636000+00:00\", \"source\": \"revolut-x\", \"bids\": [[\"93.349\", \"28.5944\"], [\"93.327\", \"65.853759\"], [\"93.318\", \"131.707519\"], [\"93.314\", \"263.415038\"], [\"93.306\", \"16.076136\"], [\"93.300\", \"658.537594\"], [\"93.264\", \"6585.37594\"], [\"93.219\", \"6585.37594\"], [\"93.217\", \"6585.37594\"], [\"93.201\", \"6585.37594\"], [\"93.139\", \"6585.37594\"], [\"93.128\", \"6585.37594\"], [\"93.100\", \"1.161117\"], [\"92.810\", \"0.026182\"], [\"92.694\", \"0.103555\"], [\"92.607\", \"0.016197\"], [\"92.600\", \"0.227991\"], [\"92.547\", \"0.02161\"], [\"92.515\", \"2.161811\"], [\"92.500\", \"3.324324\"], [\"92.420\", \"0.026293\"], [\"92.366\", \"0.10349\"], [\"92.210\", \"0.162672\"], [\"92.180\", \"0.12\"], [\"92.030\", \"0.026404\"], [\"92.000\", \"8.770977\"], [\"91.900\", \"3.264417\"], [\"91.895\", \"0.102606\"], [\"91.770\", \"0.12\"], [\"91.700\", \"0.596401\"], [\"91.610\", \"0.026525\"], [\"91.600\", \"10.91703\"], [\"91.560\", \"0.102326\"], [\"91.555\", \"1.092239\"], [\"91.526\", \"15.241242\"], [\"91.510\", \"1.639165\"], [\"91.500\", \"107.124042\"], [\"91.300\", \"0.361444\"], [\"91.295\", \"0.105361\"], [\"91.290\", \"0.164311\"], [\"91.260\", \"0.026627\"], [\"91.250\", \"5.479452\"], [\"91.125\", \"30\"], [\"91.121\", \"0.032923\"], [\"91.100\", \"5.488474\"], [\"91.000\", \"77.33175\"], [\"90.950\", \"1.099505\"], [\"90.880\", \"1.12709\"], [\"90.750\", \"40\"], [\"90.595\", \"0.011038\"]], \"asks\": [[\"93.411\", \"28.595374\"], [\"93.412\", \"65.853759\"], [\"93.419\", \"131.707519\"], [\"93.447\", \"263.415038\"], [\"93.459\", \"658.537594\"], [\"93.477\", \"6585.37594\"], [\"93.524\", \"6585.37594\"], [\"93.529\", \"6585.37594\"], [\"93.569\", \"6585.37594\"], [\"93.579\", \"6585.37594\"], [\"93.590\", \"0.143328\"], [\"93.606\", \"0.1395\"], [\"93.624\", \"6585.37594\"], [\"93.652\", \"0.102243\"], [\"93.700\", \"20\"], [\"93.857\", \"0.184218\"], [\"93.980\", \"0.0259\"], [\"94.000\", \"554.976976\"], [\"94.090\", \"0.16103\"], [\"94.113\", \"0.101178\"], [\"94.200\", \"10.649627\"], [\"94.360\", \"0.0258\"], [\"94.370\", \"0.12\"], [\"94.390\", \"0.099928\"], [\"94.403\", \"0.341093\"], [\"94.479\", \"0.015876\"], [\"94.500\", \"14.280765\"], [\"94.708\", \"0.097925\"], [\"94.736\", \"0.078347\"], [\"94.780\", \"0.0256\"], [\"94.901\", \"0.339301\"], [\"94.908\", \"0.358496\"], [\"94.998\", \"0.338958\"], [\"95.000\", \"158.417529\"], [\"95.100\", \"0.159421\"], [\"95.110\", \"185.976367\"], [\"95.157\", \"0.420831\"], [\"95.160\", \"0.12\"], [\"95.180\", \"0.0255\"], [\"95.500\", \"21.74936\"], [\"95.529\", \"481.45483\"], [\"95.580\", \"0.550104\"], [\"95.601\", \"0.336818\"], [\"95.650\", \"0.104652\"], [\"95.696\", \"10.815569\"], [\"95.737\", \"0.107067\"], [\"95.800\", \"8.37403\"], [\"95.951\", \"0.335588\"], [\"95.953\", \"0.528843\"], [\"95.955\", \"3.68421\"]]}, \"admission_quality\": {\"entry\": {\"side\": \"BUY\", \"requested_quantity\": \"0.798908\", \"fillable_quantity\": \"0.798908\", \"unfilled_quantity\": \"0.000000\", \"best_bid\": \"93.349\", \"best_ask\": \"93.411\", \"midpoint_mark\": \"93.380\", \"spread_bps\": \"6.639537374170057828228742771\", \"bid_depth\": \"40994.146677\", \"ask_depth\": \"42136.131732\", \"book_age_seconds\": \"4.691154\", \"vwap\": \"93.485728800000\", \"gross_notional\": \"74.686496624150\", \"fee\": \"0.074686496624\", \"net_cash_change\": \"-74.761183120774\", \"net_unit_proceeds\": \"0\", \"depth_impact_bps\": \"0\", \"slippage_bps\": \"8\", \"participation\": \"1\", \"allocations\": [[0, \"0.798908\"]]}, \"rejection_reasons\": [\"first_target_destroyed_by_execution_costs\"], \"breakeven_bid\": \"93.74788572479536287648371853\", \"immediate_round_trip_net\": \"-0.318099640169\", \"target_net_scenarios\": [\"-0.1306940480585824000000000029\", \"0.007268366559084799999999997130\", \"0.1452307811767519999999999971\"], \"policy\": \"execution-quality-4.0.0\", \"probability_estimate\": null}, \"strategy_id\": \"A2_CONFIRMED_PULLBACK\", \"holding_hours\": 24, \"holding_seconds\": 3600, \"strategy_evidence\": {\"as_of\": \"2026-10-17T09:10:00+00:00\", \"entry_eligible\": true, \"execution_quality_required\": true, \"experimental_context\": {\"15m\": {\"available_at\": \"2026-10-17T09:15:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 240, \"ready\": true}, \"60m\": {\"available_at\": \"2026-10-17T09:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 59, \"ready\": true}, \"as_of\": \"2026-10-17T09:15:39.636000+00:00\", \"breakout_relative_volume\": \"4.887704278667039215512642010\", \"current_volume\": \"2.194357\", \"last_open\": \"93.411\", \"prebreak_width\": \"0.003069296347572631124633797756\", \"previous_high\": \"93.393\", \"previous_volume\": \"24.644794\", \"ready\": true}, \"holding_bars\": 12, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"2\", \"target_atr\": \"2\"}, \"qualified\": true, \"regime\": \"COMPRESSION\", \"relative_return\": \"-0.00084280722639490072286801235\", \"strategy_version\": \"4.2.0-experimental.1\", \"timeframe\": \"5m\", \"unvalidated\": true, \"veto\": false}}",
+          "decision_payload": "{\"accepted\": true, \"action\": \"BUY\", \"ai_assessment_id\": null, \"decision_id\": \"dec_616682ad80044fab9004981aa724b201\", \"entry_price\": \"93.411\", \"explanation\": \"aggregate_signal_score=1; explicit_eligible_strategies=['A2_CONFIRMED_PULLBACK']; risk_paper_only=True; risk_quote_amount_positive=True; risk_entry_price_positive=True; risk_stop_loss_positive=True; risk_long_stop_below_entry=True; risk_minimum_order_size=True; risk_position_size=True; risk_cash_available=True; risk_reserve_preserved=True; risk_total_exposure=True; risk_allocated_capital=True; risk_position_count=True; risk_planned_loss=True; risk_daily_loss_budget=True; risk_weekly_loss_budget=True; risk_entry_frequency=True\", \"proposed_quantity\": \"0.798908\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": null, \"signal_ids\": [\"sig_67b01e522b90437c99a2475b207a016a\", \"sig_fb595fb639b74fc1973c668a978fbe1e\", \"sig_0135f058b87b4391bac2ad9acf27bf4d\", \"sig_e74d4af4156242429475a6cd157fa2db\", \"sig_e5dde2efeff04903986fc11f22c654ce\", \"sig_33d6e4c539d948bebbaca253e849e3bc\"], \"stop_loss\": \"93.238\", \"symbol\": \"SOL-EUR\", \"take_profit_targets\": [\"93.584\", \"93.757\", \"93.930\"], \"timestamp\": \"2026-10-17 09:15:44.212755+00:00\"}",
+          "created_at": "2026-10-17 09:15:44.330367+00:00"
+        },
+        {
+          "order_id": "ord_0bd094d2ca754d5ab027119d9bb4af01",
+          "decision_id": "dec_adac1787251e4f6995f3179103b731e1",
+          "symbol": "ETH-EUR",
+          "side": "BUY",
+          "status": "REJECTED",
+          "quantity": "0.034446130000",
+          "quote_amount": "75.000000000000",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "execution_json": "{\"fee_bps\": \"10\", \"slippage_bps\": \"8\", \"rejection_reason\": \"execution_quality:first_target_destroyed_by_execution_costs\", \"quantity_step\": \"1E-8\", \"limit_price\": null, \"stop_loss\": \"2164.23\", \"targets\": [\"2168.73\", \"2170.98\", \"2173.23\"], \"book\": {\"timestamp\": \"2026-10-17T09:10:40.356000+00:00\", \"source\": \"revolut-x\", \"bids\": [[\"2164.56\", \"2.0543258\"], [\"2164.55\", \"3.063\"], [\"2164.26\", \"30.15086\"], [\"2163.00\", \"4.59673601\"], [\"2162.55\", \"0.0184394\"], [\"2162.50\", \"0.1\"], [\"2162.00\", \"0.1\"], [\"2160.06\", \"500\"], [\"2160.00\", \"0.47916665\"], [\"2156.28\", \"0.09275233\"], [\"2153.05\", \"0.00460277\"], [\"2152.61\", \"0.00464552\"], [\"2151.85\", \"0.00113855\"], [\"2150.00\", \"0.09302324\"], [\"2148.69\", \"0.01163499\"], [\"2148.67\", \"500\"], [\"2146.68\", \"0.01\"], [\"2146.38\", \"500\"], [\"2145.46\", \"0.02563552\"], [\"2143.22\", \"500\"], [\"2143.15\", \"0.00114317\"], [\"2142.23\", \"0.01167008\"], [\"2141.90\", \"0.00466875\"], [\"2140.77\", \"0.00700682\"], [\"2140.00\", \"1.02336448\"], [\"2139.65\", \"500\"], [\"2139.00\", \"0.0116877\"], [\"2138.66\", \"500\"], [\"2137.16\", \"0.01\"], [\"2137.00\", \"4\"], [\"2135.00\", \"1.01326463\"], [\"2134.84\", \"0.01132018\"], [\"2134.25\", \"0.00114794\"], [\"2132.00\", \"0.76228424\"], [\"2131.52\", \"0.00070372\"], [\"2131.29\", \"0.00469199\"], [\"2130.00\", \"0.23192957\"], [\"2129.00\", \"0.00032409\"], [\"2128.98\", \"1\"], [\"2127.14\", \"0.01\"], [\"2127.00\", \"0.02822284\"], [\"2126.92\", \"0.00195901\"], [\"2125.60\", \"0.00115261\"], [\"2125.00\", \"1.47576467\"], [\"2122.00\", \"0.1\"], [\"2121.33\", \"0.02357011\"], [\"2121.00\", \"0.48573785\"], [\"2120.69\", \"0.00471544\"], [\"2120.00\", \"1.94895751\"], [\"2119.87\", \"0.00438706\"]], \"asks\": [[\"2166.48\", \"2.05439305\"], [\"2166.49\", \"3.063\"], [\"2166.68\", \"30.15086\"], [\"2167.00\", \"0.5\"], [\"2167.91\", \"0.01847174\"], [\"2168.00\", \"0.64372659\"], [\"2168.87\", \"0.03713623\"], [\"2169.00\", \"0.1\"], [\"2169.34\", \"500\"], [\"2169.60\", \"0.0011\"], [\"2170.00\", \"0.30671169\"], [\"2171.59\", \"0.01\"], [\"2171.64\", \"0.01132018\"], [\"2171.84\", \"0.02338579\"], [\"2174.14\", \"0.00462252\"], [\"2174.59\", \"0.00068978\"], [\"2175.00\", \"2\"], [\"2175.04\", \"0.00323\"], [\"2175.77\", \"1.50299677\"], [\"2176.00\", \"0.03724082\"], [\"2176.30\", \"0.04147847\"], [\"2177.43\", \"500\"], [\"2177.82\", \"500\"], [\"2178.60\", \"0.0011\"], [\"2180.00\", \"0.00458716\"], [\"2180.67\", \"0.0006906\"], [\"2181.00\", \"0.00063646\"], [\"2181.18\", \"500\"], [\"2181.38\", \"500\"], [\"2183.01\", \"500\"], [\"2183.60\", \"0.03688556\"], [\"2185.00\", \"0.2\"], [\"2185.02\", \"0.00459951\"], [\"2186.00\", \"1.00300817\"], [\"2186.24\", \"0.0414093\"], [\"2186.30\", \"0.04157309\"], [\"2186.52\", \"0.01\"], [\"2186.67\", \"0.02303741\"], [\"2187.05\", \"0.01598043\"], [\"2187.60\", \"0.0011\"], [\"2189.63\", \"0.04126282\"], [\"2190.00\", \"1.8694004\"], [\"2190.04\", \"0.01132018\"], [\"2191.19\", \"0.89914\"], [\"2192.16\", \"0.007136\"], [\"2192.94\", \"0.04120041\"], [\"2195.00\", \"0.94645794\"], [\"2195.89\", \"0.00457674\"], [\"2196.45\", \"0.0011\"], [\"2198.43\", \"0.03663674\"]]}, \"admission_quality\": {\"entry\": {\"side\": \"BUY\", \"requested_quantity\": \"0.03444613\", \"fillable_quantity\": \"0.03444613\", \"unfilled_quantity\": \"0E-8\", \"best_bid\": \"2164.56\", \"best_ask\": \"2166.48\", \"midpoint_mark\": \"2165.52\", \"spread_bps\": \"8.866230743655103624071816469\", \"bid_depth\": \"3052.98563524\", \"ask_depth\": \"3045.75320255\", \"book_age_seconds\": \"1.810645\", \"vwap\": \"2168.213184000000\", \"gross_notional\": \"74.686553203777\", \"fee\": \"0.074686553203\", \"net_cash_change\": \"-74.761239756980\", \"net_unit_proceeds\": \"0\", \"depth_impact_bps\": \"0\", \"slippage_bps\": \"8\", \"participation\": \"1\", \"allocations\": [[0, \"0.03444613\"]]}, \"rejection_reasons\": [\"first_target_destroyed_by_execution_costs\"], \"breakeven_bid\": \"2174.293385843760802396188122\", \"immediate_round_trip_net\": \"-0.334674242883\", \"target_net_scenarios\": [\"-0.1912923185224080800000000046\", \"-0.1139279708458740800000000046\", \"-0.03656362316934008000000000460\"], \"policy\": \"execution-quality-4.0.0\", \"probability_estimate\": null}, \"strategy_id\": \"A2_CONFIRMED_PULLBACK\", \"holding_hours\": 24, \"holding_seconds\": 3600, \"strategy_evidence\": {\"as_of\": \"2026-10-17T09:05:00+00:00\", \"entry_eligible\": true, \"execution_quality_required\": true, \"experimental_context\": {\"15m\": {\"available_at\": \"2026-10-17T09:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 239, \"ready\": true}, \"60m\": {\"available_at\": \"2026-10-17T09:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 59, \"ready\": true}, \"as_of\": \"2026-10-17T09:10:40.356000+00:00\", \"breakout_relative_volume\": \"0.003755218623056354094458373925\", \"current_volume\": \"0.0577525\", \"last_open\": \"2165.08\", \"prebreak_width\": \"0.001486634674248350627741502929\", \"previous_high\": \"2165.71\", \"previous_volume\": \"0.00214264\", \"ready\": true}, \"holding_bars\": 12, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"2\", \"target_atr\": \"2\"}, \"qualified\": true, \"regime\": \"COMPRESSION\", \"relative_return\": \"0.000367879383472650657502746\", \"strategy_version\": \"4.2.0-experimental.1\", \"timeframe\": \"5m\", \"unvalidated\": true, \"veto\": false}}",
+          "decision_payload": "{\"accepted\": true, \"action\": \"BUY\", \"ai_assessment_id\": null, \"decision_id\": \"dec_adac1787251e4f6995f3179103b731e1\", \"entry_price\": \"2166.48\", \"explanation\": \"aggregate_signal_score=1; explicit_eligible_strategies=['A2_CONFIRMED_PULLBACK']; risk_paper_only=True; risk_quote_amount_positive=True; risk_entry_price_positive=True; risk_stop_loss_positive=True; risk_long_stop_below_entry=True; risk_minimum_order_size=True; risk_position_size=True; risk_cash_available=True; risk_reserve_preserved=True; risk_total_exposure=True; risk_allocated_capital=True; risk_position_count=True; risk_planned_loss=True; risk_daily_loss_budget=True; risk_weekly_loss_budget=True; risk_entry_frequency=True\", \"proposed_quantity\": \"0.03444613\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": null, \"signal_ids\": [\"sig_8aeb6fbd02484cb99b302aaa2227122f\", \"sig_9757c6e72b6c41c4804fd81b79f089c2\", \"sig_f625ff13a8e54f81a2445c16df3c076d\", \"sig_18e2e4e7375947e3af2a32bfe70ae6e0\", \"sig_23f3234b9d054dc58906e39e39daa0d4\", \"sig_c8dda4dc8a664a38b3fd24d4ea71a4b4\"], \"stop_loss\": \"2164.23\", \"symbol\": \"ETH-EUR\", \"take_profit_targets\": [\"2168.73\", \"2170.98\", \"2173.23\"], \"timestamp\": \"2026-10-17 09:10:42.039750+00:00\"}",
+          "created_at": "2026-10-17 09:10:42.170135+00:00"
+        },
+        {
+          "order_id": "ord_8243f36eb9134021b867da12c7802569",
+          "decision_id": "dec_862514831cc14f2aaaeda5af21eb8bf2",
+          "symbol": "SOL-EUR",
+          "side": "BUY",
+          "status": "REJECTED",
+          "quantity": "0.799105000000",
+          "quote_amount": "75.000000000000",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "execution_json": "{\"fee_bps\": \"10\", \"slippage_bps\": \"8\", \"rejection_reason\": \"execution_quality:first_target_destroyed_by_execution_costs\", \"quantity_step\": \"0.000001\", \"limit_price\": null, \"stop_loss\": \"93.227\", \"targets\": [\"93.549\", \"93.710\", \"93.871\"], \"book\": {\"timestamp\": \"2026-10-17T08:55:35.595000+00:00\", \"source\": \"revolut-x\", \"bids\": [[\"93.306\", \"28.601077\"], [\"93.300\", \"65.853759\"], [\"93.289\", \"263.415038\"], [\"93.284\", \"131.707519\"], [\"93.259\", \"658.537594\"], [\"93.210\", \"6585.37594\"], [\"93.207\", \"6585.37594\"], [\"93.156\", \"6585.37594\"], [\"93.148\", \"6585.37594\"], [\"93.140\", \"6585.37594\"], [\"93.131\", \"6585.37594\"], [\"93.100\", \"1.161117\"], [\"92.810\", \"0.026182\"], [\"92.694\", \"0.103555\"], [\"92.607\", \"0.016197\"], [\"92.600\", \"0.227991\"], [\"92.547\", \"0.02161\"], [\"92.515\", \"2.161811\"], [\"92.500\", \"3.324324\"], [\"92.420\", \"0.026293\"], [\"92.366\", \"0.10349\"], [\"92.210\", \"0.162672\"], [\"92.180\", \"0.12\"], [\"92.030\", \"0.026404\"], [\"92.000\", \"8.770977\"], [\"91.900\", \"3.264417\"], [\"91.895\", \"0.102606\"], [\"91.770\", \"0.12\"], [\"91.700\", \"0.596401\"], [\"91.610\", \"0.026525\"], [\"91.600\", \"10.91703\"], [\"91.560\", \"0.102326\"], [\"91.555\", \"1.092239\"], [\"91.526\", \"15.241242\"], [\"91.510\", \"1.639165\"], [\"91.500\", \"107.124042\"], [\"91.300\", \"0.361444\"], [\"91.295\", \"0.105361\"], [\"91.290\", \"0.164311\"], [\"91.260\", \"0.026627\"], [\"91.250\", \"5.479452\"], [\"91.125\", \"30\"], [\"91.121\", \"0.032923\"], [\"91.100\", \"5.488474\"], [\"91.000\", \"77.33175\"], [\"90.950\", \"1.099505\"], [\"90.880\", \"1.12709\"], [\"90.750\", \"40\"], [\"90.595\", \"0.011038\"], [\"90.500\", \"167.468838\"]], \"asks\": [[\"93.388\", \"28.60216\"], [\"93.390\", \"65.853759\"], [\"93.400\", \"131.707519\"], [\"93.401\", \"263.415038\"], [\"93.418\", \"658.537594\"], [\"93.459\", \"6585.37594\"], [\"93.474\", \"6585.37594\"], [\"93.489\", \"6585.37594\"], [\"93.492\", \"6585.37594\"], [\"93.520\", \"6585.37594\"], [\"93.547\", \"6585.37594\"], [\"93.590\", \"0.143328\"], [\"93.606\", \"0.1395\"], [\"93.652\", \"0.102243\"], [\"93.700\", \"20\"], [\"93.857\", \"0.184218\"], [\"93.980\", \"0.0259\"], [\"94.000\", \"554.976976\"], [\"94.090\", \"0.16103\"], [\"94.113\", \"0.101178\"], [\"94.200\", \"10.649627\"], [\"94.360\", \"0.0258\"], [\"94.370\", \"0.12\"], [\"94.390\", \"0.099928\"], [\"94.403\", \"0.341093\"], [\"94.479\", \"0.015876\"], [\"94.500\", \"14.280765\"], [\"94.708\", \"0.097925\"], [\"94.736\", \"0.078347\"], [\"94.780\", \"0.0256\"], [\"94.901\", \"0.339301\"], [\"94.908\", \"0.358496\"], [\"94.998\", \"0.338958\"], [\"95.000\", \"158.417529\"], [\"95.100\", \"0.159421\"], [\"95.110\", \"185.976367\"], [\"95.157\", \"0.420831\"], [\"95.160\", \"0.12\"], [\"95.180\", \"0.0255\"], [\"95.500\", \"21.74936\"], [\"95.529\", \"481.45483\"], [\"95.580\", \"0.550104\"], [\"95.601\", \"0.336818\"], [\"95.650\", \"0.104652\"], [\"95.696\", \"10.815569\"], [\"95.737\", \"0.107067\"], [\"95.951\", \"0.335588\"], [\"95.953\", \"0.528843\"], [\"95.955\", \"3.68421\"], [\"95.980\", \"0.0253\"]]}, \"admission_quality\": {\"entry\": {\"side\": \"BUY\", \"requested_quantity\": \"0.799105\", \"fillable_quantity\": \"0.799105\", \"unfilled_quantity\": \"0.000000\", \"best_bid\": \"93.306\", \"best_ask\": \"93.388\", \"midpoint_mark\": \"93.347\", \"spread_bps\": \"8.784427994472237993722347799\", \"bid_depth\": \"41145.546056\", \"ask_depth\": \"42127.789788\", \"book_age_seconds\": \"3.408358\", \"vwap\": \"93.462710400000\", \"gross_notional\": \"74.686519194192\", \"fee\": \"0.074686519194\", \"net_cash_change\": \"-74.761205713386\", \"net_unit_proceeds\": \"0\", \"depth_impact_bps\": \"0\", \"slippage_bps\": \"8\", \"participation\": \"1\", \"allocations\": [[0, \"0.799105\"]]}, \"rejection_reasons\": [\"first_target_destroyed_by_execution_costs\"], \"breakeven_bid\": \"93.72480277555353565254533876\", \"immediate_round_trip_net\": \"-0.334065258387\", \"target_net_scenarios\": [\"-0.1402321165680839999999999971\", \"-0.01180768927235999999999999712\", \"0.1166167380233640000000000029\"], \"policy\": \"execution-quality-4.0.0\", \"probability_estimate\": null}, \"strategy_id\": \"A2_CONFIRMED_PULLBACK\", \"holding_hours\": 24, \"holding_seconds\": 3600, \"strategy_evidence\": {\"as_of\": \"2026-10-17T08:50:00+00:00\", \"entry_eligible\": true, \"execution_quality_required\": true, \"experimental_context\": {\"15m\": {\"available_at\": \"2026-10-17T08:45:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 239, \"ready\": true}, \"60m\": {\"available_at\": \"2026-10-17T08:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 59, \"ready\": true}, \"as_of\": \"2026-10-17T08:55:35.595000+00:00\", \"breakout_relative_volume\": \"0.1022787960549264726735120269\", \"current_volume\": \"12.742951\", \"last_open\": \"93.315\", \"prebreak_width\": \"0.003581563150840808640408240651\", \"previous_high\": \"93.366\", \"previous_volume\": \"1.642389\", \"ready\": true}, \"holding_bars\": 12, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"2\", \"target_atr\": \"2\"}, \"qualified\": true, \"regime\": \"COMPRESSION\", \"relative_return\": \"0.0005144815568113231611160504\", \"strategy_version\": \"4.2.0-experimental.1\", \"timeframe\": \"5m\", \"unvalidated\": true, \"veto\": false}}",
+          "decision_payload": "{\"accepted\": true, \"action\": \"BUY\", \"ai_assessment_id\": null, \"decision_id\": \"dec_862514831cc14f2aaaeda5af21eb8bf2\", \"entry_price\": \"93.388\", \"explanation\": \"aggregate_signal_score=1; explicit_eligible_strategies=['A2_CONFIRMED_PULLBACK']; risk_paper_only=True; risk_quote_amount_positive=True; risk_entry_price_positive=True; risk_stop_loss_positive=True; risk_long_stop_below_entry=True; risk_minimum_order_size=True; risk_position_size=True; risk_cash_available=True; risk_reserve_preserved=True; risk_total_exposure=True; risk_allocated_capital=True; risk_position_count=True; risk_planned_loss=True; risk_daily_loss_budget=True; risk_weekly_loss_budget=True; risk_entry_frequency=True\", \"proposed_quantity\": \"0.799105\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": null, \"signal_ids\": [\"sig_873eb6d4ebd04a468478e11439c5d503\", \"sig_ade2e291d2084f4eaac13c1ba89ecebb\", \"sig_76a4541bf5ff4927ac4c4493b5556882\", \"sig_cf1e7d19488541efb91c4ab7c6755af3\", \"sig_5a6727269fd44004ad613dce38d95a87\", \"sig_2f20157ac04346e88221145f57b822ce\"], \"stop_loss\": \"93.227\", \"symbol\": \"SOL-EUR\", \"take_profit_targets\": [\"93.549\", \"93.710\", \"93.871\"], \"timestamp\": \"2026-10-17 08:55:38.881711+00:00\"}",
+          "created_at": "2026-10-17 08:55:39.007297+00:00"
+        },
+        {
+          "order_id": "ord_5a3b391f53a44c19b91775e6ecd0e739",
+          "decision_id": "dec_644345c5e743442da783b8eb2b87da8b",
+          "symbol": "SOL-EUR",
+          "side": "BUY",
+          "status": "REJECTED",
+          "quantity": "0.799730000000",
+          "quote_amount": "75.000000000000",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "execution_json": "{\"fee_bps\": \"10\", \"slippage_bps\": \"8\", \"rejection_reason\": \"execution_quality:first_target_destroyed_by_execution_costs\", \"quantity_step\": \"0.000001\", \"limit_price\": null, \"stop_loss\": \"93.146\", \"targets\": [\"93.484\", \"93.653\", \"93.822\"], \"book\": {\"timestamp\": \"2026-10-17T08:50:37.084000+00:00\", \"source\": \"revolut-x\", \"bids\": [[\"93.242\", \"28.625313\"], [\"93.213\", \"65.853759\"], [\"93.207\", \"131.707519\"], [\"93.192\", \"263.415038\"], [\"93.184\", \"658.537594\"], [\"93.154\", \"6585.37594\"], [\"93.142\", \"6585.37594\"], [\"93.140\", \"6585.37594\"], [\"93.100\", \"0.161117\"], [\"93.091\", \"6585.37594\"], [\"93.063\", \"6585.37594\"], [\"93.032\", \"6585.37594\"], [\"92.810\", \"0.026182\"], [\"92.694\", \"0.103555\"], [\"92.607\", \"0.016197\"], [\"92.600\", \"0.227991\"], [\"92.547\", \"0.02161\"], [\"92.515\", \"2.161811\"], [\"92.500\", \"3.324324\"], [\"92.420\", \"0.026293\"], [\"92.366\", \"0.10349\"], [\"92.210\", \"0.162672\"], [\"92.180\", \"0.12\"], [\"92.030\", \"0.026404\"], [\"92.000\", \"6.749999\"], [\"91.900\", \"3.264417\"], [\"91.895\", \"0.102606\"], [\"91.770\", \"0.12\"], [\"91.700\", \"0.596401\"], [\"91.610\", \"0.026525\"], [\"91.600\", \"10.91703\"], [\"91.560\", \"0.102326\"], [\"91.555\", \"1.092239\"], [\"91.526\", \"15.241242\"], [\"91.510\", \"1.639165\"], [\"91.500\", \"107.124042\"], [\"91.300\", \"0.361444\"], [\"91.295\", \"0.105361\"], [\"91.290\", \"0.164311\"], [\"91.260\", \"0.026627\"], [\"91.250\", \"5.479452\"], [\"91.125\", \"30\"], [\"91.121\", \"0.032923\"], [\"91.100\", \"5.488474\"], [\"91.000\", \"77.33175\"], [\"90.950\", \"1.099505\"], [\"90.880\", \"1.12709\"], [\"90.750\", \"40\"], [\"90.595\", \"0.011038\"], [\"90.500\", \"167.468838\"]], \"asks\": [[\"93.315\", \"28.625667\"], [\"93.316\", \"65.853759\"], [\"93.321\", \"131.707519\"], [\"93.331\", \"263.415038\"], [\"93.342\", \"658.537594\"], [\"93.416\", \"6585.37594\"], [\"93.455\", \"6585.37594\"], [\"93.459\", \"6585.37594\"], [\"93.489\", \"6585.37594\"], [\"93.492\", \"6585.37594\"], [\"93.547\", \"6585.37594\"], [\"93.590\", \"0.143328\"], [\"93.606\", \"0.1395\"], [\"93.652\", \"0.102243\"], [\"93.700\", \"20\"], [\"93.857\", \"0.184218\"], [\"93.980\", \"0.0259\"], [\"94.000\", \"554.976976\"], [\"94.090\", \"0.16103\"], [\"94.113\", \"0.101178\"], [\"94.200\", \"10.649627\"], [\"94.360\", \"0.0258\"], [\"94.370\", \"0.12\"], [\"94.390\", \"0.099928\"], [\"94.403\", \"0.341093\"], [\"94.479\", \"0.015876\"], [\"94.500\", \"14.280765\"], [\"94.708\", \"0.097925\"], [\"94.780\", \"0.0256\"], [\"94.901\", \"0.339301\"], [\"94.908\", \"0.358496\"], [\"94.998\", \"0.338958\"], [\"95.000\", \"158.417529\"], [\"95.100\", \"0.159421\"], [\"95.110\", \"185.976367\"], [\"95.157\", \"0.420831\"], [\"95.160\", \"0.12\"], [\"95.180\", \"0.0255\"], [\"95.500\", \"21.74936\"], [\"95.529\", \"481.45483\"], [\"95.580\", \"0.550104\"], [\"95.601\", \"0.336818\"], [\"95.650\", \"0.104652\"], [\"95.696\", \"10.815569\"], [\"95.737\", \"0.107067\"], [\"95.951\", \"0.335588\"], [\"95.953\", \"0.528843\"], [\"95.955\", \"3.68421\"], [\"95.980\", \"0.0253\"], [\"96.000\", \"274.362993\"]]}, \"admission_quality\": {\"entry\": {\"side\": \"BUY\", \"requested_quantity\": \"0.799730\", \"fillable_quantity\": \"0.799730\", \"unfilled_quantity\": \"0.000000\", \"best_bid\": \"93.242\", \"best_ask\": \"93.315\", \"midpoint_mark\": \"93.2785\", \"spread_bps\": \"7.826026361916197194423152173\", \"bid_depth\": \"41142.549314\", \"ask_depth\": \"42402.097941\", \"book_age_seconds\": \"1.504771\", \"vwap\": \"93.389652000000\", \"gross_notional\": \"74.686506393960\", \"fee\": \"0.074686506393\", \"net_cash_change\": \"-74.761192900353\", \"net_unit_proceeds\": \"0\", \"depth_impact_bps\": \"0\", \"slippage_bps\": \"8\", \"participation\": \"1\", \"allocations\": [[0, \"0.799730\"]]}, \"rejection_reasons\": [\"first_target_destroyed_by_execution_costs\"], \"breakeven_bid\": \"93.65153950187056511561928857\", \"immediate_round_trip_net\": \"-0.326931750001\", \"target_net_scenarios\": [\"-0.1337452975615439999999999981\", \"0.001165902695952000000000001914\", \"0.1360771029534480000000000019\"], \"policy\": \"execution-quality-4.0.0\", \"probability_estimate\": null}, \"strategy_id\": \"A2_CONFIRMED_PULLBACK\", \"holding_hours\": 24, \"holding_seconds\": 3600, \"strategy_evidence\": {\"as_of\": \"2026-10-17T08:45:00+00:00\", \"entry_eligible\": true, \"execution_quality_required\": true, \"experimental_context\": {\"15m\": {\"available_at\": \"2026-10-17T08:45:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 239, \"ready\": true}, \"60m\": {\"available_at\": \"2026-10-17T08:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 59, \"ready\": true}, \"as_of\": \"2026-10-17T08:50:37.084000+00:00\", \"breakout_relative_volume\": \"0.06709614652859693522120192809\", \"current_volume\": \"1.642389\", \"last_open\": \"93.26\", \"prebreak_width\": \"0.003518618974244328666759498281\", \"previous_high\": \"93.282\", \"previous_volume\": \"1.262114\", \"ready\": true}, \"holding_bars\": 12, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"2\", \"target_atr\": \"2\"}, \"qualified\": true, \"regime\": \"COMPRESSION\", \"relative_return\": \"0.0009029152611800742444145335\", \"strategy_version\": \"4.2.0-experimental.1\", \"timeframe\": \"5m\", \"unvalidated\": true, \"veto\": false}}",
+          "decision_payload": "{\"accepted\": true, \"action\": \"BUY\", \"ai_assessment_id\": null, \"decision_id\": \"dec_644345c5e743442da783b8eb2b87da8b\", \"entry_price\": \"93.315\", \"explanation\": \"aggregate_signal_score=1; explicit_eligible_strategies=['A2_CONFIRMED_PULLBACK']; risk_paper_only=True; risk_quote_amount_positive=True; risk_entry_price_positive=True; risk_stop_loss_positive=True; risk_long_stop_below_entry=True; risk_minimum_order_size=True; risk_position_size=True; risk_cash_available=True; risk_reserve_preserved=True; risk_total_exposure=True; risk_allocated_capital=True; risk_position_count=True; risk_planned_loss=True; risk_daily_loss_budget=True; risk_weekly_loss_budget=True; risk_entry_frequency=True\", \"proposed_quantity\": \"0.799730\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": null, \"signal_ids\": [\"sig_4a3beccbfff641d0b49fad6925f4a809\", \"sig_e8cfdfeea68f428da35df5e3f59d20ba\", \"sig_efc297cb6c1b43e7997bb88ea3af82c2\", \"sig_394c741bb176489ca3c0cc3d28519bd4\", \"sig_91f6bbb923c64e86ade6c64a10f9f96e\", \"sig_da5df40e52ae437c8245594bdfb94c3e\"], \"stop_loss\": \"93.146\", \"symbol\": \"SOL-EUR\", \"take_profit_targets\": [\"93.484\", \"93.653\", \"93.822\"], \"timestamp\": \"2026-10-17 08:50:38.446163+00:00\"}",
+          "created_at": "2026-10-17 08:50:38.591996+00:00"
+        },
+        {
+          "order_id": "ord_57ecef17fdba4adfaac6e83cb7c55755",
+          "decision_id": "dec_5772b0ef97f5434581cdda3035846b1f",
+          "symbol": "ETH-EUR",
+          "side": "BUY",
+          "status": "REJECTED",
+          "quantity": "0.034499960000",
+          "quote_amount": "75.000000000000",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "execution_json": "{\"fee_bps\": \"10\", \"slippage_bps\": \"8\", \"rejection_reason\": \"execution_quality:first_target_destroyed_by_execution_costs\", \"quantity_step\": \"1E-8\", \"limit_price\": null, \"stop_loss\": \"2159.18\", \"targets\": [\"2167.01\", \"2170.93\", \"2174.85\"], \"book\": {\"timestamp\": \"2026-10-17T07:25:25.433000+00:00\", \"source\": \"revolut-x\", \"bids\": [[\"2162.55\", \"0.0184394\"], [\"2161.98\", \"2.05775464\"], [\"2161.09\", \"3.063\"], [\"2160.63\", \"30.15086\"], [\"2160.00\", \"0.00462962\"], [\"2157.11\", \"500\"], [\"2156.28\", \"0.09275233\"], [\"2152.61\", \"0.00464552\"], [\"2151.85\", \"0.00113855\"], [\"2150.00\", \"0.04651162\"], [\"2148.69\", \"0.01163499\"], [\"2146.68\", \"0.01\"], [\"2145.46\", \"0.02563552\"], [\"2144.20\", \"500\"], [\"2143.22\", \"500\"], [\"2143.15\", \"0.00114317\"], [\"2142.23\", \"0.01167008\"], [\"2141.90\", \"0.00466875\"], [\"2140.77\", \"0.00700682\"], [\"2140.00\", \"1.03504672\"], [\"2139.65\", \"500\"], [\"2139.00\", \"0.0116877\"], [\"2138.66\", \"500\"], [\"2137.66\", \"500\"], [\"2137.16\", \"0.01\"], [\"2137.00\", \"3\"], [\"2135.00\", \"1.00859953\"], [\"2134.84\", \"0.01132018\"], [\"2134.25\", \"0.00114794\"], [\"2132.00\", \"0.76228424\"], [\"2131.52\", \"0.00070372\"], [\"2131.29\", \"0.00469199\"], [\"2130.00\", \"0.20105164\"], [\"2129.00\", \"0.00032409\"], [\"2128.98\", \"1\"], [\"2127.14\", \"0.01\"], [\"2127.00\", \"0.02822284\"], [\"2126.92\", \"0.00195901\"], [\"2125.60\", \"0.00115261\"], [\"2125.00\", \"1.47576467\"], [\"2122.00\", \"0.1\"], [\"2121.33\", \"0.02357011\"], [\"2121.00\", \"0.48573785\"], [\"2120.69\", \"0.00471544\"], [\"2120.00\", \"1.94895751\"], [\"2119.87\", \"0.00438706\"], [\"2118.50\", \"0.00094406\"], [\"2118.04\", \"0.11803365\"], [\"2117.89\", \"0.01\"], [\"2116.90\", \"0.00115735\"]], \"asks\": [[\"2163.10\", \"3.063\"], [\"2163.70\", \"30.15086\"], [\"2164.72\", \"0.13768523\"], [\"2165.00\", \"0.2317\"], [\"2165.70\", \"0.13858733\"], [\"2166.35\", \"500\"], [\"2168.00\", \"0.64372659\"], [\"2168.87\", \"0.03713623\"], [\"2169.00\", \"0.1\"], [\"2169.60\", \"0.0011\"], [\"2170.00\", \"0.30671169\"], [\"2171.59\", \"0.01\"], [\"2171.64\", \"0.01132018\"], [\"2171.84\", \"0.02338579\"], [\"2174.14\", \"0.00462252\"], [\"2174.15\", \"500\"], [\"2174.59\", \"0.00068978\"], [\"2175.00\", \"2\"], [\"2175.04\", \"0.00323\"], [\"2175.77\", \"1.50299677\"], [\"2176.00\", \"0.03724082\"], [\"2176.30\", \"0.04147847\"], [\"2176.70\", \"500\"], [\"2177.43\", \"500\"], [\"2177.82\", \"500\"], [\"2178.60\", \"0.0011\"], [\"2180.00\", \"0.00458716\"], [\"2180.67\", \"0.0006906\"], [\"2181.00\", \"0.00063646\"], [\"2181.38\", \"500\"], [\"2183.60\", \"0.03688556\"], [\"2185.00\", \"0.2\"], [\"2185.02\", \"0.00459951\"], [\"2186.24\", \"0.0414093\"], [\"2186.30\", \"0.04157309\"], [\"2186.52\", \"0.01\"], [\"2186.67\", \"0.02303741\"], [\"2187.05\", \"0.02055567\"], [\"2187.60\", \"0.0011\"], [\"2188.00\", \"0.067\"], [\"2189.63\", \"0.04126282\"], [\"2190.00\", \"2.10359243\"], [\"2190.04\", \"0.01132018\"], [\"2191.19\", \"0.89914\"], [\"2192.16\", \"0.007136\"], [\"2192.94\", \"0.04120041\"], [\"2195.00\", \"1.17793942\"], [\"2195.89\", \"0.00457674\"], [\"2196.45\", \"0.0011\"], [\"2198.43\", \"0.03663674\"]]}, \"admission_quality\": {\"entry\": {\"side\": \"BUY\", \"requested_quantity\": \"0.03449996\", \"fillable_quantity\": \"0.03449996\", \"unfilled_quantity\": \"0E-8\", \"best_bid\": \"2162.55\", \"best_ask\": \"2163.10\", \"midpoint_mark\": \"2162.825\", \"spread_bps\": \"2.542970420630425485187197300\", \"bid_depth\": \"3046.77295092\", \"ask_depth\": \"3043.22255090\", \"book_age_seconds\": \"1.903814\", \"vwap\": \"2164.830480000000\", \"gross_notional\": \"74.686564966780\", \"fee\": \"0.074686564966\", \"net_cash_change\": \"-74.761251531746\", \"net_unit_proceeds\": \"0\", \"depth_impact_bps\": \"0\", \"slippage_bps\": \"8\", \"participation\": \"1\", \"allocations\": [[0, \"0.03449996\"]]}, \"rejection_reasons\": [\"first_target_destroyed_by_execution_costs\"], \"breakeven_bid\": \"2170.901195911638399465337928\", \"immediate_round_trip_net\": \"-0.296735595121\", \"target_net_scenarios\": [\"-0.1340045677146243199999999932\", \"0.0009919519594902400000000067957\", \"0.1359884716336048000000000068\"], \"policy\": \"execution-quality-4.0.0\", \"probability_estimate\": null}, \"strategy_id\": \"A2_CONFIRMED_PULLBACK\", \"holding_hours\": 24, \"holding_seconds\": 3600, \"strategy_evidence\": {\"as_of\": \"2026-10-17T07:20:00+00:00\", \"entry_eligible\": true, \"execution_quality_required\": true, \"experimental_context\": {\"15m\": {\"available_at\": \"2026-10-17T07:15:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 239, \"ready\": true}, \"60m\": {\"available_at\": \"2026-10-17T07:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 59, \"ready\": true}, \"as_of\": \"2026-10-17T07:25:25.433000+00:00\", \"breakout_relative_volume\": \"1.315682257959834705031084385\", \"current_volume\": \"0.08441028\", \"last_open\": \"2161.16\", \"prebreak_width\": \"0.003541995173816616154500834081\", \"previous_high\": \"2163.04\", \"previous_volume\": \"0.38849658\", \"ready\": true}, \"holding_bars\": 12, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"2\", \"target_atr\": \"2\"}, \"qualified\": true, \"regime\": \"COMPRESSION\", \"relative_return\": \"0.001789174053908197696527537\", \"strategy_version\": \"4.2.0-experimental.1\", \"timeframe\": \"5m\", \"unvalidated\": true, \"veto\": false}}",
+          "decision_payload": "{\"accepted\": true, \"action\": \"BUY\", \"ai_assessment_id\": null, \"decision_id\": \"dec_5772b0ef97f5434581cdda3035846b1f\", \"entry_price\": \"2163.10\", \"explanation\": \"aggregate_signal_score=1; explicit_eligible_strategies=['A2_CONFIRMED_PULLBACK']; risk_paper_only=True; risk_quote_amount_positive=True; risk_entry_price_positive=True; risk_stop_loss_positive=True; risk_long_stop_below_entry=True; risk_minimum_order_size=True; risk_position_size=True; risk_cash_available=True; risk_reserve_preserved=True; risk_total_exposure=True; risk_allocated_capital=True; risk_position_count=True; risk_planned_loss=True; risk_daily_loss_budget=True; risk_weekly_loss_budget=True; risk_entry_frequency=True\", \"proposed_quantity\": \"0.03449996\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": null, \"signal_ids\": [\"sig_5998926cc6e94510864fe916cf5f020b\", \"sig_ced9b2607f9b41bcaaa7a82372172fca\", \"sig_2d0676c7b2fd4ebb8f58e72f6bdd44ba\", \"sig_a4493f457e164174821f25ed89393043\", \"sig_1485009275364545b0ef47df1b317551\", \"sig_d1b2f51bcb9544fba280586135988d74\"], \"stop_loss\": \"2159.18\", \"symbol\": \"ETH-EUR\", \"take_profit_targets\": [\"2167.01\", \"2170.93\", \"2174.85\"], \"timestamp\": \"2026-10-17 07:25:27.213472+00:00\"}",
+          "created_at": "2026-10-17 07:25:27.340096+00:00"
+        },
+        {
+          "order_id": "ord_7c1398a4855e4f57bfa072e54f5ec404",
+          "decision_id": "dec_38b42bfa33f34cd59b4f84f7284f986c",
+          "symbol": "ETH-EUR",
+          "side": "BUY",
+          "status": "REJECTED",
+          "quantity": "0.034512880000",
+          "quote_amount": "75.000000000000",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "execution_json": "{\"fee_bps\": \"10\", \"slippage_bps\": \"8\", \"rejection_reason\": \"execution_quality:first_target_destroyed_by_execution_costs\", \"quantity_step\": \"1E-8\", \"limit_price\": null, \"stop_loss\": \"2158.83\", \"targets\": [\"2165.74\", \"2169.19\", \"2172.65\"], \"book\": {\"timestamp\": \"2026-10-17T07:15:21.887000+00:00\", \"source\": \"revolut-x\", \"bids\": [[\"2161.93\", \"0.02312748\"], [\"2161.53\", \"0.00231317\"], [\"2161.29\", \"2.05839626\"], [\"2161.16\", \"0.34462973\"], [\"2160.45\", \"3.063\"], [\"2160.00\", \"0.00462962\"], [\"2159.86\", \"30.15086\"], [\"2157.11\", \"500\"], [\"2156.28\", \"0.09275233\"], [\"2152.61\", \"0.00464552\"], [\"2151.85\", \"0.00113855\"], [\"2150.00\", \"0.04651162\"], [\"2148.69\", \"0.01163499\"], [\"2145.46\", \"0.02563552\"], [\"2144.20\", \"500\"], [\"2143.22\", \"500\"], [\"2143.15\", \"0.00114317\"], [\"2142.23\", \"0.01167008\"], [\"2141.90\", \"0.00466875\"], [\"2140.77\", \"0.00700682\"], [\"2140.00\", \"1.03504672\"], [\"2139.65\", \"500\"], [\"2139.00\", \"0.0116877\"], [\"2138.66\", \"500\"], [\"2137.66\", \"500\"], [\"2137.16\", \"0.01\"], [\"2137.00\", \"3\"], [\"2135.00\", \"1.00859953\"], [\"2134.84\", \"0.01132018\"], [\"2134.25\", \"0.00114794\"], [\"2132.00\", \"0.76228424\"], [\"2131.52\", \"0.00070372\"], [\"2131.29\", \"0.00469199\"], [\"2130.00\", \"0.20105164\"], [\"2129.00\", \"0.00032409\"], [\"2128.98\", \"1\"], [\"2127.14\", \"0.01\"], [\"2127.00\", \"0.02822284\"], [\"2126.92\", \"0.00195901\"], [\"2125.60\", \"0.00115261\"], [\"2125.00\", \"1.47576467\"], [\"2122.00\", \"0.1\"], [\"2121.33\", \"0.02357011\"], [\"2121.00\", \"0.48573785\"], [\"2120.69\", \"0.00471544\"], [\"2120.00\", \"1.94895751\"], [\"2119.87\", \"0.00438706\"], [\"2118.50\", \"0.00094406\"], [\"2118.04\", \"0.11803365\"], [\"2117.89\", \"0.01\"]], \"asks\": [[\"2162.29\", \"3.063\"], [\"2162.37\", \"2.05822121\"], [\"2162.59\", \"30.15086\"], [\"2164.72\", \"0.1847814\"], [\"2165.00\", \"0.2317\"], [\"2165.70\", \"0.13858733\"], [\"2166.35\", \"500\"], [\"2168.87\", \"0.03713623\"], [\"2169.00\", \"0.1\"], [\"2169.60\", \"0.0011\"], [\"2170.00\", \"0.30671169\"], [\"2171.59\", \"0.01\"], [\"2171.64\", \"0.01132018\"], [\"2171.84\", \"0.02338579\"], [\"2174.14\", \"0.00462252\"], [\"2174.15\", \"500\"], [\"2174.59\", \"0.00068978\"], [\"2175.04\", \"0.00323\"], [\"2175.77\", \"1.50299677\"], [\"2176.00\", \"0.03724082\"], [\"2176.30\", \"0.04147847\"], [\"2176.70\", \"500\"], [\"2177.43\", \"500\"], [\"2177.82\", \"500\"], [\"2178.60\", \"0.0011\"], [\"2180.00\", \"0.00458716\"], [\"2180.67\", \"0.0006906\"], [\"2181.00\", \"0.00063646\"], [\"2181.38\", \"500\"], [\"2183.60\", \"0.03688556\"], [\"2185.00\", \"2.2\"], [\"2185.02\", \"0.00459951\"], [\"2186.24\", \"0.0414093\"], [\"2186.30\", \"0.04157309\"], [\"2186.52\", \"0.01\"], [\"2186.67\", \"0.02303741\"], [\"2187.05\", \"0.02055567\"], [\"2187.60\", \"0.0011\"], [\"2188.00\", \"0.067\"], [\"2189.63\", \"0.04126282\"], [\"2190.00\", \"2.10359243\"], [\"2190.04\", \"0.01132018\"], [\"2191.19\", \"0.89914\"], [\"2192.16\", \"0.007136\"], [\"2192.94\", \"0.04120041\"], [\"2195.00\", \"1.17793942\"], [\"2195.89\", \"0.00457674\"], [\"2196.45\", \"0.0011\"], [\"2198.43\", \"0.03663674\"], [\"2199.99\", \"1\"]]}, \"admission_quality\": {\"entry\": {\"side\": \"BUY\", \"requested_quantity\": \"0.03451288\", \"fillable_quantity\": \"0.03451288\", \"unfilled_quantity\": \"0E-8\", \"best_bid\": \"2161.93\", \"best_ask\": \"2162.29\", \"midpoint_mark\": \"2162.11\", \"spread_bps\": \"1.665040169094079394665396303\", \"bid_depth\": \"3047.11406617\", \"ask_depth\": \"3045.68414169\", \"book_age_seconds\": \"3.335317\", \"vwap\": \"2164.019832000000\", \"gross_notional\": \"74.686556779436\", \"fee\": \"0.074686556779\", \"net_cash_change\": \"-74.761243336215\", \"net_unit_proceeds\": \"0\", \"depth_impact_bps\": \"0\", \"slippage_bps\": \"8\", \"participation\": \"1\", \"allocations\": [[0, \"0.03451288\"]]}, \"rejection_reasons\": [\"first_target_destroyed_by_execution_costs\"], \"breakeven_bid\": \"2170.088274655743339865879141\", \"immediate_round_trip_net\": \"-0.287778345349\", \"target_net_scenarios\": [\"-0.1498014727913750400000000063\", \"-0.03094626652062624000000000627\", \"0.08825344759438559999999999373\"], \"policy\": \"execution-quality-4.0.0\", \"probability_estimate\": null}, \"strategy_id\": \"A2_CONFIRMED_PULLBACK\", \"holding_hours\": 24, \"holding_seconds\": 3600, \"strategy_evidence\": {\"as_of\": \"2026-10-17T07:10:00+00:00\", \"entry_eligible\": true, \"execution_quality_required\": true, \"experimental_context\": {\"15m\": {\"available_at\": \"2026-10-17T07:15:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 240, \"ready\": true}, \"60m\": {\"available_at\": \"2026-10-17T07:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 59, \"ready\": true}, \"as_of\": \"2026-10-17T07:15:21.887000+00:00\", \"breakout_relative_volume\": \"0.5119617173161191452771717637\", \"current_volume\": \"0.50543465\", \"last_open\": \"2162.51\", \"prebreak_width\": \"0.003720457234030459878496466077\", \"previous_high\": \"2163.65\", \"previous_volume\": \"0.14350998\", \"ready\": true}, \"holding_bars\": 12, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"2\", \"target_atr\": \"2\"}, \"qualified\": true, \"regime\": \"COMPRESSION\", \"relative_return\": \"0.002462049703247738479498116\", \"strategy_version\": \"4.2.0-experimental.1\", \"timeframe\": \"5m\", \"unvalidated\": true, \"veto\": false}}",
+          "decision_payload": "{\"accepted\": true, \"action\": \"BUY\", \"ai_assessment_id\": null, \"decision_id\": \"dec_38b42bfa33f34cd59b4f84f7284f986c\", \"entry_price\": \"2162.29\", \"explanation\": \"aggregate_signal_score=1; explicit_eligible_strategies=['A2_CONFIRMED_PULLBACK']; risk_paper_only=True; risk_quote_amount_positive=True; risk_entry_price_positive=True; risk_stop_loss_positive=True; risk_long_stop_below_entry=True; risk_minimum_order_size=True; risk_position_size=True; risk_cash_available=True; risk_reserve_preserved=True; risk_total_exposure=True; risk_allocated_capital=True; risk_position_count=True; risk_planned_loss=True; risk_daily_loss_budget=True; risk_weekly_loss_budget=True; risk_entry_frequency=True\", \"proposed_quantity\": \"0.03451288\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": null, \"signal_ids\": [\"sig_a06cc5e6e0244977b5cb482139791e4d\", \"sig_b5c56de8938542a7be769acf15ba76f3\", \"sig_4e65bdd01963410b9bf5c87adf058629\", \"sig_11f828c04ecf465b8a6816efe5e2554c\", \"sig_564e6c569f94455cb86f3c555e9d739e\", \"sig_ba7fdab03d4142cf8bbb1b56fbea1c58\"], \"stop_loss\": \"2158.83\", \"symbol\": \"ETH-EUR\", \"take_profit_targets\": [\"2165.74\", \"2169.19\", \"2172.65\"], \"timestamp\": \"2026-10-17 07:15:25.094374+00:00\"}",
+          "created_at": "2026-10-17 07:15:25.226352+00:00"
+        },
+        {
+          "order_id": "ord_ee47c70662d247d482102484de7fa129",
+          "decision_id": "dec_02864e9f2a8d4db8b4960f82f10eb341",
+          "symbol": "ETH-EUR",
+          "side": "BUY",
+          "status": "REJECTED",
+          "quantity": "0.034506980000",
+          "quote_amount": "75.000000000000",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "execution_json": "{\"fee_bps\": \"10\", \"slippage_bps\": \"8\", \"rejection_reason\": \"execution_quality:first_target_destroyed_by_execution_costs\", \"quantity_step\": \"1E-8\", \"limit_price\": null, \"stop_loss\": \"2159.70\", \"targets\": [\"2165.61\", \"2168.56\", \"2171.51\"], \"book\": {\"timestamp\": \"2026-10-17T06:55:20.736000+00:00\", \"source\": \"revolut-x\", \"bids\": [[\"2161.54\", \"2.05819964\"], [\"2161.53\", \"0.00231317\"], [\"2161.16\", \"0.34462973\"], [\"2160.81\", \"3.063\"], [\"2160.13\", \"30.15086\"], [\"2160.00\", \"0.00462962\"], [\"2157.11\", \"500\"], [\"2156.28\", \"0.09275233\"], [\"2152.61\", \"0.00464552\"], [\"2151.85\", \"0.00113855\"], [\"2150.00\", \"0.04651162\"], [\"2148.69\", \"0.01163499\"], [\"2145.46\", \"0.02563552\"], [\"2144.20\", \"500\"], [\"2143.22\", \"500\"], [\"2143.15\", \"0.00114317\"], [\"2142.23\", \"0.01167008\"], [\"2141.90\", \"0.00466875\"], [\"2140.77\", \"0.00700682\"], [\"2140.00\", \"1.02336448\"], [\"2139.65\", \"500\"], [\"2139.00\", \"0.0116877\"], [\"2138.66\", \"500\"], [\"2137.66\", \"500\"], [\"2137.16\", \"0.01\"], [\"2137.00\", \"3\"], [\"2135.00\", \"1.00859953\"], [\"2134.84\", \"0.01132018\"], [\"2134.25\", \"0.00114794\"], [\"2132.00\", \"0.76228424\"], [\"2131.52\", \"0.00070372\"], [\"2131.29\", \"0.00469199\"], [\"2130.00\", \"0.20105164\"], [\"2129.00\", \"0.00032409\"], [\"2128.98\", \"1\"], [\"2127.14\", \"0.01\"], [\"2127.00\", \"0.02822284\"], [\"2126.92\", \"0.00195901\"], [\"2125.60\", \"0.00115261\"], [\"2125.00\", \"1.47576467\"], [\"2122.00\", \"0.1\"], [\"2121.33\", \"0.02357011\"], [\"2121.00\", \"0.48573785\"], [\"2120.69\", \"0.00471544\"], [\"2120.00\", \"1.94895751\"], [\"2119.87\", \"0.00438706\"], [\"2118.50\", \"0.00094406\"], [\"2118.04\", \"0.11803365\"], [\"2117.89\", \"0.01\"], [\"2116.90\", \"0.00115735\"]], \"asks\": [[\"2162.66\", \"3.063\"], [\"2162.83\", \"30.15086\"], [\"2163.86\", \"0.04318671\"], [\"2163.91\", \"0.0231295\"], [\"2164.72\", \"0.1847814\"], [\"2165.00\", \"0.2317\"], [\"2165.70\", \"0.13858733\"], [\"2166.35\", \"500\"], [\"2168.87\", \"0.03713623\"], [\"2169.00\", \"0.1\"], [\"2169.60\", \"0.0011\"], [\"2170.00\", \"0.30671169\"], [\"2171.59\", \"0.01\"], [\"2171.64\", \"0.01132018\"], [\"2171.84\", \"0.02338579\"], [\"2174.14\", \"0.00462252\"], [\"2174.15\", \"500\"], [\"2174.59\", \"0.00068978\"], [\"2175.04\", \"0.00323\"], [\"2175.77\", \"1.50299677\"], [\"2176.00\", \"0.03724082\"], [\"2176.30\", \"0.04147847\"], [\"2176.70\", \"500\"], [\"2177.43\", \"500\"], [\"2177.82\", \"500\"], [\"2178.60\", \"0.0011\"], [\"2180.00\", \"0.00458716\"], [\"2180.67\", \"0.0006906\"], [\"2181.00\", \"0.00063646\"], [\"2181.38\", \"500\"], [\"2183.60\", \"0.03688556\"], [\"2185.00\", \"2.2\"], [\"2185.02\", \"0.00459951\"], [\"2186.24\", \"0.0414093\"], [\"2186.30\", \"0.04157309\"], [\"2186.52\", \"0.01\"], [\"2186.67\", \"0.02303741\"], [\"2187.05\", \"0.02055567\"], [\"2187.60\", \"0.0011\"], [\"2188.00\", \"0.067\"], [\"2189.63\", \"0.04126282\"], [\"2190.00\", \"2.10359243\"], [\"2190.04\", \"0.01132018\"], [\"2191.19\", \"0.89914\"], [\"2192.16\", \"0.007136\"], [\"2192.94\", \"0.04120041\"], [\"2195.00\", \"1.17793942\"], [\"2195.89\", \"0.00457674\"], [\"2196.45\", \"0.0011\"], [\"2196.90\", \"202.50673148\"]]}, \"admission_quality\": {\"entry\": {\"side\": \"BUY\", \"requested_quantity\": \"0.03450698\", \"fillable_quantity\": \"0.03450698\", \"unfilled_quantity\": \"0E-8\", \"best_bid\": \"2161.54\", \"best_ask\": \"2162.66\", \"midpoint_mark\": \"2162.10\", \"spread_bps\": \"5.180148929281716849359419083\", \"bid_depth\": \"3047.08021718\", \"ask_depth\": \"3245.16233143\", \"book_age_seconds\": \"1.267022\", \"vwap\": \"2164.390128000000\", \"gross_notional\": \"74.686566859093\", \"fee\": \"0.074686566859\", \"net_cash_change\": \"-74.761253425952\", \"net_unit_proceeds\": \"0\", \"depth_impact_bps\": \"0\", \"slippage_bps\": \"8\", \"participation\": \"1\", \"allocations\": [[0, \"0.03450698\"]]}, \"rejection_reasons\": [\"first_target_destroyed_by_execution_costs\"], \"breakeven_bid\": \"2170.459609056599174333101608\", \"immediate_round_trip_net\": \"-0.307234997767\", \"target_net_scenarios\": [\"-0.1670442749472737599999999916\", \"-0.06543183457460095999999999161\", \"0.03618060579807184000000000839\"], \"policy\": \"execution-quality-4.0.0\", \"probability_estimate\": null}, \"strategy_id\": \"A2_CONFIRMED_PULLBACK\", \"holding_hours\": 24, \"holding_seconds\": 3600, \"strategy_evidence\": {\"as_of\": \"2026-10-17T06:50:00+00:00\", \"entry_eligible\": true, \"execution_quality_required\": true, \"experimental_context\": {\"15m\": {\"available_at\": \"2026-10-17T06:45:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 239, \"ready\": true}, \"60m\": {\"available_at\": \"2026-10-17T06:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 59, \"ready\": true}, \"as_of\": \"2026-10-17T06:55:20.736000+00:00\", \"breakout_relative_volume\": \"2.531861806665379763209455085\", \"current_volume\": \"0.10009994\", \"last_open\": \"2163.31\", \"prebreak_width\": \"0.003207249438016596373585294353\", \"previous_high\": \"2163.31\", \"previous_volume\": \"0.4646292\", \"ready\": true}, \"holding_bars\": 12, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"2\", \"target_atr\": \"2\"}, \"qualified\": true, \"regime\": \"COMPRESSION\", \"relative_return\": \"0.002288623413577934168060943\", \"strategy_version\": \"4.2.0-experimental.1\", \"timeframe\": \"5m\", \"unvalidated\": true, \"veto\": false}}",
+          "decision_payload": "{\"accepted\": true, \"action\": \"BUY\", \"ai_assessment_id\": null, \"decision_id\": \"dec_02864e9f2a8d4db8b4960f82f10eb341\", \"entry_price\": \"2162.66\", \"explanation\": \"aggregate_signal_score=1; explicit_eligible_strategies=['A2_CONFIRMED_PULLBACK']; risk_paper_only=True; risk_quote_amount_positive=True; risk_entry_price_positive=True; risk_stop_loss_positive=True; risk_long_stop_below_entry=True; risk_minimum_order_size=True; risk_position_size=True; risk_cash_available=True; risk_reserve_preserved=True; risk_total_exposure=True; risk_allocated_capital=True; risk_position_count=True; risk_planned_loss=True; risk_daily_loss_budget=True; risk_weekly_loss_budget=True; risk_entry_frequency=True\", \"proposed_quantity\": \"0.03450698\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": null, \"signal_ids\": [\"sig_491efb2824cd405a995e6befa3b01316\", \"sig_42b8104a81a64064b160f7262cc528dd\", \"sig_c62bbacfa23a4feebf41926d7ecde1d9\", \"sig_a99812b78bf4432da61c52b751a738f3\", \"sig_a93336d66ad24f2f86094542bbbf23e7\", \"sig_4d0b40898fd041a1980f2773ae024e89\"], \"stop_loss\": \"2159.70\", \"symbol\": \"ETH-EUR\", \"take_profit_targets\": [\"2165.61\", \"2168.56\", \"2171.51\"], \"timestamp\": \"2026-10-17 06:55:21.868331+00:00\"}",
+          "created_at": "2026-10-17 06:55:22.007759+00:00"
+        },
+        {
+          "order_id": "ord_506abb340c9544cd8aaa7dbdef1eeee1",
+          "decision_id": "dec_ea80f1dc960d4d1ba1c8bef85e67f34f",
+          "symbol": "ETH-EUR",
+          "side": "BUY",
+          "status": "REJECTED",
+          "quantity": "0.034546910000",
+          "quote_amount": "75.000000000000",
+          "rejection_reason": "execution_quality:first_target_destroyed_by_execution_costs",
+          "execution_json": "{\"fee_bps\": \"10\", \"slippage_bps\": \"8\", \"rejection_reason\": \"execution_quality:first_target_destroyed_by_execution_costs\", \"quantity_step\": \"1E-8\", \"limit_price\": null, \"stop_loss\": \"2157.14\", \"targets\": [\"2163.17\", \"2166.19\", \"2169.21\"], \"book\": {\"timestamp\": \"2026-10-17T06:10:14.674000+00:00\", \"source\": \"revolut-x\", \"bids\": [[\"2159.08\", \"2.06038925\"], [\"2158.62\", \"0.02316294\"], [\"2158.45\", \"30.15086\"], [\"2158.41\", \"3.063\"], [\"2154.04\", \"500\"], [\"2150.00\", \"0.05116278\"], [\"2148.69\", \"0.01163499\"], [\"2145.46\", \"0.02563552\"], [\"2144.20\", \"500\"], [\"2143.22\", \"500\"], [\"2143.15\", \"0.00114317\"], [\"2142.23\", \"0.01167008\"], [\"2141.90\", \"0.00466875\"], [\"2140.77\", \"0.00700682\"], [\"2140.00\", \"194.22081307\"], [\"2139.65\", \"500\"], [\"2139.00\", \"0.0116877\"], [\"2138.66\", \"500\"], [\"2137.66\", \"500\"], [\"2137.16\", \"0.01\"], [\"2137.00\", \"3\"], [\"2135.00\", \"1.00859953\"], [\"2134.84\", \"0.01132018\"], [\"2134.25\", \"0.00114794\"], [\"2132.00\", \"0.76228424\"], [\"2131.52\", \"0.00070372\"], [\"2131.29\", \"0.00469199\"], [\"2130.00\", \"0.20105164\"], [\"2128.98\", \"1\"], [\"2127.14\", \"0.01\"], [\"2127.00\", \"0.02822284\"], [\"2126.92\", \"0.00195901\"], [\"2125.60\", \"0.00115261\"], [\"2125.00\", \"1.47576467\"], [\"2122.00\", \"0.1\"], [\"2121.33\", \"0.02357011\"], [\"2121.00\", \"0.48573785\"], [\"2120.69\", \"0.00471544\"], [\"2120.00\", \"1.94895751\"], [\"2119.87\", \"0.00438706\"], [\"2118.50\", \"0.00094406\"], [\"2118.04\", \"0.11803365\"], [\"2117.89\", \"0.01\"], [\"2116.90\", \"0.00115735\"], [\"2116.44\", \"0.01132018\"], [\"2115.00\", \"3.58049644\"], [\"2111.00\", \"0.01657981\"], [\"2110.98\", \"1\"], [\"2110.19\", \"0.0047389\"], [\"2110.00\", \"0.15178198\"]], \"asks\": [[\"2160.16\", \"2.06032157\"], [\"2160.17\", \"0.02316948\"], [\"2160.20\", \"3.063\"], [\"2160.70\", \"0.0011\"], [\"2160.71\", \"30.15086\"], [\"2162.00\", \"1\"], [\"2163.31\", \"0.09245092\"], [\"2163.38\", \"500.00464552\"], [\"2163.60\", \"202.50673148\"], [\"2165.00\", \"0.2317\"], [\"2168.00\", \"0.067\"], [\"2168.87\", \"0.03713623\"], [\"2169.00\", \"0.1\"], [\"2169.60\", \"0.0011\"], [\"2170.00\", \"0.30671169\"], [\"2171.59\", \"0.01\"], [\"2171.64\", \"0.01132018\"], [\"2171.84\", \"0.02338579\"], [\"2172.18\", \"500\"], [\"2174.14\", \"0.00462252\"], [\"2174.15\", \"500\"], [\"2174.59\", \"0.00068978\"], [\"2175.04\", \"0.00323\"], [\"2175.77\", \"1.50299677\"], [\"2176.00\", \"0.03724082\"], [\"2176.30\", \"0.04147847\"], [\"2177.43\", \"500\"], [\"2177.82\", \"500\"], [\"2178.60\", \"0.0011\"], [\"2180.00\", \"0.00458716\"], [\"2180.67\", \"0.0006906\"], [\"2181.00\", \"0.00063646\"], [\"2181.38\", \"500\"], [\"2182.00\", \"0.00476308\"], [\"2183.60\", \"0.03688556\"], [\"2185.00\", \"2.2\"], [\"2185.02\", \"0.00459951\"], [\"2186.24\", \"0.0414093\"], [\"2186.30\", \"0.04157309\"], [\"2186.52\", \"0.01\"], [\"2186.67\", \"0.02303741\"], [\"2187.05\", \"0.02055567\"], [\"2187.60\", \"0.0011\"], [\"2189.63\", \"0.04126282\"], [\"2190.00\", \"2.10359243\"], [\"2190.04\", \"0.01132018\"], [\"2191.19\", \"0.89914\"], [\"2192.16\", \"0.007136\"], [\"2192.94\", \"0.04120041\"], [\"2195.00\", \"1.17793942\"]]}, \"admission_quality\": {\"entry\": {\"side\": \"BUY\", \"requested_quantity\": \"0.03454691\", \"fillable_quantity\": \"0.03454691\", \"unfilled_quantity\": \"0E-8\", \"best_bid\": \"2159.08\", \"best_ask\": \"2160.16\", \"midpoint_mark\": \"2159.62\", \"spread_bps\": \"5.000879784406515961141311897\", \"bid_depth\": \"3244.62215378\", \"ask_depth\": \"3247.95342032\", \"book_age_seconds\": \"2.04078\", \"vwap\": \"2161.888128000000\", \"gross_notional\": \"74.686554588084\", \"fee\": \"0.074686554588\", \"net_cash_change\": \"-74.761241142672\", \"net_unit_proceeds\": \"0\", \"depth_impact_bps\": \"0\", \"slippage_bps\": \"8\", \"participation\": \"1\", \"allocations\": [[0, \"0.03454691\"]]}, \"rejection_reasons\": [\"first_target_destroyed_by_execution_costs\"], \"breakeven_bid\": \"2167.950592834611693837435865\", \"immediate_round_trip_net\": \"-0.305900204635\", \"target_net_scenarios\": [\"-0.1648575640490162399999999923\", \"-0.06071360938644167999999999233\", \"0.04343034527613288000000000767\"], \"policy\": \"execution-quality-4.0.0\", \"probability_estimate\": null}, \"strategy_id\": \"A2_CONFIRMED_PULLBACK\", \"holding_hours\": 24, \"holding_seconds\": 3600, \"strategy_evidence\": {\"as_of\": \"2026-10-17T06:05:00+00:00\", \"entry_eligible\": true, \"execution_quality_required\": true, \"experimental_context\": {\"15m\": {\"available_at\": \"2026-10-17T06:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 239, \"ready\": true}, \"60m\": {\"available_at\": \"2026-10-17T06:00:00+00:00\", \"bear\": false, \"bull\": true, \"complete_bars\": 59, \"ready\": true}, \"as_of\": \"2026-10-17T06:10:14.674000+00:00\", \"breakout_relative_volume\": \"0.003846231851391097675422284782\", \"current_volume\": \"0.01863648\", \"last_open\": \"2158.66\", \"prebreak_width\": \"0.001751589911507022313147541773\", \"previous_high\": \"2158.86\", \"previous_volume\": \"0.00025014\", \"ready\": true}, \"holding_bars\": 12, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"2\", \"target_atr\": \"2\"}, \"qualified\": true, \"regime\": \"COMPRESSION\", \"relative_return\": \"0.000203010817792439487029849\", \"strategy_version\": \"4.2.0-experimental.1\", \"timeframe\": \"5m\", \"unvalidated\": true, \"veto\": false}}",
+          "decision_payload": "{\"accepted\": true, \"action\": \"BUY\", \"ai_assessment_id\": null, \"decision_id\": \"dec_ea80f1dc960d4d1ba1c8bef85e67f34f\", \"entry_price\": \"2160.16\", \"explanation\": \"aggregate_signal_score=1; explicit_eligible_strategies=['A2_CONFIRMED_PULLBACK']; risk_paper_only=True; risk_quote_amount_positive=True; risk_entry_price_positive=True; risk_stop_loss_positive=True; risk_long_stop_below_entry=True; risk_minimum_order_size=True; risk_position_size=True; risk_cash_available=True; risk_reserve_preserved=True; risk_total_exposure=True; risk_allocated_capital=True; risk_position_count=True; risk_planned_loss=True; risk_daily_loss_budget=True; risk_weekly_loss_budget=True; risk_entry_frequency=True\", \"proposed_quantity\": \"0.03454691\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": null, \"signal_ids\": [\"sig_af653071df0d4c6e98efac8f4b4bfc55\", \"sig_0567e16ced5a4a0fa9bf6ae7fc7a5878\", \"sig_23c2289fcbdd4ff88c3d994eba02566e\", \"sig_8c6f585c65844124bb43123c0c852484\", \"sig_a1b2fbbcb7004f5aa1caeba40298f869\", \"sig_6bed3b75c81940a8bd14e02a34e9f451\"], \"stop_loss\": \"2157.14\", \"symbol\": \"ETH-EUR\", \"take_profit_targets\": [\"2163.17\", \"2166.19\", \"2169.21\"], \"timestamp\": \"2026-10-17 06:10:16.570498+00:00\"}",
+          "created_at": "2026-10-17 06:10:16.720797+00:00"
+        }
+      ],
+      "latest_accepted_buys": [
+        {
+          "decision_id": "dec_6f42f68979504b32af4c1ea91e2f002c",
+          "symbol": "SOL-EUR",
+          "created_at": "2026-10-17 09:50:48.110997+00:00"
+        },
+        {
+          "decision_id": "dec_b1ff7eef88ca490993a9fd048e907297",
+          "symbol": "ETH-EUR",
+          "created_at": "2026-10-17 09:50:47.903112+00:00"
+        },
+        {
+          "decision_id": "dec_ba64391444334447bf1e0902c0a17a20",
+          "symbol": "ETH-EUR",
+          "created_at": "2026-10-17 09:45:47.023081+00:00"
+        },
+        {
+          "decision_id": "dec_9819e81fe60c4888868649574032a57a",
+          "symbol": "ETH-EUR",
+          "created_at": "2026-10-17 09:25:44.128994+00:00"
+        },
+        {
+          "decision_id": "dec_616682ad80044fab9004981aa724b201",
+          "symbol": "SOL-EUR",
+          "created_at": "2026-10-17 09:15:44.212755+00:00"
+        },
+        {
+          "decision_id": "dec_adac1787251e4f6995f3179103b731e1",
+          "symbol": "ETH-EUR",
+          "created_at": "2026-10-17 09:10:42.039750+00:00"
+        },
+        {
+          "decision_id": "dec_862514831cc14f2aaaeda5af21eb8bf2",
+          "symbol": "SOL-EUR",
+          "created_at": "2026-10-17 08:55:38.881711+00:00"
+        },
+        {
+          "decision_id": "dec_644345c5e743442da783b8eb2b87da8b",
+          "symbol": "SOL-EUR",
+          "created_at": "2026-10-17 08:50:38.446163+00:00"
+        },
+        {
+          "decision_id": "dec_5772b0ef97f5434581cdda3035846b1f",
+          "symbol": "ETH-EUR",
+          "created_at": "2026-10-17 07:25:27.213472+00:00"
+        },
+        {
+          "decision_id": "dec_38b42bfa33f34cd59b4f84f7284f986c",
+          "symbol": "ETH-EUR",
+          "created_at": "2026-10-17 07:15:25.094374+00:00"
+        },
+        {
+          "decision_id": "dec_02864e9f2a8d4db8b4960f82f10eb341",
+          "symbol": "ETH-EUR",
+          "created_at": "2026-10-17 06:55:21.868331+00:00"
+        },
+        {
+          "decision_id": "dec_ea80f1dc960d4d1ba1c8bef85e67f34f",
+          "symbol": "ETH-EUR",
+          "created_at": "2026-10-17 06:10:16.570498+00:00"
+        }
+      ],
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "HEALTHY",
+          "reason": "fresh_portfolio_valuation",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 21:02:28.913128+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-18T08:55:02.663023+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-18 08:55:02.663092+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-18T08:55:42.450351+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-18 08:55:42.450403+00:00"
+        }
+      ],
+      "reconciliation": []
+    }
+  ],
+  "operational_execution_settings": {
+    "allocation_profile": "balanced",
+    "default_fee_bps": "10",
+    "default_slippage_bps": "8",
+    "max_allocated_capital_eur": "500",
+    "max_total_open_exposure_eur": "350",
+    "min_uncommitted_reserve_eur": "150",
+    "max_position_size_eur": "100",
+    "max_simultaneous_positions": "3",
+    "max_planned_loss_per_trade_eur": "5",
+    "daily_loss_threshold_eur": "15",
+    "weekly_loss_threshold_eur": "35",
+    "max_new_entries_per_day": "6",
+    "market_data_max_staleness_seconds": "90"
+  },
+  "source_hashes": {
+    "__init__.py": "7e4d2a3b86191de1c9e243b3229fbbd682ae5cfc6379e4613e799c5b67197c39",
+    "ai.py": "09e59aff260802128b689c6115a77a7eba7dad37a6d7eafa7d5020d8ed47d870",
+    "allocation.py": "a1790e38cbd092367e5b3cff10e84f3d79600c53d72933d2bd0930466a2b6d9b",
+    "api/__init__.py": "d85d765bcbe5b99ebc7bf88f5739dfd584d7ebd60c8a4ab2fe6e39dfda35743c",
+    "api/main.py": "f65eeab6e74f76c36a172dd7690313e55c68f8544b1bf1d42f37186309c21117",
+    "api/security.py": "beb71afd71835881c6bf7aac2032403b83dff950f5c19058fa4ac537e6331a42",
+    "api/v44.py": "535c41ad7851254d14e000fce600c4ce5da51221abb12f9d2e07fb4f59ac8da7",
+    "backtest.py": "ef2f346c2106ced5712bc884721ca446cebdcb86d10e686b3cf4826861f8aa9c",
+    "cli.py": "419c44d39a46b1051ab62eabf7d1d6cea38fd79bda1892e1bd35b77102ddfa84",
+    "clock.py": "5c8aa70595f49803798ab8381fc644e1ab77adbd6cb2445c6c51bd2b3c20e186",
+    "config.py": "8f76ad1fee4fb3ef76c146569f46fe3fc14cd974ee9faf3562dffc5f78ad6864",
+    "decision.py": "8477bf8673b7bddf2352a1f97e589c12335f43d8963027bffc354879845f7d1b",
+    "domain.py": "e714cc381e06114e6da4a75cf7c0662faf0f172bae6f5d172d2a0abc80064d73",
+    "execution/__init__.py": "383f03b379a3058f5fe5019f1faab7a98985b57dad83b890f0c7b79c70292f13",
+    "execution/postings.py": "a5bb95a9fb0247501cbdbab116125915da9651346114fb2a1e0377534e04c872",
+    "execution/pricing.py": "e8209888a8f28641359799a020c83dd5d9e4ece95fd5fc2095389f769820625d",
+    "execution/protection.py": "726bd7139e9e1061261d7ea38dd2b98fa7b88e4e71738c906c6e223e2c299b15",
+    "execution/quality.py": "bab507cee176870e6453a38db4eaa1c6d8bd77456868811c67061b7402e9bbff",
+    "execution_gateway.py": "8aee25c289c3ddb45e1bde082e27bd9bb5850265b4fb71cdb3c46a07eab830c4",
+    "failure_injection.py": "f21b5e44715e510ac0019ca62939fe7c115b656bb31db42faefcb90dccc8a834",
+    "indicators.py": "a828746f564a72c392964aeb28e273b8c4c73340aca35b7e10c65d24b4fe7b37",
+    "logging_config.py": "6e651df83b0fae507e1c99ada16ec9a949ed5cc9e71fcfc325d2a3f43ea0239d",
+    "market_data/__init__.py": "9e8f992cb1ae01b0e31211884cde5ce341679cb2f9f1951701cf1905925047e4",
+    "market_data/replay.py": "c667af1f0a2aa85b7f03ac8600c358c8c8070ebd30b0e3e933c8c851f6972228",
+    "market_data/revolut.py": "6eececc825d21ae796eb3457ed7cb3cca8c5ca5588b3d7b1991bdda575932d9b",
+    "market_data/scheduling.py": "3d8be924a69d19afc2b699321b800492ce1685e1ba70ffd40b26d09679d3e234",
+    "market_data/service.py": "bafd58334c7341d6782d569768a474a639c99dfd1d0a000eacc9e77ff3081ff7",
+    "notifications.py": "2f00aa409e8675e486780fe0158a2d48153fc39bb0f7785cf1efc6783601bb89",
+    "paper_broker.py": "91a4577f0caef13cef8dda8ff2d8779b29b3c4a10de91d426a5fed45eabff09d",
+    "persistence/__init__.py": "1d250956abb161c9bff6f7a20722a95309ead48a99b37a60a6938ea6dd071cb1",
+    "persistence/accounting.py": "b9a645df396a763b00d8a89ebf4357a2e77648e4e7066187a00e13370e378c3a",
+    "persistence/ai_budget.py": "95328e73fb094589f7db56bc17257dcd5af1743c0db541043cb500d4fc19468a",
+    "persistence/ai_events.py": "bd2ef2092be09682ed2588c6f5a26d435b297d5f523c33eaf8fca8eb0cf7ca2b",
+    "persistence/analytics.py": "1abd9897e1a8ae2ed25b19171dd22cda209fca0ec5a7bbe0b3d0e1ccbd9c01d0",
+    "persistence/corrections.py": "5b9dad750cafbed8da08314b99a4ea084f72ca42753ef0e6a6b7f6c293d436fa",
+    "persistence/database.py": "b653f5b4e1be9e28d3f7cd7dedbcc6ad2f153a9828ceff1d490cefbc5f5a9f5d",
+    "persistence/market_state.py": "68f2f0b1ca14a6dc406fee9c5106a32e0373bdde96e2e212d4d82facfc95149a",
+    "persistence/models.py": "ffb75f432e9c626979a46c323526bb976fd37900674a533be0b9b13f91339bee",
+    "persistence/operations.py": "d249b62db2f58adbeaef37dd8ae3777abf1c9ad1c2a4f55580b3c522dc8817ad",
+    "persistence/pilot.py": "9cfc2de4f1164bed1c50d81c5702c8753ce51ed46cf71a68249ef987c635cb87",
+    "persistence/repository.py": "ea6b91d6fc46e4556e043797c991c5344f6c5b0a490e31ef08b97d5bd8984747",
+    "persistence/research_jobs.py": "dc887ccfa14114c4d525545f9c235ba3ea1771364b9a993c980987b9b8ad98ca",
+    "persistence/research_policy.py": "20836879e13f3d0de4d2f408983c764cca15092b990933ed94b0a14e0fdac414",
+    "persistence/retry.py": "a3315cedf236b0261c3251dc5a5d473277a98113c94c203d460101598e1004fb",
+    "pilot.py": "560e06c6e2595431efa35f82e51f90c51b131ca28d521ff645984d931c53f96b",
+    "portfolio.py": "852a772f70d522cf7165519a1117a77477fe98499683926dff6ddcae4a5c9c43",
+    "position_manager.py": "fc23e86d2f0b1726574952f10349b84785822ded39701b105e5e00cb38cd03ac",
+    "research/__init__.py": "06b7c2cbc6a4db73dc404eb87d5eea83531009255cfc13bef04ce0a0c19e18b3",
+    "research/artifacts.py": "130253c9921d540f998f1b91ce1cd5e09ec199f2b767214caaedee2747d21af3",
+    "research/cli.py": "415f5980b181b85c2a7a6acf6317d1b5ba0263258062f89da16544beffa76a6e",
+    "research/context.py": "adb0bdd92d4a94d57a9e373ff6e89a3c10c9edc8a6811e3a470c30b1f5954524",
+    "research/data.py": "470ab1728811a29ceaa729b1a564d2d1b21566ed689d4f9b1c441aae8a1f99ff",
+    "research/diagnostics.py": "1483c804fb97f187b7a00b83c0893be30e70a95cac04adaef20b45a372304dea",
+    "research/experimental.py": "4af484da49015cd8ae7e55e1bdcf581185126967fee6ec3b91720291d72ab658",
+    "research/panel.py": "d9e939ed41690b4635cfb82460968c7c13c45a45a5ccac3cfb718c38a6dd8e37",
+    "research/regimes.py": "c0477ac82ee808aa61281d2db21dd64ad557d5a4bf47be5ea0d371b5ebe897ee",
+    "research/seed.py": "4652e0f8d11e34832a02ccb002377b94b821cd179a192f45533f8c5900e57a44",
+    "research/simulation.py": "595fcb5e4e2888be21b1fab39559bffef76b4e4a77728c571282db2625b3a72a",
+    "research/strategies.py": "585e6362408d1c3894363e073ed1a423cc7f52ad9b17d75f462ef07b157ff901",
+    "research/worker.py": "41760d2d73af48a9c3c7c4f17fb3211b088f010c19dfcb908ae85738f00ad028",
+    "research/workflow.py": "f833fc7d090420b6de11e9f3a319ec499ec7dab73c1130b93acc150831d1d341",
+    "risk.py": "c4caa24a6010b47f7f26d63fea1e7b24f867274f87be9b899983b2932699a354",
+    "runtime.py": "09fe805a0484c0deaa965849b62b5259bca3f17026c28c640791a1f9b6344180",
+    "scanner.py": "c1df5df0716ad0c0154cfde9ad0a0c48a8dff78bd12e9a91e76ebb7cf07885d2",
+    "shadow/__init__.py": "4a3c21bd8ebf4d4f672a52516825a63befffa0bbc0328c709482da5d64f2705b",
+    "shadow/diagnostics.py": "ce10fdfe37f88c61e428801951318e37e2cf012d52ba8492975c80e8ac82a1d7",
+    "shadow/lab.py": "7d2b789225feaf2eb3259beb4d2cb76da2dddb7131baf11b98925061a40c52cb",
+    "shadow/legacy.py": "20d2d8e6085c445881827294a481d38a5a1683861788e8357566e078130a2258",
+    "shadow/repository.py": "f5eb40fc84e3c45dedfd3979fc621210459ccdd3c4d0e90927af16016dae84e3",
+    "shadow/runtime.py": "0ce439626ca74c72fe4d8e579bd74e8e214c600dbe89585ae2d0264045980f89",
+    "shadow/versions.py": "9464e4a7884fcf19ff1a4df3fb35f953dabf943fef16bc993f144e96d329830d",
+    "shadow/views.py": "f27b705d2f4e7812888444af7e16c905a3d9aa11891704fa1835b2328ec5cba2",
+    "strategies.py": "6488e137ed05965791d700d9d1bea6dd8afffb79f64665689a79a23b1a09e7a8",
+    "worker/__init__.py": "ff25669f909727325a8366f3dedb648955c3abf7e407e84be3c2df83609cebc4",
+    "worker/health.py": "2a2ce350c1229d9051af04f4205f3ee6e1b500c86c64d65598fafc2d527ae73b",
+    "worker/runner.py": "92e12e0128942260f347d640593474b7485a279bd6a880da00008b4dd22b9fcd"
+  }
+}

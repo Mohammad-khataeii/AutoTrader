@@ -1,0 +1,1259 @@
+{
+  "evidence_class": "REAL_PRODUCTION_READ_ONLY_OBSERVATION",
+  "captured_at": "2026-10-17T13:25:57.831779+00:00",
+  "read_only": true,
+  "live_trading_enabled": false,
+  "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+  "accounts": [
+    {
+      "identity": "official",
+      "state": "OFFICIAL",
+      "database_name": "autotrader",
+      "manifest": null,
+      "manifest_hash": null,
+      "archive": null,
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "2d6de0552098d26d20128d3065de7ee609d6d9cf6e39616371ee29674c6820a4"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "ffc37186f6f3f941620e1d77e32613ba23c1cac4c3c6731455a1974040e6c5ab"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "7b6ab426c85e4b06a7fb3442c0bc789d18930ca06d8aca88479c3e97ef66b1fd"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 3,
+          "sha256": "470cb69d2b9196e39b2582082d14f121f89247bf947842810837453bfc62904d"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 29469,
+          "sha256": "4b32d56ad3ac9c0a12673e1af4a93d9311beea5b1cd6b91f27f0834cabf1d8c6"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "HEALTHY",
+          "reason": "fresh_portfolio_valuation",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 13:49:13.967445+00:00"
+        },
+        {
+          "key": "scanner",
+          "state": "OK",
+          "reason": "worker_scan",
+          "payload_json": "{\"ai\": {\"assessment\": \"No high-value or material-change AI event.\", \"assessment_id\": \"ai_86e2cf5cdbef4d8cbd6943d27d7cb03f\", \"contradicting_evidence\": [], \"estimated_cost_usd\": \"0\", \"explanation\": \"Failed safely; deterministic non-AI monitoring may continue.\", \"failed\": false, \"identified_risks\": [\"No high-value or material-change AI event.\"], \"model\": \"mock-v1\", \"potential_catalyst_interpretation\": \"\", \"provider\": \"event-gate\", \"suggested_action\": \"WAIT\", \"suggested_entry_conditions\": [], \"suggested_invalidation_conditions\": [\"AI unavailable.\"], \"supporting_evidence\": [], \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:25:18.589908+00:00\", \"tokens_used\": 0, \"uncertainty\": \"high\"}, \"candidates\": [{\"decision\": {\"accepted\": false, \"action\": \"WAIT\", \"ai_assessment_id\": \"ai_86e2cf5cdbef4d8cbd6943d27d7cb03f\", \"decision_id\": \"dec_881acdff2c664f16b951dd6e7d02f907\", \"entry_price\": \"2156.22\", \"explanation\": \"aggregate_signal_score=0; explicit_eligible_strategies=[]; strategy_regime_or_failed_breakout_veto\", \"proposed_quantity\": \"0.03461004\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": \"Entry conditions not met.\", \"signal_ids\": [\"sig_75523fe7638647e68a9aeb45f7784048\", \"sig_a86997be504d492eb58e383dc86c672a\", \"sig_2104e3076ba047ad91b62092b75d95f4\", \"sig_9d3b910df87844a7b121b40e29e2a4ee\", \"sig_7361998d795d40d983268b412a93609c\", \"sig_52f1d32999cc4cd1883f672b6eeeef0b\", \"sig_07762be19eb84d06a0c474d60d3a461b\", \"sig_f3c8ce3ea8ec44a58b64f5f1d718aa3e\"], \"stop_loss\": \"2152.38\", \"symbol\": \"ETH-EUR\", \"take_profit_targets\": [\"2160.05\", \"2163.88\", \"2167.71\"], \"timestamp\": \"2026-10-17 13:25:18.590067+00:00\"}, \"market\": {\"age_seconds\": \"0.279475\", \"ask_depth\": \"3051.20032880\", \"best_ask\": \"2156.22\", \"best_bid\": \"2154.85\", \"bid_depth\": \"3248.32108559\", \"imbalance\": \"0.03129138609477808172794577758\", \"liquidity_quote\": \"13577857.2594122619\", \"mid\": \"2155.535\", \"provider_latency_ms\": \"343.99\", \"spread\": \"1.37\", \"spread_bps\": \"6.355730711865035826372571079\"}, \"score\": \"0\", \"signals\": [{\"data_quality\": \"GOOD\", \"entry_conditions\": [\"bull trend, low touches EMA9, close recovers EMA9\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A pullback that holds trend can resume upward\", \"invalidation_conditions\": [\"close loses EMA21 or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_75523fe7638647e68a9aeb45f7784048\", \"strategy_id\": \"A_TREND_PULLBACK\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"prior width below threshold, completed close breaks resistance, elevated volume\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A narrow prior range can expand with confirmed demand\", \"invalidation_conditions\": [\"failed breakout or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_a86997be504d492eb58e383dc86c672a\", \"strategy_id\": \"B_COMPRESSION_BREAKOUT\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"previous close above resistance, current retest holds\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A completed breakout holding its prior boundary can continue\", \"invalidation_conditions\": [\"close below retest level\"], \"score\": \"0\", \"signal_id\": \"sig_2104e3076ba047ad91b62092b75d95f4\", \"strategy_id\": \"C_BREAKOUT_RETEST\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"relative volume above threshold, close above VWAP, upward EMA trend\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 8, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Elevated demand above VWAP in an upward trend can persist\", \"invalidation_conditions\": [\"VWAP/trend failure or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_9d3b910df87844a7b121b40e29e2a4ee\", \"strategy_id\": \"D_VOLUME_ACCUMULATION\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"20-bar excess return positive above threshold with upward trend\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"An established trend outperforming BTC/ETH may persist\", \"invalidation_conditions\": [\"relative strength reversal or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_7361998d795d40d983268b412a93609c\", \"strategy_id\": \"E_RELATIVE_STRENGTH\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"range/compression, near lower band, RSI below35, close recovers previous close\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 4, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A contained range dip can revert when selling slows\", \"invalidation_conditions\": [\"downtrend classification or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_52f1d32999cc4cd1883f672b6eeeef0b\", \"strategy_id\": \"F_MEAN_REVERSION\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Resistance rejection invalidates a proposed long breakout\", \"invalidation_conditions\": [\"high exceeds prior resistance but close loses it\"], \"score\": \"0\", \"signal_id\": \"sig_07762be19eb84d06a0c474d60d3a461b\", \"strategy_id\": \"G_FAILED_BREAKOUT_FILTER\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": true, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": true, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": true}, \"explanation\": \"Uncertain, bearish or illiquid markets require cash preservation\", \"invalidation_conditions\": [\"bear, liquidity stress, uncertainty or completed higher-timeframe veto\"], \"score\": \"0\", \"signal_id\": \"sig_f3c8ce3ea8ec44a58b64f5f1d718aa3e\", \"strategy_id\": \"H_RISK_OFF_FILTER\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}], \"symbol\": \"ETH-EUR\"}, {\"decision\": {\"accepted\": false, \"action\": \"WAIT\", \"ai_assessment_id\": \"ai_b76a6c3c9f974f68b6b90954dc640131\", \"decision_id\": \"dec_869656da56af42dbad6318ebd991a8fd\", \"entry_price\": \"92.489\", \"explanation\": \"aggregate_signal_score=0; explicit_eligible_strategies=[]; strategy_regime_or_failed_breakout_veto\", \"proposed_quantity\": \"0.806872\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": \"Entry conditions not met.\", \"signal_ids\": [\"sig_99fc4251072042ed94a3c520b2e24399\", \"sig_c1e6b7a797004ab094afea940e95ddf4\", \"sig_4a1241a5287f40fe80dd9f271815e3b7\", \"sig_5353b91999264ca18408e8d30e72adf6\", \"sig_4d2eded817db489ba79df72bd907216b\", \"sig_f03fd397b66b4d4c98bbd80791e83a7a\", \"sig_d2e32dd0e7254f3cb992069c7180fd82\", \"sig_919b66b377f342108c9ba5879cf35978\"], \"stop_loss\": \"92.237\", \"symbol\": \"SOL-EUR\", \"take_profit_targets\": [\"92.740\", \"92.991\", \"93.242\"], \"timestamp\": \"2026-10-17 13:25:18.650923+00:00\"}, \"market\": {\"age_seconds\": \"1.482584\", \"ask_depth\": \"42436.448922\", \"best_ask\": \"92.489\", \"best_bid\": \"92.424\", \"bid_depth\": \"41197.486368\", \"imbalance\": \"-0.01481411283235575700960178984\", \"liquidity_quote\": \"7735779.745093402\", \"mid\": \"92.4565\", \"provider_latency_ms\": \"571.637\", \"spread\": \"0.065\", \"spread_bps\": \"7.030333183713421987637429494\"}, \"score\": \"0\", \"signals\": [{\"data_quality\": \"GOOD\", \"entry_conditions\": [\"bull trend, low touches EMA9, close recovers EMA9\"], \"estimated_cost_bps\": \"7.030333183713421987637429494\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0050707718903636202392085645\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A pullback that holds trend can resume upward\", \"invalidation_conditions\": [\"close loses EMA21 or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_99fc4251072042ed94a3c520b2e24399\", \"strategy_id\": \"A_TREND_PULLBACK\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"prior width below threshold, completed close breaks resistance, elevated volume\"], \"estimated_cost_bps\": \"7.030333183713421987637429494\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0050707718903636202392085645\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A narrow prior range can expand with confirmed demand\", \"invalidation_conditions\": [\"failed breakout or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_c1e6b7a797004ab094afea940e95ddf4\", \"strategy_id\": \"B_COMPRESSION_BREAKOUT\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"previous close above resistance, current retest holds\"], \"estimated_cost_bps\": \"7.030333183713421987637429494\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0050707718903636202392085645\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A completed breakout holding its prior boundary can continue\", \"invalidation_conditions\": [\"close below retest level\"], \"score\": \"0\", \"signal_id\": \"sig_4a1241a5287f40fe80dd9f271815e3b7\", \"strategy_id\": \"C_BREAKOUT_RETEST\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"relative volume above threshold, close above VWAP, upward EMA trend\"], \"estimated_cost_bps\": \"7.030333183713421987637429494\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 8, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0050707718903636202392085645\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Elevated demand above VWAP in an upward trend can persist\", \"invalidation_conditions\": [\"VWAP/trend failure or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_5353b91999264ca18408e8d30e72adf6\", \"strategy_id\": \"D_VOLUME_ACCUMULATION\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"20-bar excess return positive above threshold with upward trend\"], \"estimated_cost_bps\": \"7.030333183713421987637429494\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0050707718903636202392085645\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"An established trend outperforming BTC/ETH may persist\", \"invalidation_conditions\": [\"relative strength reversal or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_4d2eded817db489ba79df72bd907216b\", \"strategy_id\": \"E_RELATIVE_STRENGTH\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"range/compression, near lower band, RSI below35, close recovers previous close\"], \"estimated_cost_bps\": \"7.030333183713421987637429494\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 4, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0050707718903636202392085645\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A contained range dip can revert when selling slows\", \"invalidation_conditions\": [\"downtrend classification or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_f03fd397b66b4d4c98bbd80791e83a7a\", \"strategy_id\": \"F_MEAN_REVERSION\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"7.030333183713421987637429494\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0050707718903636202392085645\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Resistance rejection invalidates a proposed long breakout\", \"invalidation_conditions\": [\"high exceeds prior resistance but close loses it\"], \"score\": \"0\", \"signal_id\": \"sig_d2e32dd0e7254f3cb992069c7180fd82\", \"strategy_id\": \"G_FAILED_BREAKOUT_FILTER\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"7.030333183713421987637429494\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": true, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": true, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0050707718903636202392085645\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": true}, \"explanation\": \"Uncertain, bearish or illiquid markets require cash preservation\", \"invalidation_conditions\": [\"bear, liquidity stress, uncertainty or completed higher-timeframe veto\"], \"score\": \"0\", \"signal_id\": \"sig_919b66b377f342108c9ba5879cf35978\", \"strategy_id\": \"H_RISK_OFF_FILTER\", \"symbol\": \"SOL-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}], \"symbol\": \"SOL-EUR\"}, {\"decision\": {\"accepted\": false, \"action\": \"WAIT\", \"ai_assessment_id\": \"ai_0aba0cb9e3274161aadc864a316b4494\", \"decision_id\": \"dec_069437111ac94da0b4cb7ea82a5e6584\", \"entry_price\": \"72465.58\", \"explanation\": \"aggregate_signal_score=0; explicit_eligible_strategies=[]; strategy_regime_or_failed_breakout_veto\", \"proposed_quantity\": \"0.00102982\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": \"Entry conditions not met.\", \"signal_ids\": [\"sig_20df0680a662415798cc183874162da1\", \"sig_685212325d054cb1be522e800526a5bc\", \"sig_29fdccac80634d8da84e480a58546a93\", \"sig_e92502d4a71b40479ae206de241ee584\", \"sig_29706b881975420bb01cd7065ed8e5e7\", \"sig_20a1605d76094d209ec018eafa9d2f52\", \"sig_187447bf018a45a1b62e46ce73fde5fe\", \"sig_c29fe6c727574f3b8976f21db8c8a3e6\"], \"stop_loss\": \"72400.18\", \"symbol\": \"BTC-EUR\", \"take_profit_targets\": [\"72530.97\", \"72596.36\", \"72661.75\"], \"timestamp\": \"2026-10-17 13:25:18.710638+00:00\"}, \"market\": {\"age_seconds\": \"1.937466\", \"ask_depth\": \"90.40056214\", \"best_ask\": \"72465.58\", \"best_bid\": \"72427.29\", \"bid_depth\": \"87.80153444\", \"imbalance\": \"-0.01458472010082789565797150062\", \"liquidity_quote\": \"12934206.0679413255\", \"mid\": \"72446.435\", \"provider_latency_ms\": \"126.734\", \"spread\": \"38.29\", \"spread_bps\": \"5.285284224130559357406613590\"}, \"score\": \"0\", \"signals\": [{\"data_quality\": \"GOOD\", \"entry_conditions\": [\"bull trend, low touches EMA9, close recovers EMA9\"], \"estimated_cost_bps\": \"5.285284224130559357406613590\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A pullback that holds trend can resume upward\", \"invalidation_conditions\": [\"close loses EMA21 or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_20df0680a662415798cc183874162da1\", \"strategy_id\": \"A_TREND_PULLBACK\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"prior width below threshold, completed close breaks resistance, elevated volume\"], \"estimated_cost_bps\": \"5.285284224130559357406613590\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A narrow prior range can expand with confirmed demand\", \"invalidation_conditions\": [\"failed breakout or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_685212325d054cb1be522e800526a5bc\", \"strategy_id\": \"B_COMPRESSION_BREAKOUT\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"previous close above resistance, current retest holds\"], \"estimated_cost_bps\": \"5.285284224130559357406613590\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A completed breakout holding its prior boundary can continue\", \"invalidation_conditions\": [\"close below retest level\"], \"score\": \"0\", \"signal_id\": \"sig_29fdccac80634d8da84e480a58546a93\", \"strategy_id\": \"C_BREAKOUT_RETEST\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"relative volume above threshold, close above VWAP, upward EMA trend\"], \"estimated_cost_bps\": \"5.285284224130559357406613590\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 8, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Elevated demand above VWAP in an upward trend can persist\", \"invalidation_conditions\": [\"VWAP/trend failure or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_e92502d4a71b40479ae206de241ee584\", \"strategy_id\": \"D_VOLUME_ACCUMULATION\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"20-bar excess return positive above threshold with upward trend\"], \"estimated_cost_bps\": \"5.285284224130559357406613590\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"An established trend outperforming BTC/ETH may persist\", \"invalidation_conditions\": [\"relative strength reversal or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_29706b881975420bb01cd7065ed8e5e7\", \"strategy_id\": \"E_RELATIVE_STRENGTH\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"range/compression, near lower band, RSI below35, close recovers previous close\"], \"estimated_cost_bps\": \"5.285284224130559357406613590\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 4, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A contained range dip can revert when selling slows\", \"invalidation_conditions\": [\"downtrend classification or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_20a1605d76094d209ec018eafa9d2f52\", \"strategy_id\": \"F_MEAN_REVERSION\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"5.285284224130559357406613590\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Resistance rejection invalidates a proposed long breakout\", \"invalidation_conditions\": [\"high exceeds prior resistance but close loses it\"], \"score\": \"0\", \"signal_id\": \"sig_187447bf018a45a1b62e46ce73fde5fe\", \"strategy_id\": \"G_FAILED_BREAKOUT_FILTER\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"5.285284224130559357406613590\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": true, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": true, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": true}, \"explanation\": \"Uncertain, bearish or illiquid markets require cash preservation\", \"invalidation_conditions\": [\"bear, liquidity stress, uncertainty or completed higher-timeframe veto\"], \"score\": \"0\", \"signal_id\": \"sig_c29fe6c727574f3b8976f21db8c8a3e6\", \"strategy_id\": \"H_RISK_OFF_FILTER\", \"symbol\": \"BTC-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}], \"symbol\": \"BTC-EUR\"}], \"decision\": {\"accepted\": false, \"action\": \"WAIT\", \"ai_assessment_id\": \"ai_86e2cf5cdbef4d8cbd6943d27d7cb03f\", \"decision_id\": \"dec_881acdff2c664f16b951dd6e7d02f907\", \"entry_price\": \"2156.22\", \"explanation\": \"aggregate_signal_score=0; explicit_eligible_strategies=[]; strategy_regime_or_failed_breakout_veto\", \"proposed_quantity\": \"0.03461004\", \"proposed_quote_amount\": \"75\", \"rejected_reason\": \"Entry conditions not met.\", \"signal_ids\": [\"sig_75523fe7638647e68a9aeb45f7784048\", \"sig_a86997be504d492eb58e383dc86c672a\", \"sig_2104e3076ba047ad91b62092b75d95f4\", \"sig_9d3b910df87844a7b121b40e29e2a4ee\", \"sig_7361998d795d40d983268b412a93609c\", \"sig_52f1d32999cc4cd1883f672b6eeeef0b\", \"sig_07762be19eb84d06a0c474d60d3a461b\", \"sig_f3c8ce3ea8ec44a58b64f5f1d718aa3e\"], \"stop_loss\": \"2152.38\", \"symbol\": \"ETH-EUR\", \"take_profit_targets\": [\"2160.05\", \"2163.88\", \"2167.71\"], \"timestamp\": \"2026-10-17 13:25:18.590067+00:00\"}, \"duration_ms\": \"4748.896\", \"features\": {\"adx\": \"66.78626345463864684777037416\", \"atr\": \"2.555\", \"bollinger_lower\": \"2152.068411366327730\", \"bollinger_mid\": \"2159.017\", \"bollinger_upper\": \"2165.965588633672270\", \"breakout_distance\": \"-0.004295711217349130464906810781\", \"data_quality\": \"GOOD\", \"ema_200\": \"2157.046559407128328285683048\", \"ema_21\": \"2158.727074075159177779454397\", \"ema_50\": \"2161.329274004185555774758403\", \"ema_9\": \"2156.200673129561358341967874\", \"macd\": \"-2.593754835813906739701700\", \"macd_signal\": \"-2.285704853847682758435162843\", \"metadata\": {\"ask_depth\": \"3051.20032880\", \"best_ask\": \"2156.22\", \"best_bid\": \"2154.85\", \"bid_depth\": \"3248.32108559\", \"drawdown_50\": \"-0.0062373800237877907780820402\", \"higher_timeframe_confirmation\": {\"available\": true, \"ema_21\": \"2161.520621918159958667087595\", \"ema_50\": \"2157.058918641048353158852714\", \"momentum\": \"-0.001005975587707627334720992439\", \"observations\": 59, \"timeframe\": \"20m\", \"timestamp\": \"2026-10-17T13:00:00+00:00\", \"veto\": false}, \"last_close\": \"2155.65\", \"last_high\": \"2155.65\", \"last_low\": \"2154.15\", \"last_price\": \"2155.535\", \"last_volume\": \"0.94932741\", \"liquidity_quote\": \"13577857.2594122619\", \"missing\": [], \"observations\": 240, \"order_book_age_seconds\": \"0.279475\", \"previous_close\": \"2154.94\", \"prior_bollinger_width\": \"0.006683810815835762275122315354\", \"provider\": \"revolut-x\", \"provider_latency_ms\": \"343.99\", \"regime_assessment\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"evidence\": {\"atr_fraction\": \"0.001185257346971911024516967040\", \"benchmark_bear\": true, \"benchmark_symbols\": [\"BTC-EUR\"], \"bollinger_width\": \"0.006436807708019223563316083199\", \"drawdown_50\": \"-0.0062373800237877907780820402\", \"ema_trend_fraction\": \"-0.0012039812537242017037588969\", \"history_contiguous\": true, \"label_source\": \"causal rules on observed data; no retrospective labels\", \"relative_volume\": \"0.5452702480431091249510742065\", \"spread_bps\": \"6.355730711865035826372571079\"}, \"regime\": \"BEAR\", \"version\": \"regimes-4.0.0\"}, \"retest_level\": \"2165.78\", \"return_20\": \"-0.0042727146750427271467504273\", \"return_history_20\": [\"-0.0004619151000046191510000462\", \"0.000097046998474975738250381\", \"-0.0002541460461806470096252039\", \"0\", \"-0.0007210338516149309471426723\", \"0\", \"-0.0009250693802035152636447734\", \"-0.0013379629629629629629629630\", \"0.001409292989230961796106828\", \"0.000513853204638566766196792\", \"-0.0002961235575543895690476851\", \"-0.0016615601077468504410770982\", \"-0.0008066647195449298340774120\", \"0.000770197977998320411638341\", \"0.000074178817311481490066993\", \"0.000579479025177204685899189\", \"-0.0026640597490687373746733631\", \"0.000706119547897668411834935\", \"0.000376021874260142145552961\", \"0.000329475530641224349633865\"], \"source\": \"revolut-x\", \"spread_bps\": \"6.355730711865035826372571079\"}, \"momentum\": \"0.0003294755306412243496338645159\", \"order_book_imbalance\": \"0.03129138609477808172794577758\", \"relative_volume\": \"0.5452702480431091249510742065\", \"resistance\": \"2164.95\", \"rsi\": \"38.18384815779679940454037962\", \"spread_bps\": \"6.355730711865035826372571079\", \"support\": \"2152.61\", \"symbol\": \"ETH-EUR\", \"timeframe\": \"5m\", \"timestamp\": \"2026-10-17 13:20:00+00:00\", \"volatility\": \"3.474294316836135\", \"volume_acceleration\": \"1.176808191853410006852762266\", \"vwap\": \"2157.851525421351516238313348\"}, \"provider_errors\": [], \"rejected\": [], \"scanned\": 3, \"signals\": [{\"data_quality\": \"GOOD\", \"entry_conditions\": [\"bull trend, low touches EMA9, close recovers EMA9\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A pullback that holds trend can resume upward\", \"invalidation_conditions\": [\"close loses EMA21 or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_75523fe7638647e68a9aeb45f7784048\", \"strategy_id\": \"A_TREND_PULLBACK\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"prior width below threshold, completed close breaks resistance, elevated volume\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 12, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A narrow prior range can expand with confirmed demand\", \"invalidation_conditions\": [\"failed breakout or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_a86997be504d492eb58e383dc86c672a\", \"strategy_id\": \"B_COMPRESSION_BREAKOUT\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"previous close above resistance, current retest holds\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A completed breakout holding its prior boundary can continue\", \"invalidation_conditions\": [\"close below retest level\"], \"score\": \"0\", \"signal_id\": \"sig_2104e3076ba047ad91b62092b75d95f4\", \"strategy_id\": \"C_BREAKOUT_RETEST\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"relative volume above threshold, close above VWAP, upward EMA trend\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 8, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Elevated demand above VWAP in an upward trend can persist\", \"invalidation_conditions\": [\"VWAP/trend failure or protective stop\"], \"score\": \"0\", \"signal_id\": \"sig_9d3b910df87844a7b121b40e29e2a4ee\", \"strategy_id\": \"D_VOLUME_ACCUMULATION\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"20-bar excess return positive above threshold with upward trend\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 10, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"An established trend outperforming BTC/ETH may persist\", \"invalidation_conditions\": [\"relative strength reversal or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_7361998d795d40d983268b412a93609c\", \"strategy_id\": \"E_RELATIVE_STRENGTH\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"range/compression, near lower band, RSI below35, close recovers previous close\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 4, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"A contained range dip can revert when selling slows\", \"invalidation_conditions\": [\"downtrend classification or bid stop\"], \"score\": \"0\", \"signal_id\": \"sig_52f1d32999cc4cd1883f672b6eeeef0b\", \"strategy_id\": \"F_MEAN_REVERSION\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": false, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": false, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": false}, \"explanation\": \"Resistance rejection invalidates a proposed long breakout\", \"invalidation_conditions\": [\"high exceeds prior resistance but close loses it\"], \"score\": \"0\", \"signal_id\": \"sig_07762be19eb84d06a0c474d60d3a461b\", \"strategy_id\": \"G_FAILED_BREAKOUT_FILTER\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}, {\"data_quality\": \"GOOD\", \"entry_conditions\": [\"never opens positions\"], \"estimated_cost_bps\": \"6.355730711865035826372571079\", \"evidence\": {\"as_of\": \"2026-10-17T13:20:00+00:00\", \"enabled\": true, \"entry_eligible\": false, \"holding_bars\": 0, \"observable_conditions\": true, \"parameters\": {\"breakout_buffer\": \"0.001\", \"compression_width\": \"0.06\", \"relative_return\": \"0.02\", \"relative_volume\": \"1.5\", \"stop_atr\": \"1.5\", \"target_atr\": \"1.5\"}, \"qualified\": true, \"regime\": \"BEAR\", \"regime_version\": \"regimes-4.0.0\", \"relative_return\": \"-0.0033094616674792540537280628\", \"strategy_version\": \"4.0.0\", \"timeframe\": \"5m\", \"veto\": true}, \"explanation\": \"Uncertain, bearish or illiquid markets require cash preservation\", \"invalidation_conditions\": [\"bear, liquidity stress, uncertainty or completed higher-timeframe veto\"], \"score\": \"0\", \"signal_id\": \"sig_f3c8ce3ea8ec44a58b64f5f1d718aa3e\", \"strategy_id\": \"H_RISK_OFF_FILTER\", \"symbol\": \"ETH-EUR\", \"timestamp\": \"2026-10-17 13:20:00+00:00\"}], \"status\": \"OK\"}",
+          "updated_at": "2026-10-17 13:25:18.752119+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-17T13:25:18.767373+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-17 13:25:18.767407+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-17T13:25:20.264732+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-17 13:25:20.264802+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "2f12b0257a3b453a8e2a61ab695d8146",
+      "state": "STOPPED",
+      "database_name": "autotrader_shadow_c76d01fe85f2d630ea79ea72f901a213",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_c76d01fe85f2d630ea79ea72f901a213",
+        "experiment_id": "2f12b0257a3b453a8e2a61ab695d8146",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T13:17:09.680968+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "8dc0b0560b110277214f4491c5e63ecb40e30c5680255a170ea13a257b515927",
+      "archive": {
+        "archived_at": "2026-10-16T21:01:29.701960+00:00",
+        "experiment_id": "2f12b0257a3b453a8e2a61ab695d8146",
+        "history_preserved": true,
+        "slot_released": true
+      },
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "12cd29d6cb85872dc654a9bd4026cf0d016ed7063c09b72789dd8c1cc0853e08"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "779a7a2c028869eb8e9155cbcddeaec52f158fd8764e4f5e09f5a3a1c8f0aba0"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "dd0ce8b2c01fbd886736e41b9c7b4f25dd663638a8ddaee1c10db2c3a65a760b"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 2,
+          "sha256": "02868827a8160222f279f68c36e22db004bb2d56ea2d01590edd31e89ba1bf57"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 5919,
+          "sha256": "330d3f8bb390dd7485936e8a4388fa264c6f35a3a774f27dd98f9ef7b3f858d0"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "STOPPED",
+          "reason": "operator_stop",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 14:14:47.317275+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-16T21:00:57.502506+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-16 21:00:57.502561+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-16T21:01:28.301748+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-16 21:01:28.301802+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "39cddc6d7e584a369ce223945f06e629",
+      "state": "STOPPED",
+      "database_name": "autotrader_shadow_6586961c826144cc7274d9666eb7d374",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_6586961c826144cc7274d9666eb7d374",
+        "experiment_id": "39cddc6d7e584a369ce223945f06e629",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T12:33:54.725073+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "cd088d4951a2dcb50b85fbd28b09fd40fc7fa92283873c81d84b5af42fa0e799",
+      "archive": {
+        "archived_at": "2026-10-16T21:01:24.641367+00:00",
+        "experiment_id": "39cddc6d7e584a369ce223945f06e629",
+        "history_preserved": true,
+        "slot_released": true
+      },
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "14eeaf0211e6cc144e94241457dcd17826240bd2d711b7c1bcfcb2c8dee27470"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "6c93d3ebeb824eeb315fe31312f8154e870569c4bd99f7a536d4b46a7df1f76b"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "f176b079bd577524fdf5ea056f63a1b1027b72b8ae64cfeaab25951529b759e1"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 2,
+          "sha256": "c96faa7402cbda99e5dcf71b945e363823bdc077fa6876548994acd83b1d36fa"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 6491,
+          "sha256": "6427d0d74e95c33eb3eb83694c151440868c26e43e20e3c929e3c4c2144dd1cd"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "STOPPED",
+          "reason": "operator_stop",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 14:13:13.630020+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-16T21:00:57.457047+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-16 21:00:57.457091+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-16T21:01:23.259563+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-16 21:01:23.259675+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "40f3f37036f848d0a417b06b6a6fc201",
+      "state": "SHADOW_ACTIVE",
+      "database_name": "autotrader_shadow_a6e7df2be43bab0b6c016d26295c6094",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_a6e7df2be43bab0b6c016d26295c6094",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "40f3f37036f848d0a417b06b6a6fc201",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T21:01:43.195534+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "dfd924ca4a65319f13527ccc31f1e8a155a33ac70bb58cdb6383c285eeb116a6",
+      "archive": null,
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "cbc525d42a2c9c1e3b67d49723299e4a0ffe4301741cbdc6ceabc7a6baeae536"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "9f3da8a10a9dd2f02e69639eeb6d3c8f304beff00ffc7ef1fd615d5791cce3c7"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "d0f93841855295affea843e0be284474eefcd213aaca1d65dbbfd6d3ae9b7e91"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 3,
+          "sha256": "254cc91372b0eefccc0a92408a7cd0a4b96fc02f1fbbd0797fcc72402d511b2b"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 12401,
+          "sha256": "7705ccb878eb7cd5dea5cf58bcc9972140ec5547bf95f4ab3d5d68fd882d922e"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "HEALTHY",
+          "reason": "fresh_portfolio_valuation",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 21:01:45.727782+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-17T13:25:18.794180+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-17 13:25:18.794231+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-17T13:25:57.244857+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-17 13:25:57.244909+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "52746de1116e4852b61cb16988917545",
+      "state": "STOPPED",
+      "database_name": "autotrader_shadow_824feeb25abce7c6de5034b06290c76d",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_824feeb25abce7c6de5034b06290c76d",
+        "experiment_id": "52746de1116e4852b61cb16988917545",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T12:34:06.656736+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "A2_CONFIRMED_PULLBACK",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "cdaf4e5cd875ab1639db5436ab3460b6289d838f5ad578ae01664c05f0832651",
+      "archive": {
+        "archived_at": "2026-10-16T21:01:34.540271+00:00",
+        "experiment_id": "52746de1116e4852b61cb16988917545",
+        "history_preserved": true,
+        "slot_released": true
+      },
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "92ea56aaa65e724477216dd50150e8906b066cb96533654142893741aa5e7a41"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "346bea3e2199bb688def99908163f66104f744ef24121e6896e405f842454581"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "9baa07efb3d6cf3ab483135f761f4fefb64a98499e976a772ed8a9e8e40bccc5"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 2,
+          "sha256": "a6ac24b1fd63a9114b1a0e8788fbeb97e96b89700b76753a53b06e06cd5dcae1"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 6758,
+          "sha256": "1b4dacded8d9a3b17c71a7c1a277a505be0c62b1a280ca65d38e794f413cc831"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "STOPPED",
+          "reason": "operator_stop",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 20:58:49.037939+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-16T21:00:57.478841+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-16 21:00:57.478907+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-16T21:01:33.273611+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-16 21:01:33.273672+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "9b18cabcc94c45fe84a59917226ebb58",
+      "state": "STOPPED",
+      "database_name": "autotrader_shadow_cfdd3d916c4c5107aa49a40d724451a6",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_cfdd3d916c4c5107aa49a40d724451a6",
+        "experiment_id": "9b18cabcc94c45fe84a59917226ebb58",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T12:33:25.979051+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "40145fb5d355888da29b8495608d8e280e163cc77113217e30d61d92420e012a",
+      "archive": {
+        "archived_at": "2026-10-16T21:01:16.071240+00:00",
+        "experiment_id": "9b18cabcc94c45fe84a59917226ebb58",
+        "history_preserved": true,
+        "slot_released": true
+      },
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "61a07444eedbb9a103cdefda7ecf2c440cd63ac038741504c05f01099b860a85"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "bbc6f7c2af9008390f48bedb370caaa7bc47921893557a86c6bd54d760cf4e96"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "672f0be569342028d431ac5acdef8a31c252282e3458a494832c613706ae01b9"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 2,
+          "sha256": "482ffbf50372cb9a717197831e223a356e7dc6d917fea9d1d0e6347f91280575"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 6768,
+          "sha256": "aa856d507fc372fad4483da10f388cfeb85156dcc0a26e5a3e46956200814270"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "STOPPED",
+          "reason": "operator_stop",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 20:58:30.996240+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-16T21:00:57.433507+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-16 21:00:57.433653+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-16T21:01:13.256481+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-16 21:01:13.256545+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "b97173b5abec41208c8541015d30003c",
+      "state": "SHADOW_ACTIVE",
+      "database_name": "autotrader_shadow_7d01d84930078baab2700418b243db74",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_7d01d84930078baab2700418b243db74",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "b97173b5abec41208c8541015d30003c",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T21:03:08.104215+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "5c99b88c763f420fe033481d7ec92c4ed3b2f04e9e60e9f35999ea28e1f624af",
+      "archive": null,
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "2527a4ea0745d5d6811893afb459f292ce208ecec239001dcbf81d0cec6520d1"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "fa110c07b501f9996dfd5a29f6e2dd412cc9d8695432b000a2064955222051d7"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "6fb2b88d432cd8dfa9b78a7de0728f24fe9f658d5cf92a702baec46765601411"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 3,
+          "sha256": "10df467b6473f7a088c33c258cdc797838e9089df49e24fa6643957cef8b78dc"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 12384,
+          "sha256": "397f5c3c2fa6521e59a8b5f8a91b1f6405ea57876a8887187a01bd7fb9dda09c"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "HEALTHY",
+          "reason": "fresh_portfolio_valuation",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 21:03:10.602869+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-17T13:25:18.860524+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-17 13:25:18.860557+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-17T13:25:57.394913+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-17 13:25:57.394965+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "baac318a9797469c8f3693c042eb2855",
+      "state": "SHADOW_ACTIVE",
+      "database_name": "autotrader_shadow_36372df7dcedc418e13556763997d1cf",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_36372df7dcedc418e13556763997d1cf",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "baac318a9797469c8f3693c042eb2855",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T21:02:49.043851+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "strategy_id": "C2_LIQUID_RETEST",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "5d391ec5170a08dd60feddc1ce0381abc9d0b8885222c60f50cc23af42c82f4e",
+      "archive": null,
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "697cd00082a6c6511279966c15b23641863fce4c3fc30e3fce97e02c6cc43292"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "9d8beec61e32cf258d679b15b9f32a0a9c65f6334812f634ad38ea712264d681"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "ce235f82a6aa20a682b41e80327a7e00f17819364f8eb6b5279c43a33ce94bf0"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 3,
+          "sha256": "745cd49fca08d822acf8c491867f5a5bd792ed42adebd56c32f720b30e698402"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 12388,
+          "sha256": "7dd7e7773f1ebf63764e940db869fe142c5aa1839576c501ab3fb0b3cc10d2fb"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "HEALTHY",
+          "reason": "fresh_portfolio_valuation",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 21:02:51.327467+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-17T13:25:18.839238+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-17 13:25:18.839275+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-17T13:25:57.352820+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-17 13:25:57.352876+00:00"
+        }
+      ],
+      "reconciliation": []
+    },
+    {
+      "identity": "dc1edd63598e4caeb476864bee8851e3",
+      "state": "SHADOW_ACTIVE",
+      "database_name": "autotrader_shadow_702481a99cfbc24d32479efc589fba9b",
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_702481a99cfbc24d32479efc589fba9b",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "dc1edd63598e4caeb476864bee8851e3",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T21:02:26.456888+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "strategy_id": "A2_CONFIRMED_PULLBACK",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "3d9db0caede98736082f7215e7be25e55f0115ada5d3d10999ac343327b239a9",
+      "archive": null,
+      "financial_seal": {
+        "accounts": {
+          "rows": 1,
+          "sha256": "92567a9bab74a82b1784c7f2ba2890238fc36a7ced71d263dd42e1b0986c67be"
+        },
+        "balances": {
+          "rows": 1,
+          "sha256": "d4c45762d9f046b7250917f7c364de1fc714fcea99a68d02ce16dbb40bd98bcc"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "719bfe05724dd2477b72cf72372a394324d5b165de4415fbd0b9d6c2247a8dbe"
+        },
+        "orders": {
+          "rows": 12,
+          "sha256": "c3266065495e1ebac02b655f8d9a730936f10c63a35c7dfde15e1a6d969d57be"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "risk_periods": {
+          "rows": 3,
+          "sha256": "4d7a9f5298bb9c1cb39e8511e3b51784c298dc579d9eeade391c274a149d4ae5"
+        },
+        "cooldowns": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "equity_snapshots": {
+          "rows": 12404,
+          "sha256": "9312d19e2bd3bc368211a815a4e7cd1ce2fe914e1d9410d6fff8b742572e1aff"
+        },
+        "ai_budgets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ai_usage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "schema": "0011_v42_shadow_isolation",
+      "balances": [
+        {
+          "asset": "EUR",
+          "available": "500.000000000000",
+          "reserved": "0E-12"
+        }
+      ],
+      "open_positions": [],
+      "open_orders": [],
+      "funding": [],
+      "identity_matches": true,
+      "health_states": [
+        {
+          "key": "runtime_health",
+          "state": "HEALTHY",
+          "reason": "fresh_portfolio_valuation",
+          "payload_json": "{}",
+          "updated_at": "2026-10-16 21:02:28.913128+00:00"
+        },
+        {
+          "key": "shadow_reconciliation",
+          "state": "CONSISTENT",
+          "reason": "actual_full_ledger_reconciliation",
+          "payload_json": "{\"checked_at\": \"2026-10-17T13:25:18.816879+00:00\", \"problems\": []}",
+          "updated_at": "2026-10-17 13:25:18.816917+00:00"
+        },
+        {
+          "key": "worker",
+          "state": "RUNNING",
+          "reason": "cycle_completed",
+          "payload_json": "{\"frame_id\": null, \"heartbeat\": \"2026-10-17T13:25:57.303689+00:00\", \"parent_process_id\": 0, \"process_id\": 1}",
+          "updated_at": "2026-10-17 13:25:57.303794+00:00"
+        }
+      ],
+      "reconciliation": []
+    }
+  ],
+  "source_hashes": {
+    "__init__.py": "7e4d2a3b86191de1c9e243b3229fbbd682ae5cfc6379e4613e799c5b67197c39",
+    "ai.py": "09e59aff260802128b689c6115a77a7eba7dad37a6d7eafa7d5020d8ed47d870",
+    "allocation.py": "a1790e38cbd092367e5b3cff10e84f3d79600c53d72933d2bd0930466a2b6d9b",
+    "api/__init__.py": "d85d765bcbe5b99ebc7bf88f5739dfd584d7ebd60c8a4ab2fe6e39dfda35743c",
+    "api/main.py": "f65eeab6e74f76c36a172dd7690313e55c68f8544b1bf1d42f37186309c21117",
+    "api/security.py": "beb71afd71835881c6bf7aac2032403b83dff950f5c19058fa4ac537e6331a42",
+    "api/v44.py": "535c41ad7851254d14e000fce600c4ce5da51221abb12f9d2e07fb4f59ac8da7",
+    "backtest.py": "ef2f346c2106ced5712bc884721ca446cebdcb86d10e686b3cf4826861f8aa9c",
+    "cli.py": "419c44d39a46b1051ab62eabf7d1d6cea38fd79bda1892e1bd35b77102ddfa84",
+    "clock.py": "5c8aa70595f49803798ab8381fc644e1ab77adbd6cb2445c6c51bd2b3c20e186",
+    "config.py": "8f76ad1fee4fb3ef76c146569f46fe3fc14cd974ee9faf3562dffc5f78ad6864",
+    "decision.py": "8477bf8673b7bddf2352a1f97e589c12335f43d8963027bffc354879845f7d1b",
+    "domain.py": "e714cc381e06114e6da4a75cf7c0662faf0f172bae6f5d172d2a0abc80064d73",
+    "execution/__init__.py": "383f03b379a3058f5fe5019f1faab7a98985b57dad83b890f0c7b79c70292f13",
+    "execution/postings.py": "a5bb95a9fb0247501cbdbab116125915da9651346114fb2a1e0377534e04c872",
+    "execution/pricing.py": "e8209888a8f28641359799a020c83dd5d9e4ece95fd5fc2095389f769820625d",
+    "execution/protection.py": "726bd7139e9e1061261d7ea38dd2b98fa7b88e4e71738c906c6e223e2c299b15",
+    "execution/quality.py": "bab507cee176870e6453a38db4eaa1c6d8bd77456868811c67061b7402e9bbff",
+    "execution_gateway.py": "8aee25c289c3ddb45e1bde082e27bd9bb5850265b4fb71cdb3c46a07eab830c4",
+    "failure_injection.py": "f21b5e44715e510ac0019ca62939fe7c115b656bb31db42faefcb90dccc8a834",
+    "indicators.py": "a828746f564a72c392964aeb28e273b8c4c73340aca35b7e10c65d24b4fe7b37",
+    "logging_config.py": "6e651df83b0fae507e1c99ada16ec9a949ed5cc9e71fcfc325d2a3f43ea0239d",
+    "market_data/__init__.py": "9e8f992cb1ae01b0e31211884cde5ce341679cb2f9f1951701cf1905925047e4",
+    "market_data/replay.py": "c667af1f0a2aa85b7f03ac8600c358c8c8070ebd30b0e3e933c8c851f6972228",
+    "market_data/revolut.py": "6eececc825d21ae796eb3457ed7cb3cca8c5ca5588b3d7b1991bdda575932d9b",
+    "market_data/scheduling.py": "3d8be924a69d19afc2b699321b800492ce1685e1ba70ffd40b26d09679d3e234",
+    "market_data/service.py": "bafd58334c7341d6782d569768a474a639c99dfd1d0a000eacc9e77ff3081ff7",
+    "notifications.py": "2f00aa409e8675e486780fe0158a2d48153fc39bb0f7785cf1efc6783601bb89",
+    "paper_broker.py": "91a4577f0caef13cef8dda8ff2d8779b29b3c4a10de91d426a5fed45eabff09d",
+    "persistence/__init__.py": "1d250956abb161c9bff6f7a20722a95309ead48a99b37a60a6938ea6dd071cb1",
+    "persistence/accounting.py": "b9a645df396a763b00d8a89ebf4357a2e77648e4e7066187a00e13370e378c3a",
+    "persistence/ai_budget.py": "95328e73fb094589f7db56bc17257dcd5af1743c0db541043cb500d4fc19468a",
+    "persistence/ai_events.py": "bd2ef2092be09682ed2588c6f5a26d435b297d5f523c33eaf8fca8eb0cf7ca2b",
+    "persistence/analytics.py": "1abd9897e1a8ae2ed25b19171dd22cda209fca0ec5a7bbe0b3d0e1ccbd9c01d0",
+    "persistence/corrections.py": "5b9dad750cafbed8da08314b99a4ea084f72ca42753ef0e6a6b7f6c293d436fa",
+    "persistence/database.py": "b653f5b4e1be9e28d3f7cd7dedbcc6ad2f153a9828ceff1d490cefbc5f5a9f5d",
+    "persistence/market_state.py": "68f2f0b1ca14a6dc406fee9c5106a32e0373bdde96e2e212d4d82facfc95149a",
+    "persistence/models.py": "ffb75f432e9c626979a46c323526bb976fd37900674a533be0b9b13f91339bee",
+    "persistence/operations.py": "d249b62db2f58adbeaef37dd8ae3777abf1c9ad1c2a4f55580b3c522dc8817ad",
+    "persistence/pilot.py": "9cfc2de4f1164bed1c50d81c5702c8753ce51ed46cf71a68249ef987c635cb87",
+    "persistence/repository.py": "ea6b91d6fc46e4556e043797c991c5344f6c5b0a490e31ef08b97d5bd8984747",
+    "persistence/research_jobs.py": "dc887ccfa14114c4d525545f9c235ba3ea1771364b9a993c980987b9b8ad98ca",
+    "persistence/research_policy.py": "20836879e13f3d0de4d2f408983c764cca15092b990933ed94b0a14e0fdac414",
+    "persistence/retry.py": "a3315cedf236b0261c3251dc5a5d473277a98113c94c203d460101598e1004fb",
+    "pilot.py": "560e06c6e2595431efa35f82e51f90c51b131ca28d521ff645984d931c53f96b",
+    "portfolio.py": "852a772f70d522cf7165519a1117a77477fe98499683926dff6ddcae4a5c9c43",
+    "position_manager.py": "fc23e86d2f0b1726574952f10349b84785822ded39701b105e5e00cb38cd03ac",
+    "research/__init__.py": "06b7c2cbc6a4db73dc404eb87d5eea83531009255cfc13bef04ce0a0c19e18b3",
+    "research/artifacts.py": "130253c9921d540f998f1b91ce1cd5e09ec199f2b767214caaedee2747d21af3",
+    "research/cli.py": "415f5980b181b85c2a7a6acf6317d1b5ba0263258062f89da16544beffa76a6e",
+    "research/context.py": "adb0bdd92d4a94d57a9e373ff6e89a3c10c9edc8a6811e3a470c30b1f5954524",
+    "research/data.py": "470ab1728811a29ceaa729b1a564d2d1b21566ed689d4f9b1c441aae8a1f99ff",
+    "research/diagnostics.py": "1483c804fb97f187b7a00b83c0893be30e70a95cac04adaef20b45a372304dea",
+    "research/experimental.py": "4af484da49015cd8ae7e55e1bdcf581185126967fee6ec3b91720291d72ab658",
+    "research/panel.py": "d9e939ed41690b4635cfb82460968c7c13c45a45a5ccac3cfb718c38a6dd8e37",
+    "research/regimes.py": "c0477ac82ee808aa61281d2db21dd64ad557d5a4bf47be5ea0d371b5ebe897ee",
+    "research/seed.py": "4652e0f8d11e34832a02ccb002377b94b821cd179a192f45533f8c5900e57a44",
+    "research/simulation.py": "595fcb5e4e2888be21b1fab39559bffef76b4e4a77728c571282db2625b3a72a",
+    "research/strategies.py": "585e6362408d1c3894363e073ed1a423cc7f52ad9b17d75f462ef07b157ff901",
+    "research/worker.py": "41760d2d73af48a9c3c7c4f17fb3211b088f010c19dfcb908ae85738f00ad028",
+    "research/workflow.py": "f833fc7d090420b6de11e9f3a319ec499ec7dab73c1130b93acc150831d1d341",
+    "risk.py": "c4caa24a6010b47f7f26d63fea1e7b24f867274f87be9b899983b2932699a354",
+    "runtime.py": "09fe805a0484c0deaa965849b62b5259bca3f17026c28c640791a1f9b6344180",
+    "scanner.py": "c1df5df0716ad0c0154cfde9ad0a0c48a8dff78bd12e9a91e76ebb7cf07885d2",
+    "shadow/__init__.py": "4a3c21bd8ebf4d4f672a52516825a63befffa0bbc0328c709482da5d64f2705b",
+    "shadow/diagnostics.py": "ce10fdfe37f88c61e428801951318e37e2cf012d52ba8492975c80e8ac82a1d7",
+    "shadow/lab.py": "7d2b789225feaf2eb3259beb4d2cb76da2dddb7131baf11b98925061a40c52cb",
+    "shadow/legacy.py": "20d2d8e6085c445881827294a481d38a5a1683861788e8357566e078130a2258",
+    "shadow/repository.py": "f5eb40fc84e3c45dedfd3979fc621210459ccdd3c4d0e90927af16016dae84e3",
+    "shadow/runtime.py": "0ce439626ca74c72fe4d8e579bd74e8e214c600dbe89585ae2d0264045980f89",
+    "shadow/versions.py": "9464e4a7884fcf19ff1a4df3fb35f953dabf943fef16bc993f144e96d329830d",
+    "shadow/views.py": "f27b705d2f4e7812888444af7e16c905a3d9aa11891704fa1835b2328ec5cba2",
+    "strategies.py": "6488e137ed05965791d700d9d1bea6dd8afffb79f64665689a79a23b1a09e7a8",
+    "worker/__init__.py": "ff25669f909727325a8366f3dedb648955c3abf7e407e84be3c2df83609cebc4",
+    "worker/health.py": "2a2ce350c1229d9051af04f4205f3ee6e1b500c86c64d65598fafc2d527ae73b",
+    "worker/runner.py": "92e12e0128942260f347d640593474b7485a279bd6a880da00008b4dd22b9fcd"
+  }
+}

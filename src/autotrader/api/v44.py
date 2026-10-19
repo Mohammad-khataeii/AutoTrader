@@ -414,6 +414,10 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
                 redis_status = "ok" if await redis.ping() else "unavailable"
         except Exception:
             redis_status = "unavailable"
+        market_quality = await repository.market_data_health()
+        caches = market_quality.get("caches", [])
+        live_fresh = all(c.get("age_seconds") is not None and 0 <= c["age_seconds"] < 390
+                         and c.get("observations", 0) >= 50 for c in caches) if caches else None
         return {
             "as_of": utc_now().isoformat(),
             "service": {
@@ -427,6 +431,8 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
                 else "not_configured",
             },
             "market_data": {
+                "live_observations_fresh": live_fresh,
+                "freshness_status": "UNKNOWN" if live_fresh is None else "FRESH" if live_fresh else "STALE",
                 "state": states["scanner"].state if "scanner" in states else "no_scan_yet",
                 "fresh": "scanner" in states
                 and (utc_now() - aware(states["scanner"].updated_at)).total_seconds() < 180,
@@ -455,6 +461,7 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
                     "reconciliation": e["reconciliation_status"],
                     "scan_observation": e["scan_observation"],
                     "risk_state": e["portfolio"]["risk_state"],
+                    "runtime_incidents": e["runtime_incidents"],
                 }
                 for e in summary["experiments"]
             ],
@@ -477,7 +484,7 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
             "official_reconciliation": account["reconciliation_status"],
             "incident_resolution": "Known risk/operation incidents resolve when their current state changes. Other warning/error/critical incidents remain conservatively visible because explicit resolution links are absent.",
             "live_trading_enabled": settings.live_trading_enabled,
-            "market_data_quality": await repository.market_data_health(),
+            "market_data_quality": market_quality,
         }
 
     @app.get("/api/research/summary", dependencies=auth)

@@ -2,14 +2,12 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import re
 import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
-from uuid import uuid4
 
 import httpx
 
@@ -39,20 +37,27 @@ def main() -> None:
     parser.add_argument('action',choices=['inventory','sync-research','build','up','verify','logs','stop','backup','restore','upgrade','rollback'])
     parser.add_argument('--project',default='autotrader-v41')
     parser.add_argument('--env-file',type=Path,default=ROOT/'.env')
-    parser.add_argument('--backup',type=Path)
+    parser.add_argument('--backup',type=Path,help='Complete nine-database backup-set.json')
+    parser.add_argument('--candidate-image',help='Immutable candidate image ID for isolated restore')
+    parser.add_argument('--rollback-image',help='Recorded known-good image ID for isolated rollback proof')
     parser.add_argument('--release',type=Path,help='Previously verified release.json for image rollback')
     parser.add_argument('--release-commit',help='Full approved immutable Git commit; required for production source operations')
     parser.add_argument('--release-manifest',type=Path,help='Verified release-manifest.json accompanying that commit')
     args=parser.parse_args()
     if not re.fullmatch(r'autotrader-[a-z0-9][a-z0-9-]{0,45}',args.project):
         parser.error('An independent autotrader-* Compose project is required.')
-    if args.project=='autotrader-v41' and args.action in {'build','up','upgrade'}:
+    if args.action=='inventory':
+        subprocess.run(['docker','ps','--format','{{.Names}} | {{.Image}} | {{.Ports}}'],check=True)
+        return
+    if args.project=='autotrader-v41' and args.action in {'build','up','upgrade','rollback'}:
         if not args.release_commit or not args.release_manifest:
             parser.error('Production source operations require --release-commit and --release-manifest after explicit release approval.')
         import importlib.util
         spec=importlib.util.spec_from_file_location('autotrader_release',ROOT/'deploy'/'release.py')
         release_module=importlib.util.module_from_spec(spec);spec.loader.exec_module(release_module)
         verified=release_module.verify_source_release(ROOT,args.release_manifest.resolve(),args.release_commit)
+        if args.action in {'up','upgrade'}:
+            release_module.verify_release_preflight(ROOT)
         print('Verified immutable release: '+verified['commit'])
     env_file=args.env_file.resolve()
     private=ROOT/'.tools'/'deployments'/args.project
@@ -66,9 +71,6 @@ def main() -> None:
         return result.stdout
     def dc(*parts: str,data: bytes | None = None) -> bytes:
         return run([*compose,*parts],data)
-    if args.action=='inventory':
-        print(run(['docker','ps','--format','{{.Names}} | {{.Image}} | {{.Ports}}']).decode())
-        return
     values=dict(line.split('=',1) for line in env_file.read_text().splitlines() if '=' in line and not line.startswith('#'))
     for key in ('DASHBOARD_PASSWORD','POSTGRES_PASSWORD'):
         if len(values.get(key,''))<20 or 'REPLACE' in values.get(key,''):
@@ -108,64 +110,23 @@ def main() -> None:
             for r in json.loads(run(['docker','inspect',*ids]))] if ids else []
         result['project']=args.project
         return result
-    def backup_database(database: str = 'autotrader', account_id: str = 'paper-eur') -> Path:
-        if database!='autotrader' and not re.fullmatch(r'autotrader_shadow_[a-f0-9]{32}',database):
-            raise ValueError('Backup database is outside the registered AutoTrader domains.')
-        stamp=datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid4().hex[:6]
-        output=private/(stamp+'.dump')
-        data=dc('exec','-T','postgres','pg_dump','-U','autotrader','-Fc',database)
-        # Parse the archive before recording it as a usable backup.
-        dc('exec','-T','postgres','pg_restore','--list',data=data)
-        descriptor=os.open(output,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)
-        with os.fdopen(descriptor,'wb') as stream:
-            stream.write(data);stream.flush();os.fsync(stream.fileno())
-        metadata={'sha256':hashlib.sha256(data).hexdigest(),'bytes':len(data),'project':args.project,
-            'database':database,'account_id':account_id,
-            'schema':dc('exec','-T','postgres','psql','-U','autotrader','-d',database,'-Atc','SELECT version_num FROM alembic_version').decode().strip()}
-        output.with_suffix('.json').write_text(json.dumps(metadata,indent=2)+'\n')
-        output.with_suffix('.json').chmod(0o600)
-        print('Verified backup archive: '+str(output))
-        return output
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('financial_set', ROOT/'deploy'/'financial_set.py')
+    financial_set = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(financial_set)
+
     def backup() -> Path:
-        output=backup_database()
-        exists=dc('exec','-T','postgres','psql','-U','autotrader','-d','autotrader','-Atc',
-            "SELECT to_regclass('public.shadow_experiments') IS NOT NULL").decode().strip()=='t'
-        children=[]
-        if exists:
-            rows=json.loads(dc('exec','-T','postgres','psql','-U','autotrader','-d','autotrader','-Atc',
-                "SELECT COALESCE(json_agg(json_build_object('id',experiment_id,'database',database_name,'state',state)),'[]'::json) FROM shadow_experiments"))
-            for row in rows:
-                if row['state']=='CREATING':
-                    raise RuntimeError('Shadow provisioning is incomplete; backup set/deployment refused.')
-                child=backup_database(row['database'],'shadow:'+row['id'])
-                children.append(str(child))
-        metadata=json.loads(output.with_suffix('.json').read_bytes())
-        metadata['shadow_backups']=children
-        output.with_suffix('.json').write_text(json.dumps(metadata,indent=2)+'\n')
-        return output
-    def restore(path: Path) -> dict:
-        path=path.resolve()
-        data=path.read_bytes()
-        metadata=json.loads(path.with_suffix('.json').read_bytes())
-        if hashlib.sha256(data).hexdigest()!=metadata['sha256']:
-            raise RuntimeError('Backup checksum mismatch.')
-        database='autotrader_restore_'+uuid4().hex[:12]
-        dc('exec','-T','postgres','createdb','-U','autotrader',database)
-        dc('exec','-T','postgres','pg_restore','--exit-on-error','--no-owner','-U','autotrader','-d',database,data=data)
-        code=(ROOT/'deploy'/'verify_clone.py').read_text()
-        code+='\nprint(json.dumps(asyncio.run(verify_clone('+repr(database)+','+repr(metadata.get('account_id','paper-eur'))+'))))\n'
-        # Does not require the dashboard to be running, and never migrates the dump.
-        check=json.loads(dc('run','--rm','--no-deps','backend','python','-c',code))
-        children=[restore(Path(child)) for child in metadata.get('shadow_backups',[])]
-        result={'restore_database':database,'account_id':metadata.get('account_id','paper-eur'),
-            'reconciliation':check['reconciliation'],'verification':check,'original_database_modified':False,'backup_sha256':metadata['sha256'],
-            'shadow_restores':children,'runtime_activation':'forbidden without isolated cluster or reviewed mapping'}
-        (private/(database+'.json')).write_text(json.dumps(result,indent=2)+'\n')
-        return result
-    def stage_migration(database: str, account: str = 'paper-eur') -> dict:
-        code=(ROOT/'deploy'/'verify_clone.py').read_text()
-        code+='\nprint(json.dumps(asyncio.run(verify_clone('+repr(database)+','+repr(account)+',migrate=True))))\n'
-        return json.loads(dc('run','--rm','--no-deps','backend','python','-c',code))
+        manifest = financial_set.backup_all(dc, private)
+        print('Verified complete retained database backup set: ' + str(manifest))
+        return manifest
+
+    def restore(path: Path, rollback_image: str | None = None) -> dict:
+        configured = json.loads(dc('config','--format','json'))
+        image = args.candidate_image or configured['services']['backend']['image']
+        postgres_id = dc('ps','-q','postgres').decode().strip()
+        postgres_image = run(['docker','inspect','--format','{{.Image}}',postgres_id]).decode().strip()
+        return financial_set.restore_isolated(path.resolve(), image, postgres_image,
+                                              rollback_image or args.rollback_image)
 
     if args.action=='sync-research':
         code="""from pathlib import Path
@@ -187,13 +148,12 @@ print('Published verified matching-source research catalog and report pointer.')
     elif args.action=='build':
         dc('build','backend','frontend','postgres','redis')
     elif args.action=='up':
+        if args.project=='autotrader-v41':
+            raise RuntimeError('Production retains nine existing financial domains; use the approved upgrade workflow, never fresh initialization.')
         dc('up','-d','--wait','--no-build','postgres','redis')
         state=database_state(dc)
         if state=='POPULATED':
-            restored=restore(backup())
-            stage_migration(restored['restore_database'])
-            for child in restored['shadow_restores']:
-                stage_migration(child['restore_database'],child['account_id'])
+            raise RuntimeError('Populated deployments require upgrade with coordinated writer interruption and a complete isolated restore.')
         dc('run','--rm','--no-deps','migrate')
         dc('--profile','bootstrap','run','--rm','--no-deps','research-init')
         dc('up','-d','--wait','--no-build','--no-deps',*CORE)
@@ -223,15 +183,13 @@ print('Published verified matching-source research catalog and report pointer.')
         if stopped:
             dc('stop',*stopped)
         dump=backup()
-        # Backup parse + full isolated restore/reconciliation precede any migration.
-        restore_result=restore(dump)
-        migration_result=stage_migration(restore_result['restore_database'])
-        shadow_migrations=[stage_migration(child['restore_database'],child['account_id']) for child in restore_result['shadow_restores']]
-        dc('run','--rm','--no-deps','migrate')
+        # RC2 requires the existing schema; no production migration is allowed.
+        old_backend = next(c['image'] for c in previous['containers'] if c['name'].endswith('-backend-1'))
+        restore_result=restore(dump, old_backend)
         dc('up','-d','--wait','--no-build','--no-deps',*CORE)
         current=verify()
         release={'before':previous,'after':current,'backup':str(dump),'restore':restore_result,
-            'staged_migration':migration_result,'shadow_migrations':shadow_migrations,'previous_tag':previous_tag,'image_tag':os.environ['AUTOTRADER_IMAGE_TAG'],'previous_images_retained':True}
+            'schema_change':False,'previous_tag':previous_tag,'image_tag':os.environ['AUTOTRADER_IMAGE_TAG'],'previous_images_retained':True}
         (release_dir/'release.json').write_text(json.dumps(release,indent=2)+'\n')
         persist_tag(os.environ['AUTOTRADER_IMAGE_TAG'])
         if 'research-worker' in running:
@@ -243,19 +201,29 @@ print('Published verified matching-source research catalog and report pointer.')
         release=json.loads(args.release.read_bytes())
         if release['before']['project']!=args.project:
             raise ValueError('Rollback belongs to a different Compose project.')
-        backup_schema=json.loads(Path(release['backup']).with_suffix('.json').read_bytes())['schema']
+        backup_schema=release['restore']['candidate']['accounts'][0]['schema']
+        financial_set.discover(dc)
         schema=dc('exec','-T','postgres','psql','-U','autotrader','-d','autotrader','-Atc','SELECT version_num FROM alembic_version').decode().strip()
         if schema!=backup_schema:
             raise RuntimeError('Schema changed: restore backup into a new database and review compatibility; automatic destructive downgrade forbidden.')
         containers=release['before']['containers']
-        images={service:next(c['image'] for c in containers if c['name'].endswith('-'+service+'-1')) for service in CORE}
+        rollback_services=CORE+(['research-worker'] if any(c['name'].endswith('-research-worker-1') for c in containers) else [])
+        images={service:next(c['image'] for c in containers if c['name'].endswith('-'+service+'-1')) for service in rollback_services}
         for image in images.values():
             run(['docker','image','inspect',image])
-        override=private/'rollback.json'
+        override=private/('rollback-'+datetime.now(UTC).strftime('%Y%m%dT%H%M%S%fZ')+'.json')
         override.write_text(json.dumps({'services':{service:{'image':image} for service,image in images.items()}}))
-        # `run migrate` from the old image is intentionally not called on rollback.
+        running=dc('ps','--services','--status','running').decode().split()
+        writers=[service for service in ('worker','backend','research-worker') if service in running]
+        if writers:
+            dc('stop',*writers)
+        latest=backup()
+        restore(latest, images['backend'])
+        # Image rollback preserves newer transactions; never restore financial databases.
         run([*compose,'-f',str(override),'up','-d','--wait','--no-build','--no-deps',*CORE])
         persist_tag(release.get('previous_tag','4.1.0'))
+        if 'research-worker' in running:
+            run([*compose,'-f',str(override),'up','-d','--no-build','--no-deps','research-worker'])
         print(json.dumps(verify(),indent=2))
 
 

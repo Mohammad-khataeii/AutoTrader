@@ -9,6 +9,10 @@ from typing import Any
 def first_blocker(row: dict[str, Any]) -> str:
     """Stage attribution, not a claim that one independent condition is sufficient."""
     if row.get('decision_accepted'):
+        if row.get('trace_execution_state') == 'EXCEPTION':
+            return 'execution:system_exception'
+        if row.get('trace_execution_state') == 'OUTCOME_UNAVAILABLE':
+            return 'execution:outcome_unavailable'
         allocation = row.get('allocation', {})
         if allocation.get('reached') and not allocation.get('accepted'):
             return 'allocation'
@@ -73,7 +77,10 @@ def aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
         counts['allocation_attempts'] += row.get('allocation', {}).get('reached') is True
         counts['allocation_refusals'] += row.get('allocation', {}).get('accepted') is False
         execution = row.get('execution', {})
-        reached = execution.get('reached') is True and execution.get('stage') == 'entry'
+        trace_state = row.get('trace_execution_state')
+        reached = bool(trace_state in {'SUCCEEDED', 'REJECTED', 'EXCEPTION', 'OUTCOME_UNAVAILABLE'} or (execution.get('reached') is True and execution.get('stage') == 'entry'))
+        counts['execution_exceptions'] += trace_state == 'EXCEPTION'
+        counts['execution_outcomes_unavailable'] += trace_state == 'OUTCOME_UNAVAILABLE'
         counts['execution_attempts'] += reached
         counts['accepted_paper_orders'] += reached and row.get('final_state') == 'ACCEPTED'
         counts['execution_refusals'] += reached and row.get('final_state') == 'REJECTED'

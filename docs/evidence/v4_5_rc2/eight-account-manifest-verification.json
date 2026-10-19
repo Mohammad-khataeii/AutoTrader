@@ -1,0 +1,330 @@
+{
+  "engineering_status": "PASS",
+  "evidence_class": "REAL_PRODUCTION_READ_ONLY_OBSERVATION_WITH_LOCAL_COMPATIBILITY_CHECK",
+  "source_snapshots": [
+    "production-before.json",
+    "production-current.json",
+    "production-final.json"
+  ],
+  "manifest_count": 8,
+  "active": 4,
+  "archived_stopped": 4,
+  "accounts": [
+    {
+      "identity": "2f12b0257a3b453a8e2a61ab695d8146",
+      "state": "STOPPED",
+      "archive": {
+        "archived_at": "2026-10-16T21:01:29.701960+00:00",
+        "experiment_id": "2f12b0257a3b453a8e2a61ab695d8146",
+        "history_preserved": true,
+        "slot_released": true
+      },
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_c76d01fe85f2d630ea79ea72f901a213",
+        "experiment_id": "2f12b0257a3b453a8e2a61ab695d8146",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T13:17:09.680968+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "8dc0b0560b110277214f4491c5e63ecb40e30c5680255a170ea13a257b515927",
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      },
+      "manifest_and_database_marker_unchanged": true
+    },
+    {
+      "identity": "39cddc6d7e584a369ce223945f06e629",
+      "state": "STOPPED",
+      "archive": {
+        "archived_at": "2026-10-16T21:01:24.641367+00:00",
+        "experiment_id": "39cddc6d7e584a369ce223945f06e629",
+        "history_preserved": true,
+        "slot_released": true
+      },
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_6586961c826144cc7274d9666eb7d374",
+        "experiment_id": "39cddc6d7e584a369ce223945f06e629",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T12:33:54.725073+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "cd088d4951a2dcb50b85fbd28b09fd40fc7fa92283873c81d84b5af42fa0e799",
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      },
+      "manifest_and_database_marker_unchanged": true
+    },
+    {
+      "identity": "40f3f37036f848d0a417b06b6a6fc201",
+      "state": "SHADOW_ACTIVE",
+      "archive": null,
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_a6e7df2be43bab0b6c016d26295c6094",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "40f3f37036f848d0a417b06b6a6fc201",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T21:01:43.195534+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "dfd924ca4a65319f13527ccc31f1e8a155a33ac70bb58cdb6383c285eeb116a6",
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v44",
+        "reason": null
+      },
+      "manifest_and_database_marker_unchanged": true
+    },
+    {
+      "identity": "52746de1116e4852b61cb16988917545",
+      "state": "STOPPED",
+      "archive": {
+        "archived_at": "2026-10-16T21:01:34.540271+00:00",
+        "experiment_id": "52746de1116e4852b61cb16988917545",
+        "history_preserved": true,
+        "slot_released": true
+      },
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_824feeb25abce7c6de5034b06290c76d",
+        "experiment_id": "52746de1116e4852b61cb16988917545",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T12:34:06.656736+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "A2_CONFIRMED_PULLBACK",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "cdaf4e5cd875ab1639db5436ab3460b6289d838f5ad578ae01664c05f0832651",
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      },
+      "manifest_and_database_marker_unchanged": true
+    },
+    {
+      "identity": "9b18cabcc94c45fe84a59917226ebb58",
+      "state": "STOPPED",
+      "archive": {
+        "archived_at": "2026-10-16T21:01:16.071240+00:00",
+        "experiment_id": "9b18cabcc94c45fe84a59917226ebb58",
+        "history_preserved": true,
+        "slot_released": true
+      },
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_cfdd3d916c4c5107aa49a40d724451a6",
+        "experiment_id": "9b18cabcc94c45fe84a59917226ebb58",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T12:33:25.979051+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "40145fb5d355888da29b8495608d8e280e163cc77113217e30d61d92420e012a",
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      },
+      "manifest_and_database_marker_unchanged": true
+    },
+    {
+      "identity": "b97173b5abec41208c8541015d30003c",
+      "state": "SHADOW_ACTIVE",
+      "archive": null,
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_7d01d84930078baab2700418b243db74",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "b97173b5abec41208c8541015d30003c",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T21:03:08.104215+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "5c99b88c763f420fe033481d7ec92c4ed3b2f04e9e60e9f35999ea28e1f624af",
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v44",
+        "reason": null
+      },
+      "manifest_and_database_marker_unchanged": true
+    },
+    {
+      "identity": "baac318a9797469c8f3693c042eb2855",
+      "state": "SHADOW_ACTIVE",
+      "archive": null,
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_36372df7dcedc418e13556763997d1cf",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "baac318a9797469c8f3693c042eb2855",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T21:02:49.043851+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "strategy_id": "C2_LIQUID_RETEST",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "5d391ec5170a08dd60feddc1ce0381abc9d0b8885222c60f50cc23af42c82f4e",
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v44",
+        "reason": null
+      },
+      "manifest_and_database_marker_unchanged": true
+    },
+    {
+      "identity": "dc1edd63598e4caeb476864bee8851e3",
+      "state": "SHADOW_ACTIVE",
+      "archive": null,
+      "manifest": {
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_702481a99cfbc24d32479efc589fba9b",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "dc1edd63598e4caeb476864bee8851e3",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-16T21:02:26.456888+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+        "strategy_id": "A2_CONFIRMED_PULLBACK",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "manifest_hash": "3d9db0caede98736082f7215e7be25e55f0115ada5d3d10999ac343327b239a9",
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v44",
+        "reason": null
+      },
+      "manifest_and_database_marker_unchanged": true
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal as D
 from pathlib import Path
 
@@ -55,6 +55,12 @@ async def test_fees_cost_basis_realized_pnl_and_duplicate_fill(pg_repo: Persiste
 
 
 async def test_weekly_unrealized_loss_after_day_rollover(pg_repo: PersistentTradingRepository) -> None:
+    # Tuesday -> Wednesday stays within one ISO week, regardless of execution day.
+    with at(datetime(2026, 10, 13, 12, tzinfo=UTC)):
+        await _weekly_loss_across_same_week_day(pg_repo)
+
+
+async def _weekly_loss_across_same_week_day(pg_repo: PersistentTradingRepository) -> None:
     repo=pg_repo
     await repo.initialize_portfolio(D(500))
     assert (await buy(repo,symbol="BTC-EUR")).accepted

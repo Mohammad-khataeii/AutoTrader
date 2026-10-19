@@ -3,6 +3,8 @@ import { chromium, expect } from "@playwright/test";
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+const evidenceRoot = process.env.AUTOTRADER_LIFECYCLE_EVIDENCE_ROOT ?? "docs/evidence/v4_5";
+fs.mkdirSync(evidenceRoot, { recursive: true });
 const backend = new URL(process.env.AUTOTRADER_LIFECYCLE_API);
 if (backend.hostname !== "127.0.0.1") throw new Error("Local test API only");
 const experiment = process.env.AUTOTRADER_LIFECYCLE_EXPERIMENT;
@@ -82,7 +84,7 @@ try {
   );
   if (!report.ok()) throw new Error("Test API report unavailable");
   const body = await report.json();
-  const runner = body.manifest.execution_fingerprint ? "native" : "legacy";
+  const runner = body.runtime_compatibility?.runner === "verified-v44" ? "frozen-v44" : body.manifest.execution_fingerprint ? "native" : "legacy";
   if (
     body.fills.length !== 5 ||
     body.reconciliation.length ||
@@ -103,7 +105,7 @@ try {
       .getByRole("cell", { name: "Closed", exact: true }),
   ).toBeVisible();
   await page.screenshot({
-    path: `docs/evidence/v4_5/${runner}-shadow-lifecycle.png`,
+    path: `${evidenceRoot}/${runner}-shadow-lifecycle.png`,
     fullPage: true,
   });
   await page.getByText("Technical details", { exact: true }).last().click();
@@ -130,7 +132,7 @@ try {
   ).toHaveCount(5);
   await expect(page.locator("pre:visible")).toHaveCount(0);
   await page.screenshot({
-    path: `docs/evidence/v4_5/${runner}-trade-lifecycle.png`,
+    path: `${evidenceRoot}/${runner}-trade-lifecycle.png`,
     fullPage: true,
   });
   await page.getByRole("button", { name: "Overview", exact: true }).click();
@@ -139,7 +141,7 @@ try {
   ).toBeVisible();
   if (errors.length) throw new Error(errors.join("\n"));
   fs.writeFileSync(
-    `docs/evidence/v4_5/${runner}-frontend-lifecycle.json`,
+    `${evidenceRoot}/${runner}-frontend-lifecycle.json`,
     JSON.stringify(
       {
         data_kind: body.manifest.data_kind,

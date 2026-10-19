@@ -1,0 +1,31 @@
+{
+  "evidence_class": "HASH_BOUND_ENGINEERING_ACCEPTANCE_WITH_DISCLOSED_LIMITS",
+  "recommendation": "READY",
+  "scope": "Engineering release candidate ready for exact-commit Stage B review; no deployment authorization or profitability approval.",
+  "application_source_fingerprint": "ae00122e325e0b59871e666925554ff8b144026502cf09c5bd8135e5c2c30b1d",
+  "engineering_evidence": {
+    "backend-tests.json": "2561d4cb61248a1c32f83f7e02bcd72e3e8df6f67eb6fa5ff7b5ef8ab598fa70",
+    "frontend-tests.json": "5064d4ed4795826e87a13ee7a45d9e6e1423de491f5865dfa837bd1678363461",
+    "amd64-container-tests.json": "53c9261c3fa5827ddcc26b8a72e22b4e5de0831b2a1b9bb22e335da11f6da4ec",
+    "eight-account-manifest-verification.json": "830e33c4d1753179bf8c6a3bb82fb7ddbf2215a8d6edb769d58dbac7cdc3d5d4",
+    "v42-runtime-parity.json": "6ec4f5f3bd3c6d39bfdaf95b4b16af7ffa06cfcf2ec89a2d1241a26efacf8ea5",
+    "v44-runtime-parity.json": "cfb29738564c9690a7218efcfe8d9d3c7e880252ce83cf0185b1d53792721acb",
+    "v45-runtime-identity.json": "b57a748a9da855d043f5b4b278308f0b50d662e1359abaa357de681329f2c746",
+    "native-entry-acceptance.json": "0a348d32e84b322ba2841de49f91333ea5cc9f780578b504398e9427a0b690b1",
+    "financial-integrity.json": "a9a9a2d3bed069758958d896a47599ecb993894e0282975ec65a51a2055f88a5",
+    "nine-database-backup-restore.json": "3c882576267f7f0c5a7022e3de5fdceba508f962a4b0995ff58c625c829afe2f",
+    "isolated-restart-recovery.json": "79fd8750922be3ea0fae5102cfefb9e7617a3deef39581620ed2bea45654bdcb",
+    "rollback-readiness.json": "62924b368c16039b4044f02752ceaf3b6fd9916f4435458696806e5588725ade",
+    "execution-gateway-traces.json": "dda495845dcb067d26d74ee0516b4b9abb80471a1b5bf04d0e081b8a01fb56a3",
+    "trade-gate-ui-tests.json": "ac963fec7edd3de7705cb4daa5c13cf8ffbb3bbf767944fb8149bb730873e4e0"
+  },
+  "production_deployment": "NOT_EXECUTED",
+  "approval_required": "Explicit approval naming the final full commit and archive hash, followed by fresh quiesced nine-database backup/restore verification.",
+  "known_limits": [
+    "Missing historical stage traces and exact benchmark batch membership remain unverified.",
+    "Historical instrument minimum/price precision and full regime/untouched-holdout coverage are unavailable.",
+    "No strategy passed validation; account creation, capital changes and promotion are not authorized.",
+    "Actual production rollout/rollback and its final coordinated financial cut remain Stage B work."
+  ],
+  "rollout_and_rollback_plan": "docs/V4_5_RC2_RELEASE.md"
+}

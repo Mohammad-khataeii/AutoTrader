@@ -1,0 +1,1344 @@
+{
+  "evidence_class": "REAL_PRODUCTION_READ_ONLY_OBSERVATION_WITH_EXPLICIT_CONDITIONAL_COST_CALCULATION",
+  "accepted_recorded_cases": [
+    {
+      "decision_id": "dec_ea80f1dc960d4d1ba1c8bef85e67f34f",
+      "experiment_id": "dc1edd63598e4caeb476864bee8851e3",
+      "symbol": "ETH-EUR",
+      "candle_at": "2026-10-17T06:05:00+00:00",
+      "entry": "2160.16",
+      "bid": "2159.08",
+      "ask": "2160.16",
+      "proposed_quote": "75",
+      "proposed_quantity": "0.03454691",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "round_trip_fee_slippage_bps_approx": "36",
+      "recorded_spread_bps": "5.000879784406515961141311897",
+      "target_prices": [
+        "2163.17",
+        "2166.19",
+        "2169.21"
+      ],
+      "target_distance_bps": [
+        "13.93415302570179986667654000",
+        "27.91459891859862232427228000",
+        "41.89504481149544478186801000"
+      ],
+      "stop_price": "2157.14",
+      "stop_distance_bps": "13.98044589289682245759573400",
+      "conditional_target_net_eur": [
+        "-0.16485756404958072",
+        "-0.06071360938700616",
+        "0.04343034527556840"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.4422137534691952489194170969",
+        "-0.1628581208783112773997885119",
+        "0.1164975117125726941198400731"
+      ],
+      "recorded_bid_depth": "3244.62215378",
+      "recorded_ask_depth": "3247.95342032",
+      "instruments": {
+        "symbol": "ETH-EUR",
+        "base_asset": "ETH",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "5000",
+        "status": "active"
+      },
+      "precision_metadata_status": "Current RC1 public metadata; historical precision at event time NOT_VERIFIED",
+      "depth_status": "This feature export contains aggregate depth; exact submitted L2 is now independently verified in durable_rejected_order_cost_evidence.",
+      "allocation_status": "Proposal size shown here; actual submitted quantities and rejected orders are independently verified in durable_rejected_order_cost_evidence.",
+      "expected_value": "NOT_ESTIMABLE: conditional payoff is not probability-weighted expected return",
+      "historical_execution_outcome": "Historical execution outcome not verified"
+    },
+    {
+      "decision_id": "dec_02864e9f2a8d4db8b4960f82f10eb341",
+      "experiment_id": "dc1edd63598e4caeb476864bee8851e3",
+      "symbol": "ETH-EUR",
+      "candle_at": "2026-10-17T06:50:00+00:00",
+      "entry": "2162.66",
+      "bid": "2161.54",
+      "ask": "2162.66",
+      "proposed_quote": "75",
+      "proposed_quantity": "0.03450698",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "round_trip_fee_slippage_bps_approx": "36",
+      "recorded_spread_bps": "5.180148929281716849359419083",
+      "target_prices": [
+        "2165.61",
+        "2168.56",
+        "2171.51"
+      ],
+      "target_distance_bps": [
+        "13.64060924972025191199726000",
+        "27.28121849944050382399453000",
+        "40.92182774916075573599179000"
+      ],
+      "stop_price": "2159.70",
+      "stop_distance_bps": "13.68684860310913412186844000",
+      "conditional_target_net_eur": [
+        "-0.16704427494780720",
+        "-0.06543183457513440",
+        "0.03618060579753840"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.4507235375464945585894185367",
+        "-0.1765500072186026715909049468",
+        "0.09762352310928921540760864319"
+      ],
+      "recorded_bid_depth": "3047.08021718",
+      "recorded_ask_depth": "3245.16233143",
+      "instruments": {
+        "symbol": "ETH-EUR",
+        "base_asset": "ETH",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "5000",
+        "status": "active"
+      },
+      "precision_metadata_status": "Current RC1 public metadata; historical precision at event time NOT_VERIFIED",
+      "depth_status": "This feature export contains aggregate depth; exact submitted L2 is now independently verified in durable_rejected_order_cost_evidence.",
+      "allocation_status": "Proposal size shown here; actual submitted quantities and rejected orders are independently verified in durable_rejected_order_cost_evidence.",
+      "expected_value": "NOT_ESTIMABLE: conditional payoff is not probability-weighted expected return",
+      "historical_execution_outcome": "Historical execution outcome not verified"
+    },
+    {
+      "decision_id": "dec_38b42bfa33f34cd59b4f84f7284f986c",
+      "experiment_id": "dc1edd63598e4caeb476864bee8851e3",
+      "symbol": "ETH-EUR",
+      "candle_at": "2026-10-17T07:10:00+00:00",
+      "entry": "2162.29",
+      "bid": "2161.93",
+      "ask": "2162.29",
+      "proposed_quote": "75",
+      "proposed_quantity": "0.03451288",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "round_trip_fee_slippage_bps_approx": "36",
+      "recorded_spread_bps": "1.665040169094079394665396303",
+      "target_prices": [
+        "2165.74",
+        "2169.19",
+        "2172.65"
+      ],
+      "target_distance_bps": [
+        "15.95530664249476249716735000",
+        "31.91061328498952499433471000",
+        "47.91216719311470709294313000"
+      ],
+      "stop_price": "2158.83",
+      "stop_distance_bps": "16.00155390812518209860842000",
+      "conditional_target_net_eur": [
+        "-0.14980147279197120",
+        "-0.03094626652122240",
+        "0.08825344759378944"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.3862292215029338701670336986",
+        "-0.07978795003913095440383055249",
+        "0.2275415569941322596659326028"
+      ],
+      "recorded_bid_depth": "3047.11406617",
+      "recorded_ask_depth": "3045.68414169",
+      "instruments": {
+        "symbol": "ETH-EUR",
+        "base_asset": "ETH",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "5000",
+        "status": "active"
+      },
+      "precision_metadata_status": "Current RC1 public metadata; historical precision at event time NOT_VERIFIED",
+      "depth_status": "This feature export contains aggregate depth; exact submitted L2 is now independently verified in durable_rejected_order_cost_evidence.",
+      "allocation_status": "Proposal size shown here; actual submitted quantities and rejected orders are independently verified in durable_rejected_order_cost_evidence.",
+      "expected_value": "NOT_ESTIMABLE: conditional payoff is not probability-weighted expected return",
+      "historical_execution_outcome": "Historical execution outcome not verified"
+    },
+    {
+      "decision_id": "dec_5772b0ef97f5434581cdda3035846b1f",
+      "experiment_id": "dc1edd63598e4caeb476864bee8851e3",
+      "symbol": "ETH-EUR",
+      "candle_at": "2026-10-17T07:20:00+00:00",
+      "entry": "2163.10",
+      "bid": "2162.55",
+      "ask": "2163.10",
+      "proposed_quote": "75",
+      "proposed_quantity": "0.03449996",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "round_trip_fee_slippage_bps_approx": "36",
+      "recorded_spread_bps": "2.542970420630425485187197300",
+      "target_prices": [
+        "2167.01",
+        "2170.93",
+        "2174.85"
+      ],
+      "target_distance_bps": [
+        "18.07590957422218112893532000",
+        "36.19804909620452128889094000",
+        "54.32018861818686144884656000"
+      ],
+      "stop_price": "2159.18",
+      "stop_distance_bps": "18.12213952198234015995561900",
+      "conditional_target_net_eur": [
+        "-0.13400456771620512",
+        "0.00099195195790944",
+        "0.13598847163202400"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.3319794277822243695393115416",
+        "0.002457435958986418635132744138",
+        "0.3368942997001972068095770298"
+      ],
+      "recorded_bid_depth": "3046.77295092",
+      "recorded_ask_depth": "3043.22255090",
+      "instruments": {
+        "symbol": "ETH-EUR",
+        "base_asset": "ETH",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "5000",
+        "status": "active"
+      },
+      "precision_metadata_status": "Current RC1 public metadata; historical precision at event time NOT_VERIFIED",
+      "depth_status": "This feature export contains aggregate depth; exact submitted L2 is now independently verified in durable_rejected_order_cost_evidence.",
+      "allocation_status": "Proposal size shown here; actual submitted quantities and rejected orders are independently verified in durable_rejected_order_cost_evidence.",
+      "expected_value": "NOT_ESTIMABLE: conditional payoff is not probability-weighted expected return",
+      "historical_execution_outcome": "Historical execution outcome not verified"
+    }
+  ],
+  "symbol_observation_distance_screen": {
+    "SOL-EUR": {
+      "observations": 548,
+      "median_two_atr_bps": 24.62789627129047,
+      "fraction_below_36bps_fee_slippage": 0.927007299270073,
+      "interpretation": "Hypothetical 2 ATR distance on recorded evaluated features; not additional accepted opportunities"
+    },
+    "BTC-EUR": {
+      "observations": 548,
+      "median_two_atr_bps": 11.603249515418794,
+      "fraction_below_36bps_fee_slippage": 1.0,
+      "interpretation": "Hypothetical 2 ATR distance on recorded evaluated features; not additional accepted opportunities"
+    },
+    "ETH-EUR": {
+      "observations": 548,
+      "median_two_atr_bps": 20.962416057581716,
+      "fraction_below_36bps_fee_slippage": 1.0,
+      "interpretation": "Hypothetical 2 ATR distance on recorded evaluated features; not additional accepted opportunities"
+    }
+  },
+  "historical_proxy_market_screen": [
+    {
+      "symbol": "BTC-EUR",
+      "timeframe": "1h",
+      "observations": 4315,
+      "missing_observations": 5,
+      "dataset_sha256": "41089f7858c5d91bdc25ca512f8afce8dfc719d63b05d90dc09b2fe440aa6109",
+      "median_two_atr_distance_bps": 100.11227464575923,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.07298930729893073,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "BTC-EUR",
+      "timeframe": "5m",
+      "observations": 51747,
+      "missing_observations": 93,
+      "dataset_sha256": "4008cf0c1dbb2d891e879e00d77233570de7794b25fab56800ad765de8c0ea83",
+      "median_two_atr_distance_bps": 23.323510223390365,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.8901302818262651,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "BTC-EUR",
+      "timeframe": "15m",
+      "observations": 8640,
+      "missing_observations": 0,
+      "dataset_sha256": "f521a05949da4929dcc214c8dc0f9298d572b03b5f272c2413d752b92b377057",
+      "median_two_atr_distance_bps": 40.92813975917115,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.5960357018662339,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "ETH-EUR",
+      "timeframe": "1h",
+      "observations": 4315,
+      "missing_observations": 5,
+      "dataset_sha256": "ae89f707677424e1ad1a5fb8162675e472c149622261fb23190f41f578cde460",
+      "median_two_atr_distance_bps": 130.70892490432112,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.02603440260344026,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "ETH-EUR",
+      "timeframe": "5m",
+      "observations": 51724,
+      "missing_observations": 116,
+      "dataset_sha256": "1948a61fd6080bd45ca181a4d87a8b1b9f5953ce949ac6688d3295b32468b4dc",
+      "median_two_atr_distance_bps": 29.766320560233485,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.790663495194446,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "ETH-EUR",
+      "timeframe": "15m",
+      "observations": 8640,
+      "missing_observations": 0,
+      "dataset_sha256": "dcd28fd1f15783db1b56e45f203948f38cda705d927b4a7bd29e922db982b66c",
+      "median_two_atr_distance_bps": 53.898443495412145,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.3668714500985279,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "SOL-EUR",
+      "timeframe": "1h",
+      "observations": 4315,
+      "missing_observations": 5,
+      "dataset_sha256": "32b739bcf6df4e783888635927007a3814ee37aad870db534c68e22320818454",
+      "median_two_atr_distance_bps": 152.3597913587626,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.0020920502092050207,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "SOL-EUR",
+      "timeframe": "5m",
+      "observations": 25894,
+      "missing_observations": 26,
+      "dataset_sha256": "d9bae3ab490cab4384bf224fd5e3bd47b4b0cab1d5b04784c50135bf78dccda0",
+      "median_two_atr_distance_bps": 33.44552852456223,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.7198330821838415,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "SOL-EUR",
+      "timeframe": "15m",
+      "observations": 8640,
+      "missing_observations": 0,
+      "dataset_sha256": "e8191f0fe23fea399092c134b1dd985ff6f47956f5a649581653707883a89e42",
+      "median_two_atr_distance_bps": 64.004976345987,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.25733163324446506,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "XRP-EUR",
+      "timeframe": "1h",
+      "observations": 4315,
+      "missing_observations": 5,
+      "dataset_sha256": "87248df01c36a314f5a68fe05c88d23c81c99ad6e933c650a7c9555164d8a1a7",
+      "median_two_atr_distance_bps": 136.42501944616822,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.007670850767085077,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "XRP-EUR",
+      "timeframe": "5m",
+      "observations": 25127,
+      "missing_observations": 793,
+      "dataset_sha256": "1208ee991d6ff010cd4310ca3ab4716d1dd6e0fbe4bf8728ea3b21c477a5a663",
+      "median_two_atr_distance_bps": 33.222591362126245,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.6866289718881898,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "XRP-EUR",
+      "timeframe": "15m",
+      "observations": 8631,
+      "missing_observations": 9,
+      "dataset_sha256": "9346be8d45b1dfc03ff058d050e654d354d70270e77648b4779029252a36b150",
+      "median_two_atr_distance_bps": 62.11687822451837,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.32223253655140405,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "ADA-EUR",
+      "timeframe": "1h",
+      "observations": 4314,
+      "missing_observations": 6,
+      "dataset_sha256": "a9f985a36922ef5172c59674ddfa17367f5188f06c7a968212659c1360becb6d",
+      "median_two_atr_distance_bps": 192.86064941440495,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.0,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "ADA-EUR",
+      "timeframe": "5m",
+      "observations": 19916,
+      "missing_observations": 6004,
+      "dataset_sha256": "581af73b31e3c02465dc86d2c5d4de943d4064bffe7a07e9dbe1e5e795788313",
+      "median_two_atr_distance_bps": 53.63302126369253,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.3498467567703361,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "ADA-EUR",
+      "timeframe": "15m",
+      "observations": 8286,
+      "missing_observations": 354,
+      "dataset_sha256": "50646b44cd83f7878ade782b0690d2b117329572551e9257eeb7585516bb9bf2",
+      "median_two_atr_distance_bps": 92.48336407422133,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.07723921189411338,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "LINK-EUR",
+      "timeframe": "1h",
+      "observations": 4294,
+      "missing_observations": 26,
+      "dataset_sha256": "5bdea45c22ccacdbe6350febf31ceb0e1a9f4bff8b46ac88153a450373ce9086",
+      "median_two_atr_distance_bps": 149.47683109118086,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.001635131978509694,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "LINK-EUR",
+      "timeframe": "5m",
+      "observations": 18709,
+      "missing_observations": 7211,
+      "dataset_sha256": "d0cb6d621a04727f1171962075ef7e78ed4d99b08d1c4a4f2c4407dbdf4a37e5",
+      "median_two_atr_distance_bps": 45.571626708936,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.5082905434317501,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "LINK-EUR",
+      "timeframe": "15m",
+      "observations": 7814,
+      "missing_observations": 826,
+      "dataset_sha256": "d877901d0bd4292e2156944a35f8868a8a8196fd761d0d8d806cf03b31b8bdef",
+      "median_two_atr_distance_bps": 76.51473755453908,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.13241892065119856,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "AVAX-EUR",
+      "timeframe": "1h",
+      "observations": 4137,
+      "missing_observations": 183,
+      "dataset_sha256": "e017a8586926e641fe094a15934dcd73b826a75beacc6f8123bdb571ab91f1ed",
+      "median_two_atr_distance_bps": 153.40364333652926,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.0021823472356935015,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "AVAX-EUR",
+      "timeframe": "5m",
+      "observations": 13719,
+      "missing_observations": 12201,
+      "dataset_sha256": "c17afbf2d0fbb88480914ecd05fc461cd5900283f2f6c9a044cacdc1d0484ae6",
+      "median_two_atr_distance_bps": 55.10429342959867,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.34050780679994164,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "AVAX-EUR",
+      "timeframe": "15m",
+      "observations": 6675,
+      "missing_observations": 1965,
+      "dataset_sha256": "d0af65d68356c211d57eea82afa0adae243e8820e5e34d7d49e7decdf64e6d30",
+      "median_two_atr_distance_bps": 82.0723262374968,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.11513059141398979,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "DOT-EUR",
+      "timeframe": "1h",
+      "observations": 3595,
+      "missing_observations": 725,
+      "dataset_sha256": "2b420d2887ad60886d5be8b71b5df0f4991ff9242c71528765efe4286a6bf8e6",
+      "median_two_atr_distance_bps": 206.92389310126865,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.0016750418760469012,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "DOT-EUR",
+      "timeframe": "5m",
+      "observations": 10884,
+      "missing_observations": 15036,
+      "dataset_sha256": "80704b3d9b3d9e9824f8cb1e02e27eee08702cbf22cd15375682b730da765de7",
+      "median_two_atr_distance_bps": 71.78339429008133,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.1316346242296017,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    },
+    {
+      "symbol": "DOT-EUR",
+      "timeframe": "15m",
+      "observations": 5389,
+      "missing_observations": 3251,
+      "dataset_sha256": "b55d3a1003e786043d1d16212daf8e1f2d801d1d8a5e7c39e4f8ab624cae8bb9",
+      "median_two_atr_distance_bps": 122.71617737853006,
+      "fraction_two_atr_below_46bps_proxy_cost": 0.010788690476190476,
+      "spread_bps": "ASSUMED_10; historical measured spread unavailable",
+      "depth": "NOT_RECORDED",
+      "interpretation": "Volatility/cost-distance screen only; not a strategy signal, executable reward, entry recommendation or return estimate"
+    }
+  ],
+  "frozen_parameters_changed": false,
+  "new_strategy_promoted": false,
+  "untouched_holdout": false,
+  "conclusion": "Cost feasibility is necessary, not sufficient. Four recorded ETH A2 first targets cannot cover modeled costs. No evidence warrants weakening the gateway or promoting a strategy.",
+  "production_snapshot_at": "2026-10-18T13:08:18.780337+00:00",
+  "durable_rejected_order_cost_evidence": [
+    {
+      "order_id": "ord_dfabca3d5f884635bba5c4a4eceffc7f",
+      "decision_id": "dec_85a87c5102914877ac70892b84a00f9f",
+      "symbol": "BTC-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.001022450000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "72988.00",
+      "modeled_entry_vwap": "73046.390400000000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "73096.96",
+        "73205.92",
+        "73314.88"
+      ],
+      "stop_price": "72879.03",
+      "target_distances_bps": [
+        "14.92848139420178659505672000",
+        "29.85696278840357319011344000",
+        "44.78544418260535978517016000"
+      ],
+      "stop_distance_bps": "14.92985148243546884419356600",
+      "quantity_step_at_submission": "1E-8",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "BTC-EUR",
+        "base_asset": "BTC",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "200",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-18T12:05:30.435000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "72953.03",
+      "recorded_ask": "72988.00",
+      "spread_bps": "4.792346607393410886575214660",
+      "bid_depth": "89.32180843",
+      "ask_depth": "87.80502453",
+      "conditional_target_net_eur": [
+        "-0.1574499801081983999999999992",
+        "-0.04624427005687679999999999916",
+        "0.06496143999444480000000000084"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.4144820973475685374725977764",
+        "-0.1217365796445954169431353523",
+        "0.1710089380583777035863270717"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": false,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    },
+    {
+      "order_id": "ord_1b23c0f953464ed0917cec95b4516b0e",
+      "decision_id": "dec_6f42f68979504b32af4c1ea91e2f002c",
+      "symbol": "SOL-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.799319000000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "93.363",
+      "modeled_entry_vwap": "93.437690400000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "93.548",
+        "93.733",
+        "93.918"
+      ],
+      "stop_price": "93.177",
+      "target_distances_bps": [
+        "19.81513019076079389051337000",
+        "39.63026038152158778102675000",
+        "59.44539057228238167154012000"
+      ],
+      "stop_distance_bps": "19.92223900260274412775939100",
+      "quantity_step_at_submission": "0.000001",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "SOL-EUR",
+        "base_asset": "SOL",
+        "quote_asset": "EUR",
+        "price_step": "0.001",
+        "quantity_step": "0.000001",
+        "min_order_quote": "0.1",
+        "min_order_base": "0.000001",
+        "max_order_base": "20000",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-17T09:50:46.671000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "93.300",
+      "recorded_ask": "93.363",
+      "spread_bps": "6.750132591890197843171919448",
+      "bid_depth": "40980.957369",
+      "ask_depth": "42400.662135",
+      "conditional_target_net_eur": [
+        "-0.1210485911955503999999999966",
+        "0.02655936887666160000000000342",
+        "0.1741673289488736000000000034"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.2902409650400325782460388483",
+        "0.06368200387531505793855094037",
+        "0.4176049727906626941231407289"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": false,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    },
+    {
+      "order_id": "ord_40aaa216d611410ab9ecbaa261f726c5",
+      "decision_id": "dec_b1ff7eef88ca490993a9fd048e907297",
+      "symbol": "ETH-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.034448360000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "2166.34",
+      "modeled_entry_vwap": "2168.073072000000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "2169.43",
+        "2172.53",
+        "2175.63"
+      ],
+      "stop_price": "2163.24",
+      "target_distances_bps": [
+        "14.26368898695495628571692000",
+        "28.57353877969293831993131000",
+        "42.88338857243092035414570000"
+      ],
+      "stop_distance_bps": "14.30984979273798203421438900",
+      "quantity_step_at_submission": "1E-8",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "ETH-EUR",
+        "base_asset": "ETH",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "5000",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-17T09:50:44.675000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "2164.63",
+      "recorded_ask": "2166.34",
+      "spread_bps": "7.896614384306517939399256979",
+      "bid_depth": "3052.13023401",
+      "ask_depth": "3045.75326860",
+      "conditional_target_net_eur": [
+        "-0.1624027809491321599999999933",
+        "-0.05580500136599935999999999335",
+        "0.05079277821713344000000000665"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.4327803962419474245081021606",
+        "-0.1487124202080277178804958204",
+        "0.1353555558258919887471105199"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": false,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    },
+    {
+      "order_id": "ord_06e1839d74964c04bcc9586056187938",
+      "decision_id": "dec_ba64391444334447bf1e0902c0a17a20",
+      "symbol": "ETH-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.034469840000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "2164.99",
+      "modeled_entry_vwap": "2166.721992000000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "2167.81",
+        "2170.64",
+        "2173.46"
+      ],
+      "stop_price": "2162.16",
+      "target_distances_bps": [
+        "13.02546432085136651901394000",
+        "26.09711823149298611079035000",
+        "39.12258255234435262980429000"
+      ],
+      "stop_distance_bps": "13.07165391064161959177640500",
+      "quantity_step_at_submission": "1E-8",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "ETH-EUR",
+        "base_asset": "ETH",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "5000",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-17T09:45:43.027000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "2163.51",
+      "recorded_ask": "2164.99",
+      "spread_bps": "6.838396673212429248007392861",
+      "bid_depth": "3052.13165507",
+      "ask_depth": "3045.75465348",
+      "conditional_target_net_eur": [
+        "-0.1716266343886396799999999987",
+        "-0.07425249851388191999999999868",
+        "0.02277755914223712000000000132"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.4688857366581627232885476286",
+        "-0.2028585923648176802631652920",
+        "0.06222852668367455342290473936"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": false,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    },
+    {
+      "order_id": "ord_4dfc1cedc5df44b0be4410cd4dd2969d",
+      "decision_id": "dec_9819e81fe60c4888868649574032a57a",
+      "symbol": "ETH-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.034479230000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "2164.40",
+      "modeled_entry_vwap": "2166.131520000000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "2166.84",
+        "2169.28",
+        "2171.72"
+      ],
+      "stop_price": "2161.96",
+      "target_distances_bps": [
+        "11.27333210127518018850490000",
+        "22.54666420255036037700979000",
+        "33.81999630382554056551469000"
+      ],
+      "stop_distance_bps": "11.27333210127518018850489700",
+      "quantity_step_at_submission": "1E-8",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "ETH-EUR",
+        "base_asset": "ETH",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "5000",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-17T09:25:42.414000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "2163.74",
+      "recorded_ask": "2164.40",
+      "spread_bps": "3.049808924849935538129542945",
+      "bid_depth": "3053.12258457",
+      "ask_depth": "3045.75499776",
+      "conditional_target_net_eur": [
+        "-0.1846786877569734399999999951",
+        "-0.1007007320316764799999999951",
+        "-0.01672277630637951999999999513"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.5237111961559622503504392731",
+        "-0.2855667942339433755256589166",
+        "-0.04742239231192450070087856013"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": false,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    },
+    {
+      "order_id": "ord_891638cfabfb4dd59e352efc636152f8",
+      "decision_id": "dec_616682ad80044fab9004981aa724b201",
+      "symbol": "SOL-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.798908000000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "93.411",
+      "modeled_entry_vwap": "93.485728800000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "93.584",
+        "93.757",
+        "93.930"
+      ],
+      "stop_price": "93.238",
+      "target_distances_bps": [
+        "18.52030274807035573968805000",
+        "37.04060549614071147937609000",
+        "55.56090824421106721906414000"
+      ],
+      "stop_distance_bps": "18.52030274807035573968804500",
+      "quantity_step_at_submission": "0.000001",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "SOL-EUR",
+        "base_asset": "SOL",
+        "quote_asset": "EUR",
+        "price_step": "0.001",
+        "quantity_step": "0.000001",
+        "min_order_quote": "0.1",
+        "min_order_base": "0.000001",
+        "max_order_base": "20000",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-17T09:15:39.636000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "93.349",
+      "recorded_ask": "93.411",
+      "spread_bps": "6.639537374170057828228742771",
+      "bid_depth": "40994.146677",
+      "ask_depth": "42136.131732",
+      "conditional_target_net_eur": [
+        "-0.1306940480585824000000000029",
+        "0.007268366559084799999999997130",
+        "0.1452307811767519999999999971"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.3214165779227034458363534331",
+        "0.01787513311594483124546985396",
+        "0.3571668441545931083272931409"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": false,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    },
+    {
+      "order_id": "ord_0bd094d2ca754d5ab027119d9bb4af01",
+      "decision_id": "dec_adac1787251e4f6995f3179103b731e1",
+      "symbol": "ETH-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.034446130000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "2166.48",
+      "modeled_entry_vwap": "2168.213184000000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "2168.73",
+        "2170.98",
+        "2173.23"
+      ],
+      "stop_price": "2164.23",
+      "target_distances_bps": [
+        "10.38551013625789298770356000",
+        "20.77102027251578597540711000",
+        "31.15653040877367896311067000"
+      ],
+      "stop_distance_bps": "10.38551013625789298770355600",
+      "quantity_step_at_submission": "1E-8",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "ETH-EUR",
+        "base_asset": "ETH",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "5000",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-17T09:10:40.356000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "2164.56",
+      "recorded_ask": "2166.48",
+      "spread_bps": "8.866230743655103624071816469",
+      "bid_depth": "3052.98563524",
+      "ask_depth": "3045.75320255",
+      "conditional_target_net_eur": [
+        "-0.1912923185224080800000000046",
+        "-0.1139279708458740800000000046",
+        "-0.03656362316934008000000000460"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.5528343969052965847140237676",
+        "-0.3292515953579448770710356448",
+        "-0.1056687938105931694280475219"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": false,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    },
+    {
+      "order_id": "ord_8243f36eb9134021b867da12c7802569",
+      "decision_id": "dec_862514831cc14f2aaaeda5af21eb8bf2",
+      "symbol": "SOL-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.799105000000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "93.388",
+      "modeled_entry_vwap": "93.462710400000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "93.549",
+        "93.710",
+        "93.871"
+      ],
+      "stop_price": "93.227",
+      "target_distances_bps": [
+        "17.23990234291343641581359000",
+        "34.47980468582687283162719000",
+        "51.71970702874030924744078000"
+      ],
+      "stop_distance_bps": "17.23990234291343641581359500",
+      "quantity_step_at_submission": "0.000001",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "SOL-EUR",
+        "base_asset": "SOL",
+        "quote_asset": "EUR",
+        "price_step": "0.001",
+        "quantity_step": "0.000001",
+        "min_order_quote": "0.1",
+        "min_order_base": "0.000001",
+        "max_order_base": "20000",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-17T08:55:35.595000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "93.306",
+      "recorded_ask": "93.388",
+      "spread_bps": "8.784427994472237993722347799",
+      "bid_depth": "41145.546056",
+      "ask_depth": "42127.789788",
+      "conditional_target_net_eur": [
+        "-0.1402321165680839999999999971",
+        "-0.01180768927235999999999999712",
+        "0.1166167380233640000000000029"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.3531574836199946743938404611",
+        "-0.02973622542999201159076069532",
+        "0.2936850327600106512123190705"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": false,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    },
+    {
+      "order_id": "ord_5a3b391f53a44c19b91775e6ecd0e739",
+      "decision_id": "dec_644345c5e743442da783b8eb2b87da8b",
+      "symbol": "SOL-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.799730000000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "93.315",
+      "modeled_entry_vwap": "93.389652000000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "93.484",
+        "93.653",
+        "93.822"
+      ],
+      "stop_price": "93.146",
+      "target_distances_bps": [
+        "18.11070031613352622836629000",
+        "36.22140063226705245673257000",
+        "54.33210094840057868509886000"
+      ],
+      "stop_distance_bps": "18.11070031613352622836628600",
+      "quantity_step_at_submission": "0.000001",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "SOL-EUR",
+        "base_asset": "SOL",
+        "quote_asset": "EUR",
+        "price_step": "0.001",
+        "quantity_step": "0.000001",
+        "min_order_quote": "0.1",
+        "min_order_base": "0.000001",
+        "max_order_base": "20000",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-17T08:50:37.084000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "93.242",
+      "recorded_ask": "93.315",
+      "spread_bps": "7.826026361916197194423152173",
+      "bid_depth": "41142.549314",
+      "ask_depth": "42402.097941",
+      "conditional_target_net_eur": [
+        "-0.1337452975615439999999999981",
+        "0.001165902695952000000000001914",
+        "0.1360771029534480000000000019"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.3314073405750611085373515724",
+        "0.002888989137408337193972639055",
+        "0.3371853188498777829252968505"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": false,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    },
+    {
+      "order_id": "ord_57ecef17fdba4adfaac6e83cb7c55755",
+      "decision_id": "dec_5772b0ef97f5434581cdda3035846b1f",
+      "symbol": "ETH-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.034499960000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "2163.10",
+      "modeled_entry_vwap": "2164.830480000000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "2167.01",
+        "2170.93",
+        "2174.85"
+      ],
+      "stop_price": "2159.18",
+      "target_distances_bps": [
+        "18.07590957422218112893532000",
+        "36.19804909620452128889094000",
+        "54.32018861818686144884656000"
+      ],
+      "stop_distance_bps": "18.12213952198234015995561900",
+      "quantity_step_at_submission": "1E-8",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "ETH-EUR",
+        "base_asset": "ETH",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "5000",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-17T07:25:25.433000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "2162.55",
+      "recorded_ask": "2163.10",
+      "spread_bps": "2.542970420630425485187197300",
+      "bid_depth": "3046.77295092",
+      "ask_depth": "3043.22255090",
+      "conditional_target_net_eur": [
+        "-0.1340045677146243199999999932",
+        "0.0009919519594902400000000067957",
+        "0.1359884716336048000000000068"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.3319794277796082454832568789",
+        "0.002457435962912275296517446516",
+        "0.3368942997054327960762917720"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": true,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    },
+    {
+      "order_id": "ord_7c1398a4855e4f57bfa072e54f5ec404",
+      "decision_id": "dec_38b42bfa33f34cd59b4f84f7284f986c",
+      "symbol": "ETH-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.034512880000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "2162.29",
+      "modeled_entry_vwap": "2164.019832000000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "2165.74",
+        "2169.19",
+        "2172.65"
+      ],
+      "stop_price": "2158.83",
+      "target_distances_bps": [
+        "15.95530664249476249716735000",
+        "31.91061328498952499433471000",
+        "47.91216719311470709294313000"
+      ],
+      "stop_distance_bps": "16.00155390812518209860842000",
+      "quantity_step_at_submission": "1E-8",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "ETH-EUR",
+        "base_asset": "ETH",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "5000",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-17T07:15:21.887000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "2161.93",
+      "recorded_ask": "2162.29",
+      "spread_bps": "1.665040169094079394665396303",
+      "bid_depth": "3047.11406617",
+      "ask_depth": "3045.68414169",
+      "conditional_target_net_eur": [
+        "-0.1498014727913750400000000063",
+        "-0.03094626652062624000000000627",
+        "0.08825344759438559999999999373"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.3862292215019904653560120739",
+        "-0.07978795003771652982464327489",
+        "0.2275415569960190692879758684"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": true,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    },
+    {
+      "order_id": "ord_ee47c70662d247d482102484de7fa129",
+      "decision_id": "dec_02864e9f2a8d4db8b4960f82f10eb341",
+      "symbol": "ETH-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.034506980000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "2162.66",
+      "modeled_entry_vwap": "2164.390128000000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "2165.61",
+        "2168.56",
+        "2171.51"
+      ],
+      "stop_price": "2159.70",
+      "target_distances_bps": [
+        "13.64060924972025191199726000",
+        "27.28121849944050382399453000",
+        "40.92182774916075573599179000"
+      ],
+      "stop_distance_bps": "13.68684860310913412186844000",
+      "quantity_step_at_submission": "1E-8",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "ETH-EUR",
+        "base_asset": "ETH",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "5000",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-17T06:55:20.736000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "2161.54",
+      "recorded_ask": "2162.66",
+      "spread_bps": "5.180148929281716849359419083",
+      "bid_depth": "3047.08021718",
+      "ask_depth": "3245.16233143",
+      "conditional_target_net_eur": [
+        "-0.1670442749472737599999999916",
+        "-0.06543183457460095999999999161",
+        "0.03618060579807184000000000839"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.4507235375457039615026941525",
+        "-0.1765500072174174448246819388",
+        "0.09762352311086907185333027494"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": true,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    },
+    {
+      "order_id": "ord_506abb340c9544cd8aaa7dbdef1eeee1",
+      "decision_id": "dec_ea80f1dc960d4d1ba1c8bef85e67f34f",
+      "symbol": "ETH-EUR",
+      "status": "REJECTED",
+      "recorded_rejection": "execution_quality:first_target_destroyed_by_execution_costs",
+      "submitted_quantity": "0.034546910000",
+      "submitted_quote": "75.000000000000",
+      "decision_entry_price": "2160.16",
+      "modeled_entry_vwap": "2161.888128000000",
+      "fee_bps_per_side": "10",
+      "slippage_bps_per_side": "8",
+      "target_prices": [
+        "2163.17",
+        "2166.19",
+        "2169.21"
+      ],
+      "stop_price": "2157.14",
+      "target_distances_bps": [
+        "13.93415302570179986667654000",
+        "27.91459891859862232427228000",
+        "41.89504481149544478186801000"
+      ],
+      "stop_distance_bps": "13.98044589289682245759573400",
+      "quantity_step_at_submission": "1E-8",
+      "current_precision_and_minimum_metadata": {
+        "symbol": "ETH-EUR",
+        "base_asset": "ETH",
+        "quote_asset": "EUR",
+        "price_step": "0.01",
+        "quantity_step": "1E-8",
+        "min_order_quote": "0.1",
+        "min_order_base": "1E-8",
+        "max_order_base": "5000",
+        "status": "active"
+      },
+      "historical_price_step_and_minimum": "NOT_RECORDED; current metadata supplied separately. These do not change the replayed cost-destroyed-target verdict.",
+      "book_timestamp": "2026-10-17T06:10:14.674000+00:00",
+      "stored_bid_levels": 50,
+      "stored_ask_levels": 50,
+      "recorded_bid": "2159.08",
+      "recorded_ask": "2160.16",
+      "spread_bps": "5.000879784406515961141311897",
+      "bid_depth": "3244.62215378",
+      "ask_depth": "3247.95342032",
+      "conditional_target_net_eur": [
+        "-0.1648575640490162399999999923",
+        "-0.06071360938644167999999999233",
+        "0.04343034527613288000000000767"
+      ],
+      "conditional_reward_vs_net_stop_risk": [
+        "-0.4422137534683506709905833185",
+        "-0.1628581208770437101931640290",
+        "0.1164975117142632506042552605"
+      ],
+      "frozen_v44_quality_replay": "EXACT_MATCH",
+      "executed_fill": false,
+      "original_rc1_decision": true,
+      "historical_stage_trace": "NOT_RECORDED; no stage events manufactured",
+      "expectancy": "NOT_ESTIMABLE: target-hit probability is not known"
+    }
+  ],
+  "correction_to_rc1_summary": {
+    "original_rc1_raw_order_count": 4,
+    "original_rc1_summary_zero_orders": "INCORRECT",
+    "current_captured_rejected_orders": 13,
+    "original_decisions_matched": 4,
+    "confirmed_gate": "execution_quality:first_target_destroyed_by_execution_costs",
+    "historical_rc1_assessment": "Historical execution outcome not verified",
+    "updated_evidence": "Actual immutable order records identify the refusals. Missing stage traces remain unknown; engineering replay is independent."
+  }
+}

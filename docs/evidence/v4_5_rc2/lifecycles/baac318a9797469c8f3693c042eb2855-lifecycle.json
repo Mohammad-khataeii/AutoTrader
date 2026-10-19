@@ -1,0 +1,310 @@
+{
+  "evidence_class": "SYNTHETIC_DETERMINISTIC_ENGINEERING_TEST",
+  "status": "PASS",
+  "manifest": {
+    "data_kind": "LIVE_MARKET_SHADOW",
+    "database_name": "autotrader_shadow_36372df7dcedc418e13556763997d1cf",
+    "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+    "execution_runtime": "native-v44",
+    "experiment_id": "baac318a9797469c8f3693c042eb2855",
+    "fee_bps": "10",
+    "frozen_at": "2026-10-16T21:02:49.043851+00:00",
+    "initial_cash_eur": "500",
+    "minimum_prospective_days": 30,
+    "official_database": "autotrader",
+    "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+    "parameters": {
+      "breakout_buffer": "0.001",
+      "compression_width": "0.06",
+      "relative_return": "0.02",
+      "relative_volume": "1.5",
+      "stop_atr": "2",
+      "target_atr": "2"
+    },
+    "promotion_state": "UNVALIDATED_EXPERIMENT",
+    "slippage_bps": "8",
+    "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+    "strategy_id": "C2_LIQUID_RETEST",
+    "strategy_version": "4.2.0-experimental.1"
+  },
+  "manifest_unchanged": true,
+  "runner": "autotrader._frozen.v44.shadow.repository",
+  "parameters": {
+    "breakout_buffer": "0.001",
+    "compression_width": "0.06",
+    "relative_return": "0.02",
+    "relative_volume": "1.5",
+    "stop_atr": "2",
+    "target_atr": "2"
+  },
+  "fills": [
+    {
+      "fill_id": "fill_0edb8a6d311f4854a9985370b18deb67",
+      "order_id": "ord_0edb8a6d311f4854a9985370b18deb67",
+      "position_id": "pos_51d2608330a4483283524b31c5735ac8",
+      "exit_intent_id": "",
+      "exit_target_id": "",
+      "created_at": "2026-10-18T13:15:41.878460+00:00",
+      "attribution_status": "CONFIRMED",
+      "symbol": "BTC-EUR",
+      "side": "BUY",
+      "quantity": "0.575336250000",
+      "price": "129.813768000000",
+      "fee": "0.074686566479",
+      "simulated": "True"
+    },
+    {
+      "fill_id": "fill_55de9bcd8e0a4432a29590358b2020c3",
+      "order_id": "ord_55de9bcd8e0a4432a29590358b2020c3",
+      "position_id": "pos_51d2608330a4483283524b31c5735ac8",
+      "exit_intent_id": "exit_fd4ebfb358044d20bb92d2570e1f31e8",
+      "exit_target_id": "",
+      "created_at": "2026-10-18T13:15:42.771493+00:00",
+      "attribution_status": "CONFIRMED",
+      "symbol": "BTC-EUR",
+      "side": "SELL",
+      "quantity": "0.575336250000",
+      "price": "126.898400000000",
+      "fee": "0.073009249587",
+      "simulated": "True"
+    }
+  ],
+  "orders": [
+    {
+      "order_id": "ord_0edb8a6d311f4854a9985370b18deb67",
+      "symbol": "BTC-EUR",
+      "side": "BUY",
+      "status": "FILLED",
+      "quantity": "0.575336250000",
+      "filled_quantity": "0.575336250000",
+      "average_fill_price": "129.813768000000"
+    },
+    {
+      "order_id": "ord_55de9bcd8e0a4432a29590358b2020c3",
+      "symbol": "BTC-EUR",
+      "side": "SELL",
+      "status": "FILLED",
+      "quantity": "0.575336250000",
+      "filled_quantity": "0.575336250000",
+      "average_fill_price": "126.898400000000"
+    }
+  ],
+  "positions": [
+    "Position(position_id='pos_51d2608330a4483283524b31c5735ac8', symbol='BTC-EUR', quantity=Decimal('0E-12'), average_entry_price=Decimal('129.813768000000'), opened_at=datetime.datetime(2026, 10, 18, 13, 15, 41, 844993, tzinfo=datetime.timezone.utc), realized_pnl=Decimal('-1.825012708556'), protective_stop=Decimal('128.370000000000'), take_profit_targets=[Decimal('131.050000000000'), Decimal('132.390000000000'), Decimal('133.730000000000')], original_quantity=Decimal('0.575336250000'), target_quantities=[Decimal('0.172600870000'), Decimal('0.230134500000'), Decimal('0.172600880000')], target_filled_quantities=[Decimal('0E-12'), Decimal('0E-12'), Decimal('0E-12')], closed_at=datetime.datetime(2026, 10, 18, 13, 15, 42, 775721, tzinfo=datetime.timezone.utc), target_ids=['tp_020454d70bd649729da7e4691e1bd99c', 'tp_02a1445c51944a0f9b52a9f4e0bf693a', 'tp_43ff74cfc11c45df88962eaf6605e4f6'], exit_plan_id='plan_a00e3803db7b4c6eb79041132fff2feb', cost_basis=Decimal('0E-12'), highest_price=Decimal('129.700000000000'), initial_stop=Decimal('128.370000000000'), trailing_distance=None, expires_at=datetime.datetime(2026, 10, 18, 14, 5, 41, 879703, tzinfo=datetime.timezone.utc), last_monitored_at=datetime.datetime(2026, 10, 18, 13, 15, 42, 741885, tzinfo=datetime.timezone.utc), account_id='shadow:baac318a9797469c8f3693c042eb2855')"
+  ],
+  "reconciliation": [],
+  "trace": [
+    {
+      "candle_at": "2026-10-18T13:10:00+00:00",
+      "decision_id": "dec_8d6e27c8fc174f80b3303bec229f01ab",
+      "events": {
+        "ALLOCATION_ACCEPTED": {
+          "completed_at": "2026-10-18T13:15:42.006117+00:00",
+          "entered_at": "2026-10-18T13:15:41.993565+00:00",
+          "processing_at": "2026-10-18T13:15:42.006117+00:00",
+          "reason": "correlation_concentration_limit",
+          "reason_code": "correlation_concentration_limit",
+          "related": {},
+          "stage": "ALLOCATION_ACCEPTED",
+          "status": "REJECTED"
+        },
+        "DECISION_ACCEPTED": {
+          "completed_at": "2026-10-18T13:15:41.981707+00:00",
+          "entered_at": "2026-10-18T13:15:41.981707+00:00",
+          "processing_at": "2026-10-18T13:15:41.981707+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {},
+          "stage": "DECISION_ACCEPTED",
+          "status": "SUCCEEDED"
+        },
+        "SIGNAL_ELIGIBLE": {
+          "completed_at": "2026-10-18T13:15:41.978987+00:00",
+          "entered_at": "2026-10-18T13:15:41.978987+00:00",
+          "processing_at": "2026-10-18T13:15:41.978987+00:00",
+          "reason": "recorded_signal_eligibility",
+          "reason_code": "recorded_signal_eligibility",
+          "related": {},
+          "stage": "SIGNAL_ELIGIBLE",
+          "status": "SUCCEEDED"
+        }
+      },
+      "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+      "experiment_id": "baac318a9797469c8f3693c042eb2855",
+      "runtime": "verified-v44",
+      "schema": "execution-trace/1",
+      "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+      "strategy_id": "C2_LIQUID_RETEST",
+      "symbol": "ETH-EUR"
+    },
+    {
+      "candle_at": "2026-10-18T13:10:00+00:00",
+      "decision_id": "dec_7e2d0ac154e944aa99f590cece2f8bdd",
+      "events": {
+        "ALLOCATION_ACCEPTED": {
+          "completed_at": "2026-10-18T13:15:41.796126+00:00",
+          "entered_at": "2026-10-18T13:15:41.783466+00:00",
+          "processing_at": "2026-10-18T13:15:41.796126+00:00",
+          "reason": "allocation_accepted",
+          "reason_code": "allocation_accepted",
+          "related": {},
+          "stage": "ALLOCATION_ACCEPTED",
+          "status": "SUCCEEDED"
+        },
+        "DECISION_ACCEPTED": {
+          "completed_at": "2026-10-18T13:15:41.770642+00:00",
+          "entered_at": "2026-10-18T13:15:41.770642+00:00",
+          "processing_at": "2026-10-18T13:15:41.770642+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {},
+          "stage": "DECISION_ACCEPTED",
+          "status": "SUCCEEDED"
+        },
+        "ENTRY_PREFLIGHT": {
+          "completed_at": "2026-10-18T13:15:41.894674+00:00",
+          "entered_at": "2026-10-18T13:15:41.801831+00:00",
+          "processing_at": "2026-10-18T13:15:41.894674+00:00",
+          "reason": "FILLED",
+          "reason_code": "FILLED",
+          "related": {
+            "order_id": "ord_0edb8a6d311f4854a9985370b18deb67"
+          },
+          "stage": "ENTRY_PREFLIGHT",
+          "status": "SUCCEEDED"
+        },
+        "ORDER_FILLED:ord_0edb8a6d311f4854a9985370b18deb67": {
+          "completed_at": "2026-10-18T13:15:41.905324+00:00",
+          "entered_at": "2026-10-18T13:15:41.905324+00:00",
+          "processing_at": "2026-10-18T13:15:41.905324+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "fill_ids": [
+              "fill_0edb8a6d311f4854a9985370b18deb67"
+            ],
+            "order_id": "ord_0edb8a6d311f4854a9985370b18deb67",
+            "position_id": "pos_51d2608330a4483283524b31c5735ac8"
+          },
+          "stage": "ORDER_FILLED",
+          "status": "SUCCEEDED"
+        },
+        "ORDER_FILLED:ord_55de9bcd8e0a4432a29590358b2020c3": {
+          "completed_at": "2026-10-18T13:15:42.790216+00:00",
+          "entered_at": "2026-10-18T13:15:42.790216+00:00",
+          "processing_at": "2026-10-18T13:15:42.790216+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "fill_ids": [
+              "fill_55de9bcd8e0a4432a29590358b2020c3"
+            ],
+            "order_id": "ord_55de9bcd8e0a4432a29590358b2020c3",
+            "position_id": "pos_51d2608330a4483283524b31c5735ac8"
+          },
+          "stage": "ORDER_FILLED",
+          "status": "SUCCEEDED"
+        },
+        "PAPER_ORDER_CREATED:ord_0edb8a6d311f4854a9985370b18deb67": {
+          "completed_at": "2026-10-18T13:15:41.902648+00:00",
+          "entered_at": "2026-10-18T13:15:41.902648+00:00",
+          "processing_at": "2026-10-18T13:15:41.902648+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "fill_ids": [
+              "fill_0edb8a6d311f4854a9985370b18deb67"
+            ],
+            "order_id": "ord_0edb8a6d311f4854a9985370b18deb67",
+            "position_id": "pos_51d2608330a4483283524b31c5735ac8"
+          },
+          "stage": "PAPER_ORDER_CREATED",
+          "status": "SUCCEEDED"
+        },
+        "PAPER_ORDER_CREATED:ord_55de9bcd8e0a4432a29590358b2020c3": {
+          "completed_at": "2026-10-18T13:15:42.787283+00:00",
+          "entered_at": "2026-10-18T13:15:42.787283+00:00",
+          "processing_at": "2026-10-18T13:15:42.787283+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "fill_ids": [
+              "fill_55de9bcd8e0a4432a29590358b2020c3"
+            ],
+            "order_id": "ord_55de9bcd8e0a4432a29590358b2020c3",
+            "position_id": "pos_51d2608330a4483283524b31c5735ac8"
+          },
+          "stage": "PAPER_ORDER_CREATED",
+          "status": "SUCCEEDED"
+        },
+        "POSITION_CLOSED": {
+          "completed_at": "2026-10-18T13:15:42.792642+00:00",
+          "entered_at": "2026-10-18T13:15:42.792642+00:00",
+          "processing_at": "2026-10-18T13:15:42.792642+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "fill_ids": [
+              "fill_55de9bcd8e0a4432a29590358b2020c3"
+            ],
+            "order_id": "ord_55de9bcd8e0a4432a29590358b2020c3",
+            "position_id": "pos_51d2608330a4483283524b31c5735ac8"
+          },
+          "stage": "POSITION_CLOSED",
+          "status": "SUCCEEDED"
+        },
+        "POSITION_OPENED": {
+          "completed_at": "2026-10-18T13:15:41.908079+00:00",
+          "entered_at": "2026-10-18T13:15:41.908079+00:00",
+          "processing_at": "2026-10-18T13:15:41.908079+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "fill_ids": [
+              "fill_0edb8a6d311f4854a9985370b18deb67"
+            ],
+            "order_id": "ord_0edb8a6d311f4854a9985370b18deb67",
+            "position_id": "pos_51d2608330a4483283524b31c5735ac8"
+          },
+          "stage": "POSITION_OPENED",
+          "status": "SUCCEEDED"
+        },
+        "POSITION_PROTECTED": {
+          "completed_at": "2026-10-18T13:15:41.910678+00:00",
+          "entered_at": "2026-10-18T13:15:41.910678+00:00",
+          "processing_at": "2026-10-18T13:15:41.910678+00:00",
+          "reason": null,
+          "reason_code": null,
+          "related": {
+            "exit_plan_id": "plan_a00e3803db7b4c6eb79041132fff2feb",
+            "fill_ids": [
+              "fill_0edb8a6d311f4854a9985370b18deb67"
+            ],
+            "order_id": "ord_0edb8a6d311f4854a9985370b18deb67",
+            "position_id": "pos_51d2608330a4483283524b31c5735ac8"
+          },
+          "stage": "POSITION_PROTECTED",
+          "status": "SUCCEEDED"
+        },
+        "SIGNAL_ELIGIBLE": {
+          "completed_at": "2026-10-18T13:15:41.766937+00:00",
+          "entered_at": "2026-10-18T13:15:41.766937+00:00",
+          "processing_at": "2026-10-18T13:15:41.766937+00:00",
+          "reason": "recorded_signal_eligibility",
+          "reason_code": "recorded_signal_eligibility",
+          "related": {},
+          "stage": "SIGNAL_ELIGIBLE",
+          "status": "SUCCEEDED"
+        }
+      },
+      "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+      "experiment_id": "baac318a9797469c8f3693c042eb2855",
+      "runtime": "verified-v44",
+      "schema": "execution-trace/1",
+      "source_fingerprint": "ae428fc0ba5513519a7066b299780cfe5b88b1dab874925be1f31e2dabcd8c43",
+      "strategy_id": "C2_LIQUID_RETEST",
+      "symbol": "BTC-EUR"
+    }
+  ],
+  "original_accounts_mutated": false
+}

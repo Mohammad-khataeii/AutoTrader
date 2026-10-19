@@ -108,8 +108,11 @@ def explain(
         conditions["strategy_specific_conditions_unobserved"] = None
     veto = by_id.get("D2_MOMENTUM_QUALITY")
     regime = evidence.get("regime", features.metadata.get("regime_assessment", {}).get("regime"))
-    if runner == "verified-v42":
-        from autotrader.shadow.versions import legacy_module
+    if runner in {"verified-v42", "verified-v44"}:
+        from functools import partial
+
+        from autotrader.shadow.versions import frozen_module
+        legacy_module = partial(frozen_module, selected=runner.removeprefix("verified-"))
 
         registry = (
             *legacy_module("research.experimental").EXPERIMENTAL_REGISTRY,
@@ -221,6 +224,7 @@ def observe_repository(repo: Any, runner: str) -> None:
     if getattr(repo, "_diagnostic_observed", False):
         return
     repo._diagnostic_observed = True
+    repo._diagnostic_runner = runner
     original_market, original_analysis = repo.store_market_analysis, repo.store_analysis
     captured: dict[str, Any] = {}
     claim_candle, claim_coordinator = repo.claim_candle, repo.claim_coordinator
@@ -248,6 +252,15 @@ def observe_repository(repo: Any, runner: str) -> None:
         if hasattr(repo, "_diagnostic_scan"):
             repo._diagnostic_scan["evaluated"] += 1
         if "features" in captured:
+            from autotrader.shadow.trace import event
+            primary = next((s for s in signals if s.strategy_id == repo.scope.manifest["strategy_id"]), None)
+            stamp = captured["features"].timestamp.isoformat()
+            await event(repo, decision.decision_id, "SIGNAL_ELIGIBLE",
+                "SUCCEEDED" if primary and primary.evidence.get("entry_eligible") else "REJECTED",
+                symbol=decision.symbol, candle_at=stamp, reason="recorded_signal_eligibility")
+            await event(repo, decision.decision_id, "DECISION_ACCEPTED",
+                "SUCCEEDED" if decision.accepted and decision.action.value == "BUY" else "REJECTED",
+                symbol=decision.symbol, candle_at=stamp, reason=decision.rejected_reason)
             try:
                 await persist(
                     repo,
@@ -314,8 +327,20 @@ def observe_gateway(gateway: Any, repo: Any) -> Any:
             log.exception("shadow_execution_observation_failed")
 
     async def allocation(candidate: Any) -> Any:
+        from autotrader.shadow.trace import event
         quality.update(reached=False, rejection=None)
-        result = await allocate(candidate)
+        buying = candidate.decision.accepted and candidate.decision.action.value == "BUY"
+        if buying:
+            await event(repo, candidate.decision.decision_id, "ALLOCATION_ACCEPTED", "ATTEMPTED", symbol=candidate.decision.symbol)
+        try:
+            result = await allocate(candidate)
+        except Exception as exc:
+            if buying:
+                await event(repo, candidate.decision.decision_id, "ALLOCATION_ACCEPTED", "EXCEPTION", reason=type(exc).__name__)
+            raise
+        if buying:
+            await event(repo, candidate.decision.decision_id, "ALLOCATION_ACCEPTED",
+                "SUCCEEDED" if result[0] is not None else "REJECTED", reason=result[1])
         if candidate.decision.accepted and candidate.decision.action.value == "BUY":
             await outcome(
                 candidate.decision.decision_id, result[0] is not None, result[1], "allocation"
@@ -324,13 +349,39 @@ def observe_gateway(gateway: Any, repo: Any) -> Any:
 
     async def entry(pair: Any, decision: Any, *args: Any, **kwargs: Any) -> Any:
         quality.update(reached=False, rejection=None)
-        result = await execute(pair, decision, *args, **kwargs)
+        from autotrader.shadow.trace import event, observe_order
+        buying = decision.accepted and decision.action.value == "BUY"
+        if buying:
+            await event(repo, decision.decision_id, "ENTRY_PREFLIGHT", "ATTEMPTED", symbol=pair.symbol)
+        try:
+            result = await execute(pair, decision, *args, **kwargs)
+        except Exception as exc:
+            if buying:
+                await event(repo, decision.decision_id, "ENTRY_PREFLIGHT", "EXCEPTION", reason=type(exc).__name__)
+            raise
+        if buying:
+            await event(repo, decision.decision_id, "ENTRY_PREFLIGHT",
+                "SUCCEEDED" if result.accepted else "REJECTED", reason=result.reason,
+                related={"order_id": result.order.order_id if result.order else None})
+            if result.order:
+                await observe_order(repo, result.order.order_id)
         # The original runtime invokes the gateway for WAIT decisions too; that
         # returns before risk/market quality evaluation. Preserve that distinction.
         if decision.accepted and decision.action.value == "BUY":
             await outcome(decision.decision_id, result.accepted, result.reason, "entry")
         return result
 
+    original_exit: Any = getattr(gateway, "execute_exit", None)
+
+    async def exit_observation(*args: Any, **kwargs: Any) -> Any:
+        from autotrader.shadow.trace import observe_order
+        result = await original_exit(*args, **kwargs)
+        if result.order:
+            await observe_order(repo, result.order.order_id)
+        return result
+
+    if original_exit is not None:
+        gateway.execute_exit = exit_observation
     gateway.allocate_candidate, gateway.execute_entry_decision = allocation, entry
     return gateway
 

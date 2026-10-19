@@ -1,0 +1,36 @@
+{
+  "evidence_class": "REAL_PRODUCTION_READ_ONLY_RECORDED_INPUT_REPLAY",
+  "engineering_status": "PASS",
+  "generation": "v42",
+  "package_files": 71,
+  "independent_original_git_signal_comparisons": 657,
+  "independent_original_git_full_signal_mismatches": 0,
+  "accounts": {
+    "9b18cabcc94c45fe84a59917226ebb58": {
+      "recorded_evaluations_replayed": 306,
+      "primary_eligibility_veto_regime_mismatches": [],
+      "nonprimary_benchmark_dependent_mismatches": []
+    },
+    "39cddc6d7e584a369ce223945f06e629": {
+      "recorded_evaluations_replayed": 36,
+      "primary_eligibility_veto_regime_mismatches": [],
+      "nonprimary_benchmark_dependent_mismatches": []
+    },
+    "52746de1116e4852b61cb16988917545": {
+      "recorded_evaluations_replayed": 306,
+      "primary_eligibility_veto_regime_mismatches": [],
+      "nonprimary_benchmark_dependent_mismatches": []
+    },
+    "2f12b0257a3b453a8e2a61ab695d8146": {
+      "recorded_evaluations_replayed": 9,
+      "primary_eligibility_veto_regime_mismatches": [],
+      "nonprimary_benchmark_dependent_mismatches": []
+    }
+  },
+  "limits": [
+    "Exact saved decimal features/context; does not reconstruct missing historical raw-candle scan batches.",
+    "Historical benchmark batch membership was not retained. Nonprimary D2 differences remain unverified; no historical full decision/order replay claim.",
+    "Stored execution books for rejected A2 orders are replayed separately in execution-cost-analysis.json.",
+    "Synthetic raw-candle liveness and restart proofs are separate engineering evidence; no profitability claim."
+  ]
+}

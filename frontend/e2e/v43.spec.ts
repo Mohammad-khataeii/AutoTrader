@@ -311,7 +311,7 @@ for (const width of [1440, 1024, 768, 375])
       ),
     ).toBe(true);
     await page.screenshot({
-      path: `../docs/evidence/v4_5/acceptance-overview-${width}.png`,
+      path: `${process.env.AUTOTRADER_BROWSER_EVIDENCE ?? "../docs/evidence/v4_5"}/acceptance-overview-${width}.png`,
       fullPage: true,
     });
     await page
@@ -325,7 +325,7 @@ for (const width of [1440, 1024, 768, 375])
     ).toBe(true);
     await expect(page.locator("pre:visible")).toHaveCount(0);
     await page.screenshot({
-      path: `../docs/evidence/v4_5/acceptance-experiments-${width}.png`,
+      path: `${process.env.AUTOTRADER_BROWSER_EVIDENCE ?? "../docs/evidence/v4_5"}/acceptance-experiments-${width}.png`,
       fullPage: true,
     });
     await page.getByRole("button", { name: "Research", exact: true }).focus();

@@ -188,14 +188,15 @@ async def test_gateway_observation_does_not_call_wait_preflight_a_quality_reject
             if not decision.accepted:
                 return SimpleNamespace(accepted=False, reason="Entry conditions not met.")
             self.market_data.validate_order_book(None)
-            return SimpleNamespace(accepted=False, reason="stale_depth")
+            return SimpleNamespace(accepted=False, reason="stale_depth", order=None)
 
     gateway = observe_gateway(Gateway(), pg_repo)
     decision = SimpleNamespace(
         decision_id="wait-test", accepted=False, action=SimpleNamespace(value="WAIT")
     )
     await gateway.allocate_candidate(SimpleNamespace(decision=decision))
-    await gateway.execute_entry_decision(None, decision)
+    pair = SimpleNamespace(symbol="BTC-EUR")
+    await gateway.execute_entry_decision(pair, decision)
     async with pg_repo.session_factory() as session:
         row = await session.get(SystemStateModel, "shadow_explanation:wait-test")
         body = json.loads(row.payload_json)
@@ -204,7 +205,7 @@ async def test_gateway_observation_does_not_call_wait_preflight_a_quality_reject
         assert body["reason_code"] == "RECORDED_DECISION_REJECTION"
     decision.accepted = True
     decision.action.value = "BUY"
-    await gateway.execute_entry_decision(None, decision)
+    await gateway.execute_entry_decision(pair, decision)
     async with pg_repo.session_factory() as session:
         row = await session.get(SystemStateModel, "shadow_explanation:wait-test")
         assert json.loads(row.payload_json)["execution"]["quality"] == {

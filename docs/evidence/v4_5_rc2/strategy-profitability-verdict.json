@@ -1,0 +1,139 @@
+{
+  "evidence_class": "HISTORICAL_PROXY_RESEARCH",
+  "status": "NO_STRATEGY_PASSED",
+  "studies": {
+    "universe-target-research.json": {
+      "5m": {
+        "A2_CONFIRMED_PULLBACK": {
+          "net_profit": -11.183525321487025,
+          "trades": 27,
+          "max_drawdown": 0.02256338483975618,
+          "sharpe_ratio": -12.786879774181775,
+          "rejections": {
+            "regime_or_signal_ineligible": 39017,
+            "data_quality_or_history": 29063,
+            "position_or_cooldown": 38,
+            "first_target_destroyed_by_execution_costs": 272,
+            "exit_limit_not_executable": 3,
+            "correlation_concentration_limit": 5,
+            "insufficient_executable_entry_notional": 2
+          }
+        },
+        "B2_CONFIRMED_COMPRESSION": {
+          "net_profit": -1.0387097976930022,
+          "trades": 2,
+          "max_drawdown": 0.0020774195953860044,
+          "sharpe_ratio": -8.021380669041653,
+          "rejections": {
+            "regime_or_signal_ineligible": 39357,
+            "data_quality_or_history": 29063
+          }
+        },
+        "C2_LIQUID_RETEST": {
+          "net_profit": 0.0,
+          "trades": 0,
+          "max_drawdown": 0.0,
+          "sharpe_ratio": null,
+          "rejections": {
+            "regime_or_signal_ineligible": 39359,
+            "data_quality_or_history": 29063
+          }
+        },
+        "E2_ABSOLUTE_RELATIVE_STRENGTH": {
+          "net_profit": 0.0,
+          "trades": 0,
+          "max_drawdown": 0.0,
+          "sharpe_ratio": null,
+          "rejections": {
+            "regime_or_signal_ineligible": 39359,
+            "data_quality_or_history": 29063
+          }
+        }
+      }
+    },
+    "timeframe-research.json": {
+      "15m": {
+        "A_TREND_PULLBACK": {
+          "net_profit": -15.480133550672008,
+          "trades": 99,
+          "max_drawdown": 0.03933372467518539,
+          "sharpe_ratio": -8.964032339208899,
+          "rejections": {
+            "regime_or_signal_ineligible": 9425,
+            "data_quality_or_history": 3170,
+            "position_or_cooldown": 179,
+            "correlation_concentration_limit": 24,
+            "entry_frequency": 346,
+            "first_target_destroyed_by_execution_costs": 133,
+            "missing_position_market_data": 5,
+            "stale_open_position_valuation": 3,
+            "insufficient_executable_entry_notional": 2,
+            "position_count": 18,
+            "exit_no_assumed_liquidity": 8,
+            "exit_limit_not_executable": 18
+          }
+        },
+        "B_COMPRESSION_BREAKOUT": {
+          "net_profit": -18.54161980140202,
+          "trades": 58,
+          "max_drawdown": 0.040405954524303095,
+          "sharpe_ratio": -14.372436298711612,
+          "rejections": {
+            "regime_or_signal_ineligible": 10118,
+            "data_quality_or_history": 3170,
+            "position_or_cooldown": 25,
+            "exit_limit_not_executable": 18,
+            "entry_frequency": 5,
+            "position_count": 2,
+            "correlation_concentration_limit": 7,
+            "first_target_destroyed_by_execution_costs": 12,
+            "exit_no_assumed_liquidity": 9,
+            "missing_position_market_data": 2
+          }
+        }
+      },
+      "1h": {
+        "A_TREND_PULLBACK": {
+          "net_profit": -38.09319283659602,
+          "trades": 140,
+          "max_drawdown": 0.10023217241092033,
+          "sharpe_ratio": -5.493990037832245,
+          "rejections": {
+            "regime_or_signal_ineligible": 6320,
+            "position_or_cooldown": 223,
+            "correlation_concentration_limit": 33,
+            "position_count": 103,
+            "exit_no_assumed_liquidity": 2,
+            "entry_frequency": 102,
+            "exit_limit_not_executable": 4
+          }
+        },
+        "B_COMPRESSION_BREAKOUT": {
+          "net_profit": -27.279474055369008,
+          "trades": 58,
+          "max_drawdown": 0.06110751583773449,
+          "sharpe_ratio": -8.086102361182915,
+          "rejections": {
+            "regime_or_signal_ineligible": 6790,
+            "correlation_concentration_limit": 18,
+            "position_or_cooldown": 22,
+            "exit_limit_not_executable": 2,
+            "position_count": 8,
+            "entry_frequency": 1,
+            "exit_no_assumed_liquidity": 2
+          }
+        }
+      }
+    }
+  },
+  "untouched_holdout": false,
+  "production_parameters_changed": false,
+  "promotions": [],
+  "verdict": "No strategy has positive validated out-of-sample support. Preserve existing unvalidated status and cost/risk refusals. No forced trading, new allocations, prospective-return or completed-30-day claim.",
+  "limits": [
+    "Current surviving Coinbase EUR universe and incomplete observations; no historical Revolut L2.",
+    "Chronological splits, purge/embargo, four walk-forwards and conservative multiple-comparison handling do not create untouched holdout data.",
+    "Reported rejection frequencies are historical simulation events; actual per-symbol full qualified opportunity census and all market regimes are not verified.",
+    "No target-hit probability model; conditional target rewards and ATR-cost screens are not probability-weighted expected returns."
+  ]
+}

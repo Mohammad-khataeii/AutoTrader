@@ -1,0 +1,70 @@
+{
+  "engineering_status": "PASS",
+  "evidence_class": "SYNTHETIC_DETERMINISTIC_ENGINEERING_TEST",
+  "runtime": {
+    "status": "PASS",
+    "architecture": "x86_64",
+    "v42_files": 71,
+    "v44_files": 76,
+    "boundary": "PASS",
+    "v45_execution": "f3761999cc5a6114e5fe6cf79d7b939d3c14e65ee7063b033e11337ddefcebd2",
+    "application_source_fingerprint": "ae00122e325e0b59871e666925554ff8b144026502cf09c5bd8135e5c2c30b1d",
+    "image_id": "sha256:619f8c650e731273912670f1a96f76b273f078aaac31cfd21d993bb1bcfba811",
+    "frontend_image_id": "sha256:da64e8daf7753f899a59ddb52d4a04c787a02c069dd574032ecebc9a032e2725",
+    "frontend_actual_nginx_static_http": "PASS",
+    "frontend_compiled_asset_sha256": {
+      "index.html": "ff40a7272622a20b87ef8324c4af1947a1555268b16eb37e9921a9bc4ec1b1cb",
+      "assets/index-BIrh912o.css": "350c3bc6c888e004d4ced1a7fa6a0277f58e6a8b3f71f99c235a1d4929fa15ee",
+      "assets/index-flG17WBf.js": "18db041d44787458e9ddbac111a09ea446178d845cb99f2a37e205c8e8f619c8"
+    },
+    "standalone_frontend_health_scope": "Actual Nginx static HTTP; /healthz is intentionally proxied to backend and is not a standalone frontend check.",
+    "actual_final_image_source_verification": "PASS"
+  },
+  "actual_candidate_lifecycle_count": 12,
+  "lifecycle_evidence_sha256": "512c6381bf1f2c269036fea104ea744769a3ecafc92d52c39580717c6419ca71",
+  "restore_evidence_sha256": "3c882576267f7f0c5a7022e3de5fdceba508f962a4b0995ff58c625c829afe2f",
+  "commands": [
+    {
+      "kind": "amd64-backend-build",
+      "argv": [
+        "docker",
+        "buildx",
+        "build",
+        "--platform",
+        "linux/amd64",
+        "--load",
+        "-t",
+        "autotrader-v45-rc2:amd64",
+        "-f",
+        "Dockerfile.backend",
+        "."
+      ],
+      "cwd": ".",
+      "started_at": "2026-10-18T13:16:58.926192+00:00",
+      "duration_seconds": 2.267,
+      "exit_code": 0,
+      "log_sha256": "bfe8096c2a0e26e2366cc1072e497fa088efc6c3dc7fde7dda5fec0296a151ff"
+    },
+    {
+      "kind": "amd64-frontend-build",
+      "argv": [
+        "docker",
+        "buildx",
+        "build",
+        "--platform",
+        "linux/amd64",
+        "--load",
+        "-t",
+        "autotrader-v45-rc2-frontend:amd64",
+        "frontend"
+      ],
+      "cwd": ".",
+      "started_at": "2026-10-18T13:17:01.192938+00:00",
+      "duration_seconds": 1.717,
+      "exit_code": 0,
+      "log_sha256": "06165b7161f6fc014aa7ab0296368ae00129846de9b5dd5a2b71af5d8327eaca"
+    }
+  ],
+  "integration_command": "python3 scripts/run_rc2_container_acceptance.py",
+  "isolation": "Internal Docker networks, ephemeral PostgreSQL tmpfs, no exposed ports, read-only candidate, no production route or exchange orders"
+}

@@ -68,6 +68,6 @@ strict = true
 packages = ["autotrader"]
 
 [tool.setuptools.package-data]
-"autotrader._frozen" = ["v42-manifest.json"]
+"autotrader._frozen" = ["v42-manifest.json", "v44-manifest.json"]
 
 "autotrader.shadow" = ["v45-boundary.json"]

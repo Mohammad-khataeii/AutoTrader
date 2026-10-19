@@ -1,0 +1,43 @@
+{
+  "engineering_status": "PASS",
+  "evidence_class": "SYNTHETIC_DETERMINISTIC_ENGINEERING_TEST",
+  "environment": {
+    "os": "macOS-26.6.2-arm64-arm-64bit",
+    "host_architecture": "arm64",
+    "python": "3.12.0",
+    "postgres": "16-alpine local isolated verification cluster",
+    "container_target": "linux/amd64",
+    "node": "v22.13.0"
+  },
+  "full_suite": {
+    "tests": 235,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "duration_seconds": 581.623
+  },
+  "supplemental_new_trace_api_case": {
+    "tests": 1,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "duration_seconds": 2.76
+  },
+  "distinct_tests_passed": 236,
+  "compiled_three_generation_browser_lifecycles": {
+    "tests": 3,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "duration_seconds": 73.879
+  },
+  "commands": [
+    "AUTOTRADER_RC2_EVIDENCE=docs/evidence/v4_5_rc2/lifecycles python3 .tools/with_pg.py python3 -m pytest -q --junitxml=docs/evidence/v4_5_rc2/backend-tests.xml",
+    "python3 .tools/with_pg.py python3 -m pytest -q tests/test_v45_trade_gates.py::test_durable_trace_api_authentication_scope_and_bounded_pagination --junitxml=docs/evidence/v4_5_rc2/trace-api-tests.xml"
+  ],
+  "notes": [
+    "The full run collected 235 cases; the new authenticated trace-pagination case was added and executed separately while that run was active.",
+    "Initial 230-pass/2-failure evidence is retained. Fixed calendar-dependent test fixture and outdated gateway mock; unchanged financial risk rules.",
+    "Starlette/AnyIO deprecation warning remains; PostgreSQL-dependent tests were executed, not skipped."
+  ]
+}

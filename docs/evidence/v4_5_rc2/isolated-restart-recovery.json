@@ -1,0 +1,27 @@
+{
+  "engineering_status": "PASS",
+  "evidence_class": "SYNTHETIC_DETERMINISTIC_ENGINEERING_TEST",
+  "generations": [
+    "verified-v42",
+    "verified-v44",
+    "native-v45"
+  ],
+  "actual_worker_sigkill_and_restart": true,
+  "compiled_browser_cases": {
+    "tests": 3,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "duration_seconds": 73.879
+  },
+  "fills_per_closed_partial_target_lifecycle": 5,
+  "reconciliation": [],
+  "evidence": [
+    "compiled-lifecycle-tests.xml",
+    "lifecycles/v44-worker-restart.json",
+    "legacy-frontend-lifecycle.json",
+    "frozen-v44-frontend-lifecycle.json",
+    "native-frontend-lifecycle.json"
+  ],
+  "limits": "SIGKILL uses real isolated host worker processes; actual AMD64 image separately proves runner reconstruction and 12 complete financial lifecycles. No production worker interruption."
+}

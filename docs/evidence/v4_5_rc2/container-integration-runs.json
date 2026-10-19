@@ -1,0 +1,15 @@
+{
+  "evidence_class": "EXECUTED_LOCAL_ENGINEERING_CHECKS",
+  "runs": [
+    {
+      "command": "python3 scripts/run_rc2_container_acceptance.py --image sha256:619f8c650e731273912670f1a96f76b273f078aaac31cfd21d993bb1bcfba811",
+      "duration_seconds": 28.654,
+      "status": "PASS"
+    },
+    {
+      "command": "financial_set.restore_isolated(final_private_backup_manifest, exact_candidate_image, postgres16_image, exact_production_rollback_image, exercise_backup=True)",
+      "duration_seconds": 30.903,
+      "status": "PASS"
+    }
+  ]
+}

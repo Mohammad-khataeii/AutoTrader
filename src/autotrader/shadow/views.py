@@ -196,6 +196,9 @@ async def account_summary(repo: Any) -> dict[str, Any]:
         reconciliation = await session.get(m.SystemStateModel, "shadow_reconciliation")
         health = await session.get(m.SystemStateModel, "runtime_health")
         scan_observation = await session.get(m.SystemStateModel, "shadow_scan_observation")
+        incident_rows = (await session.scalars(select(m.SystemStateModel).where(
+            m.SystemStateModel.key.in_(["shadow_runtime_incident", "execution_trace_health"]),
+            m.SystemStateModel.state == "ERROR"))).all()
         return {
             "portfolio": {
                 "equity": str(equity) if equity is not None else "",
@@ -211,6 +214,7 @@ async def account_summary(repo: Any) -> dict[str, Any]:
                 "fees": str(fees),
             },
             "scan_observation": json.loads(scan_observation.payload_json) if scan_observation else None,
+            "runtime_incidents": [{"state": r.state, "reason": r.reason, "detail": json.loads(r.payload_json)} for r in incident_rows],
             "last_evaluation_at": aware(last.created_at).isoformat() if last else None,
             "latest_decision": json.loads(explanation.payload_json)
             if explanation
