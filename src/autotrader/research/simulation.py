@@ -61,21 +61,38 @@ class SimPosition:
 
 
 class ResearchSimulation:
-    def __init__(self, bars: list[HistoricalBar], *, experimental: bool = False) -> None:
+    def __init__(self, bars: list[HistoricalBar], *, experimental: bool = False, successor: bool = False) -> None:
         if not bars or len({b.timeframe for b in bars}) != 1:
             raise ValueError("one_nonempty_research_timeframe_required")
         self.timeframe = bars[0].timeframe
         self.seconds = TIMEFRAMES[self.timeframe]
-        self.experimental = experimental
-        self.frames, self.features, self.feature_manifest = build_panel(bars, experimental_context=experimental)
+        self.experimental = experimental or successor
+        self.successor = successor
+        self.frames, self.features, self.feature_manifest = build_panel(bars, experimental_context=self.experimental)
+        if successor:
+            from autotrader.opportunity.research import prepare_panel
+            prepare_panel(self.frames, self.features)
         self.times = sorted(self.frames)
         self._signal_cache: dict[str, dict[tuple[datetime, str], tuple[list[tuple[Decimal, str]], bool, str]]] = {}
+
+    def enable_successors(self) -> None:
+        """Reuse the identical completed-data panel after matched baseline evaluation."""
+        if self.timeframe != '5m' or not self.experimental or self.successor:
+            raise ValueError('successor_comparison_requires_original_experimental_5m_panel')
+        from autotrader.opportunity.research import prepare_panel
+        self._signal_cache.clear()
+        prepare_panel(self.frames, self.features)
+        self.successor = True
 
     def run(self, *, start: datetime, end: datetime, strategy_ids: set[str],
             parameters: StrategyParameters | None = None, costs: Costs | None = None,
             member_parameters: dict[str, StrategyParameters] | None = None,
-            legacy: bool = False, ai_mode: str = "RULE_ONLY") -> dict[str, Any]:
+            legacy: bool = False, ai_mode: str = "RULE_ONLY", successor_parameters: Any = None,
+            entry_method: str = "MARKET", regime_model: str = "MULTIDIMENSIONAL",
+            universe: set[str] | None = None) -> dict[str, Any]:
         params, model = parameters or StrategyParameters(), costs or Costs()
+        if entry_method not in {'MARKET', 'BID_IOC', 'PULLBACK_IOC', 'RETEST_IOC'}:
+            raise ValueError('unknown_research_entry_method')
         if member_parameters is not None and set(member_parameters) != strategy_ids:
             raise ValueError("exact_frozen_parameters_required_for_every_member")
         members = member_parameters if member_parameters is not None else {s: params for s in strategy_ids}
@@ -117,6 +134,19 @@ class ResearchSimulation:
         risk = RiskEngine(RiskLimits())
         quality = ExecutionQualityEngine()
         specs = {s.strategy_id: s for s in (EXPERIMENTAL_REGISTRY if self.experimental else REGISTRY)}
+        opportunity_counts: Counter[str] = Counter()
+        successor_engine: Any = None
+        successor_plans: dict[tuple[datetime, str], Any] = {}
+        pending_entries: dict[str, dict[str, Any]] = {}
+        executable_limits: dict[tuple[datetime, str], Decimal] = {}
+        if self.successor:
+            from autotrader.opportunity.engine import (
+                SUCCESSOR_REGISTRY,
+                SuccessorOpportunityEngine,
+                SuccessorParameters,
+            )
+            successor_engine = SuccessorOpportunityEngine(successor_parameters or SuccessorParameters(), model.fee_bps, model.slippage_bps)
+            specs.update({s.strategy_id: s for s in SUCCESSOR_REGISTRY})
 
         def equity() -> Decimal:
             return cash + sum((p.position.quantity * marks.get(symbol, p.position.average_entry_price)
@@ -125,9 +155,9 @@ class ResearchSimulation:
         for timestamp in self.times:
             if not start <= timestamp < end:
                 continue
-            frame = {c.symbol: c for c in self.frames[timestamp]}
+            frame = {c.symbol: c for c in self.frames[timestamp] if universe is None or c.symbol in universe}
             observed_assets.update(frame)
-            context = self.features.get(timestamp, {})  # only bars completed BEFORE this open
+            context = {s: f for s, f in self.features.get(timestamp, {}).items() if universe is None or s in universe}  # only bars completed BEFORE this open
             used: dict[str, Decimal] = defaultdict(lambda: ZERO)
             previous_equity = equity()
             for symbol, candle in frame.items():
@@ -241,9 +271,45 @@ class ResearchSimulation:
                     if f.data_quality is not DataQuality.GOOD or not f.metadata.get("history_contiguous", True):
                         rejections["data_quality_or_history"] += 1
                         continue
+                    if self.successor and symbol in pending_entries:
+                        waiting = pending_entries[symbol]
+                        if timestamp > waiting['expires'] or D(str(f.metadata['last_close'])) <= D(waiting['plan']['stop']):
+                            pending_entries.pop(symbol)
+                            rejections['conditional_entry_expired_or_invalidated'] += 1
+                            opportunity_counts['missed_fills'] += 1
+                        elif frame[symbol].open * (1 + model.spread_bps / 20000) * (1 + model.slippage_bps / 10000) <= waiting['limit']:
+                            candidates.append((waiting['score'], symbol, waiting['strategy'], waiting['features'], waiting['regime']))
+                            successor_plans[(timestamp, symbol)] = waiting['plan']
+                            executable_limits[(timestamp, symbol)] = waiting['limit']
+                            pending_entries.pop(symbol)
+                        else:
+                            rejections['conditional_limit_not_executable_yet'] += 1
+                        continue
                     eligible: list[tuple[Decimal, str]] = []
                     veto = False
-                    if legacy:
+                    if self.successor:
+                        from autotrader.research.regimes import Regime, classify
+                        hypothesis = next(iter(strategy_ids))
+                        preview = book(symbol, frame[symbol].open, timestamp)
+                        if preview is None:
+                            rejections['entry_no_assumed_liquidity'] += 1
+                            continue
+                        pair = TradingPair(symbol, symbol.split('-')[0], 'EUR', min_order_quote=D(5))
+                        f = replace(f, metadata={**f.metadata, 'liquidity_quote': sum((l.price*l.quantity for l in (*preview.bids, *preview.asks)), ZERO), 'order_book_age_seconds': ZERO})
+                        signal = successor_engine.evaluate(hypothesis, f, pair, preview, context.get('BTC-EUR'), context.get('ETH-EUR'))
+                        opportunity_counts['evaluations'] += 1
+                        opportunity_counts['technical'] += int(signal.evidence['technical_eligible'])
+                        opportunity_counts['economically_viable'] += int(signal.evidence['economic_eligible'])
+                        rejections.update(signal.evidence['reasons'])
+                        regime = signal.evidence['regime'] + '+' + '+'.join(signal.evidence['regime_assessment']['structure'])
+                        old = classify(f, context.get('BTC-EUR'), context.get('ETH-EUR'))
+                        if regime_model == 'LEGACY_BULL_FILTER' and old.regime not in {Regime.MODERATE_BULL, Regime.STRONG_BULL}:
+                            rejections['legacy_single_label_bull_filter'] += 1
+                            continue
+                        if signal.evidence['entry_eligible']:
+                            eligible = [(signal.score, signal.strategy_id)]
+                            successor_plans[(timestamp, symbol)] = signal.evidence['entry_plan']
+                    elif legacy:
                         signals = legacy_engine.generate(f, context.get("BTC-EUR"), context.get("ETH-EUR"))
                         eligible = [(s.score, s.strategy_id) for s in signals if s.score > 0]
                         veto = any(s.evidence.get("veto") for s in signals)
@@ -269,7 +335,7 @@ class ResearchSimulation:
                     # qualified proposals give a matched integration comparison only.
                     primary = max(eligible) if legacy else min(eligible, key=lambda row: row[1])
                     candidates.append((sum(score for score, _ in eligible), symbol, primary[1], f, regime))
-                for _, symbol, strategy, f, regime in sorted(candidates, key=lambda row: (-row[0], row[1])):
+                for ranking_score, symbol, strategy, f, regime in sorted(candidates, key=lambda row: (-row[0], row[1])):
                     if halted:
                         rejections["persistent_equity_risk_halt"] += 1
                         continue
@@ -288,7 +354,13 @@ class ResearchSimulation:
                     atr = f.atr or price * D(".02")
                     stop = price - atr * selected_params.stop_atr
                     targets = [price + atr * selected_params.target_atr * i for i in (1, 2, 3)]
+                    if self.successor:
+                        plan = successor_plans[(timestamp, symbol)]
+                        stop, targets = D(plan['stop']), [D(t) for t in plan['targets']]
+                        opportunity_counts['buy_decisions_before_portfolio_risk'] += 1
                     quote_amount = min(D(75), max(cash - 150, ZERO), D(5) / (atr * selected_params.stop_atr / price + D(".01")))
+                    if self.successor:
+                        quote_amount = min(D(75), max(cash - 150, ZERO), D(5) / ((price - stop) / price + D('.01'))) if 0 < stop < price else ZERO
                     pair = TradingPair(symbol, symbol.split("-")[0], "EUR", min_order_quote=D(5))
                     quantity = quantize_down(quote_amount / (price * D("1.005")), pair.quantity_step)
                     portfolio = Portfolio(cash)
@@ -308,6 +380,27 @@ class ResearchSimulation:
                         rejections.update(feasibility.rejection_reasons)
                         continue
                     quote = feasibility.entry
+                    if self.successor and entry_method != 'MARKET':
+                        limit = executable_limits.get((timestamp, symbol))
+                        if limit is None:
+                            limit = observation.best_bid or ZERO
+                            if entry_method == 'PULLBACK_IOC':
+                                limit -= atr * D('.25')
+                            if entry_method == 'RETEST_IOC':
+                                level = f.metadata.get('successor_patterns', {}).get('0.02:1.3:8', {}).get('level')
+                                limit = min(limit, D(level)) if level else limit - atr * D('.25')
+                            pending_entries[symbol] = {'limit': limit, 'expires': timestamp + timedelta(seconds=3*self.seconds),
+                                'score': ranking_score, 'strategy': strategy, 'features': f, 'regime': regime,
+                                'plan': successor_plans[(timestamp, symbol)]}
+                            opportunity_counts['conditional_entry_watches'] += 1
+                            continue
+                        quote = quote_execution(observation, Side.BUY, quantity, quantity_step=pair.quantity_step,
+                            fee_bps=model.fee_bps, slippage_bps=model.slippage_bps, quote_budget=quote_amount, limit_price=limit)
+                        if quote.fillable_quantity == 0:
+                            rejections['conditional_ioc_unfilled_no_queue_priority_assumed'] += 1
+                            opportunity_counts['missed_fills'] += 1
+                            continue
+                    opportunity_counts['actual_simulated_buy_fills'] += 1
                     cash += quote.net_cash_change
                     asset_cashflows[symbol] += quote.net_cash_change
                     regime_cashflows[regime] += quote.net_cash_change
@@ -322,7 +415,7 @@ class ResearchSimulation:
                         protective_stop=stop, cost_basis=-quote.net_cash_change, highest_price=observation.best_bid)
                     quantities = [quantize_down(quote.fillable_quantity * D(fraction), pair.quantity_step) for fraction in (".3", ".4")]
                     quantities.append(quote.fillable_quantity - sum(quantities))
-                    holding = specs[strategy].holding_bars if strategy in specs else 12
+                    holding = successor_engine.parameters.holding_bars if self.successor else specs[strategy].holding_bars if strategy in specs else 12
                     opened[symbol] = SimPosition(position, strategy, regime, targets, quantities,
                         timestamp + timedelta(seconds=self.seconds * holding), atr * selected_params.stop_atr)
                     fills.append({"position_id": position_id, "symbol": symbol, "timestamp": timestamp.isoformat(),
@@ -382,6 +475,10 @@ class ResearchSimulation:
             "start": start.isoformat(), "end_exclusive": end.isoformat(), "timeframe": self.timeframe,
             "strategy_ids": sorted(strategy_ids), "legacy_signal_baseline": legacy, "ai_mode": ai_mode,
             "rejections": dict(rejections), "regime_observations": dict(regime_observations),
+            "opportunity_counts": dict(opportunity_counts), "entry_method": entry_method,
+            "successor_parameters": successor_engine.parameters.payload() if self.successor else None,
+            "regime_model": regime_model if self.successor else 'ORIGINAL',
+            "pending_conditional_entries_at_end": len(pending_entries),
             "open_positions_at_end": [{"symbol": s, "quantity": str(p.position.quantity), "cost_basis": str(p.position.cost_basis)} for s, p in opened.items()],
             "curve": curve, "fills": fills, "feature_manifest": self.feature_manifest,
             "closed_positions": [{"position_id": p.position.position_id, "symbol": p.position.symbol,

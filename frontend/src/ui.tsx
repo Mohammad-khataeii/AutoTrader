@@ -10,6 +10,14 @@ import {
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { errorMessage, type Row, type Snapshot } from "./api";
 import { date, money, number } from "./model";
+import { personalText } from "./presentation";
+function presentationNode(value: React.ReactNode): React.ReactNode {
+  if (typeof value === "string") return personalText(value);
+  if (Array.isArray(value)) return value.map(presentationNode);
+  if (React.isValidElement<{ children?: React.ReactNode }>(value) && value.props.children != null)
+    return React.cloneElement(value, { children: presentationNode(value.props.children) });
+  return value;
+}
 export function Panel({
   children,
   className = "",
@@ -29,7 +37,7 @@ export function Badge({
   return (
     <span className={`badge ${tone}`}>
       <span className="status-dot" />
-      {children}
+      {presentationNode(children)}
     </span>
   );
 }
@@ -46,7 +54,7 @@ export function Pnl({ value }: { value: unknown }) {
   );
 }
 export function Empty({
-  title = "No trades yet.",
+  title = "No activity yet.",
   children,
 }: {
   title?: string;
@@ -100,7 +108,7 @@ export function Technical({
   return (
     <details className="disclosure">
       <summary>{label}</summary>
-      <pre>{JSON.stringify(value, null, 2)}</pre>
+      <pre>{personalText(JSON.stringify(value, null, 2))}</pre>
     </details>
   );
 }
@@ -146,7 +154,7 @@ export function CompactTable({
                 }
               >
                 {columns.map((c) => (
-                  <td key={c.label}>{c.render(r)}</td>
+                  <td key={c.label}>{presentationNode(c.render(r))}</td>
                 ))}
               </tr>
             ))}

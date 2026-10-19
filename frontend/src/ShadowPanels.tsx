@@ -24,7 +24,7 @@ export function TradeFailureExplorer({ auth: _auth }: { auth: string }) {
   return (
     <div className="page-stack">
       <Panel>
-        <h2>Trade failure diagnostics</h2>
+        <h2>Outcome diagnostics</h2>
         <p className="muted">
           Previously examined historical OHLCV proxies. Diagnostic labels are
           observations; counterfactuals are hypotheses.
@@ -71,11 +71,11 @@ export function TradeFailureExplorer({ auth: _auth }: { auth: string }) {
           {data.data?.matched ?? 0} matching / {data.data?.total ?? 0}{" "}
           positions. Showing up to 100.
         </p>
-        <ResourceState resource={data} label="Trade diagnostics" />
+        <ResourceState resource={data} label="Decision diagnostics" />
       </Panel>
       <Panel>
         <CompactTable
-          label="Historical trade failures"
+          label="Historical position outcomes"
           rows={data.data?.positions ?? []}
           columns={[
             {

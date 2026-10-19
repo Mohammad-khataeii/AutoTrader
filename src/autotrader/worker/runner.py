@@ -145,6 +145,10 @@ async def main() -> None:
     from autotrader.shadow.runtime import ShadowRuntime
     shadow_lab = ShadowLab(repository, settings)
     shadow_runtime = ShadowRuntime(shadow_lab, market_data, risk, owner) if settings.shadow_enabled else None
+    from autotrader.opportunity.service import OpportunityObserver
+    opportunity_observer = OpportunityObserver(repository, market_data,
+        extra_pairs=settings.successor_discovery_extra_pairs, fee_bps=settings.default_fee_bps,
+        slippage_bps=settings.default_slippage_bps)
     await repository.recover_pending_orders()
     await repository.reconcile_runtime_health(settings.initial_cash_eur)
     await repository.worker_heartbeat(key='worker_instance')
@@ -234,6 +238,14 @@ async def main() -> None:
                     execution_gateway,
                     settings.worker_max_entries_per_cycle,
                 )
+                # New research discovery cannot delay the historical entry path.
+                # Protective monitoring remains independent and has HTTP priority.
+                try:
+                    extra_candidates = await opportunity_observer.observe(result.candidates)
+                    if shadow_runtime and extra_candidates:
+                        await shadow_runtime.scan([*result.candidates, *extra_candidates], successors_only=True)
+                except Exception as exc:
+                    await opportunity_observer.failure(exc)
                 if executions:
                     logger.info("worker entry executions complete", extra={"executions": [execution.__dict__ for execution in executions]})
                 else:

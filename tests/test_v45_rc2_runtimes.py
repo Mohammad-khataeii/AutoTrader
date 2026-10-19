@@ -27,7 +27,7 @@ def test_v44_exact_original_algorithm_and_all_dependencies():
     assert old.execution_fingerprint() == versions.V44_EXECUTION
     assert versions.compatibility({"execution_fingerprint": versions.V44_EXECUTION}) == {
         "compatible": True, "runner": "verified-v44", "reason": None}
-    assert versions.compatibility({"execution_fingerprint": versions.execution_fingerprint()})["runner"] == "native-v45"
+    assert versions.compatibility({"execution_fingerprint": versions.execution_fingerprint()})["runner"] == versions.CURRENT_RUNTIME
     assert not versions.compatibility({"execution_fingerprint": "unknown"})["compatible"]
 
 

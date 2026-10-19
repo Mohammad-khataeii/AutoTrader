@@ -62,6 +62,15 @@ def install(app: FastAPI, repository: Any, lab: Any, require_user: Any) -> None:
             complete_trace = traces.get(trace_key(decision['decision_id']))
             decision['execution_trace'] = {**complete_trace, 'events': dict(list(complete_trace['events'].items())[:20]), 'total_events': len(complete_trace['events']), 'more_events': len(complete_trace['events']) > 20} if complete_trace else None
             decision['stage_states'] = stage_states(complete_trace)
+            if row.get('schema') == 'shadow-decision-explanation/3':
+                stages_now = decision['stage_states']
+                preflight = stages_now['ENTRY_PREFLIGHT']
+                row['opportunity']['pipeline'][-1] = {'stage': 'PAPER_EXECUTION',
+                    'reached': preflight not in {'NOT_RECORDED', 'NEVER_REACHED'},
+                    'passed': True if stages_now['ORDER_FILLED'] == 'SUCCEEDED' else False if preflight in {'REJECTED', 'EXCEPTION'} else None,
+                    'reason': 'persisted_fill' if stages_now['ORDER_FILLED'] == 'SUCCEEDED' else row.get('execution', {}).get('reason') or preflight}
+                if row.get('allocation', {}).get('reached') and not row['allocation'].get('accepted'):
+                    row['opportunity']['pipeline'][-2] = {'stage': 'PORTFOLIO_RISK', 'reached': True, 'passed': False, 'reason': row['allocation'].get('reason')}
             if decision['stage_states']['ENTRY_PREFLIGHT'] not in {'NOT_RECORDED', 'NEVER_REACHED'}:
                 row['trace_execution_state'] = decision['stage_states']['ENTRY_PREFLIGHT']
             if decision['execution_trace'] is None and decision['accepted'] and decision['action'] == 'BUY':
@@ -89,6 +98,9 @@ def install(app: FastAPI, repository: Any, lab: Any, require_user: Any) -> None:
                 'runtime_compatibility': compatibility(record['manifest']),
                 'window': {'limit': limit, 'as_of': page['as_of'], 'unannotated': unannotated},
                 **aggregate(rows), 'lifetime_financial_counts': counts,
+                'qualification_counts': {
+                    'technical': sum(r.get('technical_eligible') is True for r in rows) if any('technical_eligible' in r for r in rows) else None,
+                    'economic': sum(r.get('economic_eligible') is True for r in rows) if any('economic_eligible' in r for r in rows) else None},
                 'execution_stages': stages,
                 'runtime_incidents': [{'reason': r.reason, 'detail': json.loads(r.payload_json)} for r in incident_rows],
                 'recent_in_window': {

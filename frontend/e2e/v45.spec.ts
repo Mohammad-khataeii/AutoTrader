@@ -13,8 +13,8 @@ test("trade gate dashboard distinguishes eligibility from orders and shows decis
     decisions: [{ decision_id: "fixture-decision", symbol: "BTC-EUR", created_at: "2026-10-17T08:00:00Z", explanation: { reason: "first_target_destroyed_by_execution_costs", entry_conditions: { higher_timeframe_bullish: true }, inputs: { ema_9: "100.5" } } }]
   }}));
   await signIn(page);
-  await page.getByRole("button", { name: "Trade Gate Diagnostics", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Trade Gate Diagnostics", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Decision Insights", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Decision Insights", exact: true })).toBeVisible();
   await expect(page.getByText("35 recorded evaluations in this page.", { exact: false }).first()).toBeVisible();
   await expect(page.getByText("0 lifetime paper fills", { exact: false }).first()).toBeVisible();
   await page.getByText("BTC-EUR ·", { exact: false }).first().click();
@@ -25,7 +25,7 @@ test("trade gate dashboard distinguishes eligibility from orders and shows decis
 test("archiving is disabled by default while stopped history stays accessible", async ({ page }) => {
   await mockApi(page, fixture());
   await signIn(page);
-  await page.getByRole("button", { name: "Experiments", exact: true }).click();
+  await page.getByRole("button", { name: "Strategies", exact: true }).click();
   await page.getByRole("button", { name: new RegExp(`Open .* ${ids[3].slice(0, 8)}`) }).click();
   await expect(page.getByRole("button", { name: "Delete experiment", exact: true })).toHaveCount(0);
 });

@@ -250,7 +250,7 @@ export function StrategyLab({
         <p>
           Run: {latest?.run_id ?? "Unavailable"}. Parameters are selected on
           training data and frozen before validation and test. Passing software
-          checks does not establish trading edge.
+          checks does not establish predictive edge.
         </p>
         {data.error && <p role="alert">{data.error}</p>}
         <label>
@@ -509,7 +509,7 @@ export function StrategyLab({
             }
           }}
         >
-          {busy ? "Loading evidence…" : "Load trade and equity evidence"}
+          {busy ? "Loading evidence…" : "Load position and equity evidence"}
         </button>
         {error && <p role="alert">{error}</p>}
       </section>

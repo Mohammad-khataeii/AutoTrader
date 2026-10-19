@@ -40,27 +40,32 @@ def digest(value: bytes) -> str:
 
 
 def verify_release_preflight(root: Path) -> dict:
-    """RC2 production activation requires the reviewed, hash-bound engineering evidence."""
-    folder = root / 'docs/evidence/v4_5_rc2'
+    """Production activation requires reviewed, source-bound engineering evidence."""
+    import tomllib
+    version_file = root / 'pyproject.toml'
+    v46 = version_file.exists() and tomllib.loads(version_file.read_text()).get('project', {}).get('version', '').startswith('4.6.')
+    folder = root / ('docs/evidence/v4_6' if v46 else 'docs/evidence/v4_5_rc2')
     readiness = json.loads((folder/'deployment-readiness.json').read_bytes())
     required = {'backend-tests.json', 'frontend-tests.json', 'amd64-container-tests.json',
                 'eight-account-manifest-verification.json', 'v42-runtime-parity.json',
                 'v44-runtime-parity.json', 'v45-runtime-identity.json', 'native-entry-acceptance.json',
                 'financial-integrity.json', 'nine-database-backup-restore.json',
                 'isolated-restart-recovery.json', 'rollback-readiness.json'}
+    if v46:
+        required = {'tests.json', 'runtime-compatibility.json', 'container-tests.json', 'financial-restore.json'}
     evidence = readiness.get('engineering_evidence', {})
     if readiness.get('recommendation') != 'READY' or not required.issubset(evidence):
-        raise ValueError('RC2 engineering release preflight is blocked or incomplete')
+        raise ValueError('Release engineering preflight is blocked or incomplete')
     for name, expected in evidence.items():
         if Path(name).name != name or digest((folder/name).read_bytes()) != expected:
-            raise ValueError('RC2 release evidence hash mismatch: '+name)
+            raise ValueError('Release evidence hash mismatch: '+name)
         report = json.loads((folder/name).read_bytes())
         if report.get('engineering_status', report.get('status')) != 'PASS':
-            raise ValueError('RC2 engineering evidence did not pass: '+name)
+            raise ValueError('Release engineering evidence did not pass: '+name)
     package = {str(p.relative_to(root/'src/autotrader')): digest(p.read_bytes())
                for p in sorted((root/'src/autotrader').rglob('*.py'))}
     if digest(canonical(package)) != readiness.get('application_source_fingerprint'):
-        raise ValueError('RC2 release evidence belongs to different application source')
+        raise ValueError('Release evidence belongs to different application source')
     return {'status': 'PASS', 'evidence_files': len(evidence), 'deployment_authorized': False}
 
 

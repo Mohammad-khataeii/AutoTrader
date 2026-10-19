@@ -101,7 +101,7 @@ export function Research({ auth }: { auth: string }) {
               </strong>
             </div>
             <div>
-              <span>Closed trades</span>
+              <span>Closed positions</span>
               <strong>{selected.out_of_sample?.trades ?? "Unavailable"}</strong>
             </div>
             <div>
@@ -205,7 +205,7 @@ export function Research({ auth }: { auth: string }) {
               render: (r) => <Pnl value={r.out_of_sample?.net_profit} />,
             },
             {
-              label: "Trades",
+              label: "Activity",
               render: (r) => r.out_of_sample?.trades ?? "Unavailable",
             },
             {
@@ -232,7 +232,7 @@ export function Research({ auth }: { auth: string }) {
       <p className="small muted">
         D2 is a momentum quality filter, not a standalone portfolio. A strategy
         needs independent validation and approval before official-account
-        trading.
+        activity.
       </p>
     </div>
   );

@@ -1,4 +1,5 @@
 import type { Row } from "./api";
+import { personalText } from "./presentation";
 export const number = (value: unknown): number | undefined =>
   value === "" || value == null || !Number.isFinite(Number(value))
     ? undefined
@@ -46,6 +47,9 @@ const names: Record<string, string> = {
   D2_MOMENTUM_QUALITY: "D2 Momentum Quality",
   E2_ABSOLUTE_RELATIVE_STRENGTH: "E2 Relative Strength",
   F2_RESTRICTED_RANGE: "F2 Restricted Range",
+  A3_COST_AWARE_CONTINUATION: "A3 Cost-Aware Continuation",
+  B3_STATEFUL_BREAKOUT: "B3 Stateful Breakout",
+  E3_ADAPTIVE_RELATIVE_STRENGTH: "E3 Adaptive Relative Strength",
   A_TREND_PULLBACK: "Trend Pullback",
   B_COMPRESSION_BREAKOUT: "Compression Breakout",
   C_BREAKOUT_RETEST: "Breakout Retest",
@@ -56,7 +60,7 @@ const names: Record<string, string> = {
 export const strategyName = (id: string = "") =>
   names[id] ?? humanize(id || "Strategy unavailable");
 export const humanize = (value: unknown) =>
-  String(value ?? "Unavailable")
+  personalText(value ?? "Unavailable")
     .replace(/_/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
 export const stateName = (value: unknown) =>
@@ -115,7 +119,7 @@ export function rejection(reason: unknown): string {
   const key = String(reason);
   return (
     {
-      decision_not_accepted: "No qualifying trade",
+      decision_not_accepted: "No qualifying opportunity",
       research_only: "No strategy is approved for the official account",
       shadow_frozen_source_changed:
         "Strategy configuration changed; new entries blocked",

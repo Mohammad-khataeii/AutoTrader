@@ -22,7 +22,7 @@ import { systemStatus } from "./model";
 import { Badge, ResourceState } from "./ui";
 import { TradeGates } from "./TradeGates";
 import { Overview } from "./Overview";
-import { Experiments } from "./Experiments";
+import { Opportunities, StrategiesWorkspace } from "./Opportunities";
 import { Trades } from "./Trades";
 import { Research } from "./Research";
 import { AdvancedScreen, advancedItems } from "./advanced";
@@ -35,10 +35,11 @@ export function displayMoney(value: unknown): string {
 }
 const navigation = [
   { name: "Overview", icon: LayoutDashboard },
-  { name: "Experiments", icon: FlaskConical },
-  { name: "Trades", icon: ArrowRightLeft },
+  { name: "Opportunities", icon: Activity },
+  { name: "Strategies", icon: FlaskConical },
+  { name: "Activity", icon: ArrowRightLeft },
   { name: "Research", icon: BarChart3 },
-  { name: "Trade Gate Diagnostics", icon: Activity },
+  { name: "Decision Insights", icon: Activity },
 ];
 function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
   const api = useApi();
@@ -65,7 +66,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
             <Activity size={20} />
           </span>
           <div>
-            AutoTrader<span>Virtual markets</span>
+            Personal Plan<span>Private portfolio</span>
           </div>
         </div>
         <nav aria-label="Primary navigation">
@@ -84,7 +85,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
           <details ref={menu} className="advanced-menu">
             <summary>
               <SlidersHorizontal size={17} />
-              <span>Advanced</span>
+              <span>Settings</span>
               <ChevronDown size={14} />
             </summary>
             <div className="advanced-options">
@@ -102,7 +103,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
               ))}
             </div>
           </details>
-          <p className="build-label">Interface 4.5 · Paper trading</p>
+          <p className="build-label">Interface 4.6 · Simulated Mode</p>
         </div>
       </aside>
       <main id="workspace" className="workspace">
@@ -110,8 +111,8 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
           <div>
             <p className="eyebrow">
               {active === "Advanced"
-                ? "Workspace / Advanced"
-                : "Your trading workspace"}
+                ? "Workspace / Settings"
+                : "Your personal portfolio"}
             </p>
             <h1>{active === "Advanced" ? advanced : active}</h1>
           </div>
@@ -156,7 +157,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
         {readiness.error && (
           <ResourceState
             resource={readiness}
-            label="Trading-mode verification"
+            label="Execution-mode verification"
           />
         )}
         {readiness.data?.live_trading_enabled === true && (
@@ -171,15 +172,16 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
             successful update.
           </div>
         )}
-        {active === "Trade Gate Diagnostics" && <TradeGates />}
+        {active === "Decision Insights" && <TradeGates />}
         {active === "Overview" && (
           <Overview
             system={system}
-            onExperiments={() => setActive("Experiments")}
+            onExperiments={() => setActive("Strategies")}
           />
         )}{" "}
-        {active === "Experiments" && <Experiments />}
-        {active === "Trades" && <Trades />}
+        {active === "Opportunities" && <Opportunities />}
+        {active === "Strategies" && <StrategiesWorkspace />}
+        {active === "Activity" && <Trades />}
         {active === "Research" && <Research auth={auth} />}{" "}
         {active === "Advanced" && (
           <AdvancedScreen key={advanced} page={advanced} auth={auth} />
@@ -190,8 +192,8 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
           </span>
           <span>
             {readiness.data?.live_trading_enabled === false
-              ? "Real-money trading disabled"
-              : "Simulated workspace · trading-mode check unavailable"}
+              ? "Real-money execution disabled"
+              : "Simulated workspace · execution-mode check unavailable"}
           </span>
         </footer>
       </main>
@@ -224,10 +226,10 @@ function App() {
     <main className="login-page">
       <div className="login-brand">
         <Activity size={24} />
-        <span>AutoTrader</span>
+        <span>Personal Plan</span>
       </div>
       <section className="login-card">
-        <p className="eyebrow">Your virtual trading workspace</p>
+        <p className="eyebrow">Your simulated portfolio workspace</p>
         <h1>Welcome back</h1>
         <p className="muted">
           Sign in to follow your strategies and virtual accounts.
@@ -286,7 +288,7 @@ function App() {
           </button>
         </form>
         <p className="small muted login-footnote">
-          Paper trading and isolated simulations. No real-money trading.
+          Simulated orders and isolated portfolios. Real-money execution is disabled.
         </p>
       </section>
     </main>

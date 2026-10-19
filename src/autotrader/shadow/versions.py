@@ -22,6 +22,7 @@ FROZEN = ROOT / "_frozen" / "v42"
 V44_EXECUTION = "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890"
 V44_PACKAGE = "d7aec58e3c62595d77b96cd74dd11248dab40bdf9575eb50bb6c2b6e49ef8064"
 FROZEN_V44 = ROOT / "_frozen" / "v44"
+CURRENT_RUNTIME = "native-v46"
 # Conservative closure: execution, accounting, indicators and persistence all matter.
 # API, diagnostics, transport scheduling and research publication do not authorize orders.
 EXECUTION_FILES = (
@@ -65,7 +66,7 @@ def execution_fingerprint() -> str:
     paths = {p for p in EXECUTION_FILES if (ROOT / p).is_file()}
     paths.update(
         str(p.relative_to(ROOT))
-        for folder in ("execution", "persistence")
+        for folder in ("execution", "persistence", "opportunity")
         for p in (ROOT / folder).rglob("*.py")
     )
     paths.add("shadow/v45-boundary.json")
@@ -82,7 +83,10 @@ def verify_legacy() -> dict[str, str]:
     return actual
 
 
-BOUNDARY_FILES = ('config.py', 'domain.py', 'indicators.py', 'market_data/replay.py', 'market_data/revolut.py', 'market_data/scheduling.py', 'market_data/service.py', 'research/artifacts.py', 'research/context.py', 'research/data.py', 'scanner.py', 'shadow/diagnostics.py', 'shadow/frozen.py', 'shadow/gates.py', 'shadow/lab.py', 'shadow/legacy.py', 'shadow/runtime.py', 'shadow/trace.py', 'shadow/versions.py', 'shadow/views.py', 'worker/runner.py')
+BOUNDARY_FILES: tuple[str, ...] = ('config.py', 'domain.py', 'indicators.py', 'market_data/replay.py', 'market_data/revolut.py', 'market_data/scheduling.py', 'market_data/service.py', 'research/artifacts.py', 'research/context.py', 'research/data.py', 'scanner.py', 'shadow/diagnostics.py', 'shadow/frozen.py', 'shadow/gates.py', 'shadow/lab.py', 'shadow/legacy.py', 'shadow/runtime.py', 'shadow/trace.py', 'shadow/versions.py', 'shadow/views.py', 'worker/runner.py')
+BOUNDARY_FILES += ('opportunity/__init__.py', 'opportunity/regime.py', 'opportunity/economics.py',
+    'opportunity/engine.py', 'opportunity/features.py', 'opportunity/patterns.py',
+    'opportunity/runtime.py', 'opportunity/service.py', 'opportunity/discovery.py', 'opportunity/research.py')
 
 
 def verify_boundary() -> None:
@@ -114,13 +118,13 @@ def generation(manifest: dict[str, Any]) -> str | None:
     if fingerprint == V44_EXECUTION:
         return "v44"
     if fingerprint:
-        return "v45" if fingerprint == execution_fingerprint() else None
+        return "v46" if fingerprint == execution_fingerprint() else None
     return "v42" if manifest.get("source_fingerprint") == LEGACY_SOURCE else None
 
 
 def compatibility(manifest: dict[str, Any]) -> dict[str, Any]:
     selected = generation(manifest)
-    runner = {"v42": "verified-v42", "v44": "verified-v44", "v45": "native-v45"}.get(selected or "")
+    runner = {"v42": "verified-v42", "v44": "verified-v44", "v46": CURRENT_RUNTIME}.get(selected or "")
     if selected:
         try:
             if selected == "v44":

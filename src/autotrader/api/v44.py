@@ -338,6 +338,7 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
                                     "position_monitor",
                                     "research_entry_policy",
                                     "runtime_health",
+                                    "opportunity_snapshot",
                                 ]
                             )
                         )
@@ -408,6 +409,10 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
             and unresolved(r)
         ]
         scan = payload("scanner")
+        opportunity_state = states.get('opportunity_snapshot')
+        if opportunity_state is not None and opportunity_state.state == 'ERROR':
+            errors.append({'message': 'successor_opportunity_observation:' + str(opportunity_state.reason),
+                'severity': 'ERROR', 'state': 'ERROR', 'created_at': aware(opportunity_state.updated_at).isoformat()})
         try:
             from redis.asyncio import Redis
             async with Redis.from_url(settings.redis_url, socket_connect_timeout=1, socket_timeout=1) as redis:
@@ -420,6 +425,8 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
                          and c.get("observations", 0) >= 50 for c in caches) if caches else None
         return {
             "as_of": utc_now().isoformat(),
+            "opportunity_engine": {'state': opportunity_state.state if opportunity_state else 'NOT_RECORDED',
+                'updated_at': aware(opportunity_state.updated_at).isoformat() if opportunity_state else None},
             "service": {
                 "api": "ok",
                 "redis": redis_status,

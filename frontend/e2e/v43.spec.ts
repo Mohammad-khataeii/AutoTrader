@@ -10,14 +10,14 @@ test("five primary routes, authentic status language and no default technical pa
       .getByRole("navigation", { name: "Primary navigation" })
       .getByRole("button")
       .allTextContents(),
-  ).toEqual(["Overview", "Experiments", "Trades", "Research", "Trade Gate Diagnostics"]);
+  ).toEqual(["Overview", "Opportunities", "Strategies", "Activity", "Research", "Decision Insights"]);
   await expect(
     page.getByText("The official portfolio is in research mode.", {
       exact: false,
     }),
   ).toBeVisible();
   await expect(
-    page.getByText("Real-money trading disabled", { exact: true }),
+    page.getByText("Real-money execution disabled", { exact: true }),
   ).toBeVisible();
   await expect(page.locator("pre:visible")).toHaveCount(0);
   expect(await page.locator(".kpi").count()).toBe(4);
@@ -46,7 +46,7 @@ test("all four retained accounts are distinct, duplicates preserved and creation
 }) => {
   const api = await mockApi(page);
   await signIn(page);
-  await page.getByRole("button", { name: "Experiments", exact: true }).click();
+  await page.getByRole("button", { name: "Strategies", exact: true }).click();
   await expect(page.locator(".experiment-card")).toHaveCount(3);
   for (const id of ids)
     await expect(
@@ -70,7 +70,7 @@ test("state-valid actions and confirmed permanent stop preserve the retained slo
 }) => {
   const api = await mockApi(page);
   await signIn(page);
-  await page.getByRole("button", { name: "Experiments", exact: true }).click();
+  await page.getByRole("button", { name: "Strategies", exact: true }).click();
   await expect(
     page.getByRole("button", {
       name: `Resume experiment ${ids[1].slice(0, 8)}`,
@@ -135,7 +135,7 @@ test("one export menu retains all five authenticated complete exports", async ({
 }) => {
   await mockApi(page);
   await signIn(page);
-  await page.getByRole("button", { name: "Experiments", exact: true }).click();
+  await page.getByRole("button", { name: "Strategies", exact: true }).click();
   await page
     .getByRole("button", {
       name: `Open B2 Confirmed Compression ${ids[0].slice(0, 8)}`,
@@ -202,14 +202,14 @@ test("research loads on demand, preserves negative results, and advanced capabil
     .click();
   await page
     .getByLabel("Research tool")
-    .selectOption("Trade failure diagnostics");
+    .selectOption("Outcome diagnostics");
   await expect(
     page.getByRole("heading", {
-      name: "Trade failure diagnostics",
+      name: "Outcome diagnostics",
       exact: true,
     }),
   ).toBeVisible();
-  await page.getByText("Advanced", { exact: true }).click();
+  await page.locator("summary").filter({ hasText: "Settings" }).click();
   await page
     .getByRole("button", { name: "Official Account Controls", exact: true })
     .click();
@@ -241,7 +241,7 @@ test("open trade detail does not invent prices or P&L without a valid timestampe
   data.overview.portfolio.positions = "1";
   await mockApi(page, data);
   await signIn(page);
-  await page.getByRole("button", { name: "Trades", exact: true }).click();
+  await page.getByRole("button", { name: "Activity", exact: true }).click();
   await expect(
     page
       .getByRole("region", { name: "Open positions", exact: true })
@@ -262,7 +262,7 @@ test("open trade detail does not invent prices or P&L without a valid timestampe
   await expect(page.getByText("Realized P&L", { exact: true })).toBeVisible();
   await expect(page.getByText("-€5.00", { exact: true })).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Back to trades", exact: true }),
+    page.getByRole("button", { name: "Back to activity", exact: true }),
   ).toBeVisible();
   await expect(page.locator("pre:visible")).toHaveCount(0);
 });
@@ -272,7 +272,7 @@ test("refresh timers are sequential, hidden views stop polling and heavy data st
   const api = await mockApi(page);
   await page.clock.install();
   await signIn(page);
-  await page.getByRole("button", { name: "Experiments", exact: true }).click();
+  await page.getByRole("button", { name: "Strategies", exact: true }).click();
   await page
     .getByRole("button", {
       name: `Pause experiment ${ids[0].slice(0, 8)}`,
@@ -315,7 +315,7 @@ for (const width of [1440, 1024, 768, 375])
       fullPage: true,
     });
     await page
-      .getByRole("button", { name: "Experiments", exact: true })
+      .getByRole("button", { name: "Strategies", exact: true })
       .click();
     await expect(page.locator(".experiment-card")).toHaveCount(3);
     expect(
@@ -342,7 +342,7 @@ test("creating an experiment requires explicit slot-use review and cancellation 
   data.shadow.experiments.pop();
   const api = await mockApi(page, data);
   await signIn(page);
-  await page.getByRole("button", { name: "Experiments", exact: true }).click();
+  await page.getByRole("button", { name: "Strategies", exact: true }).click();
   await page
     .getByRole("button", { name: "New experiment", exact: true })
     .click();

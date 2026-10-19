@@ -13,6 +13,7 @@ import {
   systemStatus,
 } from "./model";
 import { Badge, EquityChart, Panel, Pnl, ResourceState } from "./ui";
+import { OpportunityPreview } from "./Opportunities";
 export function Overview({
   system,
   onExperiments,
@@ -120,6 +121,14 @@ export function Overview({
           </small>
         </div>
       </div>
+      <div className="balance-summary" aria-label="Official simulated balance and results">
+        <div><span>Available balance</span><strong>{money(p?.available_cash)}</strong></div>
+        <div><span>Reserved balance</span><strong>{money(p?.reserved_cash)}</strong></div>
+        <div><span>Allocated balance</span><strong>{money(number(p?.open_exposure) != null && number(p?.reserved_cash) != null ? Number(p.open_exposure) + Number(p.reserved_cash) : undefined)}</strong></div>
+        <div><span>Realized result</span><strong><Pnl value={p?.realized_pnl} /></strong></div>
+        <div><span>Unrealized result</span><strong><Pnl value={p?.unrealized_pnl} /></strong></div>
+      </div>
+      <OpportunityPreview />
       <Panel className="happening">
         <div className="section-heading">
           <h2>What’s happening now?</h2>
@@ -129,7 +138,7 @@ export function Overview({
         <p>
           {system.data?.official?.approval?.research_only === true ||
           system.data?.operational_state === "RESEARCH_ONLY"
-            ? "The official portfolio is in research mode. No strategy is approved to trade in this account."
+            ? "The official portfolio is in research mode. No strategy is approved to place orders in this account."
             : "Official-account entries remain subject to the existing research and risk checks."}
         </p>
         {system.data?.service && (
@@ -188,7 +197,7 @@ export function Overview({
           <span className="muted small">
             Last updated {date(system.updatedAt, true)}
           </span>
-          <Badge>Simulated trading only</Badge>
+          <Badge>Simulated Mode</Badge>
         </div>
       </Panel>
       <div className="section-heading">
@@ -212,7 +221,7 @@ export function Overview({
               <strong>{strategyName(e.manifest?.strategy_id)}</strong>
               <span className="muted small">
                 Instance {shortId(e.experiment_id)} ·{" "}
-                {e.performance?.closed_trades ?? "Unavailable"} closed trades ·{" "}
+                {e.performance?.closed_trades ?? "Unavailable"} closed positions ·{" "}
                 {e.source_matches === false ? "New entries blocked" : "Active"}
               </span>
             </div>

@@ -22,6 +22,21 @@ def explain(
     by_id = {s.strategy_id: s for s in signals}
     primary = by_id.get(manifest["strategy_id"])
     evidence = primary.evidence if primary else {}
+    if evidence.get('strategy_version') == '4.6.0-experimental.1':
+        assert primary is not None
+        successor_conditions = evidence['conditions']
+        return {'schema': 'shadow-decision-explanation/3', 'decision_id': decision.decision_id,
+            'experiment_id': manifest['experiment_id'], 'strategy_id': manifest['strategy_id'],
+            'symbol': decision.symbol, 'runner': runner, 'data_quality': features.data_quality.value,
+            'regime': evidence['regime'], 'entry_conditions': successor_conditions,
+            'independently_failed': evidence['reasons'], 'unknown_conditions': [], 'diagnostic_parity': True,
+            'signal_entry_eligible': evidence['entry_eligible'], 'technical_eligible': evidence['technical_eligible'],
+            'economic_eligible': evidence['economic_eligible'], 'opportunity': evidence,
+            'risk': {'reached': evidence['entry_eligible'], 'rejection': decision.rejected_reason if not decision.accepted else None},
+            'decision_accepted': decision.accepted, 'execution': {'reached': False, 'quality': {'reached': False, 'rejection': None}},
+            'final_state': 'BUY_PENDING_EXECUTION' if decision.accepted else 'REJECTED',
+            'reason_code': 'DECISION_ACCEPTED' if decision.accepted else 'COST_REFUSAL' if evidence['technical_eligible'] and not evidence['economic_eligible'] else 'RISK_REFUSAL' if evidence['entry_eligible'] else 'TECHNICAL_INELIGIBLE',
+            'reason': decision.rejected_reason if evidence['entry_eligible'] and not decision.accepted else primary.explanation}
     p = manifest["parameters"]
 
     def decimal(value: Any) -> D | None:
@@ -327,20 +342,22 @@ def observe_gateway(gateway: Any, repo: Any) -> Any:
             log.exception("shadow_execution_observation_failed")
 
     async def allocation(candidate: Any) -> Any:
+        from autotrader.domain import new_id
         from autotrader.shadow.trace import event
+        attempt = new_id('attempt') if getattr(getattr(repo, 'scope', None), 'manifest', {}).get('strategy_version') == '4.6.0-experimental.1' else ''
         quality.update(reached=False, rejection=None)
         buying = candidate.decision.accepted and candidate.decision.action.value == "BUY"
         if buying:
-            await event(repo, candidate.decision.decision_id, "ALLOCATION_ACCEPTED", "ATTEMPTED", symbol=candidate.decision.symbol)
+            await event(repo, candidate.decision.decision_id, "ALLOCATION_ACCEPTED", "ATTEMPTED", symbol=candidate.decision.symbol, discriminator=attempt)
         try:
             result = await allocate(candidate)
         except Exception as exc:
             if buying:
-                await event(repo, candidate.decision.decision_id, "ALLOCATION_ACCEPTED", "EXCEPTION", reason=type(exc).__name__)
+                await event(repo, candidate.decision.decision_id, "ALLOCATION_ACCEPTED", "EXCEPTION", reason=type(exc).__name__, discriminator=attempt)
             raise
         if buying:
             await event(repo, candidate.decision.decision_id, "ALLOCATION_ACCEPTED",
-                "SUCCEEDED" if result[0] is not None else "REJECTED", reason=result[1])
+                "SUCCEEDED" if result[0] is not None else "REJECTED", reason=result[1], discriminator=attempt)
         if candidate.decision.accepted and candidate.decision.action.value == "BUY":
             await outcome(
                 candidate.decision.decision_id, result[0] is not None, result[1], "allocation"
@@ -349,20 +366,22 @@ def observe_gateway(gateway: Any, repo: Any) -> Any:
 
     async def entry(pair: Any, decision: Any, *args: Any, **kwargs: Any) -> Any:
         quality.update(reached=False, rejection=None)
+        from autotrader.domain import new_id
         from autotrader.shadow.trace import event, observe_order
+        attempt = new_id('attempt') if getattr(getattr(repo, 'scope', None), 'manifest', {}).get('strategy_version') == '4.6.0-experimental.1' else ''
         buying = decision.accepted and decision.action.value == "BUY"
         if buying:
-            await event(repo, decision.decision_id, "ENTRY_PREFLIGHT", "ATTEMPTED", symbol=pair.symbol)
+            await event(repo, decision.decision_id, "ENTRY_PREFLIGHT", "ATTEMPTED", symbol=pair.symbol, discriminator=attempt)
         try:
             result = await execute(pair, decision, *args, **kwargs)
         except Exception as exc:
             if buying:
-                await event(repo, decision.decision_id, "ENTRY_PREFLIGHT", "EXCEPTION", reason=type(exc).__name__)
+                await event(repo, decision.decision_id, "ENTRY_PREFLIGHT", "EXCEPTION", reason=type(exc).__name__, discriminator=attempt)
             raise
         if buying:
             await event(repo, decision.decision_id, "ENTRY_PREFLIGHT",
                 "SUCCEEDED" if result.accepted else "REJECTED", reason=result.reason,
-                related={"order_id": result.order.order_id if result.order else None})
+                related={"order_id": result.order.order_id if result.order else None}, discriminator=attempt)
             if result.order:
                 await observe_order(repo, result.order.order_id)
         # The original runtime invokes the gateway for WAIT decisions too; that

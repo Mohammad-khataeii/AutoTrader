@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useSyncExternalStore,
 } from "react";
+import { personalText } from "./presentation";
 export type Row = Record<string, any>;
 export type Snapshot = {
   data?: any;
@@ -21,7 +22,7 @@ type Entry = {
 };
 export function errorMessage(error: unknown): string {
   return error instanceof Error
-    ? error.message
+    ? personalText(error.message)
     : "The request could not be completed. Please try again.";
 }
 export class ApiClient {
@@ -82,7 +83,7 @@ export class ApiClient {
         );
       const reason =
         typeof detail === "string"
-          ? detail.replace(/_/g, " ")
+          ? personalText(detail.replace(/_/g, " "))
           : "The server could not complete this action.";
       throw new Error(`${reason} (${response.status})`);
     }
@@ -93,7 +94,7 @@ export class ApiClient {
     const data = await response.json();
     if (path === "/readyz" && typeof data.live_trading_enabled !== "boolean")
       throw new Error(
-        "Trading mode could not be verified from the readiness response.",
+        "Execution mode could not be verified from the readiness response.",
       );
     return data;
   }

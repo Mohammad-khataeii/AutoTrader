@@ -147,7 +147,7 @@ def restore_isolated(manifest: Path, candidate_image: str, postgres_image: str,
              "-e", "POSTGRES_DB=postgres", "-e", "POSTGRES_USER=autotrader", "-e", "POSTGRES_HOST_AUTH_METHOD=trust", postgres_image])
         created_container = True
         for _ in range(60):
-            if subprocess.run(["docker", "exec", container, "pg_isready", "-U", "autotrader"], capture_output=True, check=False).returncode == 0:
+            if subprocess.run(["docker", "exec", container, "pg_isready", "-h", "127.0.0.1", "-U", "autotrader"], capture_output=True, check=False).returncode == 0:
                 break
             time.sleep(0.5)
         else:

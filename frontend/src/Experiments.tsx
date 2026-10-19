@@ -168,7 +168,7 @@ export function Experiments() {
   if (experiment)
     return (
       <div className="page-stack">
-        <ResourceState resource={resource} label="Experiments" />
+        <ResourceState resource={resource} label="Strategies" />
         {selected && (
           <ResourceState resource={detail} label="Experiment details" />
         )}
@@ -277,7 +277,7 @@ export function Experiments() {
             </strong>
           </div>
           <div>
-            <span>Closed trades</span>
+            <span>Closed positions</span>
             <strong>
               {experiment.performance?.closed_trades ?? "Unavailable"}
             </strong>
@@ -456,7 +456,7 @@ export function Experiments() {
           </button>
         )}
       </div>
-      <ResourceState resource={resource} label="Experiments" />
+      <ResourceState resource={resource} label="Strategies" />
       {full && (
         <div className="slot-note">
           {experiments.length} of {maximum} experiment slots used. Existing
@@ -507,7 +507,7 @@ export function Experiments() {
                     </strong>
                   </div>
                   <div>
-                    <span>Closed trades</span>
+                    <span>Closed positions</span>
                     <strong>
                       {e.performance?.closed_trades ?? "Unavailable"}
                     </strong>

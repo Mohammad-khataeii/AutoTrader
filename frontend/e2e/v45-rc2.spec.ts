@@ -17,7 +17,7 @@ test("frozen incompatibility is critical and missing stage evidence remains unkn
       recorded_order_outcomes: [{ order_id: "synthetic-rejected-order", status: "REJECTED", reason: "execution_quality:first_target_destroyed_by_execution_costs" }] }]
   }}));
   await signIn(page);
-  await page.getByRole("button", { name: "Trade Gate Diagnostics", exact: true }).click();
+  await page.getByRole("button", { name: "Decision Insights", exact: true }).click();
   await expect(page.getByRole("alert").first()).toContainText("Critical: frozen runtime identity is incompatible");
   await expect(page.getByRole("cell", { name: "NOT_RECORDED", exact: true }).first()).toBeVisible();
   await page.getByText("ETH-EUR ·", { exact: false }).first().click();
@@ -40,7 +40,7 @@ test("trace exceptions are distinct from refused and unreached stages", async ({
   }}));
   await page.setViewportSize({ width: 375, height: 900 });
   await signIn(page);
-  await page.getByRole("button", { name: "Trade Gate Diagnostics", exact: true }).click();
+  await page.getByRole("button", { name: "Decision Insights", exact: true }).click();
   await expect(page.getByRole("alert").first()).toContainText("Runtime incident: TimeoutError");
   await expect(page.getByRole("cell", { name: "NEVER_REACHED", exact: true }).first()).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

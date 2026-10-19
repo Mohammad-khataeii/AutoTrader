@@ -100,6 +100,8 @@ class RevolutXPublicClient:
         # Retain the private candles handle for existing diagnostics/tests.
         self._breaker = self._breakers['/1.0/public/candles']
         self._pairs_cache: tuple[datetime, list[TradingPair]] | None = None
+        self._ticker_cache: tuple[datetime, list[dict[str, Any]]] | None = None
+        self._ticker_lock = asyncio.Lock()
 
     async def close(self) -> None:
         await self._client.aclose()
@@ -219,11 +221,20 @@ class RevolutXPublicClient:
         return pairs
 
     async def get_tickers(self, symbols: list[str] | None = None) -> list[dict[str, Any]]:
-        params: dict[str, Any] = {}
-        if symbols:
-            params["symbols"] = ",".join(symbols)
-        payload = await self._request("/1.0/public/tickers", params)
-        return list(payload["data"])
+        async with self._ticker_lock:
+            if symbols is None and self._ticker_cache and (utc_now() - self._ticker_cache[0]).total_seconds() < 60:
+                return [dict(row) for row in self._ticker_cache[1]]
+            params: dict[str, Any] = {"symbols": ",".join(symbols)} if symbols else {}
+            payload = await self._request("/1.0/public/tickers", params)
+            stamp = _timestamp_ms(payload.get('metadata', {}).get('timestamp'), context='ticker metadata.timestamp')
+            if not -5 <= (utc_now() - stamp).total_seconds() <= 90 or not isinstance(payload.get('data'), list):
+                raise MarketDataError('stale_or_invalid_ticker_summary')
+            rows = list(payload['data'])
+            if not all(isinstance(row, dict) for row in rows):
+                raise MarketDataError('invalid_ticker_summary_row')
+            if symbols is None:
+                self._ticker_cache = (stamp, rows)
+            return [dict(row) for row in rows]
 
     async def get_order_book(self, symbol: str, limit: int = 50) -> OrderBook:
         payload = await self._request(f"/2.0/public/order-book/{symbol}", {"limit": limit})

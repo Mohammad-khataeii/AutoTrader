@@ -1352,3 +1352,29 @@ dialog h2 {
 .trade-gates { display: grid; gap: 20px; }
 .trade-gates h3 { margin-top: 18px; margin-bottom: 10px; }
 .trade-gates details > summary { cursor: pointer; }
+
+.balance-summary, .insight-metrics, .opportunity-economics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 18px;
+  padding: 18px 22px;
+  border: 1px solid #e6ebe5;
+  border-radius: 12px;
+  background: #fff;
+}
+.balance-summary > div, .insight-metrics > div, .opportunity-economics > div { display: grid; gap: 8px; min-width: 0; }
+.balance-summary span, .insight-metrics span, .opportunity-economics span { color: #68756d; font-size: 12px; }
+.balance-summary strong { font-size: 16px; font-weight: 550; }
+.insight-metrics, .opportunity-economics { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 18px 0; border: 0; }
+.insight-metrics strong { font-size: 23px; font-weight: 550; letter-spacing: -.5px; }
+.opportunities-view > .panel { min-width: 0; }
+.opportunities-view .table-link { min-width: 150px; }
+.opportunity-preview .section-heading svg { color: #588273; }
+.qualification-path { list-style: none; padding: 0; display: grid; gap: 0; }
+.qualification-path li { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-bottom: 1px solid #edf0e9; }
+.qualification-path svg { margin-top: 3px; color: #608270; flex-shrink: 0; }
+.qualification-path p { margin: 5px 0 0; color: #68756d; font-size: 12px; overflow-wrap: anywhere; }
+@media (max-width: 700px) {
+  .balance-summary, .insight-metrics, .opportunity-economics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; }
+  .insight-metrics strong { font-size: 20px; }
+}

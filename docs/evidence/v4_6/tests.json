@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "evidence_class": "ENGINEERING_ACCEPTANCE_NOT_PROFITABILITY",
+  "application_source_fingerprint": "9d20ca986d88ae2bbc0e516173a02bb9199fc98cd358564c56ec5e0cb7e8a126",
+  "backend": {
+    "full_suite_passed": 253,
+    "additional_causal_research_and_source_bound_preflight_passed": 2,
+    "focused_successor_suite_passed": 17,
+    "focused_is_subset_of_full": true,
+    "real_postgresql": true
+  },
+  "frontend": {
+    "unit_passed": 13,
+    "typescript": "PASS",
+    "production_build": "PASS",
+    "browser_passed": 27,
+    "compiled_real_api_worker_lifecycle_passed": 3,
+    "mobile_desktop_visual_review": "PASS"
+  },
+  "ruff": "PASS",
+  "mypy": "PASS",
+  "nonblocking_warnings": [
+    "AnyIO BlockingPortal deprecation in Starlette test client",
+    "Frontend main chunk exceeds 500 kB advisory"
+  ],
+  "corrected_failures": [
+    "Legacy browser selector renamed Advanced to Settings and scoped to summary; new assertion scoped to paragraph.",
+    "Disposable PostgreSQL startup readiness now waits on TCP rather than temporary initialization socket.",
+    "Bundled research directory permissions corrected for non-root image execution."
+  ],
+  "unverified": [
+    "Positive expected value, calibrated probabilities and prospective strategy performance",
+    "Sustained discovery 429 improvement and false-positive rate",
+    "Untouched independent historical holdout",
+    "Passive queue fills and real historical order-book replay"
+  ],
+  "log_sha256": {
+    "v46-backend-tests.log": "3c40cab4979fa5d176495f0192e79e0942d24956c1a4022300ff0cb6d1de3c0c",
+    "v46-research-tests.log": "573203101bdd6bf05c98dd3d22925f0713473008a227e4a8ada27c7768628fee",
+    "v46-compiled-browser.log": "dccc2f54afedbbb5e716fe955561d4b54b177c1495ba0494dd78bfa8597d2f8a",
+    "v46-frontend-unit.log": "e470d723945e3968d25db45baa34cfb6035d5c8744f03f97318d56b306c4a917",
+    "v46-frontend-build.log": "6cb360b08f9d795be3ca5846923296245d5e218e26c46d760ee85e4f5980e496",
+    "v46-lint.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "v46-mypy.log": "fe0ce6e3b1983c3e150c09b415036599a0bee120f2cad38e219412ce21d84a67"
+  }
+}

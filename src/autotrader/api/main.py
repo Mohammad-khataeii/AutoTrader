@@ -201,7 +201,7 @@ def create_app() -> FastAPI:
         await market_data.close()
         await engine.dispose()
 
-    app = FastAPI(title=settings.app_name, version="4.5.0", lifespan=lifespan)
+    app = FastAPI(title=settings.app_name, version="4.6.0", lifespan=lifespan)
     app.state.auth_throttle = AuthenticationThrottle()
     app.state.shadow_lab = shadow_lab
     app.state.repository = repository
@@ -212,10 +212,12 @@ def create_app() -> FastAPI:
 
     from autotrader.api.v45 import install as install_v45
     install_v45(app, repository, shadow_lab, require_user)
+    from autotrader.api.v46 import install as install_v46
+    install_v46(app, repository, require_user, settings.research_root)
 
     @app.get("/healthz")
     async def healthz() -> dict[str, str]:
-        return {"status": "ok", "mode": "paper", "version":"4.5.0"}
+        return {"status": "ok", "mode": "paper", "version":"4.6.0"}
 
     @app.get("/readyz")
     async def readyz() -> dict[str, str | bool]:
@@ -241,7 +243,7 @@ def create_app() -> FastAPI:
     async def overview() -> dict[str, object]:
         snapshot = await repository.snapshot()
         return {
-            "application_version":"4.4.0",
+            "application_version":"4.6.0",
             "portfolio": snapshot,
             "health": {
                 "api": "ok",

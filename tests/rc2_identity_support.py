@@ -33,7 +33,7 @@ async def identity_fixture(monkeypatch):
             "-p", "127.0.0.1::5432", "-e", "POSTGRES_DB=autotrader", "-e", "POSTGRES_USER=autotrader",
             "-e", "POSTGRES_HOST_AUTH_METHOD=trust", "postgres:16-alpine")
         for _ in range(60):
-            if (await asyncio.to_thread(subprocess.run, ["docker", "exec", token, "pg_isready", "-U", "autotrader"], capture_output=True, check=False)).returncode == 0:
+            if (await asyncio.to_thread(subprocess.run, ["docker", "exec", token, "pg_isready", "-h", "127.0.0.1", "-U", "autotrader"], capture_output=True, check=False)).returncode == 0:
                 break
             await asyncio.sleep(.25)
         port = json.loads(run("inspect", token))[0]["NetworkSettings"]["Ports"]["5432/tcp"][0]["HostPort"]

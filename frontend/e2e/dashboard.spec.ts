@@ -48,7 +48,7 @@ test("authenticated runtime data, retained advanced research, paper controls and
       exact: false,
     }),
   ).toBeVisible();
-  for (const tab of ["Experiments", "Trades", "Research", "Overview"]) {
+  for (const tab of ["Strategies", "Activity", "Research", "Overview"]) {
     await page.getByRole("button", { name: tab, exact: true }).click();
     await expect(
       page.getByRole("heading", { name: tab, level: 1 }),
@@ -79,7 +79,7 @@ test("authenticated runtime data, retained advanced research, paper controls and
     .selectOption("B_COMPRESSION_BREAKOUT");
   await page
     .getByRole("button", {
-      name: "Load trade and equity evidence",
+      name: "Load position and equity evidence",
       exact: true,
     })
     .click();
@@ -133,18 +133,18 @@ test("authenticated runtime data, retained advanced research, paper controls and
   // Exercise its state-valid action before the full control sequence.
   const initialControl = (await (await request.get("/api/overview", { headers })).json()).portfolio.control;
   if (initialControl !== "RUNNING") {
-    const initialLabel = initialControl === "STOPPED" ? "Start paper trading" : "Resume paper trading";
+    const initialLabel = initialControl === "STOPPED" ? "Start simulated activity" : "Resume simulated activity";
     await page.getByRole("button", { name: initialLabel, exact: true }).click();
     await page.getByRole("dialog").getByRole("button", { name: initialLabel, exact: true }).click();
     await expect(page.getByRole("dialog")).toHaveCount(0);
   }
   for (const [action, label, state] of [
     ["pause", "Pause new entries", "PAUSED"],
-    ["resume", "Resume paper trading", "RUNNING"],
-    ["stop", "Stop paper trading", "STOPPED"],
-    ["start", "Start paper trading", "RUNNING"],
+    ["resume", "Resume simulated activity", "RUNNING"],
+    ["stop", "Stop simulated activity", "STOPPED"],
+    ["start", "Start simulated activity", "RUNNING"],
     ["emergency", "Emergency halt", "EMERGENCY"],
-    ["resume", "Resume paper trading", "RUNNING"],
+    ["resume", "Resume simulated activity", "RUNNING"],
   ]) {
     await page.getByRole("button", { name: label, exact: true }).click();
     await expect(page.getByRole("dialog")).toBeVisible();

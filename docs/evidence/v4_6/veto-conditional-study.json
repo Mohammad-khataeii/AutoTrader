@@ -1,0 +1,96 @@
+{
+  "evidence_class": "REUSED_HISTORICAL_CONDITIONAL_DIAGNOSTIC",
+  "start": "2026-10-04T06:00:00+00:00",
+  "end_exclusive": "2026-10-16T00:00:00+00:00",
+  "counts": {
+    "evaluations": 12057,
+    "e2_excess_above_two_percent": 35,
+    "e2_all_primary_conditions": 0,
+    "primary_setup_before_d2": 70,
+    "primary_with_extension": 9,
+    "primary_with_falling_price_volume": 0,
+    "primary_with_bearish_benchmarks": 13,
+    "primary_with_spread": 0,
+    "primary_with_adverse_regime": 0
+  },
+  "d2_components": [
+    {
+      "component": "extension",
+      "conditional_other_vetoes_absent": {
+        "False": {
+          "nonoverlapping_samples": 20,
+          "mean_net_mark_return": -0.0049359340690886214
+        },
+        "True": {
+          "nonoverlapping_samples": 6,
+          "mean_net_mark_return": -0.0074322129346702966
+        }
+      },
+      "independent_predictive_value": "NOT_ESTABLISHED"
+    },
+    {
+      "component": "falling_price_volume",
+      "conditional_other_vetoes_absent": {
+        "False": {
+          "nonoverlapping_samples": 23,
+          "mean_net_mark_return": -0.004864862209259614
+        },
+        "True": {
+          "nonoverlapping_samples": 0,
+          "mean_net_mark_return": null
+        }
+      },
+      "independent_predictive_value": "NOT_ESTABLISHED"
+    },
+    {
+      "component": "bearish_benchmarks",
+      "conditional_other_vetoes_absent": {
+        "False": {
+          "nonoverlapping_samples": 23,
+          "mean_net_mark_return": -0.0049492713606212385
+        },
+        "True": {
+          "nonoverlapping_samples": 5,
+          "mean_net_mark_return": -0.004473512803536499
+        }
+      },
+      "independent_predictive_value": "NOT_ESTABLISHED"
+    },
+    {
+      "component": "spread",
+      "conditional_other_vetoes_absent": {
+        "False": {
+          "nonoverlapping_samples": 23,
+          "mean_net_mark_return": -0.004864862209259614
+        },
+        "True": {
+          "nonoverlapping_samples": 0,
+          "mean_net_mark_return": null
+        }
+      },
+      "independent_predictive_value": "NOT_ESTABLISHED"
+    },
+    {
+      "component": "adverse_regime",
+      "conditional_other_vetoes_absent": {
+        "False": {
+          "nonoverlapping_samples": 23,
+          "mean_net_mark_return": -0.004864862209259614
+        },
+        "True": {
+          "nonoverlapping_samples": 0,
+          "mean_net_mark_return": null
+        }
+      },
+      "independent_predictive_value": "NOT_ESTABLISHED"
+    }
+  ],
+  "policy_changed": false,
+  "limits": [
+    "Observational reused test interval, no causal inference or threshold tuning.",
+    "Forward 60-minute open mark, fixed 46bps cost assumption; no stop/target or historical L2, not a strategy PnL.",
+    "Nonoverlapping within symbol/component; cross-symbol dependence remains.",
+    "Spread is fixed at 10bps in historical panel: independent wide-spread value cannot be identified.",
+    "Conditioned strata may be empty or too small; no removal of a safeguard is supported."
+  ]
+}

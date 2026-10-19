@@ -62,10 +62,10 @@ try {
   await page.getByLabel("Username").fill("admin");
   await page.getByLabel("Password").fill("change-me");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await page.getByRole("button", { name: "Experiments", exact: true }).click();
+  await page.getByRole("button", { name: "Strategies", exact: true }).click();
   await page
     .getByRole("button", {
-      name: `Open A2 Confirmed Pullback ${experiment.slice(0, 8)}`,
+      name: new RegExp(`^Open .* ${experiment.slice(0, 8)}$`),
       exact: true,
     })
     .click();
@@ -111,14 +111,14 @@ try {
   await page.getByText("Technical details", { exact: true }).last().click();
   for (const fill of body.fills)
     await expect(page.locator("pre:visible")).toContainText(fill.fill_id);
-  await page.getByRole("button", { name: "Trades", exact: true }).click();
-  await page.getByRole("tab", { name: "Trade history", exact: true }).click();
+  await page.getByRole("button", { name: "Activity", exact: true }).click();
+  await page.getByRole("tab", { name: "Activity History", exact: true }).click();
   await page
-    .getByLabel("Trade account", { exact: true })
+    .getByLabel("Activity account", { exact: true })
     .selectOption(experiment);
   await page
     .getByRole("button", {
-      name: `View BTC-EUR A2 Confirmed Pullback · ${experiment.slice(0, 8)}`,
+      name: new RegExp(`^View BTC-EUR .* · ${experiment.slice(0, 8)}$`),
       exact: true,
     })
     .click();
@@ -127,7 +127,7 @@ try {
     .click();
   await expect(
     page
-      .getByRole("region", { name: "Trade fills", exact: true })
+      .getByRole("region", { name: "Position fills", exact: true })
       .locator("tbody tr"),
   ).toHaveCount(5);
   await expect(page.locator("pre:visible")).toHaveCount(0);

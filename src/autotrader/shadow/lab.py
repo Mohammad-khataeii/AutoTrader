@@ -14,6 +14,7 @@ from sqlalchemy import func, select, text
 from sqlalchemy.engine import make_url
 
 from autotrader.domain import utc_now
+from autotrader.opportunity.engine import SUCCESSOR_REGISTRY, SuccessorParameters
 from autotrader.persistence.database import create_schema, make_engine, make_session_factory
 from autotrader.persistence.models import (
     AccountModel,
@@ -29,11 +30,11 @@ from autotrader.research.data import canonical, digest
 from autotrader.research.experimental import EXPERIMENTAL_REGISTRY
 from autotrader.research.strategies import REGISTRY, StrategyParameters
 from autotrader.shadow.repository import ShadowScope, ShadowTradingRepository
-from autotrader.shadow.versions import compatibility, execution_fingerprint
+from autotrader.shadow.versions import CURRENT_RUNTIME, compatibility, execution_fingerprint
 
 log = logging.getLogger(__name__)
 D = Decimal
-PRESETS = {s.strategy_id: s for s in (*REGISTRY, *EXPERIMENTAL_REGISTRY) if not s.filter_only}
+PRESETS = {s.strategy_id: s for s in (*REGISTRY, *EXPERIMENTAL_REGISTRY, *SUCCESSOR_REGISTRY) if not s.filter_only}
 MAX_EXPERIMENTS = 4
 
 
@@ -159,7 +160,7 @@ class ShadowLab:
                     database = (
                         "autotrader_shadow_" + digest((str(url.database) + identity).encode())[:32]
                     )
-                    params = (
+                    params: Any = SuccessorParameters() if strategy_id in {s.strategy_id for s in SUCCESSOR_REGISTRY} else (
                         StrategyParameters(stop_atr=D(2), target_atr=D(2))
                         if strategy_id in {s.strategy_id for s in EXPERIMENTAL_REGISTRY}
                         else StrategyParameters()
@@ -174,7 +175,7 @@ class ShadowLab:
                         "parameter_hash": digest(canonical(params.payload())),
                         "source_fingerprint": source_fingerprint()[0],
                         "execution_fingerprint": execution_fingerprint(),
-                        "execution_runtime": "native-v45",
+                        "execution_runtime": CURRENT_RUNTIME,
                         "fee_bps": str(self.settings.default_fee_bps),
                         "slippage_bps": str(self.settings.default_slippage_bps),
                         "initial_cash_eur": "500",

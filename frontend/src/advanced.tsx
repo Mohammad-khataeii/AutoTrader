@@ -136,7 +136,7 @@ export function AdvancedResearch({ auth }: { auth: string }) {
             {[
               "Historical lab",
               "Historical replay",
-              "Trade failure diagnostics",
+              "Outcome diagnostics",
               "Opportunity outcomes",
               "Paper pilot",
             ].map((s) => (
@@ -158,7 +158,7 @@ export function AdvancedResearch({ auth }: { auth: string }) {
         </>
       )}
       {tool === "Historical replay" && <Replay />}
-      {tool === "Trade failure diagnostics" && (
+      {tool === "Outcome diagnostics" && (
         <TradeFailureExplorer auth={auth} />
       )}{" "}
       {tool === "Opportunity outcomes" && (
@@ -214,17 +214,17 @@ export function AdvancedScreen({ page, auth }: { page: string; auth: string }) {
   const [recover, setRecover] = useState(false);
   const control = overview.data?.portfolio?.control;
   const labels: Record<string, string> = {
-    start: "Start paper trading",
+    start: "Start simulated activity",
     pause: "Pause new entries",
-    resume: "Resume paper trading",
-    stop: "Stop paper trading",
+    resume: "Resume simulated activity",
+    stop: "Stop simulated activity",
     emergency: "Emergency halt",
   };
   if (page === "Paper pilot") return <PilotPanel auth={auth} />;
   return (
     <div className="page-stack">
       <div>
-        <p className="eyebrow">Advanced</p>
+        <p className="eyebrow">Settings</p>
         <h2 className="page-title">{page}</h2>
       </div>
       {page === "Official Account Controls" && (
@@ -235,7 +235,7 @@ export function AdvancedScreen({ page, auth }: { page: string; auth: string }) {
             <h3>Official paper account only</h3>
             <p>
               These controls never approve a strategy or enable real-money
-              trading. Shadow experiments have separate controls.
+              activity. Shadow experiments have separate controls.
             </p>
             <div className="toolbar">
               {officialActions(control)
@@ -473,7 +473,7 @@ export function AdvancedScreen({ page, auth }: { page: string; auth: string }) {
           <Panel>
             <h3>Read-only server configuration</h3>
             <p>
-              The dashboard does not change trading limits, credentials,
+              The dashboard does not change risk limits, credentials,
               schedules or market-data safeguards.
             </p>
             <Technical value={settings.data} label="View server settings" />

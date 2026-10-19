@@ -9,9 +9,10 @@ COPY --chmod=0644 requirements.lock ./
 RUN pip install --no-cache-dir -r requirements.lock
 COPY src ./src
 COPY alembic ./alembic
+COPY --chmod=0644 docs/evidence/v4_6/research-comparison.json /app/evidence/v46/comparison-v46.json
 COPY --chmod=0644 alembic.ini ./
-RUN find /app/src /app/alembic -type d -exec chmod 0755 {} + \
-    && find /app/src /app/alembic -type f -exec chmod 0644 {} +
+RUN find /app/src /app/alembic /app/evidence -type d -exec chmod 0755 {} + \
+    && find /app/src /app/alembic /app/evidence -type f -exec chmod 0644 {} +
 RUN pip install --no-cache-dir --no-deps .
 RUN python -m pip uninstall -y pip setuptools wheel
 RUN adduser -S -D -u 10001 paper

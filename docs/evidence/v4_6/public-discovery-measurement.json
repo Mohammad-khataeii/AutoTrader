@@ -1,0 +1,106 @@
+{
+  "evidence_class": "REAL_PUBLIC_MARKET_OBSERVATION_LOCAL_DISPOSABLE_DATABASE",
+  "production_connections": false,
+  "financial_actions": false,
+  "configurations": [
+    {
+      "extra_pairs": 0,
+      "calibrated_positive_expected_value_candidates": null,
+      "cycle_bucket": 5974714,
+      "data_failures": [],
+      "discovery": {
+        "extra_detail_budget": 0,
+        "mode": "base_shared_observations"
+      },
+      "economically_viable_candidates": 0,
+      "evaluated_markets": 3,
+      "financial_actions": false,
+      "measurement": {
+        "counter_scope": "Shared provider window may include concurrent protective requests; not exclusively discovery traffic.",
+        "duration_seconds": 0.00897087500197813,
+        "false_positive_limit": "Unknown until independent subsequent outcome evidence exists.",
+        "false_positive_rate": null,
+        "shared_counter_deltas": {
+          "request_429": 0,
+          "request_failure": 0,
+          "request_success": 0
+        }
+      },
+      "paper_observation_only": true,
+      "schema": "opportunity-snapshot/4.6",
+      "technical_candidates": 0,
+      "updated_at": "2026-10-19T12:50:04.701147+00:00"
+    },
+    {
+      "extra_pairs": 3,
+      "calibrated_positive_expected_value_candidates": null,
+      "cycle_bucket": 5974714,
+      "data_failures": [],
+      "discovery": {
+        "counts": {
+          "expensive_or_thin": 48,
+          "missing_or_invalid_summary": 0,
+          "screened": 10,
+          "supported_eur": 61
+        },
+        "detail_time_budget_seconds": 12,
+        "extra_detail_budget": 3,
+        "interval_seconds": 300,
+        "mode": "cached_ticker_then_bounded_details",
+        "planned_initial_endpoint_calls": 8,
+        "ranking": [
+          {
+            "daily_range_bps": "486.3612969634585692228512609",
+            "evidence": "Ticker screen only; history, depth, regime and setup are not yet verified",
+            "quote_volume": "1700534.07",
+            "score": "5.682711258913878881454794991",
+            "spread_bps": "3.431120260765139818150626179",
+            "symbol": "XRP-EUR"
+          },
+          {
+            "daily_range_bps": "950.6542005493390341916191971",
+            "evidence": "Ticker screen only; history, depth, regime and setup are not yet verified",
+            "quote_volume": "549749.98",
+            "score": "5.310802921665850325408959909",
+            "spread_bps": "6.765259041768709323880011366",
+            "symbol": "PEPE-EUR"
+          },
+          {
+            "daily_range_bps": "602.4620581987561743403373173",
+            "evidence": "Ticker screen only; history, depth, regime and setup are not yet verified",
+            "quote_volume": "292158.53",
+            "score": "5.242603666798223837432498144",
+            "spread_bps": "5.630486525222020320937731938",
+            "symbol": "ADA-EUR"
+          }
+        ]
+      },
+      "economically_viable_candidates": 0,
+      "evaluated_markets": 6,
+      "financial_actions": false,
+      "measurement": {
+        "counter_scope": "Shared provider window may include concurrent protective requests; not exclusively discovery traffic.",
+        "duration_seconds": 2.968416125018848,
+        "false_positive_limit": "Unknown until independent subsequent outcome evidence exists.",
+        "false_positive_rate": null,
+        "shared_counter_deltas": {
+          "request_429": 0,
+          "request_failure": 0,
+          "request_success": 7
+        }
+      },
+      "paper_observation_only": true,
+      "schema": "opportunity-snapshot/4.6",
+      "technical_candidates": 0,
+      "updated_at": "2026-10-19T12:50:07.673771+00:00"
+    }
+  ],
+  "baseline_data_failures": [],
+  "false_positive_rate": null,
+  "limitations": [
+    "One current public observation, not a profitability or sustained 429 improvement measurement.",
+    "Shared base observations and warm cache make incremental comparison explicit."
+  ],
+  "base_preparation_seconds": 2.881116167001892,
+  "status": "MEASURED"
+}

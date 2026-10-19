@@ -38,7 +38,7 @@ export function Trades() {
   );
   const orderFeed = useResource(
     `/api/trades?account=${account}&kind=orders&view=history&limit=30${orderCursor ? "&cursor=" + encodeURIComponent(orderCursor) : ""}`,
-    { enabled: tab === "Trade history" && showOrders, ttl: 30000 },
+    { enabled: tab === "Activity History" && showOrders, ttl: 30000 },
   );
   const detail = useResource(
     `/api/trades/${selected?.account}/${selected?.kind}/${selected?.record?.[selected?.kind === "order" ? "order_id" : "position_id"]}`,
@@ -105,7 +105,7 @@ export function Trades() {
     return (
       <div className="page-stack">
         <button className="text-button" onClick={() => setSelected(null)}>
-          <ChevronLeft size={16} /> Back to trades
+          <ChevronLeft size={16} /> Back to activity
         </button>
         <div className="section-heading">
           <div>
@@ -129,7 +129,7 @@ export function Trades() {
             the previously loaded record; current valuation is unavailable.
           </p>
         )}
-        <ResourceState resource={detail} label="Trade details" />
+        <ResourceState resource={detail} label="Position details" />
         <Panel>
           <dl className="facts">
             <div>
@@ -256,7 +256,7 @@ export function Trades() {
           />
           <h3>Confirmed fills</h3>
           <CompactTable
-            label="Trade fills"
+            label="Position fills"
             rows={fills}
             columns={[
               { label: "Side", render: (r) => humanize(r.side) },
@@ -289,16 +289,16 @@ export function Trades() {
     <div className="page-stack">
       <div className="section-heading">
         <div>
-          <h2 className="page-title">Trading activity</h2>
+          <h2 className="page-title">Portfolio activity</h2>
           <p className="muted">
             Every position belongs to one virtual account.
           </p>
         </div>
-        <Badge>All trades simulated</Badge>
+        <Badge>All orders simulated</Badge>
       </div>
       <div className="section-heading">
-        <div className="segmented" role="tablist" aria-label="Trade view">
-          {["Open positions", "Trade history"].map((t) => (
+        <div className="segmented" role="tablist" aria-label="Activity view">
+          {["Open positions", "Activity History"].map((t) => (
             <button
               key={t}
               role="tab"
@@ -317,7 +317,7 @@ export function Trades() {
         <label className="inline-label">
           Account
           <select
-            aria-label="Trade account"
+            aria-label="Activity account"
             value={account}
             onChange={(e) => {
               setAccount(e.target.value);
@@ -334,8 +334,8 @@ export function Trades() {
           </select>
         </label>
       </div>
-      <ResourceState resource={feed} label="Trades" />
-      <ResourceState resource={shadow} label="Shadow trades" />
+      <ResourceState resource={feed} label="Activity" />
+      <ResourceState resource={shadow} label="Shadow activity" />
       <Panel>
         <CompactTable
           label={tab}
@@ -416,7 +416,7 @@ export function Trades() {
           Next records
         </button>
       </div>
-      {tab === "Trade history" && (
+      {tab === "Activity History" && (
         <details
           className="panel disclosure"
           onToggle={(e) => setShowOrders(e.currentTarget.open)}

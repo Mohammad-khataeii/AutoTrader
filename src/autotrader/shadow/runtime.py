@@ -18,7 +18,7 @@ from autotrader.research.strategies import StrategyParameters, V4StrategyEngine
 from autotrader.scanner import ScanCandidate
 from autotrader.shadow.lab import ShadowLab
 from autotrader.shadow.repository import ShadowTradingRepository
-from autotrader.shadow.versions import LEGACY_SOURCE, V44_EXECUTION, compatibility
+from autotrader.shadow.versions import CURRENT_RUNTIME, LEGACY_SOURCE, V44_EXECUTION, compatibility
 
 
 class ShadowExecutionGateway(PaperExecutionGateway):
@@ -61,7 +61,7 @@ class ShadowRuntime:
 
     def gateway(self, repo: ShadowTradingRepository) -> ShadowExecutionGateway:
         from autotrader.shadow.diagnostics import observe_gateway
-        if compatibility(repo.scope.manifest)["runner"] != "native-v45" or not compatibility(repo.scope.manifest)["compatible"]:
+        if compatibility(repo.scope.manifest)["runner"] != CURRENT_RUNTIME or not compatibility(repo.scope.manifest)["compatible"]:
             raise ValueError("frozen_runtime_mismatch")
         return cast(ShadowExecutionGateway, observe_gateway(ShadowExecutionGateway(
             repo,
@@ -132,19 +132,22 @@ class ShadowRuntime:
                     extra={"experiment_id": record["experiment_id"]},
                 )
 
-    async def scan(self, candidates: list[ScanCandidate]) -> None:
+    async def scan(self, candidates: list[ScanCandidate], *, successors_only: bool = False) -> None:
+        from autotrader.opportunity.engine import VERSION as SUCCESSOR_VERSION
         from autotrader.shadow.views import record_reconciliation
-        await record_reconciliation(self.lab.official)
-        for record in await self.lab.records():
+        records = [r for r in await self.lab.records() if not successors_only or r['manifest']['strategy_version'] == SUCCESSOR_VERSION]
+        if not successors_only:
+            await record_reconciliation(self.lab.official)
+        for record in records:
             if record["state"] != "CREATING" and not record.get("archived_at"):
                 try:
                     await record_reconciliation(await self.lab.repository(record["experiment_id"]))
                 except Exception:
                     logger.exception("shadow_reconciliation_observation_failed")
-        context = {c.features.symbol: c.features for c in candidates}
-        for record in await self.lab.records():
+        for record in records:
             if record["state"] != "SHADOW_ACTIVE" or record.get("archived_at"):
                 continue
+            selected = candidates if record['manifest']['strategy_version'] == SUCCESSOR_VERSION else [c for c in candidates if not c.features.metadata.get('successor_discovery_only')]
             observation: dict[str, Any] = {"discovered_candidates": len(candidates), "evaluated": 0, "skips": []}
             observed_repo: Any = None
             try:
@@ -161,11 +164,11 @@ class ShadowRuntime:
                     observed_repo = await self.frozen_v44().lab.repository(record["experiment_id"])
                 observed_repo._diagnostic_scan = observation
                 if self.pinned_legacy(record):
-                    await self.legacy().scan(record, candidates)
+                    await self.legacy().scan(record, selected)
                 elif self.pinned_v44(record):
-                    await self.frozen_v44().scan(record, candidates)
+                    await self.frozen_v44().scan(record, selected)
                 else:
-                    await self._scan_experiment(record, candidates, context)
+                    await self._scan_experiment(record, selected, {c.features.symbol: c.features for c in selected})
             except Exception as exc:
                 observation["exception"] = type(exc).__name__
                 if observed_repo is not None:
@@ -184,8 +187,13 @@ class ShadowRuntime:
     async def _scan_experiment(self, record: dict[str, Any], candidates: list[ScanCandidate], context: dict[str, Any]) -> None:
         repo = await self.lab.repository(record["experiment_id"])
         from autotrader.shadow.diagnostics import observe_repository
-        observe_repository(repo, "native-v45")
+        observe_repository(repo, CURRENT_RUNTIME)
         if not await repo.claim_coordinator(self.owner):
+            return
+        from autotrader.opportunity.engine import VERSION as SUCCESSOR_VERSION
+        if record['manifest']['strategy_version'] == SUCCESSOR_VERSION:
+            from autotrader.opportunity.runtime import scan_successor
+            await scan_successor(self, repo, record['manifest'], candidates)
             return
         repo._diagnostic_benchmarks = {k: v for k, v in context.items() if k in {"BTC-EUR", "ETH-EUR"}}  # type: ignore[attr-defined]
         m = record["manifest"]

@@ -1,6 +1,8 @@
-# Revolut X AutoTrader — V4.4
+# Personal Plan — V4.6 release candidate
 
-V4.4 preserves source-pinned V4.2 experiments through a verified legacy runner, adds structured decision explanations and bounded APIs, and keeps the four-page dashboard. Paused or stopped flat experiments can be archived to free a workspace slot while preserving all financial history. See the [release report and evidence](docs/V4_4_RELEASE_REPORT.md) and [approval-gated deployment/rollback plan](docs/V4_4_DEPLOYMENT_AND_ROLLBACK.md). This release is developed and verified locally; production deployment requires approval of its exact commit.
+V4.6 release candidate: [implementation, measured comparisons and limits](docs/V4_6_RELEASE.md). Stage A only; deployment requires separate approval of the exact release commit.
+
+V4.6 adds multidimensional regimes, cost-aware A3/B3/E3 research, bounded EUR discovery and six primary dashboard views. Source-pinned V4.2/V4.4 runners and all eight historical experiment identities remain intact. Flat paused/stopped accounts can be archived through the existing explicit controls; no account is created or promoted automatically. Prior [V4.4 evidence](docs/V4_4_RELEASE_REPORT.md) and the [deployment/rollback workflow](docs/V4_4_DEPLOYMENT_AND_ROLLBACK.md) remain available.
 
 An autonomous EUR500 **paper-trading research platform** using public Revolut X observations, FastAPI, React and authoritative PostgreSQL accounting. The existing journal, realistic bid/ask execution, partial targets, protective stops, reservations and recovery remain intact. Real-money trading stays disabled. AI defaults to mock with persistent30/day,6/rolling-hour and USD10/month paid-mode limits.
 

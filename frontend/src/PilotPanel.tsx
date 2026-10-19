@@ -96,7 +96,7 @@ export function PilotPanel({ auth: _auth }: { auth: string }) {
           <p>
             This freezes the current configuration and starts a durable
             observation period. It does not approve a strategy, reset financial
-            history or enable real trading.
+            history or enable real-money execution.
           </p>
         </Confirm>
       )}

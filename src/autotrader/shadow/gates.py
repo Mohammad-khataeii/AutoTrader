@@ -8,6 +8,8 @@ from typing import Any
 
 def first_blocker(row: dict[str, Any]) -> str:
     """Stage attribution, not a claim that one independent condition is sufficient."""
+    if row.get('technical_eligible') is True and row.get('economic_eligible') is False:
+        return 'economics:' + str(next(iter(row.get('independently_failed', [])), 'unverified_cost_outcome'))
     if row.get('decision_accepted'):
         if row.get('trace_execution_state') == 'EXCEPTION':
             return 'execution:system_exception'

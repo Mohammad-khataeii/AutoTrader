@@ -6,7 +6,7 @@ async function mockApi(page: any, data = fixture()) {
   return baseMockApi(page, data);
 }
 async function open(page: any, id: string) {
-  await page.getByRole("button", { name: "Experiments", exact: true }).click();
+  await page.getByRole("button", { name: "Strategies", exact: true }).click();
   await page
     .getByRole("button", { name: new RegExp(`Open .* ${id.slice(0, 8)}`) })
     .click();
@@ -133,7 +133,7 @@ test("HTML readiness fails safely and official STOPPED remains independent of sy
     page.getByRole("alert").filter({ hasText: "JSON was expected" }),
   ).toBeVisible();
   await expect(
-    page.getByText("Real-money trading disabled", { exact: true }),
+    page.getByText("Real-money execution disabled", { exact: true }),
   ).toHaveCount(0);
 });
 test("routine views use compact APIs and structured decision evidence stays contextual", async ({

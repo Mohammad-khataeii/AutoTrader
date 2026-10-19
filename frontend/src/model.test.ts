@@ -61,7 +61,7 @@ describe("honest financial presentation", () => {
         },
       }),
     ).toBe("2026-10-16T12:00:00Z");
-    expect(rejection("decision_not_accepted")).toBe("No qualifying trade");
+    expect(rejection("decision_not_accepted")).toBe("No qualifying opportunity");
     expect(rejection(undefined)).toBe("No recorded explanation");
     expect(date(0)).not.toBe("Unavailable");
   });

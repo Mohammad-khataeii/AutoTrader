@@ -38,7 +38,7 @@ test("retained V4.2 shadow controls, five complete exports, official isolation a
     .getByLabel("Password", { exact: true })
     .fill(env.DASHBOARD_PASSWORD);
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await page.getByRole("button", { name: "Experiments", exact: true }).click();
+  await page.getByRole("button", { name: "Strategies", exact: true }).click();
   const id = existing.experiment_id.slice(0, 8);
   await page
     .getByRole("button", { name: new RegExp(`^Open .* ${id}$`) })
@@ -80,7 +80,7 @@ test("retained V4.2 shadow controls, five complete exports, official isolation a
     .click();
   await page
     .getByLabel("Research tool")
-    .selectOption("Trade failure diagnostics");
+    .selectOption("Outcome diagnostics");
   await page.getByLabel("Failure outcome").selectOption("LOSS");
   await page
     .getByLabel("Failure strategy", { exact: true })

@@ -85,7 +85,7 @@ describe("readiness and mounted resource refresh", () => {
       Response.json({ ready: true }),
     );
     await expect(incomplete.request("/readyz")).rejects.toThrow(
-      "Trading mode could not be verified",
+      "Execution mode could not be verified",
     );
   });
   it("manual refresh includes only enabled mounted resources", async () => {
