@@ -1,0 +1,173 @@
+{
+  "evidence_class": "REAL_PUBLIC_MARKET_OBSERVATION_LOCAL_DISPOSABLE_DATABASE",
+  "production_connections": false,
+  "financial_actions": false,
+  "configurations": [
+    {
+      "extra_pairs": 0,
+      "calibrated_positive_expected_value_candidates": null,
+      "cycle_bucket": 5975647,
+      "data_failures": [],
+      "discovery": {
+        "configured_maximum": 0,
+        "detail_attempts": 0,
+        "extra_detail_budget": 0,
+        "mode": "base_shared_observations",
+        "recent_details": {},
+        "request_budget": 16
+      },
+      "economically_viable_candidates": 0,
+      "evaluated_markets": 3,
+      "evaluation_grace_seconds": 90,
+      "evaluation_interval_seconds": 300,
+      "financial_actions": false,
+      "measurement": {
+        "counter_scope": "Shared provider window may include concurrent protective requests; not exclusively discovery traffic.",
+        "duration_seconds": 0.010297208005795255,
+        "false_positive_limit": "Unknown until independent subsequent outcome evidence exists.",
+        "false_positive_rate": null,
+        "feasible_per_successful_request": null,
+        "shared_counter_deltas": {
+          "request_429": 0,
+          "request_failure": 0,
+          "request_success": 0
+        },
+        "valid_markets": 3
+      },
+      "observer_process_id": 92501,
+      "paper_observation_only": true,
+      "schema": "opportunity-snapshot/4.6-rc2",
+      "technical_candidates": 0,
+      "updated_at": "2026-10-22T18:35:10.403657+00:00"
+    },
+    {
+      "extra_pairs": 6,
+      "calibrated_positive_expected_value_candidates": null,
+      "cycle_bucket": 5975647,
+      "data_failures": [],
+      "discovery": {
+        "configured_maximum": 6,
+        "counts": {
+          "expensive_or_thin": 46,
+          "missing_or_invalid_summary": 0,
+          "screened": 12,
+          "supported_eur": 61
+        },
+        "detail_attempts": 6,
+        "detail_time_budget_seconds": 12,
+        "extra_detail_budget": 6,
+        "interval_seconds": 300,
+        "mode": "cached_ticker_then_bounded_details",
+        "planned_initial_endpoint_calls": 13,
+        "ranking": [
+          {
+            "daily_range_bps": "711.0269432727898769045364552",
+            "evidence": "Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified",
+            "quote_volume": "2775968.38",
+            "score": "4.186812430059395713178961866",
+            "spread_bps": "3.443229749505035723508651115",
+            "symbol": "XRP-EUR"
+          },
+          {
+            "daily_range_bps": "815.8323988174125802834131920",
+            "evidence": "Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified",
+            "quote_volume": "768334.44",
+            "score": "2.686385578941788153736364563",
+            "spread_bps": "10.70445509226220817616474666",
+            "symbol": "PEPE-EUR"
+          },
+          {
+            "daily_range_bps": "1084.320557491289198606271777",
+            "evidence": "Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified",
+            "quote_volume": "542924.24",
+            "score": "1.863670356515679442508710801",
+            "spread_bps": "13.93728222996515679442508711",
+            "symbol": "INJ-EUR"
+          },
+          {
+            "daily_range_bps": "937.7149812139493041223474626",
+            "evidence": "Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified",
+            "quote_volume": "284870.91",
+            "score": "1.486224853525956501031909827",
+            "spread_bps": "7.408583373022172831666402074",
+            "symbol": "ADA-EUR"
+          },
+          {
+            "daily_range_bps": "695.4629807384654764190183656",
+            "evidence": "Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified",
+            "quote_volume": "224398.54",
+            "score": "1.256351728823190631599155308",
+            "spread_bps": "8.958853266781851922953861906",
+            "symbol": "XLM-EUR"
+          },
+          {
+            "daily_range_bps": "1096.459718971364124431260766",
+            "evidence": "Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified",
+            "quote_volume": "171440.74",
+            "score": "1.161804046232068781720006489",
+            "spread_bps": "6.025352830757108757618595166",
+            "symbol": "AAVE-EUR"
+          }
+        ],
+        "recent_details": {
+          "AAVE-EUR": {
+            "bucket": 5975647,
+            "data_failed": false
+          },
+          "ADA-EUR": {
+            "bucket": 5975647,
+            "data_failed": false
+          },
+          "INJ-EUR": {
+            "bucket": 5975647,
+            "data_failed": false
+          },
+          "PEPE-EUR": {
+            "bucket": 5975647,
+            "data_failed": false
+          },
+          "XLM-EUR": {
+            "bucket": 5975647,
+            "data_failed": false
+          },
+          "XRP-EUR": {
+            "bucket": 5975647,
+            "data_failed": false
+          }
+        },
+        "request_budget": 16
+      },
+      "economically_viable_candidates": 0,
+      "evaluated_markets": 9,
+      "evaluation_grace_seconds": 90,
+      "evaluation_interval_seconds": 300,
+      "financial_actions": false,
+      "measurement": {
+        "counter_scope": "Shared provider window may include concurrent protective requests; not exclusively discovery traffic.",
+        "duration_seconds": 7.327787457994418,
+        "false_positive_limit": "Unknown until independent subsequent outcome evidence exists.",
+        "false_positive_rate": null,
+        "feasible_per_successful_request": 0.0,
+        "shared_counter_deltas": {
+          "request_429": 0,
+          "request_failure": 0,
+          "request_success": 13
+        },
+        "valid_markets": 9
+      },
+      "observer_process_id": 92501,
+      "paper_observation_only": true,
+      "schema": "opportunity-snapshot/4.6-rc2",
+      "technical_candidates": 0,
+      "updated_at": "2026-10-22T18:35:17.736643+00:00"
+    }
+  ],
+  "baseline_data_failures": [],
+  "false_positive_rate": null,
+  "limitations": [
+    "One current public observation, not a profitability or sustained 429 improvement measurement.",
+    "Shared base observations and warm cache make incremental comparison explicit."
+  ],
+  "base_preparation_seconds": 3.6810442909772974,
+  "status": "MEASURED"
+}

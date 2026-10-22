@@ -44,7 +44,7 @@ class CostAwareOpportunityEngine:
 
     def evaluate(self, pair: TradingPair, book: OrderBook, *, quote_budget: Decimal,
                  stop: Decimal, targets: tuple[Decimal, ...], atr: Decimal,
-                 plausible_target: Decimal | None, holding_bars: int) -> OpportunityEconomics:
+                 plausible_target: Decimal | None, holding_bars: int, exit_fractions: tuple[Decimal, ...] | None = None) -> OpportunityEconomics:
         p = self.assumptions
         validator = MarketDataService(None)  # type: ignore[arg-type]
         reasons = validator.validate_pair(pair)
@@ -74,6 +74,14 @@ class CostAwareOpportunityEngine:
             reasons.append("minimum_order_not_met")
         if pair.max_order_base is not None and q > pair.max_order_base:
             reasons.append("maximum_order_exceeded")
+        if exit_fractions is not None:
+            if len(exit_fractions)!=len(targets) or sum(exit_fractions)!=1 or any(v<=0 for v in exit_fractions):
+                reasons.append('invalid_partial_exit_schedule')
+            else:
+                parts = [quantize_down(q*f,pair.quantity_step) for f in exit_fractions[:-1]]
+                parts.append(q-sum(parts))
+                if any(amount<pair.min_order_base or amount*target<pair.min_order_quote for amount,target in zip(parts,targets,strict=True)):
+                    reasons.append('partial_exit_below_instrument_minimum')
         if entry.spread_bps > p.maximum_spread_bps:
             reasons.append("spread_too_wide")
         # Observed exit depth impact is reused conservatively for hypothetical
@@ -102,9 +110,10 @@ class CostAwareOpportunityEngine:
             "breakeven_bid": str(breakeven), "minimum_economically_feasible_target": str(floor),
             "binary_target_stop_breakeven_probability": str(loss / (loss + net_targets[0])) if loss > 0 and net_targets[0] > 0 else None,
             "probability_limit": "Binary conditional payoff threshold only; no forecast, calibrated probability or partial-exit distribution",
-            "proposed_quantity": str(quantity), "fillable_quantity": str(q), "entry": entry.payload(), "exit_now": exit_quote.payload(),
+            "quote_budget_eur": str(quote_budget), "size_scope": "Conditional estimate at stated size; account admission is separate",
+            "partial_entry": q < quantity, "proposed_quantity": str(quantity), "fillable_quantity": str(q), "entry": entry.payload(), "exit_now": exit_quote.payload(),
             "spread_counted": "Once through actual ask-side entry and bid-side exit; never added again",
             "future_depth": "Assumed current depth-impact fraction; future depth and gap loss can be worse",
             "atr": str(atr), "stop": str(stop), "targets": [str(t) for t in targets],
             "plausible_target_ceiling": str(plausible_target) if plausible_target is not None else None,
-            "holding_bars": holding_bars, "assumptions": {k: str(v) for k, v in asdict(p).items()}})
+            "holding_bars": holding_bars, "partial_exit_fractions": [str(v) for v in exit_fractions] if exit_fractions else None, "assumptions": {k: str(v) for k, v in asdict(p).items()}})

@@ -1,0 +1,17 @@
+{
+  "status": "BLOCKED",
+  "attempted_at": "2026-10-22T18:57:30.834493+00:00",
+  "action": "Read-only production inventory using existing SSH host alias",
+  "result": "SSH authentication refused (publickey,password), exit 255",
+  "production_changes": false,
+  "credentials_or_private_keys_read": false,
+  "last_retained_inventory": "2026-10-19",
+  "current_inventory_verified": false,
+  "fresh_backup_verified": false,
+  "retained_backup_scope": "October 19 nine-database archive set; isolated compatibility only",
+  "required_before_deployment": [
+    "Restore authorized SSH access",
+    "Approve exact immutable candidate commit",
+    "Fresh production inventory, backup, isolated restore and reconciliation"
+  ]
+}

@@ -25,17 +25,7 @@ import {
 import { MarketDataHealth, TradeFailureExplorer } from "./ShadowPanels";
 import { PilotPanel } from "./PilotPanel";
 import { HistoryExplorer } from "./HistoryExplorer";
-export const advancedItems = [
-  "Official Account Controls",
-  "Market monitor",
-  "Decision journal",
-  "Execution diagnostics",
-  "AI & budgets",
-  "Risk & recovery",
-  "System & data health",
-  "Paper pilot",
-  "Settings",
-];
+
 function Replay() {
   const api = useApi();
   const data = useResource("/api/backtests", { ttl: 60000 });

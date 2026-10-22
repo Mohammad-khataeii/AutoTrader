@@ -22,6 +22,7 @@ class BreakoutState:
     breakout_volume: str | None = None
     atr: str | None = None
     retest_age: int = 0
+    hold_count: int = 0
     confirmed_at: str | None = None
     event_id: str | None = None
     last_candle: str | None = None
@@ -34,7 +35,7 @@ class BreakoutState:
 
 def advance(state: BreakoutState, candle: Candle, prior: list[Candle], *,
             compression_width: Decimal = D(".02"), volume_ratio: Decimal = D("1.3"),
-            retest_bars: int = 8, validated_history: bool = False) -> BreakoutState:
+            retest_bars: int = 8, hold_bars: int = 0, validated_history: bool = False) -> BreakoutState:
     stamp = candle.timestamp.isoformat()
     if state.last_candle is not None and stamp <= state.last_candle:
         return state
@@ -75,6 +76,7 @@ def advance(state: BreakoutState, candle: Candle, prior: list[Candle], *,
     elif state.stage == "RETEST_PENDING":
         assert state.level is not None and state.atr is not None
         state.retest_age += 1
+        state.hold_count = state.hold_count+1 if candle.low >= D(state.level) and candle.close > D(state.level) else 0
         level, distance = D(state.level), D(state.atr)
         if candle.close < level - distance * D(".75"):
             transition("INVALIDATED", "breakout_invalidation_level_lost")
@@ -83,6 +85,9 @@ def advance(state: BreakoutState, candle: Candle, prior: list[Candle], *,
         elif candle.low <= level + distance * D(".5") and candle.close >= level and candle.close > candle.open:
             state.confirmed_at = stamp
             transition("CONFIRMED", "delayed_retest_recovered")
+        elif hold_bars > 0 and state.hold_count >= hold_bars:
+            state.confirmed_at = stamp
+            transition("CONFIRMED", "resistance_accepted_without_deep_retest")
     state.last_candle = stamp
     return state
 

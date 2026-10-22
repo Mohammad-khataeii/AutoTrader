@@ -13,7 +13,7 @@ import {
   systemStatus,
 } from "./model";
 import { Badge, EquityChart, Panel, Pnl, ResourceState } from "./ui";
-import { OpportunityPreview } from "./Opportunities";
+import { OpportunityPreview } from "./OpportunityPreview";
 export function Overview({
   system,
   onExperiments,

@@ -9,9 +9,9 @@
 frontend/node_modules
 frontend/dist
 docs/evidence/*
-!docs/evidence/v4_6
-docs/evidence/v4_6/*
-!docs/evidence/v4_6/research-comparison.json
+!docs/evidence/v4_6_rc2
+docs/evidence/v4_6_rc2/*
+!docs/evidence/v4_6_rc2/research-comparison.json
 .pytest_cache
 .mypy_cache
 .ruff_cache

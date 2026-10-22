@@ -1,0 +1,43 @@
+{
+  "status": "PASS",
+  "evidence_class": "ENGINEERING_ACCEPTANCE_NOT_PROFITABILITY",
+  "application_source_fingerprint": "0b437d055815ae1d783e527c1d431259b590b2909e87c682fe335c7c19366950",
+  "backend": {
+    "full_suite_passed": 271,
+    "actual_postgresql": true,
+    "compiled_react_api_worker_lifecycles_passed": 3
+  },
+  "frontend": {
+    "unit_passed": 13,
+    "typescript": "PASS",
+    "production_build": "PASS",
+    "browser_passed": 30,
+    "desktop_mobile_visual_review": "PASS"
+  },
+  "ruff": "PASS",
+  "mypy": "PASS",
+  "nonblocking_warnings": [
+    "Starlette AnyIO BlockingPortal deprecation"
+  ],
+  "corrected_failures": [
+    "AMD64 lifecycle fixture used a fixed stop quote of 127 above A3 structural stop 126.561; fixture now crosses the actual recorded stop. Protection assertions retained.",
+    "Initial spread-based anti-chase check mixed technical movement and execution cost; midpoint correction replayed without retuning; all final research intervals reused."
+  ],
+  "unverified": [
+    "Positive expected value or prospective profitability",
+    "Fresh production state and backup",
+    "Independent untouched research interval",
+    "Sustained discovery quality/429 reduction",
+    "Historical order-book replay and passive queue fills"
+  ],
+  "log_sha256": {
+    "v46-rc2-final-backend-tests.log": "2e257b8ca89a70030b7698aaaa1ae7ced2191c2807e2376529f4d2db99738fbe",
+    "v46-rc2-compiled-browser.log": "18e1da03c909fb77921069bd7e1ed481ef3f5c61849e14d0e962903a0ee41336",
+    "v46-rc2-frontend-unit.log": "e4c5b3900e1f8303954869951e436356b2693e6da3a67e64a475d5ad1e738a38",
+    "v46-rc2-frontend-build.log": "cbeff7815308809a79dd0349e4800f446c1bf655c8268fb6b3af487ecb54419b",
+    "v46-rc2-lint.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "v46-rc2-mypy.log": "787fb5f4281ca29d54908fb6f304c60aaf529c36739cf0420d75b382addef0b7",
+    "v46-rc2-backend-image-final.log": "b8afcca50039ea1004105aa785cee052015ca74e3479cd4156bfab29dc364c0a",
+    "v46-rc2-frontend-image-final.log": "900a851e73511587f0a56e0ee21cd9c983c1ecf5afcbf805fd3418e581196f7c"
+  }
+}

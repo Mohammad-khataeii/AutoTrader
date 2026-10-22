@@ -1,0 +1,1651 @@
+{
+  "evidence_class": "SYNTHETIC_DETERMINISTIC_ENGINEERING_TEST",
+  "architecture": "x86_64",
+  "candidate_execution": "d7a2770b42c9a7b31daf91b438afd5ccc830c08c213415d45cf5a1a9f43c5ec5",
+  "v42_files": 71,
+  "v44_files": 76,
+  "accounts": [
+    {
+      "generation": "v42",
+      "strategy": "A2_CONFIRMED_PULLBACK",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_6e017fda4a6b16e8ee8b06c7700ab79f",
+        "experiment_id": "0e24c62ed64742e490b1d8b8427d9aa4",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:02:54.401181+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_v42",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "A2_CONFIRMED_PULLBACK",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_1209af4fe8cc4b88b312cc2cbc204cf4",
+          "order_id": "ord_1209af4fe8cc4b88b312cc2cbc204cf4",
+          "position_id": "pos_5922576998bc420b9c19aae38686fdd2",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:02:55.796498+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "BUY",
+          "quantity": "0.576670000000",
+          "price": "129.513528000000",
+          "fee": "0.074686566191",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_0fc55b7f52b34af8a1c358e4ab46a483",
+          "order_id": "ord_0fc55b7f52b34af8a1c358e4ab46a483",
+          "position_id": "pos_5922576998bc420b9c19aae38686fdd2",
+          "exit_intent_id": "exit_083cce65e6124e10b268c3a2b54d79c8",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:02:56.124987+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "SELL",
+          "quantity": "0.576670000000",
+          "price": "126.898400000000",
+          "fee": "0.073178500328",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_5922576998bc420b9c19aae38686fdd2",
+        "symbol": "BTC-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "129.513528000000",
+        "opened_at": "2026-10-22 19:02:55.755055+00:00",
+        "realized_pnl": "-1.655930930279",
+        "protective_stop": "128.138000000000",
+        "take_profit_targets": [
+          "130.681000000000",
+          "131.952000000000",
+          "133.224000000000"
+        ],
+        "original_quantity": "0.576670000000",
+        "target_quantities": [
+          "0.173001000000",
+          "0.230668000000",
+          "0.173001000000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:02:56.129404+00:00",
+        "target_ids": [
+          "tp_0d64e312c8c643dd9f2f3db30a817f8c",
+          "tp_6ba15370c5044e7e864d90b555c42847",
+          "tp_7d035b5bc2884a8aae9589069743567d"
+        ],
+        "exit_plan_id": "plan_a136566b32334e5b95c0a2e03a26711d",
+        "cost_basis": "0E-12",
+        "highest_price": "129.400000000000",
+        "initial_stop": "128.138000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-22 20:02:55.797964+00:00",
+        "last_monitored_at": "2026-10-22 19:02:56.096931+00:00",
+        "account_id": "shadow:0e24c62ed64742e490b1d8b8427d9aa4"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "v42",
+      "strategy": "B2_CONFIRMED_COMPRESSION",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_ca78725e7b778e1c2215562cf94e2916",
+        "experiment_id": "7b65673ba76f4de381b5156c6f882165",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:02:56.211225+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_v42",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_b78488cd45d04b82808ff90c15763510",
+          "order_id": "ord_b78488cd45d04b82808ff90c15763510",
+          "position_id": "pos_6bca9eae723d47629d5d7914118f3355",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:02:57.597230+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "BUY",
+          "quantity": "0.576670000000",
+          "price": "129.513528000000",
+          "fee": "0.074686566191",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_809a5caddfea4067830d98634d0d52dd",
+          "order_id": "ord_809a5caddfea4067830d98634d0d52dd",
+          "position_id": "pos_6bca9eae723d47629d5d7914118f3355",
+          "exit_intent_id": "exit_23d08413e7c840f6836b79000e9efa90",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:02:58.029745+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "SELL",
+          "quantity": "0.576670000000",
+          "price": "126.898400000000",
+          "fee": "0.073178500328",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_6bca9eae723d47629d5d7914118f3355",
+        "symbol": "BTC-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "129.513528000000",
+        "opened_at": "2026-10-22 19:02:57.566607+00:00",
+        "realized_pnl": "-1.655930930279",
+        "protective_stop": "128.112000000000",
+        "take_profit_targets": [
+          "130.707000000000",
+          "132.004000000000",
+          "133.301000000000"
+        ],
+        "original_quantity": "0.576670000000",
+        "target_quantities": [
+          "0.173001000000",
+          "0.230668000000",
+          "0.173001000000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:02:58.034076+00:00",
+        "target_ids": [
+          "tp_8665b38b1a5b47a3844005f7cdc51aa5",
+          "tp_537a4bbb932f49f1963bbfaa96e7f423",
+          "tp_1d36168567d648fe9732103691fad3d3"
+        ],
+        "exit_plan_id": "plan_1a9674b3a6714aaabc0d274145c99b64",
+        "cost_basis": "0E-12",
+        "highest_price": "129.400000000000",
+        "initial_stop": "128.112000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-22 20:02:57.598403+00:00",
+        "last_monitored_at": "2026-10-22 19:02:57.999087+00:00",
+        "account_id": "shadow:7b65673ba76f4de381b5156c6f882165"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "v42",
+      "strategy": "C2_LIQUID_RETEST",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_a8ee90310ee82610b3b949566431d439",
+        "experiment_id": "8af7004199fd4df3bfade36d83ba2b47",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:02:58.154088+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_v42",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "C2_LIQUID_RETEST",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_5ceff18c118a4fa8a2c1ced0ed412a0f",
+          "order_id": "ord_5ceff18c118a4fa8a2c1ced0ed412a0f",
+          "position_id": "pos_2d5830762f7c468faf078d384feacba6",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:02:59.647321+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "BUY",
+          "quantity": "0.575336250000",
+          "price": "129.813768000000",
+          "fee": "0.074686566479",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_7b801cd06ced423882babb087870c294",
+          "order_id": "ord_7b801cd06ced423882babb087870c294",
+          "position_id": "pos_2d5830762f7c468faf078d384feacba6",
+          "exit_intent_id": "exit_80e7ffed5ca14d00accb95b10c37bd81",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:00.189803+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "SELL",
+          "quantity": "0.575336250000",
+          "price": "126.898400000000",
+          "fee": "0.073009249587",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_2d5830762f7c468faf078d384feacba6",
+        "symbol": "BTC-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "129.813768000000",
+        "opened_at": "2026-10-22 19:02:59.616155+00:00",
+        "realized_pnl": "-1.825012708556",
+        "protective_stop": "128.370000000000",
+        "take_profit_targets": [
+          "131.050000000000",
+          "132.390000000000",
+          "133.730000000000"
+        ],
+        "original_quantity": "0.575336250000",
+        "target_quantities": [
+          "0.172600870000",
+          "0.230134500000",
+          "0.172600880000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:00.194121+00:00",
+        "target_ids": [
+          "tp_0094785c8bdd4fb7ac823959051d502c",
+          "tp_a0dd71b2bbf9440b970833770f7e06de",
+          "tp_3995a02c7e3d4c439e3e74af5990a391"
+        ],
+        "exit_plan_id": "plan_b8f5dbbe57af482795ac3bded887bebd",
+        "cost_basis": "0E-12",
+        "highest_price": "129.700000000000",
+        "initial_stop": "128.370000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-22 19:52:59.648514+00:00",
+        "last_monitored_at": "2026-10-22 19:03:00.159403+00:00",
+        "account_id": "shadow:8af7004199fd4df3bfade36d83ba2b47"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "v42",
+      "strategy": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_92594a14f9f242499a4f5785b1b0a08a",
+        "experiment_id": "0e394cf3c7544987af38f23fccaaaf08",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:03:00.331877+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_v42",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+        "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v42",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_d2801405e5ca434e85a5df7917cf9ca2",
+          "order_id": "ord_d2801405e5ca434e85a5df7917cf9ca2",
+          "position_id": "pos_c2bd2eb0abfe43edbd855a3b82c341da",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:02.532641+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "SOL-EUR",
+          "side": "BUY",
+          "quantity": "0.559547610000",
+          "price": "133.476696000000",
+          "fee": "0.074686566237",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_f33b2718d7844e14963838f677e7a038",
+          "order_id": "ord_f33b2718d7844e14963838f677e7a038",
+          "position_id": "pos_c2bd2eb0abfe43edbd855a3b82c341da",
+          "exit_intent_id": "exit_05bf7c51d5a94d8e8a0d5bb8c575751d",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:03.150987+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "SOL-EUR",
+          "side": "SELL",
+          "quantity": "0.559547610000",
+          "price": "126.268904000000",
+          "fee": "0.070653463450",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_c2bd2eb0abfe43edbd855a3b82c341da",
+        "symbol": "SOL-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "133.476696000000",
+        "opened_at": "2026-10-22 19:03:02.501612+00:00",
+        "realized_pnl": "-4.178442816664",
+        "protective_stop": "127.370000000000",
+        "take_profit_targets": [
+          "139.370000000000",
+          "145.370000000000",
+          "151.370000000000"
+        ],
+        "original_quantity": "0.559547610000",
+        "target_quantities": [
+          "0.167864280000",
+          "0.223819040000",
+          "0.167864290000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:03.155302+00:00",
+        "target_ids": [
+          "tp_309f09b17b9a4157b657439c937b3396",
+          "tp_9b5c5005a27f4312bafceeb2b1426af4",
+          "tp_7b8b2a1a41db4e33a1f137a1363ea91b"
+        ],
+        "exit_plan_id": "plan_cc800099cffd427bbf9d39902e7c7f21",
+        "cost_basis": "0E-12",
+        "highest_price": "133.360000000000",
+        "initial_stop": "127.370000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-22 19:53:02.533686+00:00",
+        "last_monitored_at": "2026-10-22 19:03:03.120764+00:00",
+        "account_id": "shadow:0e394cf3c7544987af38f23fccaaaf08"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "v44",
+      "strategy": "A2_CONFIRMED_PULLBACK",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_efe2023f123a9833a73e6bbc055f6dce",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "1d81ac26370942359468b07a14aa45bf",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:03:04.392251+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_v44",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "d7aec58e3c62595d77b96cd74dd11248dab40bdf9575eb50bb6c2b6e49ef8064",
+        "strategy_id": "A2_CONFIRMED_PULLBACK",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v44",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_4fced999f0f446fc843a90815d05af7b",
+          "order_id": "ord_4fced999f0f446fc843a90815d05af7b",
+          "position_id": "pos_beb983c39c5f401690f5024bdbeec6dd",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:05.766316+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "BUY",
+          "quantity": "0.576670000000",
+          "price": "129.513528000000",
+          "fee": "0.074686566191",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_e0477cd3416d46e7bb26f8d1bcacec83",
+          "order_id": "ord_e0477cd3416d46e7bb26f8d1bcacec83",
+          "position_id": "pos_beb983c39c5f401690f5024bdbeec6dd",
+          "exit_intent_id": "exit_e0d92aa5be80461b9d784acfb4752509",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:06.090715+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "SELL",
+          "quantity": "0.576670000000",
+          "price": "126.898400000000",
+          "fee": "0.073178500328",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_beb983c39c5f401690f5024bdbeec6dd",
+        "symbol": "BTC-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "129.513528000000",
+        "opened_at": "2026-10-22 19:03:05.736980+00:00",
+        "realized_pnl": "-1.655930930279",
+        "protective_stop": "128.138000000000",
+        "take_profit_targets": [
+          "130.681000000000",
+          "131.952000000000",
+          "133.224000000000"
+        ],
+        "original_quantity": "0.576670000000",
+        "target_quantities": [
+          "0.173001000000",
+          "0.230668000000",
+          "0.173001000000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:06.094782+00:00",
+        "target_ids": [
+          "tp_42db19c51fd3435fb0b9cdc5326a7032",
+          "tp_c0d9998fa0934bf7ae8c9a660aa5f975",
+          "tp_e68b607892fc4cf3acade11dc919677b"
+        ],
+        "exit_plan_id": "plan_d11fa45b1713404c8290a80b199e2888",
+        "cost_basis": "0E-12",
+        "highest_price": "129.400000000000",
+        "initial_stop": "128.138000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-22 20:03:05.767553+00:00",
+        "last_monitored_at": "2026-10-22 19:03:06.062495+00:00",
+        "account_id": "shadow:1d81ac26370942359468b07a14aa45bf"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "v44",
+      "strategy": "B2_CONFIRMED_COMPRESSION",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_dd3f972437429742c1aff9f68df32a12",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "e65a4f77a54e461490e517973a336d50",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:03:06.182628+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_v44",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "d7aec58e3c62595d77b96cd74dd11248dab40bdf9575eb50bb6c2b6e49ef8064",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v44",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_18cd6f31d9fa494fac906cded01fb7f0",
+          "order_id": "ord_18cd6f31d9fa494fac906cded01fb7f0",
+          "position_id": "pos_bc1ef557ba9b4d2b9ea282603384ac54",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:07.563575+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "BUY",
+          "quantity": "0.576670000000",
+          "price": "129.513528000000",
+          "fee": "0.074686566191",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_e0c723b90a35455f9129052761936467",
+          "order_id": "ord_e0c723b90a35455f9129052761936467",
+          "position_id": "pos_bc1ef557ba9b4d2b9ea282603384ac54",
+          "exit_intent_id": "exit_a32e0941a78440abae22ebd56c5337db",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:07.999140+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "SELL",
+          "quantity": "0.576670000000",
+          "price": "126.898400000000",
+          "fee": "0.073178500328",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_bc1ef557ba9b4d2b9ea282603384ac54",
+        "symbol": "BTC-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "129.513528000000",
+        "opened_at": "2026-10-22 19:03:07.535099+00:00",
+        "realized_pnl": "-1.655930930279",
+        "protective_stop": "128.112000000000",
+        "take_profit_targets": [
+          "130.707000000000",
+          "132.004000000000",
+          "133.301000000000"
+        ],
+        "original_quantity": "0.576670000000",
+        "target_quantities": [
+          "0.173001000000",
+          "0.230668000000",
+          "0.173001000000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:08.003687+00:00",
+        "target_ids": [
+          "tp_4d1229cd82cb42d4bedd9cbc43a55047",
+          "tp_ad69f5f84b9e441eb5a8ddc1305a3edf",
+          "tp_0d7454552203429dacfe1149500f8151"
+        ],
+        "exit_plan_id": "plan_bc51ca977e5143d0a8aac93f1da8c3a2",
+        "cost_basis": "0E-12",
+        "highest_price": "129.400000000000",
+        "initial_stop": "128.112000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-22 20:03:07.564716+00:00",
+        "last_monitored_at": "2026-10-22 19:03:07.964478+00:00",
+        "account_id": "shadow:e65a4f77a54e461490e517973a336d50"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "v44",
+      "strategy": "C2_LIQUID_RETEST",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_0b17e9c80519e51760df6d42a43d9cfd",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "c85d293d3e784274818295b5b810f63c",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:03:08.194548+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_v44",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "d7aec58e3c62595d77b96cd74dd11248dab40bdf9575eb50bb6c2b6e49ef8064",
+        "strategy_id": "C2_LIQUID_RETEST",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v44",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_a1d1b66ee985427a87ea532eb0ac37a8",
+          "order_id": "ord_a1d1b66ee985427a87ea532eb0ac37a8",
+          "position_id": "pos_86e7a05eebe94abdaef160bd68d432d2",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:09.861427+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "BUY",
+          "quantity": "0.575336250000",
+          "price": "129.813768000000",
+          "fee": "0.074686566479",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_a793cc7b1b9c4563b6e74b55c764796d",
+          "order_id": "ord_a793cc7b1b9c4563b6e74b55c764796d",
+          "position_id": "pos_86e7a05eebe94abdaef160bd68d432d2",
+          "exit_intent_id": "exit_6bed3111fb504bea899bc4b495b63bd7",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:10.374456+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "SELL",
+          "quantity": "0.575336250000",
+          "price": "126.898400000000",
+          "fee": "0.073009249587",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_86e7a05eebe94abdaef160bd68d432d2",
+        "symbol": "BTC-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "129.813768000000",
+        "opened_at": "2026-10-22 19:03:09.777735+00:00",
+        "realized_pnl": "-1.825012708556",
+        "protective_stop": "128.370000000000",
+        "take_profit_targets": [
+          "131.050000000000",
+          "132.390000000000",
+          "133.730000000000"
+        ],
+        "original_quantity": "0.575336250000",
+        "target_quantities": [
+          "0.172600870000",
+          "0.230134500000",
+          "0.172600880000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:10.378445+00:00",
+        "target_ids": [
+          "tp_8cfceb5a3b574a8c9927b692efe45d0b",
+          "tp_1df9d5e229aa4e3785caf50d42f72fe3",
+          "tp_e8a532b1c3f648c5b5bfcda8b1380222"
+        ],
+        "exit_plan_id": "plan_7d237289405342da987dd2c927ecd61d",
+        "cost_basis": "0E-12",
+        "highest_price": "129.700000000000",
+        "initial_stop": "128.370000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-22 19:53:09.862544+00:00",
+        "last_monitored_at": "2026-10-22 19:03:10.345923+00:00",
+        "account_id": "shadow:c85d293d3e784274818295b5b810f63c"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "v44",
+      "strategy": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_daf23a3d6695486cff97efb4d9feecf4",
+        "execution_fingerprint": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+        "execution_runtime": "native-v44",
+        "experiment_id": "9c05f5df3065476cbf18795cf41af2fc",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:03:10.516593+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_v44",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "d7aec58e3c62595d77b96cd74dd11248dab40bdf9575eb50bb6c2b6e49ef8064",
+        "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "verified-v44",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_fdcf0eefcc0347a8ad361c58c18a2f7c",
+          "order_id": "ord_fdcf0eefcc0347a8ad361c58c18a2f7c",
+          "position_id": "pos_e7d9063d35844bccb10a8f34e2aeec04",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:12.701668+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "SOL-EUR",
+          "side": "BUY",
+          "quantity": "0.559547610000",
+          "price": "133.476696000000",
+          "fee": "0.074686566237",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_970f7d72365b45a6a9488be4ec98b4c9",
+          "order_id": "ord_970f7d72365b45a6a9488be4ec98b4c9",
+          "position_id": "pos_e7d9063d35844bccb10a8f34e2aeec04",
+          "exit_intent_id": "exit_be3cae8d252a4dacac9e5f0d45d05d6a",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:13.284533+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "SOL-EUR",
+          "side": "SELL",
+          "quantity": "0.559547610000",
+          "price": "126.268904000000",
+          "fee": "0.070653463450",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_e7d9063d35844bccb10a8f34e2aeec04",
+        "symbol": "SOL-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "133.476696000000",
+        "opened_at": "2026-10-22 19:03:12.673902+00:00",
+        "realized_pnl": "-4.178442816664",
+        "protective_stop": "127.370000000000",
+        "take_profit_targets": [
+          "139.370000000000",
+          "145.370000000000",
+          "151.370000000000"
+        ],
+        "original_quantity": "0.559547610000",
+        "target_quantities": [
+          "0.167864280000",
+          "0.223819040000",
+          "0.167864290000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:13.288333+00:00",
+        "target_ids": [
+          "tp_2766c6ab803b4ed9b51bf44ab0057a96",
+          "tp_b9d4fae65763458a835cd788716e24b9",
+          "tp_88fe870732ef47f5b272902c90ad3740"
+        ],
+        "exit_plan_id": "plan_86c21e4b91834dd7b9d5d0d6ae81f854",
+        "cost_basis": "0E-12",
+        "highest_price": "133.360000000000",
+        "initial_stop": "127.370000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-22 19:53:12.702698+00:00",
+        "last_monitored_at": "2026-10-22 19:03:13.254077+00:00",
+        "account_id": "shadow:9c05f5df3065476cbf18795cf41af2fc"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "v46",
+      "strategy": "A2_CONFIRMED_PULLBACK",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_d25d1bb7db394b2d015f077d852afc7e",
+        "execution_fingerprint": "d7a2770b42c9a7b31daf91b438afd5ccc830c08c213415d45cf5a1a9f43c5ec5",
+        "execution_runtime": "native-v46",
+        "experiment_id": "5ebaa2aadd0240a8a0ddf1f759856db4",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:03:14.373406+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_v46",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "0b437d055815ae1d783e527c1d431259b590b2909e87c682fe335c7c19366950",
+        "strategy_id": "A2_CONFIRMED_PULLBACK",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_384662b73c6440cfad0e0aff17d8e101",
+          "order_id": "ord_384662b73c6440cfad0e0aff17d8e101",
+          "position_id": "pos_eee380ecec35406d9182a7b4d7689d3e",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:15.605663+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "BUY",
+          "quantity": "0.576670000000",
+          "price": "129.513528000000",
+          "fee": "0.074686566191",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_6808b1bbee8a44d8b0a9358a52676667",
+          "order_id": "ord_6808b1bbee8a44d8b0a9358a52676667",
+          "position_id": "pos_eee380ecec35406d9182a7b4d7689d3e",
+          "exit_intent_id": "exit_4fbe323d259c41d1bc2b882c00bef226",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:15.820661+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "SELL",
+          "quantity": "0.576670000000",
+          "price": "126.898400000000",
+          "fee": "0.073178500328",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_eee380ecec35406d9182a7b4d7689d3e",
+        "symbol": "BTC-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "129.513528000000",
+        "opened_at": "2026-10-22 19:03:15.576145+00:00",
+        "realized_pnl": "-1.655930930279",
+        "protective_stop": "128.138000000000",
+        "take_profit_targets": [
+          "130.681000000000",
+          "131.952000000000",
+          "133.224000000000"
+        ],
+        "original_quantity": "0.576670000000",
+        "target_quantities": [
+          "0.173001000000",
+          "0.230668000000",
+          "0.173001000000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:15.823400+00:00",
+        "target_ids": [
+          "tp_aaad4982d18640a4817102c5390f0139",
+          "tp_65bd775f786c43cb9fd5fba2479db61c",
+          "tp_4d84e46a79c0464e820f5e96a2bebb3f"
+        ],
+        "exit_plan_id": "plan_ec440667ce7e4b58bce5f043f4142df4",
+        "cost_basis": "0E-12",
+        "highest_price": "129.400000000000",
+        "initial_stop": "128.138000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-22 20:03:15.606877+00:00",
+        "last_monitored_at": "2026-10-22 19:03:15.802785+00:00",
+        "account_id": "shadow:5ebaa2aadd0240a8a0ddf1f759856db4"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "v46",
+      "strategy": "B2_CONFIRMED_COMPRESSION",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_b7729c51c9793688927be11a4a93d2dc",
+        "execution_fingerprint": "d7a2770b42c9a7b31daf91b438afd5ccc830c08c213415d45cf5a1a9f43c5ec5",
+        "execution_runtime": "native-v46",
+        "experiment_id": "dd4ec0c1a06b4eaba5cf26adc67fd809",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:03:15.908909+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_v46",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "0b437d055815ae1d783e527c1d431259b590b2909e87c682fe335c7c19366950",
+        "strategy_id": "B2_CONFIRMED_COMPRESSION",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_86ae1b99066b4e1d8ca686cab6609299",
+          "order_id": "ord_86ae1b99066b4e1d8ca686cab6609299",
+          "position_id": "pos_fe432eda77924db3af17a174d667f348",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:17.092407+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "BUY",
+          "quantity": "0.576670000000",
+          "price": "129.513528000000",
+          "fee": "0.074686566191",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_fc3839e56bdb4ce39fbe89b4b88cd827",
+          "order_id": "ord_fc3839e56bdb4ce39fbe89b4b88cd827",
+          "position_id": "pos_fe432eda77924db3af17a174d667f348",
+          "exit_intent_id": "exit_4c9ebbe744b04c46a3b303eb7a691be6",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:17.435559+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "SELL",
+          "quantity": "0.576670000000",
+          "price": "126.898400000000",
+          "fee": "0.073178500328",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_fe432eda77924db3af17a174d667f348",
+        "symbol": "BTC-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "129.513528000000",
+        "opened_at": "2026-10-22 19:03:17.063151+00:00",
+        "realized_pnl": "-1.655930930279",
+        "protective_stop": "128.112000000000",
+        "take_profit_targets": [
+          "130.707000000000",
+          "132.004000000000",
+          "133.301000000000"
+        ],
+        "original_quantity": "0.576670000000",
+        "target_quantities": [
+          "0.173001000000",
+          "0.230668000000",
+          "0.173001000000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:17.438341+00:00",
+        "target_ids": [
+          "tp_f44f60fd337d4262b3bf6a2764126313",
+          "tp_4b99129321264b498ac33936bef362be",
+          "tp_6162c476060549f4be327f23e89247d7"
+        ],
+        "exit_plan_id": "plan_3b8acc9288cb43219e7886344ad66fb9",
+        "cost_basis": "0E-12",
+        "highest_price": "129.400000000000",
+        "initial_stop": "128.112000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-22 20:03:17.093468+00:00",
+        "last_monitored_at": "2026-10-22 19:03:17.419234+00:00",
+        "account_id": "shadow:dd4ec0c1a06b4eaba5cf26adc67fd809"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "v46",
+      "strategy": "C2_LIQUID_RETEST",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_7966f137c086c8a04437685b3eb75906",
+        "execution_fingerprint": "d7a2770b42c9a7b31daf91b438afd5ccc830c08c213415d45cf5a1a9f43c5ec5",
+        "execution_runtime": "native-v46",
+        "experiment_id": "db51579435504e23872a2ea609174003",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:03:17.524864+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_v46",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "0b437d055815ae1d783e527c1d431259b590b2909e87c682fe335c7c19366950",
+        "strategy_id": "C2_LIQUID_RETEST",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_c7d97520ff9d44198fa50a26beeea8e5",
+          "order_id": "ord_c7d97520ff9d44198fa50a26beeea8e5",
+          "position_id": "pos_28151ea8c14f49869b337a3d3fade2d3",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:18.735749+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "BUY",
+          "quantity": "0.575336250000",
+          "price": "129.813768000000",
+          "fee": "0.074686566479",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_84a3907c79eb486b963ad36e10452ed0",
+          "order_id": "ord_84a3907c79eb486b963ad36e10452ed0",
+          "position_id": "pos_28151ea8c14f49869b337a3d3fade2d3",
+          "exit_intent_id": "exit_435c2975bca546d48f64cc5661b35833",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:19.104883+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "SELL",
+          "quantity": "0.575336250000",
+          "price": "126.898400000000",
+          "fee": "0.073009249587",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_28151ea8c14f49869b337a3d3fade2d3",
+        "symbol": "BTC-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "129.813768000000",
+        "opened_at": "2026-10-22 19:03:18.707864+00:00",
+        "realized_pnl": "-1.825012708556",
+        "protective_stop": "128.370000000000",
+        "take_profit_targets": [
+          "131.050000000000",
+          "132.390000000000",
+          "133.730000000000"
+        ],
+        "original_quantity": "0.575336250000",
+        "target_quantities": [
+          "0.172600870000",
+          "0.230134500000",
+          "0.172600880000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:19.107624+00:00",
+        "target_ids": [
+          "tp_8c4caf742fdf4b02905e02b3861ceea6",
+          "tp_a655b59e11274e0d805c87cc0cc2ab9a",
+          "tp_1996a88bd7574c18a7e06d21ea411708"
+        ],
+        "exit_plan_id": "plan_73454fb599184fe5b1eaa6e90e5e171c",
+        "cost_basis": "0E-12",
+        "highest_price": "129.700000000000",
+        "initial_stop": "128.370000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-22 19:53:18.736813+00:00",
+        "last_monitored_at": "2026-10-22 19:03:19.087379+00:00",
+        "account_id": "shadow:db51579435504e23872a2ea609174003"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "v46",
+      "strategy": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_f7a3f4149f530e86713d05b6eeef352c",
+        "execution_fingerprint": "d7a2770b42c9a7b31daf91b438afd5ccc830c08c213415d45cf5a1a9f43c5ec5",
+        "execution_runtime": "native-v46",
+        "experiment_id": "57406d29889742caaa1a763d2a93a4df",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:03:19.207574+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_v46",
+        "parameter_hash": "0718ef037c85decf994a9e36296f765a79b1d5b81903665ae95526eac36a719a",
+        "parameters": {
+          "breakout_buffer": "0.001",
+          "compression_width": "0.06",
+          "relative_return": "0.02",
+          "relative_volume": "1.5",
+          "stop_atr": "2",
+          "target_atr": "2"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "0b437d055815ae1d783e527c1d431259b590b2909e87c682fe335c7c19366950",
+        "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+        "strategy_version": "4.2.0-experimental.1"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_7fa6cba16dd6426db40eb5f7abf598f1",
+          "order_id": "ord_7fa6cba16dd6426db40eb5f7abf598f1",
+          "position_id": "pos_174e1d0705c14ccba0e5b71690b0365e",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:20.988029+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "SOL-EUR",
+          "side": "BUY",
+          "quantity": "0.559547610000",
+          "price": "133.476696000000",
+          "fee": "0.074686566237",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_74347145b4a743479db1d8706dbd7977",
+          "order_id": "ord_74347145b4a743479db1d8706dbd7977",
+          "position_id": "pos_174e1d0705c14ccba0e5b71690b0365e",
+          "exit_intent_id": "exit_8d277eba83a24c0aa5a5e3b0026c8486",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:21.327194+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "SOL-EUR",
+          "side": "SELL",
+          "quantity": "0.559547610000",
+          "price": "126.268904000000",
+          "fee": "0.070653463450",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_174e1d0705c14ccba0e5b71690b0365e",
+        "symbol": "SOL-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "133.476696000000",
+        "opened_at": "2026-10-22 19:03:20.959802+00:00",
+        "realized_pnl": "-4.178442816664",
+        "protective_stop": "127.370000000000",
+        "take_profit_targets": [
+          "139.370000000000",
+          "145.370000000000",
+          "151.370000000000"
+        ],
+        "original_quantity": "0.559547610000",
+        "target_quantities": [
+          "0.167864280000",
+          "0.223819040000",
+          "0.167864290000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:21.329975+00:00",
+        "target_ids": [
+          "tp_69352cd787dc4c4fbe915f97d1f2c359",
+          "tp_eb9c9691641740fca294639878acebd9",
+          "tp_2d1554120a3447489ece95c4183c14ee"
+        ],
+        "exit_plan_id": "plan_07dc6a3a79e24a6881da7d901edf3ad6",
+        "cost_basis": "0E-12",
+        "highest_price": "133.360000000000",
+        "initial_stop": "127.370000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-22 19:53:20.989147+00:00",
+        "last_monitored_at": "2026-10-22 19:03:21.311001+00:00",
+        "account_id": "shadow:57406d29889742caaa1a763d2a93a4df"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "successors",
+      "strategy": "A3_COST_AWARE_CONTINUATION",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_2efad7c7aed910abaecd400cf51fd174",
+        "execution_fingerprint": "d7a2770b42c9a7b31daf91b438afd5ccc830c08c213415d45cf5a1a9f43c5ec5",
+        "execution_runtime": "native-v46",
+        "experiment_id": "61060e54478c4c5a82b0b1f76c6f71a6",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:03:22.317677+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_successors",
+        "parameter_hash": "00419e581d7bc5eb5d1e084ac1a9542c93d91afa5e0b9b1c0a8d1f6024b3b600",
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "0b437d055815ae1d783e527c1d431259b590b2909e87c682fe335c7c19366950",
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "strategy_version": "4.6.0-experimental.2"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_60ce2335404a4b3fa79c4581ea70e72a",
+          "order_id": "ord_60ce2335404a4b3fa79c4581ea70e72a",
+          "position_id": "pos_ebd010ea5ea744a2ad7dd2b09c6db8de",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:23.496094+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "BUY",
+          "quantity": "0.578009950000",
+          "price": "129.213288000000",
+          "fee": "0.074686566136",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_e9e920cc4af14c168bee39adcc201df0",
+          "order_id": "ord_e9e920cc4af14c168bee39adcc201df0",
+          "position_id": "pos_ebd010ea5ea744a2ad7dd2b09c6db8de",
+          "exit_intent_id": "exit_2c5e7193f3f846ab89c84034f7037a6d",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:23.792264+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "SELL",
+          "quantity": "0.578009950000",
+          "price": "125.460551200000",
+          "fee": "0.072517446926",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_ebd010ea5ea744a2ad7dd2b09c6db8de",
+        "symbol": "BTC-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "129.213288000000",
+        "opened_at": "2026-10-22 19:03:23.466205+00:00",
+        "realized_pnl": "-2.316323223193",
+        "protective_stop": "126.561000000000",
+        "take_profit_targets": [
+          "135.258000000000",
+          "138.332000000000",
+          "141.407000000000"
+        ],
+        "original_quantity": "0.578009950000",
+        "target_quantities": [
+          "0.173402980000",
+          "0.231203980000",
+          "0.173402990000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:23.794986+00:00",
+        "target_ids": [
+          "tp_1bf847a022554ee2bd5966e135915c4c",
+          "tp_d46dd8c7e3f347e5a9796d12b8ac8619",
+          "tp_e1d1f0e61b144c789cd20219bf7b3a70"
+        ],
+        "exit_plan_id": "plan_276d5d630b034ab6bcf7c23940e4a060",
+        "cost_basis": "0E-12",
+        "highest_price": "129.100000000000",
+        "initial_stop": "126.561000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-23 19:03:23.497302+00:00",
+        "last_monitored_at": "2026-10-22 19:03:23.774625+00:00",
+        "account_id": "shadow:61060e54478c4c5a82b0b1f76c6f71a6"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "successors",
+      "strategy": "B3_STATEFUL_BREAKOUT",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_3ee77de717679cf9d89c4266216b1ee5",
+        "execution_fingerprint": "d7a2770b42c9a7b31daf91b438afd5ccc830c08c213415d45cf5a1a9f43c5ec5",
+        "execution_runtime": "native-v46",
+        "experiment_id": "649c7c451abc409091c4c44aeec216f4",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:03:23.883376+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_successors",
+        "parameter_hash": "00419e581d7bc5eb5d1e084ac1a9542c93d91afa5e0b9b1c0a8d1f6024b3b600",
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "0b437d055815ae1d783e527c1d431259b590b2909e87c682fe335c7c19366950",
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "strategy_version": "4.6.0-experimental.2"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_cbb3dfd091cc4a01a6628da3cb3bc335",
+          "order_id": "ord_cbb3dfd091cc4a01a6628da3cb3bc335",
+          "position_id": "pos_f12ee39d8da2435891419ec021d5132d",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:25.128691+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "BUY",
+          "quantity": "0.571809550000",
+          "price": "130.614408000000",
+          "fee": "0.074686565861",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_53f74405b787465f98fcab98e4ae573f",
+          "order_id": "ord_53f74405b787465f98fcab98e4ae573f",
+          "position_id": "pos_f12ee39d8da2435891419ec021d5132d",
+          "exit_intent_id": "exit_bcbe2312513245f98e92af42e04a3252",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:25.418948+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "BTC-EUR",
+          "side": "SELL",
+          "quantity": "0.571809550000",
+          "price": "126.745522400000",
+          "fee": "0.072474300128",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_f12ee39d8da2435891419ec021d5132d",
+        "symbol": "BTC-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "130.614408000000",
+        "opened_at": "2026-10-22 19:03:25.098147+00:00",
+        "realized_pnl": "-2.359426599927",
+        "protective_stop": "127.847000000000",
+        "take_profit_targets": [
+          "139.532000000000",
+          "144.044000000000",
+          "148.555000000000"
+        ],
+        "original_quantity": "0.571809550000",
+        "target_quantities": [
+          "0.171542860000",
+          "0.228723820000",
+          "0.171542870000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:25.421731+00:00",
+        "target_ids": [
+          "tp_2c7805766f60436f9dc0ad684fc5e657",
+          "tp_4c35ceb95e9a4b59910a80a791a235e3",
+          "tp_d9d5901ad5b04fc8b03f4a89f5348050"
+        ],
+        "exit_plan_id": "plan_f0a55564d4ce4f4594ed38da4dd85af9",
+        "cost_basis": "0E-12",
+        "highest_price": "130.500000000000",
+        "initial_stop": "127.847000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-23 19:03:25.129785+00:00",
+        "last_monitored_at": "2026-10-22 19:03:25.401294+00:00",
+        "account_id": "shadow:649c7c451abc409091c4c44aeec216f4"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    },
+    {
+      "generation": "successors",
+      "strategy": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+      "manifest": {
+        "data_kind": "SYNTHETIC_ACCEPTANCE",
+        "database_name": "autotrader_shadow_037937ec1e998b83af861efbe558464b",
+        "execution_fingerprint": "d7a2770b42c9a7b31daf91b438afd5ccc830c08c213415d45cf5a1a9f43c5ec5",
+        "execution_runtime": "native-v46",
+        "experiment_id": "874839fadf444a86b18b0726e01c6189",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-22T19:03:25.506456+00:00",
+        "initial_cash_eur": "500",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_test_rc2_successors",
+        "parameter_hash": "00419e581d7bc5eb5d1e084ac1a9542c93d91afa5e0b9b1c0a8d1f6024b3b600",
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "0b437d055815ae1d783e527c1d431259b590b2909e87c682fe335c7c19366950",
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "strategy_version": "4.6.0-experimental.2"
+      },
+      "runtime": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "fills": [
+        {
+          "fill_id": "fill_cf3b63504db147ca837970065343c89d",
+          "order_id": "ord_cf3b63504db147ca837970065343c89d",
+          "position_id": "pos_597b2e1d9f754831972e925ce0b86195",
+          "exit_intent_id": "",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:27.275177+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "SOL-EUR",
+          "side": "BUY",
+          "quantity": "0.559547610000",
+          "price": "133.476696000000",
+          "fee": "0.074686566237",
+          "simulated": "True"
+        },
+        {
+          "fill_id": "fill_7dd445123bb543b091fd6893f28ed5ec",
+          "order_id": "ord_7dd445123bb543b091fd6893f28ed5ec",
+          "position_id": "pos_597b2e1d9f754831972e925ce0b86195",
+          "exit_intent_id": "exit_c1f9440e88f045b081074d5858eb2f65",
+          "exit_target_id": "",
+          "created_at": "2026-10-22T19:03:27.549651+00:00",
+          "attribution_status": "CONFIRMED",
+          "symbol": "SOL-EUR",
+          "side": "SELL",
+          "quantity": "0.559547610000",
+          "price": "126.898400000000",
+          "fee": "0.071005696432",
+          "simulated": "True"
+        }
+      ],
+      "position": {
+        "position_id": "pos_597b2e1d9f754831972e925ce0b86195",
+        "symbol": "SOL-EUR",
+        "quantity": "0E-12",
+        "average_entry_price": "133.476696000000",
+        "opened_at": "2026-10-22 19:03:27.246734+00:00",
+        "realized_pnl": "-3.826562067341",
+        "protective_stop": "130.180000000000",
+        "take_profit_targets": [
+          "139.990000000000",
+          "143.300000000000",
+          "146.610000000000"
+        ],
+        "original_quantity": "0.559547610000",
+        "target_quantities": [
+          "0.167864280000",
+          "0.223819040000",
+          "0.167864290000"
+        ],
+        "target_filled_quantities": [
+          "0E-12",
+          "0E-12",
+          "0E-12"
+        ],
+        "closed_at": "2026-10-22 19:03:27.552365+00:00",
+        "target_ids": [
+          "tp_50ecadd02ec6441e86a48a9ef6a89798",
+          "tp_70efe0cec4834056b5005ebc97946ce7",
+          "tp_7485f61e34c349b883cab0d4b55d4daf"
+        ],
+        "exit_plan_id": "plan_70873372f83347e9b189c71f65e5593f",
+        "cost_basis": "0E-12",
+        "highest_price": "133.360000000000",
+        "initial_stop": "130.180000000000",
+        "trailing_distance": null,
+        "expires_at": "2026-10-23 19:03:27.276235+00:00",
+        "last_monitored_at": "2026-10-22 19:03:27.532591+00:00",
+        "account_id": "shadow:874839fadf444a86b18b0726e01c6189"
+      },
+      "reconciliation": [],
+      "duplicate_fill": false
+    }
+  ],
+  "status": "PASS",
+  "image_id": "sha256:d30f72d389dffc68bbf44993a42a26fc8535ee056dd7af10678239bb80db8cbe",
+  "network_internal": true
+}

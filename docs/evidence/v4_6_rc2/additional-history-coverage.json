@@ -1,0 +1,19 @@
+{
+  "start": "2026-10-16T00:00:00+00:00",
+  "end_exclusive": "2026-10-22T00:00:00+00:00",
+  "expected_5m_per_symbol": 1728,
+  "observed_5m": {
+    "BTC-EUR": 1728,
+    "ETH-EUR": 1722,
+    "SOL-EUR": 1722,
+    "XRP-EUR": 1577,
+    "ADA-EUR": 892,
+    "LINK-EUR": 1010,
+    "AVAX-EUR": 849,
+    "DOT-EUR": 890
+  },
+  "gaps_not_interpolated": true,
+  "warmup_days": 3,
+  "current_survivor_bias": true,
+  "after_correction_all_intervals_reused": true
+}

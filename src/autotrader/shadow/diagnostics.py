@@ -22,7 +22,7 @@ def explain(
     by_id = {s.strategy_id: s for s in signals}
     primary = by_id.get(manifest["strategy_id"])
     evidence = primary.evidence if primary else {}
-    if evidence.get('strategy_version') == '4.6.0-experimental.1':
+    if evidence.get('strategy_version') in {'4.6.0-experimental.1', '4.6.0-experimental.2'}:
         assert primary is not None
         successor_conditions = evidence['conditions']
         return {'schema': 'shadow-decision-explanation/3', 'decision_id': decision.decision_id,
@@ -344,7 +344,7 @@ def observe_gateway(gateway: Any, repo: Any) -> Any:
     async def allocation(candidate: Any) -> Any:
         from autotrader.domain import new_id
         from autotrader.shadow.trace import event
-        attempt = new_id('attempt') if getattr(getattr(repo, 'scope', None), 'manifest', {}).get('strategy_version') == '4.6.0-experimental.1' else ''
+        attempt = new_id('attempt') if getattr(getattr(repo, 'scope', None), 'manifest', {}).get('strategy_version') in {'4.6.0-experimental.1', '4.6.0-experimental.2'} else ''
         quality.update(reached=False, rejection=None)
         buying = candidate.decision.accepted and candidate.decision.action.value == "BUY"
         if buying:
@@ -368,7 +368,7 @@ def observe_gateway(gateway: Any, repo: Any) -> Any:
         quality.update(reached=False, rejection=None)
         from autotrader.domain import new_id
         from autotrader.shadow.trace import event, observe_order
-        attempt = new_id('attempt') if getattr(getattr(repo, 'scope', None), 'manifest', {}).get('strategy_version') == '4.6.0-experimental.1' else ''
+        attempt = new_id('attempt') if getattr(getattr(repo, 'scope', None), 'manifest', {}).get('strategy_version') in {'4.6.0-experimental.1', '4.6.0-experimental.2'} else ''
         buying = decision.accepted and decision.action.value == "BUY"
         if buying:
             await event(repo, decision.decision_id, "ENTRY_PREFLIGHT", "ATTEMPTED", symbol=pair.symbol, discriminator=attempt)

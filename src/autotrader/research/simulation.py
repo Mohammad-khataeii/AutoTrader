@@ -89,7 +89,7 @@ class ResearchSimulation:
             member_parameters: dict[str, StrategyParameters] | None = None,
             legacy: bool = False, ai_mode: str = "RULE_ONLY", successor_parameters: Any = None,
             entry_method: str = "MARKET", regime_model: str = "MULTIDIMENSIONAL",
-            universe: set[str] | None = None) -> dict[str, Any]:
+            universe: set[str] | None = None, successor_revision: str = "RC2", quote_budget_eur: Decimal = D(75)) -> dict[str, Any]:
         params, model = parameters or StrategyParameters(), costs or Costs()
         if entry_method not in {'MARKET', 'BID_IOC', 'PULLBACK_IOC', 'RETEST_IOC'}:
             raise ValueError('unknown_research_entry_method')
@@ -135,6 +135,7 @@ class ResearchSimulation:
         quality = ExecutionQualityEngine()
         specs = {s.strategy_id: s for s in (EXPERIMENTAL_REGISTRY if self.experimental else REGISTRY)}
         opportunity_counts: Counter[str] = Counter()
+        first_blockers: Counter[str] = Counter()
         successor_engine: Any = None
         successor_plans: dict[tuple[datetime, str], Any] = {}
         pending_entries: dict[str, dict[str, Any]] = {}
@@ -145,7 +146,14 @@ class ResearchSimulation:
                 SuccessorOpportunityEngine,
                 SuccessorParameters,
             )
-            successor_engine = SuccessorOpportunityEngine(successor_parameters or SuccessorParameters(), model.fee_bps, model.slippage_bps)
+            if successor_revision not in {'RC1','RC2'}:
+                raise ValueError('unknown_successor_revision')
+            if successor_revision == 'RC1':
+                from autotrader.opportunity.rc1 import SuccessorOpportunityEngine as RC1Engine
+                from autotrader.opportunity.rc1 import SuccessorParameters as RC1Parameters
+                successor_engine = RC1Engine(successor_parameters or RC1Parameters(), model.fee_bps, model.slippage_bps)
+            else:
+                successor_engine = SuccessorOpportunityEngine(successor_parameters or SuccessorParameters(), model.fee_bps, model.slippage_bps)
             specs.update({s.strategy_id: s for s in SUCCESSOR_REGISTRY})
 
         def equity() -> Decimal:
@@ -296,11 +304,14 @@ class ResearchSimulation:
                             continue
                         pair = TradingPair(symbol, symbol.split('-')[0], 'EUR', min_order_quote=D(5))
                         f = replace(f, metadata={**f.metadata, 'liquidity_quote': sum((l.price*l.quantity for l in (*preview.bids, *preview.asks)), ZERO), 'order_book_age_seconds': ZERO})
-                        signal = successor_engine.evaluate(hypothesis, f, pair, preview, context.get('BTC-EUR'), context.get('ETH-EUR'))
+                        options = {'quote_budget': quote_budget_eur, 'sizing_scope': 'SIMULATED_ACCOUNT_PROPOSAL', 'sizing_context': {'cash': cash, 'exposure': sum((p.position.quantity*marks.get(s,p.position.average_entry_price) for s,p in opened.items()),ZERO)}} if successor_revision=='RC2' else {}
+                        signal = successor_engine.evaluate(hypothesis, f, pair, preview, context.get('BTC-EUR'), context.get('ETH-EUR'), **options)
                         opportunity_counts['evaluations'] += 1
                         opportunity_counts['technical'] += int(signal.evidence['technical_eligible'])
                         opportunity_counts['economically_viable'] += int(signal.evidence['economic_eligible'])
                         rejections.update(signal.evidence['reasons'])
+                        blocker = next((stage for stage in signal.evidence['pipeline'] if stage['reached'] and stage['passed'] is False),None)
+                        first_blockers[blocker['stage'] if blocker else 'ECONOMICALLY_FEASIBLE_EDGE_UNVALIDATED'] += 1
                         regime = signal.evidence['regime'] + '+' + '+'.join(signal.evidence['regime_assessment']['structure'])
                         old = classify(f, context.get('BTC-EUR'), context.get('ETH-EUR'))
                         if regime_model == 'LEGACY_BULL_FILTER' and old.regime not in {Regime.MODERATE_BULL, Regime.STRONG_BULL}:
@@ -308,7 +319,7 @@ class ResearchSimulation:
                             continue
                         if signal.evidence['entry_eligible']:
                             eligible = [(signal.score, signal.strategy_id)]
-                            successor_plans[(timestamp, symbol)] = signal.evidence['entry_plan']
+                            successor_plans[(timestamp, symbol)] = {**signal.evidence['entry_plan'], 'quote_budget': signal.evidence.get('sizing',{}).get('quote_budget_eur')}
                     elif legacy:
                         signals = legacy_engine.generate(f, context.get("BTC-EUR"), context.get("ETH-EUR"))
                         eligible = [(s.score, s.strategy_id) for s in signals if s.score > 0]
@@ -361,6 +372,8 @@ class ResearchSimulation:
                     quote_amount = min(D(75), max(cash - 150, ZERO), D(5) / (atr * selected_params.stop_atr / price + D(".01")))
                     if self.successor:
                         quote_amount = min(D(75), max(cash - 150, ZERO), D(5) / ((price - stop) / price + D('.01'))) if 0 < stop < price else ZERO
+                    if self.successor and successor_revision=='RC2' and plan.get('quote_budget') is not None:
+                        quote_amount = min(D(100),D(plan['quote_budget']),max(cash-150,ZERO),D(5)/((price-stop)/price+D('.01'))) if 0<stop<price else ZERO
                     pair = TradingPair(symbol, symbol.split("-")[0], "EUR", min_order_quote=D(5))
                     quantity = quantize_down(quote_amount / (price * D("1.005")), pair.quantity_step)
                     portfolio = Portfolio(cash)
@@ -475,7 +488,7 @@ class ResearchSimulation:
             "start": start.isoformat(), "end_exclusive": end.isoformat(), "timeframe": self.timeframe,
             "strategy_ids": sorted(strategy_ids), "legacy_signal_baseline": legacy, "ai_mode": ai_mode,
             "rejections": dict(rejections), "regime_observations": dict(regime_observations),
-            "opportunity_counts": dict(opportunity_counts), "entry_method": entry_method,
+            "research_quote_budget_eur": str(quote_budget_eur), "first_blocking_stages": dict(first_blockers), "successor_revision": successor_revision if self.successor else None, "opportunity_counts": dict(opportunity_counts), "entry_method": entry_method,
             "successor_parameters": successor_engine.parameters.payload() if self.successor else None,
             "regime_model": regime_model if self.successor else 'ORIGINAL',
             "pending_conditional_entries_at_end": len(pending_entries),

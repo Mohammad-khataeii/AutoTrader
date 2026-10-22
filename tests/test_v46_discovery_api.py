@@ -53,7 +53,7 @@ async def test_opportunity_api_missing_evidence_stays_unknown_and_pagination_is_
         with TestClient(create_app()) as client:
             assert client.get('/api/opportunities').status_code == 401
             data = client.get('/api/opportunities', auth=('admin','change-me')).json()
-            assert data['status'] == 'NOT_RECORDED' and 'technical_candidates' not in data
+            assert data['status'] == 'NOT_RECORDED' and data['technical_candidates'] is None
             assert client.get('/api/opportunities?limit=51', auth=('admin','change-me')).status_code == 422
     await asyncio.to_thread(missing)
     body = {'updated_at': utc_now().isoformat(), 'technical_candidates': 3,

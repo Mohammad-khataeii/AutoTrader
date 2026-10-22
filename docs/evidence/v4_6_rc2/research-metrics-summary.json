@@ -1,0 +1,464 @@
+[
+  {
+    "strategy": "A3_COST_AWARE_CONTINUATION",
+    "window": "RC1 test",
+    "net_profit": -0.48410112124497573,
+    "trades": 1,
+    "fills_count": 2,
+    "win_rate": 0.0,
+    "expectancy": -0.484101121245,
+    "profit_factor": 0.0,
+    "max_drawdown": 0.001074390421698839,
+    "fees": "0.149112830686",
+    "average_exposure_eur": "0.06623649329491725768321513002",
+    "average_holding_seconds": 1200.0,
+    "opportunity_counts": {
+      "evaluations": 12016,
+      "technical": 407,
+      "economically_viable": 2,
+      "buy_decisions_before_portfolio_risk": 1,
+      "actual_simulated_buy_fills": 1
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 9382,
+      "COST_FEASIBILITY": 405,
+      "DATA_VALIDATION": 2227,
+      "ECONOMICALLY_FEASIBLE_EDGE_UNVALIDATED": 2
+    }
+  },
+  {
+    "strategy": "A3_COST_AWARE_CONTINUATION",
+    "window": "validation",
+    "net_profit": -3.1764574584270235,
+    "trades": 5,
+    "fills_count": 13,
+    "win_rate": 0.0,
+    "expectancy": -0.6352914916854,
+    "profit_factor": 0.0,
+    "max_drawdown": 0.006352914916854047,
+    "fees": "0.644593716059",
+    "average_exposure_eur": "0.1894271310208737511084835944",
+    "average_holding_seconds": 1080.0,
+    "opportunity_counts": {
+      "evaluations": 14357,
+      "technical": 636,
+      "economically_viable": 6,
+      "buy_decisions_before_portfolio_risk": 5,
+      "actual_simulated_buy_fills": 5
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 10129,
+      "DATA_VALIDATION": 3592,
+      "COST_FEASIBILITY": 630,
+      "ECONOMICALLY_FEASIBLE_EDGE_UNVALIDATED": 6
+    }
+  },
+  {
+    "strategy": "A3_COST_AWARE_CONTINUATION",
+    "window": "test",
+    "net_profit": -0.01443990913600146,
+    "trades": 1,
+    "fills_count": 2,
+    "win_rate": 0.0,
+    "expectancy": -0.014439909136,
+    "profit_factor": 0.0,
+    "max_drawdown": 0.0002509937642660134,
+    "fees": "0.079820753235",
+    "average_exposure_eur": "0.04717674677895981087470449173",
+    "average_holding_seconds": 1200.0,
+    "opportunity_counts": {
+      "evaluations": 12016,
+      "technical": 406,
+      "economically_viable": 1,
+      "buy_decisions_before_portfolio_risk": 1,
+      "actual_simulated_buy_fills": 1
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 9383,
+      "COST_FEASIBILITY": 405,
+      "DATA_VALIDATION": 2227,
+      "ECONOMICALLY_FEASIBLE_EDGE_UNVALIDATED": 1
+    }
+  },
+  {
+    "strategy": "A3_COST_AWARE_CONTINUATION",
+    "window": "new_interval",
+    "net_profit": -0.5489504185979968,
+    "trades": 1,
+    "fills_count": 3,
+    "win_rate": 0.0,
+    "expectancy": -0.548950418598,
+    "profit_factor": 0.0,
+    "max_drawdown": 0.0010979008371959935,
+    "fees": "0.129165643265",
+    "average_exposure_eur": "0.3204967123263888888888888889",
+    "average_holding_seconds": 2700.0,
+    "opportunity_counts": {
+      "evaluations": 5377,
+      "technical": 233,
+      "economically_viable": 1,
+      "buy_decisions_before_portfolio_risk": 1,
+      "actual_simulated_buy_fills": 1
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 4010,
+      "COST_FEASIBILITY": 232,
+      "DATA_VALIDATION": 1134,
+      "ECONOMICALLY_FEASIBLE_EDGE_UNVALIDATED": 1
+    }
+  },
+  {
+    "strategy": "A3_COST_AWARE_CONTINUATION",
+    "window": "rc1_new_interval",
+    "net_profit": -1.1949919601020156,
+    "trades": 2,
+    "fills_count": 6,
+    "win_rate": 0.0,
+    "expectancy": -0.597495980051,
+    "profit_factor": 0.0,
+    "max_drawdown": 0.0025307808795916173,
+    "fees": "0.297998644845",
+    "average_exposure_eur": "0.1504718956261574074074074074",
+    "average_holding_seconds": 900.0,
+    "opportunity_counts": {
+      "evaluations": 5376,
+      "technical": 245,
+      "economically_viable": 3,
+      "buy_decisions_before_portfolio_risk": 2,
+      "actual_simulated_buy_fills": 2
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 3997,
+      "COST_FEASIBILITY": 242,
+      "DATA_VALIDATION": 1134,
+      "ECONOMICALLY_FEASIBLE_EDGE_UNVALIDATED": 3
+    }
+  },
+  {
+    "strategy": "A3_COST_AWARE_CONTINUATION",
+    "window": "cost_stress",
+    "net_profit": 0.0,
+    "trades": 0,
+    "fills_count": 0,
+    "win_rate": 0,
+    "expectancy": 0,
+    "profit_factor": null,
+    "max_drawdown": 0.0,
+    "fees": "0",
+    "average_exposure_eur": "0",
+    "average_holding_seconds": 0,
+    "opportunity_counts": {
+      "evaluations": 12016,
+      "technical": 406,
+      "economically_viable": 0
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 9383,
+      "COST_FEASIBILITY": 406,
+      "DATA_VALIDATION": 2227
+    }
+  },
+  {
+    "strategy": "B3_STATEFUL_BREAKOUT",
+    "window": "RC1 test",
+    "net_profit": -0.9452455348670128,
+    "trades": 2,
+    "fills_count": 5,
+    "win_rate": 0.0,
+    "expectancy": -0.47262276743349996,
+    "profit_factor": 0.0,
+    "max_drawdown": 0.001996581217857727,
+    "fees": "0.298040686874",
+    "average_exposure_eur": "0.5259930756530732860520094563",
+    "average_holding_seconds": 4050.0,
+    "opportunity_counts": {
+      "evaluations": 12015,
+      "technical": 49,
+      "economically_viable": 2,
+      "buy_decisions_before_portfolio_risk": 2,
+      "actual_simulated_buy_fills": 2
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 9739,
+      "COST_FEASIBILITY": 47,
+      "DATA_VALIDATION": 2227,
+      "ECONOMICALLY_FEASIBLE_EDGE_UNVALIDATED": 2
+    }
+  },
+  {
+    "strategy": "B3_STATEFUL_BREAKOUT",
+    "window": "validation",
+    "net_profit": -1.7992917651930043,
+    "trades": 3,
+    "fills_count": 7,
+    "win_rate": 0.0,
+    "expectancy": -0.599763921731,
+    "profit_factor": 0.0,
+    "max_drawdown": 0.0035985835303860084,
+    "fees": "0.414770922852",
+    "average_exposure_eur": "0.06569638306267632279042270174",
+    "average_holding_seconds": 500.0,
+    "opportunity_counts": {
+      "evaluations": 14356,
+      "technical": 74,
+      "economically_viable": 3,
+      "buy_decisions_before_portfolio_risk": 3,
+      "actual_simulated_buy_fills": 3
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 10690,
+      "DATA_VALIDATION": 3592,
+      "COST_FEASIBILITY": 71,
+      "ECONOMICALLY_FEASIBLE_EDGE_UNVALIDATED": 3
+    }
+  },
+  {
+    "strategy": "B3_STATEFUL_BREAKOUT",
+    "window": "test",
+    "net_profit": 0.0,
+    "trades": 0,
+    "fills_count": 0,
+    "win_rate": 0,
+    "expectancy": 0,
+    "profit_factor": null,
+    "max_drawdown": 0.0,
+    "fees": "0",
+    "average_exposure_eur": "0",
+    "average_holding_seconds": 0,
+    "opportunity_counts": {
+      "evaluations": 12016,
+      "technical": 62,
+      "economically_viable": 0
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 9727,
+      "COST_FEASIBILITY": 62,
+      "DATA_VALIDATION": 2227
+    }
+  },
+  {
+    "strategy": "B3_STATEFUL_BREAKOUT",
+    "window": "new_interval",
+    "net_profit": 0.0,
+    "trades": 0,
+    "fills_count": 0,
+    "win_rate": 0,
+    "expectancy": 0,
+    "profit_factor": null,
+    "max_drawdown": 0.0,
+    "fees": "0",
+    "average_exposure_eur": "0",
+    "average_holding_seconds": 0,
+    "opportunity_counts": {
+      "evaluations": 5377,
+      "technical": 32,
+      "economically_viable": 0
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 4211,
+      "DATA_VALIDATION": 1134,
+      "COST_FEASIBILITY": 32
+    }
+  },
+  {
+    "strategy": "B3_STATEFUL_BREAKOUT",
+    "window": "rc1_new_interval",
+    "net_profit": 0.0,
+    "trades": 0,
+    "fills_count": 0,
+    "win_rate": 0,
+    "expectancy": 0,
+    "profit_factor": null,
+    "max_drawdown": 0.0,
+    "fees": "0",
+    "average_exposure_eur": "0",
+    "average_holding_seconds": 0,
+    "opportunity_counts": {
+      "evaluations": 5377,
+      "technical": 18,
+      "economically_viable": 0
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 4225,
+      "DATA_VALIDATION": 1134,
+      "COST_FEASIBILITY": 18
+    }
+  },
+  {
+    "strategy": "B3_STATEFUL_BREAKOUT",
+    "window": "cost_stress",
+    "net_profit": 0.0,
+    "trades": 0,
+    "fills_count": 0,
+    "win_rate": 0,
+    "expectancy": 0,
+    "profit_factor": null,
+    "max_drawdown": 0.0,
+    "fees": "0",
+    "average_exposure_eur": "0",
+    "average_holding_seconds": 0,
+    "opportunity_counts": {
+      "evaluations": 12016,
+      "technical": 62,
+      "economically_viable": 0
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 9727,
+      "COST_FEASIBILITY": 62,
+      "DATA_VALIDATION": 2227
+    }
+  },
+  {
+    "strategy": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+    "window": "RC1 test",
+    "net_profit": 0.0,
+    "trades": 0,
+    "fills_count": 0,
+    "win_rate": 0,
+    "expectancy": 0,
+    "profit_factor": null,
+    "max_drawdown": 0.0,
+    "fees": "0",
+    "average_exposure_eur": "0",
+    "average_holding_seconds": 0,
+    "opportunity_counts": {
+      "evaluations": 12016,
+      "technical": 14,
+      "economically_viable": 0
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 9775,
+      "COST_FEASIBILITY": 14,
+      "DATA_VALIDATION": 2227
+    }
+  },
+  {
+    "strategy": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+    "window": "validation",
+    "net_profit": -0.01737922067098907,
+    "trades": 1,
+    "fills_count": 2,
+    "win_rate": 0.0,
+    "expectancy": -0.017379220671,
+    "profit_factor": 0.0,
+    "max_drawdown": 0.00036655586039579374,
+    "fees": "0.149580021693",
+    "average_exposure_eur": "0.04425785877924297960390186225",
+    "average_holding_seconds": 600.0,
+    "opportunity_counts": {
+      "evaluations": 14357,
+      "technical": 53,
+      "economically_viable": 1,
+      "buy_decisions_before_portfolio_risk": 1,
+      "actual_simulated_buy_fills": 1
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 10712,
+      "DATA_VALIDATION": 3592,
+      "COST_FEASIBILITY": 52,
+      "ECONOMICALLY_FEASIBLE_EDGE_UNVALIDATED": 1
+    }
+  },
+  {
+    "strategy": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+    "window": "test",
+    "net_profit": 0.054979698704016755,
+    "trades": 1,
+    "fills_count": 2,
+    "win_rate": 1.0,
+    "expectancy": 0.054979698704,
+    "profit_factor": null,
+    "max_drawdown": 0.0005885690207787623,
+    "fees": "0.149652423074",
+    "average_exposure_eur": "0.1547250659179078014184397163",
+    "average_holding_seconds": 2100.0,
+    "opportunity_counts": {
+      "evaluations": 12016,
+      "technical": 35,
+      "economically_viable": 1,
+      "buy_decisions_before_portfolio_risk": 1,
+      "actual_simulated_buy_fills": 1
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 9754,
+      "COST_FEASIBILITY": 34,
+      "DATA_VALIDATION": 2227,
+      "ECONOMICALLY_FEASIBLE_EDGE_UNVALIDATED": 1
+    }
+  },
+  {
+    "strategy": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+    "window": "new_interval",
+    "net_profit": -1.4124396187060029,
+    "trades": 2,
+    "fills_count": 6,
+    "win_rate": 0.0,
+    "expectancy": -0.706219809353,
+    "profit_factor": 0.0,
+    "max_drawdown": 0.0028248792374120056,
+    "fees": "0.297780976236",
+    "average_exposure_eur": "1.376065267568229166666666667",
+    "average_holding_seconds": 4950.0,
+    "opportunity_counts": {
+      "evaluations": 5377,
+      "technical": 9,
+      "economically_viable": 2,
+      "buy_decisions_before_portfolio_risk": 2,
+      "actual_simulated_buy_fills": 2
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 4234,
+      "DATA_VALIDATION": 1134,
+      "COST_FEASIBILITY": 7,
+      "ECONOMICALLY_FEASIBLE_EDGE_UNVALIDATED": 2
+    }
+  },
+  {
+    "strategy": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+    "window": "rc1_new_interval",
+    "net_profit": 0.0,
+    "trades": 0,
+    "fills_count": 0,
+    "win_rate": 0,
+    "expectancy": 0,
+    "profit_factor": null,
+    "max_drawdown": 0.0,
+    "fees": "0",
+    "average_exposure_eur": "0",
+    "average_holding_seconds": 0,
+    "opportunity_counts": {
+      "evaluations": 5377,
+      "technical": 3,
+      "economically_viable": 0
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 4240,
+      "DATA_VALIDATION": 1134,
+      "COST_FEASIBILITY": 3
+    }
+  },
+  {
+    "strategy": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+    "window": "cost_stress",
+    "net_profit": 0.0,
+    "trades": 0,
+    "fills_count": 0,
+    "win_rate": 0,
+    "expectancy": 0,
+    "profit_factor": null,
+    "max_drawdown": 0.0,
+    "fees": "0",
+    "average_exposure_eur": "0",
+    "average_holding_seconds": 0,
+    "opportunity_counts": {
+      "evaluations": 12016,
+      "technical": 35,
+      "economically_viable": 0
+    },
+    "first_blocking_stages": {
+      "TECHNICAL_SETUP": 9754,
+      "COST_FEASIBILITY": 35,
+      "DATA_VALIDATION": 2227
+    }
+  }
+]

@@ -21,7 +21,7 @@ class ExecutionQuality:
                 "breakeven_bid": str(self.breakeven_bid),
                 "immediate_round_trip_net": str(self.immediate_round_trip_net),
                 "target_net_scenarios": [str(v) for v in self.target_net_scenarios],
-                "policy": "execution-quality-4.0.0", "probability_estimate": None}
+                "policy": "execution-quality-4.6-rc2", "future_depth_assumption": "Current observed exit depth-impact fraction, not guaranteed future liquidity", "probability_estimate": None}
 
 
 class ExecutionQualityEngine:
@@ -43,7 +43,7 @@ class ExecutionQualityEngine:
         if closing.fillable_quantity < entry.fillable_quantity:
             reasons.append("insufficient_observed_exit_depth")
         unit_cost = -entry.net_cash_change / entry.fillable_quantity if entry.fillable_quantity else Decimal(0)
-        exit_factor = (1 - fee_bps / BPS) * (1 - slippage_bps / BPS)
+        exit_factor = (1 - fee_bps / BPS) * (1 - slippage_bps / BPS) * (1 - closing.depth_impact_bps / BPS)
         breakeven = unit_cost / exit_factor
         scenarios = tuple(entry.fillable_quantity * (target * exit_factor - unit_cost) for target in targets)
         if scenarios and scenarios[0] <= 0:

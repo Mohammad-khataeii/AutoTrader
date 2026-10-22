@@ -25,7 +25,8 @@ class DiscoveryCandidate:
 
 
 def rank_markets(pairs: list[TradingPair], tickers: list[dict[str, Any]], *,
-                 excluded: set[str] | None = None, limit: int = 3) -> tuple[list[DiscoveryCandidate], dict[str, int]]:
+                 excluded: set[str] | None = None, limit: int = 3,
+                 recent: dict[str, dict[str, Any]] | None = None, cycle_bucket: int = 0) -> tuple[list[DiscoveryCandidate], dict[str, int]]:
     supported = {p.symbol for p in pairs if p.quote_asset == 'EUR' and p.status.lower() == 'active' and p.price_step > 0 and p.quantity_step > 0}
     rows: list[DiscoveryCandidate] = []
     counts = {'supported_eur': len(supported), 'missing_or_invalid_summary': 0, 'expensive_or_thin': 0, 'screened': 0}
@@ -48,8 +49,19 @@ def rank_markets(pairs: list[TradingPair], tickers: list[dict[str, Any]], *,
         if spread > 25 or volume < 100000:
             counts['expensive_or_thin'] += 1
             continue
-        # Bounded independent factors; daily range is an exploration proxy, not ATR or a target forecast.
-        score = min(amplitude / (36 + spread), D(10)) * D('.5') + min(volume / 1000000, D(5)) * D('.3') + (1 - spread / 25) * D('.2')
-        rows.append(DiscoveryCandidate(symbol, score, spread, amplitude, volume))
+        # Movement is capped and multiplied by liquidity. A large percentage
+        # range cannot overwhelm thin turnover or an expensive spread.
+        liquidity = min(volume / 1000000, D(1))
+        spread_quality = 1-spread/25
+        net_movement = min(amplitude/(36+spread), D(3))
+        prior = (recent or {}).get(symbol,{})
+        elapsed = cycle_bucket-int(prior.get('bucket', cycle_bucket-12))
+        if prior.get('data_failed') and elapsed < 2:
+            counts['recent_data_failure_deferred'] = counts.get('recent_data_failure_deferred',0)+1
+            continue
+        exploration = min(max(elapsed,0),12)*D('.05')
+        score = net_movement*liquidity*spread_quality + liquidity + exploration
+        rows.append(DiscoveryCandidate(symbol, score, spread, amplitude, volume,
+            'Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified'))
     counts['screened'] = len(rows)
-    return sorted(rows, key=lambda r: (-r.score, r.symbol))[:max(0, min(limit, 6))], counts
+    return sorted(rows, key=lambda r: (-r.score, r.symbol))[:max(0, min(limit, 20))], counts

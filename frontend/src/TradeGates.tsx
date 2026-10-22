@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { type Row, useResource } from "./api";
 import { conditionName, dataKind, date, humanize, strategyName } from "./model";
+import { qualificationLabel } from "./presentation";
 import { Badge, Panel, ResourceState, Technical } from "./ui";
 
 function AccountGates({ account }: { account: Row }) {
@@ -31,7 +32,7 @@ function AccountGates({ account }: { account: Row }) {
       <p className="muted">{data.window.unannotated} unannotated decisions; {data.diagnostic_mismatches} diagnostic mismatches. Counts describe recorded events on this page. Missing telemetry remains unknown; an observed zero is not proof that an unrecorded stage was never reached. Pre-strategy skips are {data.last_scan_observation ? "recorded separately below" : "unavailable for earlier scans"}.</p>
       <Technical value={data.last_scan_observation} label="Latest scan and skipped candidates" />
       <h3>Decision evidence</h3>
-      {data.decisions.map((d: Row) => <details key={d.decision_id}><summary>{d.symbol} · {date(d.created_at, true)} · {d.explanation?.reason ?? d.rejected_reason ?? "No recorded reason"}</summary>{d.execution_evidence_status ? <p>Historical trace assessment: {d.execution_evidence_status}</p> : <p>Recorded execution progression is available below.</p>}{(d.recorded_order_outcomes ?? []).map((o: Row) => <p key={o.order_id}>Independently recorded order: {o.status} · {o.reason ?? "No rejection recorded"} · {o.order_id}</p>)}<Technical value={d.explanation ?? { evidence: "Unavailable" }} label="All conditions and recorded values" /><Technical value={{ trace: d.execution_trace ?? { evidence: "NOT_RECORDED" }, stages: d.stage_states }} label="Durable execution trace" /></details>)}
+      {data.decisions.map((d: Row) => <details key={d.decision_id}><summary>{d.symbol} · {date(d.created_at, true)} · {d.explanation?.reason ?? d.rejected_reason ?? "No recorded reason"}</summary>{d.qualification_state && <Badge>{qualificationLabel(d.qualification_state)}</Badge>}{d.execution_evidence_status ? <p>Historical trace assessment: {d.execution_evidence_status}</p> : <p>Recorded execution progression is available below.</p>}{(d.recorded_order_outcomes ?? []).map((o: Row) => <p key={o.order_id}>Independently recorded order: {o.status} · {o.reason ?? "No rejection recorded"} · {o.order_id}</p>)}<Technical value={d.explanation ?? { evidence: "Unavailable" }} label="All conditions and recorded values" /><Technical value={{ trace: d.execution_trace ?? { evidence: "NOT_RECORDED" }, stages: d.stage_states }} label="Durable execution trace" /></details>)}
       <div className="toolbar"><button disabled={!cursor} onClick={() => setCursor("")}>Latest evaluations</button><button disabled={!data.next_cursor} onClick={() => setCursor(data.next_cursor)}>Older evaluations</button></div>
     </>}
   </Panel>;

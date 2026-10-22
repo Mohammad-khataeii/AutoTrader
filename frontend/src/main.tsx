@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { Suspense, lazy, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Activity,
@@ -20,12 +20,14 @@ import {
 } from "./api";
 import { systemStatus } from "./model";
 import { Badge, ResourceState } from "./ui";
-import { TradeGates } from "./TradeGates";
+const TradeGates = lazy(() => import("./TradeGates").then(m => ({ default: m.TradeGates })));
 import { Overview } from "./Overview";
-import { Opportunities, StrategiesWorkspace } from "./Opportunities";
-import { Trades } from "./Trades";
-import { Research } from "./Research";
-import { AdvancedScreen, advancedItems } from "./advanced";
+const Opportunities = lazy(() => import("./Opportunities").then(m => ({ default: m.Opportunities })));
+const StrategiesWorkspace = lazy(() => import("./Opportunities").then(m => ({ default: m.StrategiesWorkspace })));
+const Trades = lazy(() => import("./Trades").then(m => ({ default: m.Trades })));
+const Research = lazy(() => import("./Research").then(m => ({ default: m.Research })));
+import { advancedItems } from "./navigation";
+const AdvancedScreen = lazy(() => import("./advanced").then(m => ({ default: m.AdvancedScreen })));
 import "./styles.css";
 // Retained public formatter for existing callers; primary screens use localized EUR formatting.
 export function displayMoney(value: unknown): string {
@@ -172,6 +174,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
             successful update.
           </div>
         )}
+        <Suspense fallback={<div className="loading" role="status">Loading workspace…</div>}>
         {active === "Decision Insights" && <TradeGates />}
         {active === "Overview" && (
           <Overview
@@ -186,6 +189,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
         {active === "Advanced" && (
           <AdvancedScreen key={advanced} page={advanced} auth={auth} />
         )}
+        </Suspense>
         <footer className="workspace-footer">
           <span>
             Official paper account and shadow experiments are separate.

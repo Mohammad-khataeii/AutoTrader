@@ -63,8 +63,15 @@ async def scan_successor(runtime: Any, repo: Any, manifest: dict[str, Any], cand
             completed = await session.get(SystemStateModel, key)
             if completed and json.loads(completed.payload_json)['stamp'] >= stamp:
                 continue
+        await repo.record_mark(market.order_book)
+        snapshot = await repo.snapshot()
+        portfolio = Portfolio(D(snapshot['available_cash']))
+        portfolio.balances['EUR'].reserved = D(snapshot['reserved_cash'])
+        portfolio.positions = {p.symbol: p for p in await repo.list_positions() if p.closed_at is None and p.quantity > 0}
         signal = engine.evaluate(manifest['strategy_id'], f, market.pair, market.order_book,
-            context.get('BTC-EUR'), context.get('ETH-EUR'), market.candles)
+            context.get('BTC-EUR'), context.get('ETH-EUR'), market.candles,
+            sizing_scope='ACCOUNT_CONSTRAINED_PROPOSAL',
+            sizing_context={'cash': portfolio.cash, 'exposure': portfolio.open_exposure, 'limits': runtime.risk.limits})
         identity = 'dec_' + digest((manifest['experiment_id'] + ':' + signal.signal_id).encode())[:40]
         async with repo.session_factory() as session:
             stored = await session.get(TradingDecisionModel, identity)
@@ -74,11 +81,6 @@ async def scan_successor(runtime: Any, repo: Any, manifest: dict[str, Any], cand
             # fresh book/risk/coordinator admission still runs below.
             decision, signal = restore_decision(stored.payload_json), restore_signal(original.payload_json)
         else:
-            await repo.record_mark(market.order_book)
-            snapshot = await repo.snapshot()
-            portfolio = Portfolio(D(snapshot['available_cash']))
-            portfolio.balances['EUR'].reserved = D(snapshot['reserved_cash'])
-            portfolio.positions = {p.symbol: p for p in await repo.list_positions() if p.closed_at is None and p.quantity > 0}
             decision = replace(DecisionEngine(runtime.risk).decide(market.pair, f, [signal], portfolio, None), decision_id=identity)
             signal.evidence['pipeline'][-2] = {'stage': 'PORTFOLIO_RISK', 'reached': signal.evidence['entry_eligible'],
                 'passed': decision.accepted if signal.evidence['entry_eligible'] else None, 'reason': decision.rejected_reason or 'risk_checks_passed'}

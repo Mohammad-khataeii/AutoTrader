@@ -1,6 +1,6 @@
 {
   "name": "revolutx-autotrader-dashboard",
-  "version": "4.6.0",
+  "version": "4.6.0-rc.2",
   "private": true,
   "type": "module",
   "scripts": {

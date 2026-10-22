@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "backend_image": "sha256:d30f72d389dffc68bbf44993a42a26fc8535ee056dd7af10678239bb80db8cbe",
+  "frontend_image": "sha256:f82eca962da7b9ae4f79fb68a1d516845e44ff456ef62975daec787b28461bff",
+  "architecture": "amd64",
+  "application_source_fingerprint": "0b437d055815ae1d783e527c1d431259b590b2909e87c682fe335c7c19366950",
+  "execution_fingerprint": "d7a2770b42c9a7b31daf91b438afd5ccc830c08c213415d45cf5a1a9f43c5ec5",
+  "python_files": 243,
+  "frozen_v42_files": 71,
+  "frozen_v44_files": 76,
+  "source_matches_local": true,
+  "bundled_research_sha256": "f0b893df24649c1c1202c15afa4ca38afd096605826086a52747d55b70e69efa",
+  "bundled_comparison_non_root_read": "PASS",
+  "bundled_route_contract": "PASS; rate-limit store stubbed only, actual PostgreSQL authentication verified separately",
+  "synthetic_lifecycles": 15,
+  "lifecycles_evidence": "container-lifecycles.json",
+  "financial_clone_evidence": "financial-restore.json",
+  "production_containers_built_or_restarted": false
+}

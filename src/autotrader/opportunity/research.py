@@ -30,10 +30,16 @@ def prepare_panel(frames: dict[datetime, list[Candle]], features: dict[datetime,
             f = enrich(f, history, available, cached_context=prior[1] if prior and prior[0] == bucket else None)
             cache[candle.symbol] = bucket, f.metadata['successor_context']
             patterns = {}
-            eligible_for_confirmation = candle.close > candle.open and f.metadata['successor_context']['15m']['ready'] and f.atr and f.ema_21 and (candle.close - f.ema_21) / f.atr <= 2
-            for width, volume, age in (variants if eligible_for_confirmation else ()):
-                state = replay(history[-120:], compression_width=width, volume_ratio=volume, retest_bars=age)
-                if state.stage == 'CONFIRMED':
-                    patterns[':'.join((str(width), str(volume), str(age)))] = state.payload()
+            candidate_context = f.metadata['successor_context']['15m']['ready'] and f.atr and f.ema_21 and (candle.close-f.ema_21)/f.atr <= 2
+            for width, volume, age in (variants if candidate_context else ()):
+                for hold in (0,2):
+                    if hold==0 and candle.close <= candle.open:
+                        continue
+                    state = replay(history[-120:], compression_width=width, volume_ratio=volume, retest_bars=age, hold_bars=hold)
+                    if state.stage == 'CONFIRMED':
+                        key = ':'.join((str(width),str(volume),str(age)))
+                        patterns[key+':'+str(hold)] = state.payload()
+                        if hold==0:
+                            patterns[key] = state.payload()
             f.metadata['successor_patterns'] = patterns
             features[available][candle.symbol] = f

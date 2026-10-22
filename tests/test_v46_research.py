@@ -37,12 +37,13 @@ def test_successor_research_prefix_is_causal_and_limit_watches_can_expire():
     assert not [f for f in conditional['fills'] if f['side']=='BUY']
 
 
-def test_v46_activation_evidence_is_source_bound_and_does_not_authorize_deployment(tmp_path):
+@pytest.mark.parametrize('version,folder_name',[('4.6.0','v4_6'),('4.6.0rc2','v4_6_rc2')])
+def test_v46_activation_evidence_is_source_bound_and_does_not_authorize_deployment(tmp_path,version,folder_name):
     spec=importlib.util.spec_from_file_location('release_v46',Path('deploy/release.py'))
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
-    (tmp_path/'pyproject.toml').write_text('[project]\nversion="4.6.0"\n')
+    (tmp_path/'pyproject.toml').write_text('[project]\nversion="'+version+'"\n')
     source=tmp_path/'src/autotrader';source.mkdir(parents=True);(source/'__init__.py').write_text('VERSION="synthetic"\n')
-    folder=tmp_path/'docs/evidence/v4_6';folder.mkdir(parents=True)
+    folder=tmp_path/'docs/evidence'/folder_name;folder.mkdir(parents=True)
     evidence={}
     for name in ('tests.json','runtime-compatibility.json','container-tests.json','financial-restore.json'):
         path=folder/name;path.write_text('{"status":"PASS"}');evidence[name]=module.digest(path.read_bytes())

@@ -120,14 +120,18 @@ async def main():
                     elif generation == 'v44':
                         await runtime.frozen_v44().close()
                     runtime = ShadowRuntime(lab, feed, RiskEngine(RiskLimits()), 'container-' + generation)
-                    stop = experimental_frame('container-stop', D(127))
+                    # Exercise the recorded protection rather than assuming every
+                    # strategy uses the same fixed stop distance.
+                    assert position.protective_stop > 0
+                    stop_bid = min(D(127), position.protective_stop - D(1))
+                    stop = experimental_frame('container-stop', stop_bid)
                     if strategy.startswith(('E2', 'E3')):
                         stop['pairs'].append(observation['pairs'][-1])
                         stop['markets']['SOL-EUR'] = copy.deepcopy(stop['markets']['BTC-EUR'])
                     write_frame(path, stop)
                     client.refresh()
                     await runtime.monitor()
-                    assert (await repo.list_positions())[0].quantity == 0
+                    assert (await repo.list_positions())[0].quantity == 0, (generation, strategy, stop_bid, position.protective_stop)
                     assert len(await repo.list_fills()) == 2
                     assert await repo.verify_invariants(D(500)) == []
                     assert (await lab.scope(record['experiment_id'])).manifest == manifest

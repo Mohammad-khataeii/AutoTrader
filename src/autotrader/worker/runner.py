@@ -148,7 +148,9 @@ async def main() -> None:
     from autotrader.opportunity.service import OpportunityObserver
     opportunity_observer = OpportunityObserver(repository, market_data,
         extra_pairs=settings.successor_discovery_extra_pairs, fee_bps=settings.default_fee_bps,
-        slippage_bps=settings.default_slippage_bps)
+        slippage_bps=settings.default_slippage_bps, evaluation_grace_seconds=settings.worker_scan_interval_seconds+30,
+        detail_time_budget_seconds=settings.successor_discovery_time_budget_seconds,
+        request_budget=settings.successor_discovery_request_budget, research_quote_eur=settings.successor_research_quote_eur)
     await repository.recover_pending_orders()
     await repository.reconcile_runtime_health(settings.initial_cash_eur)
     await repository.worker_heartbeat(key='worker_instance')
@@ -241,7 +243,7 @@ async def main() -> None:
                 # New research discovery cannot delay the historical entry path.
                 # Protective monitoring remains independent and has HTTP priority.
                 try:
-                    extra_candidates = await opportunity_observer.observe(result.candidates)
+                    extra_candidates = await opportunity_observer.observe(result.candidates, scan_errors=result.provider_errors)
                     if shadow_runtime and extra_candidates:
                         await shadow_runtime.scan([*result.candidates, *extra_candidates], successors_only=True)
                 except Exception as exc:

@@ -15,9 +15,13 @@ def successor_frame(strategy):
         for market in frame['markets'].values():
             for c in market['candles']:
                 close = D(c['close']);c.update(high=str(close+D('.8')),low=str(close-D('.8')))
+            # Prior higher-horizon movement supports the target; the latest
+            # twenty-bar compression remains tight and causally observable.
+            for candle in market['candles'][-45:-25]:
+                close = D(candle['close']);candle.update(high=str(close+D(4)),low=str(close-D(4)))
             market['candles'][-4].update(open='129',close='130.5',high='130.6',low='128.8',volume='3000')
             market['candles'][-3].update(open='130.6',close='130.4',high='130.7',low='130.2',volume='1000')
-            market['candles'][-2].update(open='130.5',close='130.3',high='130.6',low='130.1',volume='1000')
+            market['candles'][-2].update(open='130.5',close='130.3',high='130.6',low='129',volume='1000')
             market['candles'][-1].update(open='130.3',close='130.5',high='130.8',low='129',volume='1600')
     elif strategy.startswith('E3'):
         frame['pairs'].append({**frame['pairs'][0],'symbol':'SOL-EUR','base_asset':'SOL'})

@@ -1,8 +1,8 @@
-# Personal Plan — V4.6 release candidate
+# Personal Plan — V4.6 RC2
 
-V4.6 release candidate: [implementation, measured comparisons and limits](docs/V4_6_RELEASE.md). Stage A only; deployment requires separate approval of the exact release commit.
+V4.6 RC2: [engineering report, measured research and limitations](docs/V4_6_RC2_RELEASE.md) · [prepared deployment and rollback guide](docs/V4_6_RC2_DEPLOYMENT.md). Stage A only. Current production access and fresh backup verification are blocked; deployment also requires separate approval of the exact release commit. The [RC1 report](docs/V4_6_RELEASE.md) remains immutable historical evidence.
 
-V4.6 adds multidimensional regimes, cost-aware A3/B3/E3 research, bounded EUR discovery and six primary dashboard views. Source-pinned V4.2/V4.4 runners and all eight historical experiment identities remain intact. Flat paused/stopped accounts can be archived through the existing explicit controls; no account is created or promoted automatically. Prior [V4.4 evidence](docs/V4_4_RELEASE_REPORT.md) and the [deployment/rollback workflow](docs/V4_4_DEPLOYMENT_AND_ROLLBACK.md) remain available.
+V4.6 adds multidimensional regimes, cost-aware A3/B3/E3 research, adaptive budgeted EUR discovery and seven navigation destinations. Source-pinned V4.2/V4.4 runners and all eight historical experiment identities remain intact. Flat paused/stopped accounts can be archived through the existing explicit controls; no account is created or promoted automatically. Prior [V4.4 evidence](docs/V4_4_RELEASE_REPORT.md) and the [deployment/rollback workflow](docs/V4_4_DEPLOYMENT_AND_ROLLBACK.md) remain available.
 
 An autonomous EUR500 **paper-trading research platform** using public Revolut X observations, FastAPI, React and authoritative PostgreSQL accounting. The existing journal, realistic bid/ask execution, partial targets, protective stops, reservations and recovery remain intact. Real-money trading stays disabled. AI defaults to mock with persistent30/day,6/rolling-hour and USD10/month paid-mode limits.
 
@@ -50,7 +50,7 @@ The financial lifecycle uses real PostgreSQL/API/worker/broker components with d
 
 ```sh
 # Only after tests, clean commits, push and immutable tag verification:
-python deploy/release.py prepare --ref v4.4.0 --output .tools/releases/v4.4.0
+python deploy/release.py prepare --ref v4.6.0-rc.2 --output .tools/releases/v4.6.0-rc.2
 ```
 
 The archive/manifest identify the exact Git commit and every released source hash, excluding secrets and runtime data. Production source operations require that manifest plus the approved full commit. **Stop after Stage A and obtain explicit approval.** Then follow the [V4.4 deployment and rollback plan](docs/V4_4_DEPLOYMENT_AND_ROLLBACK.md). Keep Compose project `autotrader-v41`; preserve Nginx/TLS, all financial volumes/backups and unrelated apps. ARM64 local tests do not replace verification of the LinuxAMD64 deployment build.

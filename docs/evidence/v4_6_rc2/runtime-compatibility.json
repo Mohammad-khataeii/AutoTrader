@@ -1,0 +1,73 @@
+{
+  "status": "PASS",
+  "v42_files_verified": 71,
+  "v44_files_verified": 76,
+  "v42_source": "9f03f481049165cba9b54082d6f45f6e06e76d4b0a1625832b5f8434f8ace23a",
+  "v44_execution": "34ebd92039f48f786fe6bdf1d2f55a3c8430490ef6b4b7e6d129217000ee5890",
+  "candidate_execution": "d7a2770b42c9a7b31daf91b438afd5ccc830c08c213415d45cf5a1a9f43c5ec5",
+  "current_production_identity_count": null,
+  "production_observation": "../v4_6/production-observation.json",
+  "restore_proof": "financial-restore.json",
+  "research_math_matches_executed_snapshot": true,
+  "executed_research_source_differences": [
+    "api/v46.py"
+  ],
+  "difference_scope": "API summary serialization and fingerprint selection only; all final financial/research calculation files match corrected executed snapshot.",
+  "new_accounts_created_on_production": false,
+  "original_manifests_modified": false,
+  "original_eight_manifest_comparison": [
+    {
+      "experiment_id": "2f12b0257a3b453a8e2a61ab695d8146",
+      "manifest_hash": "8dc0b0560b110277214f4491c5e63ecb40e30c5680255a170ea13a257b515927",
+      "matches_previous_release": true,
+      "archive_unchanged": true
+    },
+    {
+      "experiment_id": "39cddc6d7e584a369ce223945f06e629",
+      "manifest_hash": "cd088d4951a2dcb50b85fbd28b09fd40fc7fa92283873c81d84b5af42fa0e799",
+      "matches_previous_release": true,
+      "archive_unchanged": true
+    },
+    {
+      "experiment_id": "40f3f37036f848d0a417b06b6a6fc201",
+      "manifest_hash": "dfd924ca4a65319f13527ccc31f1e8a155a33ac70bb58cdb6383c285eeb116a6",
+      "matches_previous_release": true,
+      "archive_unchanged": true
+    },
+    {
+      "experiment_id": "52746de1116e4852b61cb16988917545",
+      "manifest_hash": "cdaf4e5cd875ab1639db5436ab3460b6289d838f5ad578ae01664c05f0832651",
+      "matches_previous_release": true,
+      "archive_unchanged": true
+    },
+    {
+      "experiment_id": "9b18cabcc94c45fe84a59917226ebb58",
+      "manifest_hash": "40145fb5d355888da29b8495608d8e280e163cc77113217e30d61d92420e012a",
+      "matches_previous_release": true,
+      "archive_unchanged": true
+    },
+    {
+      "experiment_id": "b97173b5abec41208c8541015d30003c",
+      "manifest_hash": "5c99b88c763f420fe033481d7ec92c4ed3b2f04e9e60e9f35999ea28e1f624af",
+      "matches_previous_release": true,
+      "archive_unchanged": true
+    },
+    {
+      "experiment_id": "baac318a9797469c8f3693c042eb2855",
+      "manifest_hash": "5d391ec5170a08dd60feddc1ce0381abc9d0b8885222c60f50cc23af42c82f4e",
+      "matches_previous_release": true,
+      "archive_unchanged": true
+    },
+    {
+      "experiment_id": "dc1edd63598e4caeb476864bee8851e3",
+      "manifest_hash": "3d9db0caede98736082f7215e7be25e55f0115ada5d3d10999ac343327b239a9",
+      "matches_previous_release": true,
+      "archive_unchanged": true
+    }
+  ],
+  "application_source_fingerprint": "0b437d055815ae1d783e527c1d431259b590b2909e87c682fe335c7c19366950",
+  "production_inventory_date": "2026-10-19",
+  "retained_production_identity_count": 8,
+  "current_production_inventory_verified": false,
+  "fresh_production_diagnostics": "production-access.json"
+}

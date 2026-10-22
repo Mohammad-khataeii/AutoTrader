@@ -30,7 +30,10 @@ class Settings(BaseSettings):
     market_data_timeout_seconds: Decimal = Decimal("8")
     market_data_max_staleness_seconds: int = 90
     scanner_max_pairs: int = 8
-    successor_discovery_extra_pairs: int = Field(default=3, ge=0, le=6)
+    successor_discovery_extra_pairs: int = Field(default=6, ge=0, le=20)
+    successor_discovery_time_budget_seconds: int = Field(default=12, ge=1, le=60)
+    successor_discovery_request_budget: int = Field(default=16, ge=2, le=120)
+    successor_research_quote_eur: Decimal = Field(default=Decimal(75), gt=0, le=10000)
     worker_scan_interval_seconds: int = 60
     worker_position_interval_seconds: int = Field(default=5,ge=1,le=60)
     worker_max_entries_per_cycle: int = 3

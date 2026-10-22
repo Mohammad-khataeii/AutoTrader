@@ -1,0 +1,31 @@
+{
+  "recommendation": "BLOCKED",
+  "engineering_status": "PASS",
+  "scope": "Locally verified engineering candidate only; production activation blocked.",
+  "application_source_fingerprint": "0b437d055815ae1d783e527c1d431259b590b2909e87c682fe335c7c19366950",
+  "engineering_evidence": {
+    "tests.json": "1f42b9ae0d8fd1092cfb5b2bcfa4525723a621bd59ce77d1c765782360a189f1",
+    "runtime-compatibility.json": "ebd26c6b2b4ba710589ce90d19c67f144b46f968791378f1384244c2364e3a7c",
+    "container-tests.json": "569b38401964e35156aea2b23dd2b4b768457e1eb02ff605789e94f83f430d1c",
+    "financial-restore.json": "77cb52602a3b5ff784fb7bf1edeaf96cfd1563f95bd8f34637187902ef513af6"
+  },
+  "deployment_authorized": false,
+  "production_changed": false,
+  "live_money_enabled": false,
+  "research_status": "NO_SUCCESSOR_PASSED_VALIDATION",
+  "holdout_untouched": false,
+  "blocking_reasons": [
+    "Fresh read-only production inventory failed SSH authentication October 22",
+    "Fresh production backup/restore and protection verification unavailable",
+    "Separate exact-commit user approval required"
+  ],
+  "retained_backup_date": "2026-10-19",
+  "activation_requires_new_verified_release_evidence": true,
+  "stage_b_requires": [
+    "New committed source-bound readiness evidence after missing verification",
+    "Separate approval of that full immutable release commit",
+    "Fresh nine-database backup and isolated restore",
+    "Scoped exact-manifest deployment, reconciliation and protection verification"
+  ],
+  "historical_and_research_limits": "V4_6_RC2_RELEASE.md; initial and corrected studies retained; no profitability or forward-window claim"
+}

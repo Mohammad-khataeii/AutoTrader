@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "report_sha256": "f0b893df24649c1c1202c15afa4ca38afd096605826086a52747d55b70e69efa",
+  "full_research_body_bytes": 581304,
+  "summary_body_bytes": 17365,
+  "reduction_percent": 97.01,
+  "full_details_available_on_request": true,
+  "method": "Actual JSONResponse serialization of final corrected report; headers/compression excluded"
+}

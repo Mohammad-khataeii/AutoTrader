@@ -38,19 +38,23 @@ class DecisionEngine:
             return self._reject(pair.symbol, signals, ai_assessment, "No valid entry price.", DecisionAction.WAIT)
 
         atr = features.atr or (entry_price * Decimal("0.02"))
-        v4_signals = [signal for signal in signals if signal.evidence.get("strategy_version") in {"4.0.0", "4.2.0-experimental.1", "4.6.0-experimental.1"}]
+        v4_signals = [signal for signal in signals if signal.evidence.get("strategy_version") in {"4.0.0", "4.2.0-experimental.1", "4.6.0-experimental.1", "4.6.0-experimental.2"}]
         eligible_v4 = [s for s in v4_signals if s.evidence.get('entry_eligible')]
         primary = min(eligible_v4,key=lambda s:(-s.score,s.strategy_id)) if eligible_v4 else (v4_signals[0] if v4_signals else None)
         parameters = primary.evidence.get("parameters", {}) if primary else {}
         stop_atr = Decimal(parameters.get("stop_atr", "1.5"))
         target_atr = Decimal(parameters.get("target_atr", "1"))
         stop_loss = quantize_down(max(entry_price - (atr * stop_atr), Decimal("0")), pair.price_step)
-        successor_plan = primary.evidence.get('entry_plan') if primary and primary.evidence.get('strategy_version') == '4.6.0-experimental.1' else None
+        successor_plan = primary.evidence.get('entry_plan') if primary and primary.evidence.get('strategy_version') in {'4.6.0-experimental.1', '4.6.0-experimental.2'} else None
         if successor_plan:
             stop_loss = Decimal(successor_plan['stop'])
         quote_amount = min(self.default_quote_amount, Decimal("100"))
         if v4_signals and 0 < stop_loss < entry_price:
             quote_amount = min(quote_amount, Decimal(5) / ((entry_price - stop_loss) / entry_price + Decimal(".005")))
+        if primary and primary.evidence.get('strategy_version') == '4.6.0-experimental.2':
+            proposed = primary.evidence.get('sizing', {}).get('quote_budget_eur')
+            if proposed is not None:
+                quote_amount = min(Decimal(100), Decimal(proposed), Decimal(5)/((entry_price-stop_loss)/entry_price+Decimal('.005'))) if 0<stop_loss<entry_price else Decimal(0)
         # Size with a conservative execution-cost cushion so market orders do not rely on
         # spending more than the capital reserved by the risk engine.
         execution_buffer = Decimal("1.005")

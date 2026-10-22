@@ -7,6 +7,7 @@ from typing import Any
 from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlalchemy import func, select
 
+from autotrader.opportunity.status import qualification
 from autotrader.persistence import models as m
 from autotrader.shadow import views
 from autotrader.shadow.gates import aggregate
@@ -41,6 +42,7 @@ def install(app: FastAPI, repository: Any, lab: Any, require_user: Any) -> None:
             traces = {r.key: json.loads(r.payload_json) for r in trace_rows}
             order_rows = (await session.scalars(select(m.OrderModel).where(
                 m.OrderModel.decision_id.in_([r['decision_id'] for r in page['items']])).order_by(m.OrderModel.created_at.desc()).limit(500))).all()
+            filled_orders = set((await session.scalars(select(m.FillModel.order_id).where(m.FillModel.order_id.in_([o.order_id for o in order_rows])))).all())
             incident_rows = (await session.scalars(select(m.SystemStateModel).where(
                 m.SystemStateModel.key.in_(['shadow_runtime_incident', 'execution_trace_health']),
                 m.SystemStateModel.state == 'ERROR'))).all()
@@ -58,6 +60,13 @@ def install(app: FastAPI, repository: Any, lab: Any, require_user: Any) -> None:
                 advice = allocations[decision['decision_id']]
                 row['allocation'] = {'reached': True, 'accepted': advice['accepted'], 'reason': advice.get('reasons')}
             decision['recorded_order_outcomes'] = [{'order_id': o.order_id, 'status': o.status, 'reason': json.loads(o.execution_json).get('rejection_reason'), 'created_at': o.created_at.isoformat(), 'evidence': 'DURABLE_ORDER_RECORD'} for o in order_rows if o.decision_id == decision['decision_id']]
+            matching_orders = [o for o in order_rows if o.decision_id == decision['decision_id']]
+            decision['order_evidence_status'] = 'RECORDED_ORDER' if matching_orders else 'ACCEPTED_WITHOUT_RECORDED_ORDER' if decision['accepted'] and decision['action']=='BUY' else 'NOT_REACHED_OR_NOT_RECORDED'
+            if row.get('opportunity'):
+                decision['qualification_state'] = qualification(row['opportunity'],
+                    fill_count=sum(o.order_id in filled_orders for o in matching_orders),
+                    execution_rejected=any(o.status=='REJECTED' for o in matching_orders) or row.get('allocation',{}).get('accepted') is False or bool(row['opportunity'].get('entry_eligible') and not decision['accepted']),
+                    paper_admission_verified=any(o.status in {'ACCEPTED','PARTIALLY_FILLED','FILLED'} for o in matching_orders))
             decision['explanation'] = row
             complete_trace = traces.get(trace_key(decision['decision_id']))
             decision['execution_trace'] = {**complete_trace, 'events': dict(list(complete_trace['events'].items())[:20]), 'total_events': len(complete_trace['events']), 'more_events': len(complete_trace['events']) > 20} if complete_trace else None

@@ -46,5 +46,8 @@ def enrich(f: MarketFeatures, candles: list[Candle], as_of: datetime, *, cached_
             "atr": str(sum(ranges, D(0)) / len(ranges)) if ready and ranges else None,
             "resistance": str(max(c.high for _, cs in complete[-20:] for c in cs)) if ready else None}
     metadata["successor_context"] = context
+    metadata["swing_low_5"] = str(min(c.low for c in closed[-5:]))
+    metadata["prior_high_20"] = str(max(c.high for c in closed[-21:-1])) if len(closed)>20 else None
+    metadata["previous_ema9_reclaim"] = bool(f.ema_9 and closed[-2].close <= f.ema_9 <= closed[-1].close) if len(closed)>1 else False
     metadata["last_open"] = str(closed[-1].open)
     return replace(f, metadata=metadata)

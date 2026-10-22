@@ -1,3 +1,4 @@
+import { personalText } from "./presentation";
 import { ResourceState, Technical } from "./ui";
 import { useResource } from "./api";
 import React, { useState } from "react";
@@ -20,7 +21,7 @@ function Table({ rows, fields }: { rows: Row[]; fields: string[] }) {
         <thead>
           <tr>
             {fields.map((f) => (
-              <th key={f}>{f.replace(/_/g, " ")}</th>
+              <th key={f}>{({trades: "Closed positions", closed_trades: "Closed positions", fills_count: "Execution fills"} as Record<string,string>)[f] ?? f.replace(/_/g, " ")}</th>
             ))}
           </tr>
         </thead>
@@ -32,7 +33,7 @@ function Table({ rows, fields }: { rows: Row[]; fields: string[] }) {
                   {typeof r[f] === "object" ? (
                     <Technical value={r[f]} label="View evidence" />
                   ) : (
-                    String(r[f] ?? "Unavailable")
+                    personalText(r[f] ?? "Unavailable")
                   )}
                 </td>
               ))}

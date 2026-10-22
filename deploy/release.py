@@ -43,8 +43,9 @@ def verify_release_preflight(root: Path) -> dict:
     """Production activation requires reviewed, source-bound engineering evidence."""
     import tomllib
     version_file = root / 'pyproject.toml'
-    v46 = version_file.exists() and tomllib.loads(version_file.read_text()).get('project', {}).get('version', '').startswith('4.6.')
-    folder = root / ('docs/evidence/v4_6' if v46 else 'docs/evidence/v4_5_rc2')
+    version = tomllib.loads(version_file.read_text()).get('project', {}).get('version', '') if version_file.exists() else ''
+    v46 = version.startswith('4.6.')
+    folder = root / ('docs/evidence/v4_6_rc2' if 'rc2' in version else 'docs/evidence/v4_6' if v46 else 'docs/evidence/v4_5_rc2')
     readiness = json.loads((folder/'deployment-readiness.json').read_bytes())
     required = {'backend-tests.json', 'frontend-tests.json', 'amd64-container-tests.json',
                 'eight-account-manifest-verification.json', 'v42-runtime-parity.json',

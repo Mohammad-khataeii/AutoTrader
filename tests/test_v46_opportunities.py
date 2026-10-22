@@ -26,6 +26,7 @@ def setup_observation():
         'last_close': '100.3', 'previous_close': '99.7', 'last_open': '99.9', 'last_low': '99.5',
         'liquidity_quote': '200000', 'order_book_age_seconds': '0', 'history_contiguous': True,
         'return_20': '.05', 'return_60': '.08', 'return_volatility_20': '.001',
+        'recent_returns': ['.001','.002','.003','.004','.005']*4,
         'successor_context': {'15m': {'ready': True, 'bull': True, 'atr': '2'}, '60m': {'ready': True, 'bull': True}}},
         ema_9=D(100), ema_21=D('99.9'), ema_50=D(99), atr=D(1),
         bollinger_upper=D(101), bollinger_lower=D(99), bollinger_mid=D(100), relative_volume=D('1.6'), spread_bps=D(1))
