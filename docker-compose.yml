@@ -28,6 +28,7 @@ x-runtime: &runtime
     RESEARCH_ROOT: /app/research
     ALLOCATION_PROFILE: ${ALLOCATION_PROFILE:-balanced}
     SHADOW_ENABLED: ${SHADOW_ENABLED:-true}
+    PERSONAL_PAPER_ENABLED: ${PERSONAL_PAPER_ENABLED:-false}
     APPROVED_STRATEGY_IDS: ${APPROVED_STRATEGY_IDS:-}
   volumes: [research-data:/app/research:ro, reports:/app/reports]
   restart: unless-stopped

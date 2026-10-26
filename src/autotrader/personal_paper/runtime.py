@@ -1,0 +1,171 @@
+"""Rank causal candidates, reserve shared capital, submit durable virtual orders."""
+from __future__ import annotations
+
+from collections import Counter
+from dataclasses import replace
+from decimal import Decimal
+from typing import Any
+
+from autotrader.domain import DecisionAction, TradingDecision, quantize_down, utc_now
+from autotrader.execution_gateway import PaperExecutionGateway
+from autotrader.opportunity.engine import SuccessorOpportunityEngine, SuccessorParameters
+from autotrader.opportunity.features import enrich
+from autotrader.opportunity.runtime import restore_decision, restore_signal
+from autotrader.persistence.models import (
+    StrategySignalModel,
+    SystemStateModel,
+    TradingDecisionModel,
+)
+from autotrader.persistence.repository import _json
+from autotrader.personal_paper.policy import INITIAL, LIMITS, fingerprint
+from autotrader.personal_paper.service import PersonalPaperService
+from autotrader.portfolio import Portfolio
+from autotrader.position_manager import PositionManager
+from autotrader.research.data import canonical, digest
+from autotrader.risk import RiskEngine
+
+D = Decimal
+
+
+class PersonalPaperRuntime:
+    def __init__(self, service: PersonalPaperService, market: Any, owner: str):
+        self.service, self.market, self.owner = service, market, owner
+
+    def gateway(self, repo: Any) -> PaperExecutionGateway:
+        return PaperExecutionGateway(repo, market_data=self.market, risk_engine=RiskEngine(LIMITS),
+            initial_cash=INITIAL, fee_bps=D(repo.manifest['fee_bps']), slippage_bps=D(repo.manifest['slippage_bps']))
+
+    async def renew(self) -> None:
+        repo = await self.service.repository()
+        if repo:
+            await repo.claim_coordinator(self.owner)
+
+    async def monitor(self) -> None:
+        repo = await self.service.repository()
+        if not repo or not await repo.claim_coordinator(self.owner):
+            return
+        await repo.recover_pending_orders()
+        await PositionManager(repository=repo, market_data=self.market, execution_gateway=self.gateway(repo)).monitor_once()
+        await repo.snapshot()
+        await repo.worker_heartbeat(key='position_monitor')
+
+    async def scan(self, candidates: list[Any]) -> None:
+        repo = await self.service.repository()
+        if not repo or not await repo.claim_coordinator(self.owner):
+            return
+        if repo.manifest['runtime_fingerprint'] != fingerprint():
+            await repo.operation_state('ENTRY_SUSPENDED', 'paper_frozen_runtime_changed_new_experiment_required')
+            return
+        prepared, failures = [], []
+        for candidate in {c.market.pair.symbol: c for c in candidates}.values():
+            market = candidate.market
+            if market.pair.quote_asset != 'EUR' or not market.usable_for_entry:
+                failures.append({'symbol': market.pair.symbol, 'reason': 'invalid_or_unsupported_market'})
+                continue
+            if repo.manifest['data_kind'] != 'SYNTHETIC_ACCEPTANCE' and (
+                not market.order_book.source.startswith('revolut-x') or any(not c.source.startswith('revolut-x') for c in market.candles)):
+                raise ValueError('prospective_paper_rejects_synthetic_observations')
+            try:
+                f = enrich(candidate.features, market.candles, market.order_book.timestamp)
+            except ValueError as exc:
+                failures.append({'symbol': market.pair.symbol, 'reason': str(exc)})
+                continue
+            f.metadata.update(best_bid=market.order_book.best_bid, best_ask=market.order_book.best_ask,
+                last_price=market.metrics.mid, liquidity_quote=market.metrics.liquidity_quote,
+                order_book_age_seconds=market.metrics.age_seconds)
+            if int(f.timestamp.timestamp())+300 < int(utc_now().timestamp())//300*300:
+                f.metadata['completed_context_delayed'] = True
+            prepared.append(replace(candidate, features=f))
+        context = {c.features.symbol: c.features for c in prepared}
+        ranked = []
+        blockers: Counter[str] = Counter()
+        all_rows = []
+        snapshot = await repo.snapshot()
+        for candidate in prepared:
+            for identity, spec in repo.manifest['strategies'].items():
+                engine = SuccessorOpportunityEngine(SuccessorParameters.from_payload(spec['parameters']), D(repo.manifest['fee_bps']), D(repo.manifest['slippage_bps']))
+                signal = engine.evaluate(identity, candidate.features, candidate.market.pair, candidate.market.order_book,
+                    context.get('BTC-EUR'), context.get('ETH-EUR'), candidate.market.candles, quote_budget=LIMITS.max_position_size,
+                    sizing_scope='SHARED_7000_ACCOUNT', sizing_context={'cash': D(snapshot['available_cash']),
+                        'exposure': D(snapshot['open_exposure'] or 0), 'limits': LIMITS})
+                signal.evidence['paper_manifest'] = digest(canonical(repo.manifest))
+                signal.evidence['execution_profile'] = repo.manifest['version']
+                signal = replace(signal, signal_id='sig_'+digest((signal.signal_id+signal.evidence['paper_manifest']).encode())[:40])
+                # Same signal hypothesis and frozen parameters; this financial
+                # experiment has its own source, account and evidence identity.
+                blockers.update(signal.evidence.get('reasons', []))
+                row = {'strategy_id': identity, 'symbol': signal.symbol, 'score': str(signal.score),
+                    'technical': signal.evidence['technical_eligible'], 'economic': signal.evidence['economic_eligible'],
+                    'reasons': signal.evidence['reasons'], 'economics': signal.evidence.get('economics'),
+                    'as_of': signal.timestamp.isoformat(), 'execution': 'NOT_ELIGIBLE'}
+                all_rows.append(row)
+                ranked.append((candidate, signal, row))
+        # Economic qualification dominates ranking. No short-sample P&L chasing.
+        ranked.sort(key=lambda v: (not v[1].evidence['entry_eligible'], -v[1].score, v[1].symbol, v[1].strategy_id))
+        outcomes = []
+        selected_symbols: set[str] = set()
+        for candidate, signal, row in ranked:
+            market, f = candidate.market, candidate.features
+            identity = 'paper_'+digest((signal.signal_id+digest(canonical(repo.manifest))).encode())[:48]
+            key = 'paper_done:'+digest(identity.encode())[:40]
+            async with repo.session_factory() as session:
+                done = await session.get(SystemStateModel, key)
+                stored = await session.get(TradingDecisionModel, identity)
+                original = await session.get(StrategySignalModel, signal.signal_id) if stored else None
+            if done:
+                row['execution'] = 'ALREADY_EVALUATED'
+                continue
+            await repo.record_mark(market.order_book)
+            current = await repo.snapshot()
+            portfolio = Portfolio(D(current['available_cash']))
+            portfolio.positions = {p.symbol: p for p in await repo.list_positions() if p.closed_at is None and p.quantity>0}
+            plan = signal.evidence['entry_plan']
+            quote = D(signal.evidence.get('sizing', {}).get('quote_budget_eur', '0'))
+            stop = D(plan['stop'])
+            ask = market.order_book.best_ask
+            assert ask is not None
+            risk = RiskEngine(LIMITS).evaluate_entry(portfolio, market.pair, quote, ask, stop, 0,
+                D(current['daily_equity_change'] or 0), D(current['weekly_equity_change'] or 0))
+            accepted = signal.evidence['entry_eligible'] and risk.accepted and signal.symbol not in selected_symbols
+            reason = ','.join(signal.evidence['reasons'] or risk.reasons) if not accepted else None
+            if signal.symbol in selected_symbols:
+                reason = 'redundant_strategy_same_asset'
+            decision = TradingDecision(identity, signal.symbol, utc_now(), DecisionAction.BUY if accepted else DecisionAction.WAIT,
+                [signal.signal_id], None, quote, quantize_down(quote/(ask*D('1.005')), market.pair.quantity_step),
+                ask, stop, (D(plan['targets'][0]), D(plan['targets'][1]), D(plan['targets'][2])) if len(plan['targets'])==3 else (), accepted, reason,
+                'Shared capital rank; unvalidated paper hypothesis; '+(reason or 'eligible_for_locked_financial_admission'))
+            if stored and original:
+                decision, signal = restore_decision(stored.payload_json), restore_signal(original.payload_json)
+            f.metadata['regime_assessment'] = {'regime': 'BEAR' if signal.evidence.get('regime')=='BEARISH' else signal.evidence.get('regime')}
+            await repo.store_market_analysis(market.candles, f, market.order_book)
+            await repo.store_analysis([signal], None, decision)
+            if decision.accepted:
+                result = await self.gateway(repo).execute_entry_decision(market.pair, decision, market.order_book, identity)
+                row['execution'] = result.reason
+                outcomes.append({'strategy_id': signal.strategy_id, 'symbol': signal.symbol,
+                    'accepted': result.accepted, 'reason': result.reason, 'order_id': result.order.order_id if result.order else None})
+                if result.accepted:
+                    selected_symbols.add(signal.symbol)
+                else:
+                    blockers.update([result.reason])
+            elif reason:
+                row['execution'] = reason
+            async with repo.session_factory() as session, session.begin():
+                await repo._lock_account(session)
+                if not await session.get(SystemStateModel, key):
+                    session.add(SystemStateModel(key=key, state='COMPLETED', reason='decision_and_gateway_durable', payload_json=_json({'decision_id': identity})))
+        payload = {'observed_at': utc_now().isoformat(), 'markets': [c.features.symbol for c in prepared],
+            'strategies_evaluated': len(ranked), 'rows': all_rows, 'blockers': dict(blockers.most_common()),
+            'data_failures': failures, 'execution_outcomes': outcomes,
+            'research_action': 'Compare costs, regimes and chronological holdouts; retain losses; active parameters remain frozen.'}
+        async with repo.session_factory() as session, session.begin():
+            await repo._lock_account(session)
+            state = await session.get(SystemStateModel, 'paper_scan')
+            if state:
+                state.payload_json, state.updated_at = _json(payload), utc_now()
+            else:
+                session.add(SystemStateModel(key='paper_scan', state='PAPER_EXPERIMENTAL_ACTIVE', reason='shared_strategy_coordinator', payload_json=_json(payload)))
+        from autotrader.personal_paper.review import review_once
+        await review_once(repo)
+        await repo.worker_heartbeat()
+        await repo.reconcile_runtime_health(INITIAL)

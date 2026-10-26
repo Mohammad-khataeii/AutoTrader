@@ -1,0 +1,217 @@
+{
+  "schema": "v47-fixed-research/1",
+  "evidence_category": "HISTORICAL_PROXY_RESEARCH",
+  "source_fingerprint": "56a6910fa39e8c374f73e9343366fed8b93a1fc488ebaf921fff6640a6702062",
+  "retuning": false,
+  "timeframes": [
+    "5m",
+    "15m",
+    "1h",
+    "4h"
+  ],
+  "primary_5m_days": 21,
+  "chronological_splits": [
+    0.6,
+    0.2,
+    0.2
+  ],
+  "purge_bars": 144,
+  "reused_test_data": true,
+  "multiple_testing": "Descriptive panel; no winner promotion or independent significance claim.",
+  "execution": "Existing EUR500 research simulator. Not a backtest of EUR7000 portfolio allocation.",
+  "costs": {
+    "fee_bps": "10",
+    "slippage_bps": "8",
+    "spread_bps": "10"
+  },
+  "dataset_hashes": {
+    "BTC-EUR:1d": "5d24e35663b0d83a9306c4bdeb559078cfe775cdbff5ddd92e789802d6b0d07f",
+    "BTC-EUR:1h": "41089f7858c5d91bdc25ca512f8afce8dfc719d63b05d90dc09b2fe440aa6109",
+    "BTC-EUR:4h": "59b736a3c5a99e8a7bd074cfad9f903fa64a489b5d53fd87833086ef6510d306",
+    "BTC-EUR:1m": "b3cf2c51a992a7ad26fd76505f901bc20c29d84dc44a7cd890e73b1afdd13a51",
+    "BTC-EUR:5m": "4008cf0c1dbb2d891e879e00d77233570de7794b25fab56800ad765de8c0ea83",
+    "BTC-EUR:15m": "f521a05949da4929dcc214c8dc0f9298d572b03b5f272c2413d752b92b377057",
+    "ETH-EUR:1d": "63eb27df0170642a11b8c6f9a22d86beb57a618fceb66631c43a486797b4fb99",
+    "ETH-EUR:1h": "ae89f707677424e1ad1a5fb8162675e472c149622261fb23190f41f578cde460",
+    "ETH-EUR:4h": "9abc61f8df99fec58dcc51163401a5e7547e649fb17a12df268ef5e8fa9f3c75",
+    "ETH-EUR:1m": "745642c5bd96dd10b4c30c721cce18911ed3138df35a8b067d2dd30ef8983f3d",
+    "ETH-EUR:5m": "1948a61fd6080bd45ca181a4d87a8b1b9f5953ce949ac6688d3295b32468b4dc",
+    "ETH-EUR:15m": "dcd28fd1f15783db1b56e45f203948f38cda705d927b4a7bd29e922db982b66c",
+    "SOL-EUR:1d": "66eb8e08a8ded9d72b94154d90ab8a9d9985dbf43ff6222c5b2907f68dfa22ef",
+    "SOL-EUR:1h": "32b739bcf6df4e783888635927007a3814ee37aad870db534c68e22320818454",
+    "SOL-EUR:4h": "3eda4a0ad0bb7212dc6e3fa256fea2e28f281d4756881593d65f85cd0e604e68",
+    "SOL-EUR:1m": "e4eb039c557bfe5bc9254d263bc6e19502f308f0de4323afdfe547afc6f6c9f2",
+    "SOL-EUR:5m": "d9bae3ab490cab4384bf224fd5e3bd47b4b0cab1d5b04784c50135bf78dccda0",
+    "SOL-EUR:15m": "e8191f0fe23fea399092c134b1dd985ff6f47956f5a649581653707883a89e42",
+    "XRP-EUR:1d": "c2f943519bf59de879a0a08d86c09c066ec5b17b86c591005d1c5af87f85e573",
+    "XRP-EUR:1h": "87248df01c36a314f5a68fe05c88d23c81c99ad6e933c650a7c9555164d8a1a7",
+    "XRP-EUR:4h": "b0548d6b528db797407343758b51c82accf646f2ac286a6cf8b8acb90c5db65a",
+    "XRP-EUR:1m": "46539d984f64a45c37793c7c527bf582b997e7550cc1fff71326eb5e110c2de7",
+    "XRP-EUR:5m": "1208ee991d6ff010cd4310ca3ab4716d1dd6e0fbe4bf8728ea3b21c477a5a663",
+    "XRP-EUR:15m": "9346be8d45b1dfc03ff058d050e654d354d70270e77648b4779029252a36b150",
+    "ADA-EUR:1d": "46b1438d6dc4bb0d08d560db704dbd3fc241865f00840ef62a478d4f14887bf2",
+    "ADA-EUR:1h": "a9f985a36922ef5172c59674ddfa17367f5188f06c7a968212659c1360becb6d",
+    "ADA-EUR:4h": "387a2d1f2bd9ccce494f43489ece4a978933d05621cff074d30b2a20624ff87c",
+    "ADA-EUR:1m": "27875bd58b97ef83605678b9108739585822e080b006d4e38fd7a2572f1dc449",
+    "ADA-EUR:5m": "581af73b31e3c02465dc86d2c5d4de943d4064bffe7a07e9dbe1e5e795788313",
+    "ADA-EUR:15m": "50646b44cd83f7878ade782b0690d2b117329572551e9257eeb7585516bb9bf2",
+    "LINK-EUR:1d": "371e2f42958e6f82f083e13364e591b0e7519c6264afeb4c51bfc9c7cbaf7abc",
+    "LINK-EUR:1h": "5bdea45c22ccacdbe6350febf31ceb0e1a9f4bff8b46ac88153a450373ce9086",
+    "LINK-EUR:4h": "8b3c46f729249ebc9e6461fbcb57dac9160402e0b41242064a8641c4b8f45085",
+    "LINK-EUR:1m": "2ea26ca2837da26dcf685ebae6c962aff90461b727a2f5bbd358c93c3c3d3cc1",
+    "LINK-EUR:5m": "d0cb6d621a04727f1171962075ef7e78ed4d99b08d1c4a4f2c4407dbdf4a37e5",
+    "LINK-EUR:15m": "d877901d0bd4292e2156944a35f8868a8a8196fd761d0d8d806cf03b31b8bdef",
+    "AVAX-EUR:1d": "b1db47e52fc1850adec7e6ced1e559904d4613f364c520d166b340cb8ec0bf63",
+    "AVAX-EUR:1h": "e017a8586926e641fe094a15934dcd73b826a75beacc6f8123bdb571ab91f1ed",
+    "AVAX-EUR:4h": "e7d4a46673e86aa49614c70fcf612408945ec10c0200bac3f738f8539b289a68",
+    "AVAX-EUR:1m": "5c944322dfc5c9923123ba4ad97d28430c5be38a8eafa5bdae5b37b0029940d7",
+    "AVAX-EUR:5m": "c17afbf2d0fbb88480914ecd05fc461cd5900283f2f6c9a044cacdc1d0484ae6",
+    "AVAX-EUR:15m": "d0af65d68356c211d57eea82afa0adae243e8820e5e34d7d49e7decdf64e6d30",
+    "DOT-EUR:1d": "279a4fbbbe9bca93eb64394e23cd99983dce15e3318e7f8c5100747cf57d30c2",
+    "DOT-EUR:1h": "2b420d2887ad60886d5be8b71b5df0f4991ff9242c71528765efe4286a6bf8e6",
+    "DOT-EUR:4h": "626104d301f85bf71fc182d92f5f097c14e875d1924f2f84680223d0a9daaddb",
+    "DOT-EUR:1m": "6e9dc353d4d23b6ee79e241c1fd39e7e80937424409cd459ec146344fb413a69",
+    "DOT-EUR:5m": "80704b3d9b3d9e9824f8cb1e02e27eee08702cbf22cd15375682b730da765de7",
+    "DOT-EUR:15m": "b55d3a1003e786043d1d16212daf8e1f2d801d1d8a5e7c39e4f8ab624cae8bb9"
+  },
+  "registry": [
+    {
+      "strategy_id": "A_TREND_PULLBACK",
+      "version": "4.0.0",
+      "filter_only": false,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "B_COMPRESSION_BREAKOUT",
+      "version": "4.0.0",
+      "filter_only": false,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "C_BREAKOUT_RETEST",
+      "version": "4.0.0",
+      "filter_only": false,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "D_VOLUME_ACCUMULATION",
+      "version": "4.0.0",
+      "filter_only": false,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "E_RELATIVE_STRENGTH",
+      "version": "4.0.0",
+      "filter_only": false,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "F_MEAN_REVERSION",
+      "version": "4.0.0",
+      "filter_only": false,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "G_FAILED_BREAKOUT_FILTER",
+      "version": "4.0.0",
+      "filter_only": true,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "H_RISK_OFF_FILTER",
+      "version": "4.0.0",
+      "filter_only": true,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "A2_CONFIRMED_PULLBACK",
+      "version": "4.2.0-experimental.1",
+      "filter_only": false,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "B2_CONFIRMED_COMPRESSION",
+      "version": "4.2.0-experimental.1",
+      "filter_only": false,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "C2_LIQUID_RETEST",
+      "version": "4.2.0-experimental.1",
+      "filter_only": false,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "D2_MOMENTUM_QUALITY",
+      "version": "4.2.0-experimental.1",
+      "filter_only": true,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "E2_ABSOLUTE_RELATIVE_STRENGTH",
+      "version": "4.2.0-experimental.1",
+      "filter_only": false,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "F2_RESTRICTED_RANGE",
+      "version": "4.2.0-experimental.1",
+      "filter_only": false,
+      "primary_paper_selected": false
+    },
+    {
+      "strategy_id": "A3_COST_AWARE_CONTINUATION",
+      "version": "4.6.0-experimental.2",
+      "filter_only": false,
+      "primary_paper_selected": true
+    },
+    {
+      "strategy_id": "B3_STATEFUL_BREAKOUT",
+      "version": "4.6.0-experimental.2",
+      "filter_only": false,
+      "primary_paper_selected": true
+    },
+    {
+      "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+      "version": "4.6.0-experimental.2",
+      "filter_only": false,
+      "primary_paper_selected": true
+    }
+  ],
+  "successor_trials": [
+    {
+      "entry_reference": "MIDPOINT",
+      "entry_mode": "EARLY_RECLAIM",
+      "breakout_hold_bars": "2",
+      "stop_basis": "STRUCTURE",
+      "relative_model": "RESIDUAL_VOLATILITY",
+      "target_atr": "2",
+      "stop_atr": "2",
+      "relative_z": "0.75",
+      "relative_volume": "1.2",
+      "compression_width": "0.02",
+      "breakout_volume": "1.3",
+      "retest_bars": "8",
+      "holding_bars": "36",
+      "target_basis": "15m",
+      "minimum_net_reward_risk": "1.2"
+    },
+    {
+      "entry_reference": "MIDPOINT",
+      "entry_mode": "EARLY_RECLAIM",
+      "breakout_hold_bars": "2",
+      "stop_basis": "STRUCTURE",
+      "relative_model": "RESIDUAL_VOLATILITY",
+      "target_atr": "3",
+      "stop_atr": "2",
+      "relative_z": "0.75",
+      "relative_volume": "1.2",
+      "compression_width": "0.02",
+      "breakout_volume": "1.3",
+      "retest_bars": "8",
+      "holding_bars": "72",
+      "target_basis": "15m",
+      "minimum_net_reward_risk": "1.2"
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "captured_at": "2026-10-26T19:20:05.019029+00:00",
+  "state": "PAPER_EXPERIMENTAL_ACTIVE",
+  "version": "4.7.0-paper.2",
+  "runtime_matches": true,
+  "worker_health": {
+    "monitor_age_seconds": 3.09301,
+    "scan_age_seconds": 21.146433,
+    "fresh": true
+  },
+  "reconciliation": [],
+  "portfolio": {
+    "initial_cash": "7000",
+    "cash": "7000.000000000000",
+    "available_cash": "7000.000000000000",
+    "reserved_cash": "0E-12",
+    "open_exposure": "0E-12",
+    "equity": "7000.000000000000",
+    "realized_pnl": "0",
+    "unrealized_pnl": "0E-12",
+    "total_net_pnl": "0E-12",
+    "current_drawdown": "0E-12",
+    "daily_risk_status": "WITHIN_LIMIT",
+    "weekly_risk_status": "WITHIN_LIMIT",
+    "daily_equity_change": "0E-12",
+    "weekly_equity_change": "0E-12",
+    "valuation_degraded": "false",
+    "missing_marks": "",
+    "positions": "0",
+    "orders": "1",
+    "pending_orders": "0",
+    "control": "RUNNING",
+    "risk_state": "HEALTHY"
+  },
+  "performance": {
+    "modeled_slippage_and_impact_eur": "0",
+    "buy_orders": 1,
+    "sell_orders": 0,
+    "buy_fills": 0,
+    "sell_fills": 0,
+    "fills": 0,
+    "open_positions": 0,
+    "closed_positions": 0,
+    "fees_eur": "0",
+    "win_rate": null,
+    "average_win": null,
+    "average_loss": null,
+    "profit_factor": null,
+    "expectancy": null,
+    "max_drawdown": "0",
+    "risk_adjusted_return": null,
+    "statistics_limit": "Trade counts are not independent samples; risk-adjusted returns require a longer daily series.",
+    "capital_utilization": "0",
+    "closed_positions_per_day": 0.0,
+    "age_days": 0.1225866424074074,
+    "frequency_limit": "Rate since experiment creation; unstable in short windows."
+  },
+  "scan": {
+    "blockers": {
+      "benchmarks_not_adverse": 3,
+      "confirmed_delayed_retest": 3,
+      "entry_not_chased": 3,
+      "higher_15m_bullish": 3,
+      "nonbearish_trend": 9,
+      "normalized_outperformance": 3,
+      "persistent_outperformance": 2,
+      "positive_local_trend": 3,
+      "pullback_invalidation": 3,
+      "recent_positive_returns": 1,
+      "relative_demand": 3
+    },
+    "data_failures": [],
+    "execution_outcomes": [],
+    "markets": [
+      "SOL-EUR",
+      "BTC-EUR",
+      "ETH-EUR"
+    ],
+    "observed_at": "2026-10-26T19:19:43.747450+00:00",
+    "research_action": "Compare costs, regimes and chronological holdouts; retain losses; active parameters remain frozen.",
+    "rows": [
+      {
+        "as_of": "2026-10-26T19:10:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "ALREADY_EVALUATED",
+        "reasons": [
+          "nonbearish_trend",
+          "higher_15m_bullish",
+          "pullback_invalidation",
+          "entry_not_chased"
+        ],
+        "score": "0.3305530862825712539585532530",
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "symbol": "SOL-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T19:10:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "ALREADY_EVALUATED",
+        "reasons": [
+          "nonbearish_trend",
+          "confirmed_delayed_retest",
+          "entry_not_chased"
+        ],
+        "score": "0.3305530862825712539585532530",
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "symbol": "SOL-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T19:10:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "ALREADY_EVALUATED",
+        "reasons": [
+          "nonbearish_trend",
+          "normalized_outperformance",
+          "persistent_outperformance",
+          "relative_demand",
+          "benchmarks_not_adverse",
+          "positive_local_trend",
+          "entry_not_chased"
+        ],
+        "score": "0.3170915478210327924200917145",
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "symbol": "SOL-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T19:10:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "ALREADY_EVALUATED",
+        "reasons": [
+          "nonbearish_trend",
+          "higher_15m_bullish",
+          "pullback_invalidation"
+        ],
+        "score": "0.3966509819160748967708285133",
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "symbol": "BTC-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T19:10:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "ALREADY_EVALUATED",
+        "reasons": [
+          "nonbearish_trend",
+          "confirmed_delayed_retest"
+        ],
+        "score": "0.4112343152494082301041618466",
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "symbol": "BTC-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T19:10:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "ALREADY_EVALUATED",
+        "reasons": [
+          "nonbearish_trend",
+          "normalized_outperformance",
+          "persistent_outperformance",
+          "relative_demand",
+          "benchmarks_not_adverse",
+          "positive_local_trend"
+        ],
+        "score": "0.3663625203776133583092900518",
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "symbol": "BTC-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T19:10:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "ALREADY_EVALUATED",
+        "reasons": [
+          "nonbearish_trend",
+          "higher_15m_bullish",
+          "pullback_invalidation"
+        ],
+        "score": "0.3944233862501538513518405448",
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "symbol": "ETH-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T19:10:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "ALREADY_EVALUATED",
+        "reasons": [
+          "nonbearish_trend",
+          "confirmed_delayed_retest"
+        ],
+        "score": "0.4090067195834871846851738781",
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "symbol": "ETH-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T19:10:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "ALREADY_EVALUATED",
+        "reasons": [
+          "nonbearish_trend",
+          "normalized_outperformance",
+          "relative_demand",
+          "benchmarks_not_adverse",
+          "positive_local_trend",
+          "recent_positive_returns"
+        ],
+        "score": "0.3641349247116923128903020833",
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "symbol": "ETH-EUR",
+        "technical": false
+      }
+    ],
+    "strategies_evaluated": 9
+  }
+}

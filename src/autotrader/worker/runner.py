@@ -145,6 +145,13 @@ async def main() -> None:
     from autotrader.shadow.runtime import ShadowRuntime
     shadow_lab = ShadowLab(repository, settings)
     shadow_runtime = ShadowRuntime(shadow_lab, market_data, risk, owner) if settings.shadow_enabled else None
+    from autotrader.personal_paper.runtime import PersonalPaperRuntime
+    from autotrader.personal_paper.service import PersonalPaperService
+    personal_paper = PersonalPaperService(repository, settings)
+    paper_runtime = PersonalPaperRuntime(personal_paper, market_data, owner) if settings.personal_paper_enabled else None
+    if paper_runtime:
+        await personal_paper.ensure()
+        await paper_runtime.renew()
     from autotrader.opportunity.service import OpportunityObserver
     opportunity_observer = OpportunityObserver(repository, market_data,
         extra_pairs=settings.successor_discovery_extra_pairs, fee_bps=settings.default_fee_bps,
@@ -171,6 +178,8 @@ async def main() -> None:
                 await repository.worker_heartbeat(key='coordinator_heartbeat')
                 if shadow_runtime:
                     await shadow_runtime.renew()
+                if paper_runtime:
+                    await paper_runtime.renew()
             except Exception:
                 logger.exception('coordinator renewal unavailable; financial ownership checks remain authoritative')
             try:
@@ -185,6 +194,8 @@ async def main() -> None:
                     await position_manager.monitor_once()
                     if shadow_runtime:
                         await shadow_runtime.monitor()
+                    if paper_runtime:
+                        await paper_runtime.monitor()
                 await repository.snapshot()
                 await repository.worker_heartbeat(key="position_monitor")
             except Exception:
@@ -216,6 +227,8 @@ async def main() -> None:
                         await position_manager.monitor_once()
                         if shadow_runtime:
                             await shadow_runtime.monitor()
+                        if paper_runtime:
+                            await paper_runtime.monitor()
                     await repository.worker_heartbeat(key="position_monitor")
                     await asyncio.sleep(settings.worker_scan_interval_seconds)
                     continue
@@ -226,6 +239,8 @@ async def main() -> None:
                         position_actions=await position_manager.monitor_once()
                         if shadow_runtime:
                             await shadow_runtime.monitor()
+                        if paper_runtime:
+                            await paper_runtime.monitor()
                 if position_actions:
                     logger.info(
                         "position manager actions",
@@ -242,12 +257,15 @@ async def main() -> None:
                 )
                 # New research discovery cannot delay the historical entry path.
                 # Protective monitoring remains independent and has HTTP priority.
+                extra_candidates = []
                 try:
                     extra_candidates = await opportunity_observer.observe(result.candidates, scan_errors=result.provider_errors)
                     if shadow_runtime and extra_candidates:
                         await shadow_runtime.scan([*result.candidates, *extra_candidates], successors_only=True)
                 except Exception as exc:
                     await opportunity_observer.failure(exc)
+                if paper_runtime:
+                    await paper_runtime.scan([*result.candidates, *extra_candidates])
                 if executions:
                     logger.info("worker entry executions complete", extra={"executions": [execution.__dict__ for execution in executions]})
                 else:
@@ -317,6 +335,7 @@ async def main() -> None:
         except Exception:
             logger.exception('lease release unavailable; bounded expiry applies')
         await shadow_lab.close()
+        await personal_paper.close()
         await market_data.close()
         await engine.dispose()
 

@@ -1,0 +1,9 @@
+{
+  "runtime": "fd20b6e6e61e5c775ff8bd62b3fc87095fa55c6ea7e0d290fb6209eb6a9c1e77",
+  "source": "4378414d10e72964a915ed8d428937e6f195ea3572e2d4ac7f467e5ba7974c13",
+  "architecture": "aarch64",
+  "status": "PASS",
+  "v42_files": 71,
+  "v44_files": 76,
+  "local_source_matches_running_image": true
+}

@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "original_account_count": 3,
+  "new_account_count": 4,
+  "original_manifests_unchanged": true,
+  "old_core_ledgers_unchanged": true,
+  "tables": [
+    "accounts",
+    "balances",
+    "financial_journal",
+    "orders",
+    "fills",
+    "positions",
+    "capital_reservations",
+    "exit_intents",
+    "exit_targets",
+    "exit_plans",
+    "order_transitions"
+  ],
+  "vps_accessed": false,
+  "financial_restore_over_current_transactions": false
+}

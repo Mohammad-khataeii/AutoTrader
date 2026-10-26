@@ -1,5 +1,10 @@
 # Personal Plan — V4.6 RC2
 
+## Personal Plan V4.7 Mac paper portfolio
+
+The Mac development setup adds one isolated EUR7,000 shared virtual portfolio with autonomous A3/B3/E3 paper execution. The official EUR500 account and research shadows remain separate. Live exchange trading remains disabled. Read the [V4.7 release report](docs/V4_7_RELEASE_REPORT.md), [Mac operating guide](docs/V4_7_MAC_OPERATIONS.md) and [future live-readiness limits](docs/V4_7_LIVE_READINESS.md). This development release does not authorize VPS deployment or establish a profitable strategy.
+
+
 V4.6 RC2: [engineering report, measured research and limitations](docs/V4_6_RC2_RELEASE.md) · [prepared deployment and rollback guide](docs/V4_6_RC2_DEPLOYMENT.md). Stage A only. Current production access and fresh backup verification are blocked; deployment also requires separate approval of the exact release commit. The [RC1 report](docs/V4_6_RELEASE.md) remains immutable historical evidence.
 
 Local Mac hosting uses its own persistent simulated account and native containers: [operating guide](docs/V4_6_MAC_SERVER.md) · [October 26 validation](docs/V4_6_MAC_VALIDATION.md). This local setup does not deploy the VPS or modify RC2's tag.

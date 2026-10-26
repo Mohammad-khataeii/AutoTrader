@@ -1,0 +1,189 @@
+{
+  "v42_files": 71,
+  "v44_files": 76,
+  "strategy_bytes_changed": false,
+  "v42_4h": {
+    "A_TREND_PULLBACK": {
+      "net_profit": 1.1842822145219998,
+      "total_return": 0.0023685644290440955,
+      "trades": 35,
+      "win_rate": 0.5714285714285714,
+      "profit_factor": 1.0350265705139472,
+      "max_drawdown": 0.02529674992460053,
+      "expectancy": 0.03383663470062857,
+      "fees": "5.220998454484",
+      "spread_cost": "2.610506758243434442035931980",
+      "slippage_cost": "4.176805536152309561703862420",
+      "rejections": {
+        "regime_or_signal_ineligible": 1261,
+        "position_count": 51,
+        "position_or_cooldown": 82,
+        "correlation_concentration_limit": 11,
+        "exit_limit_not_executable": 1
+      },
+      "regime_observations": {
+        "BEAR": 454,
+        "COMPRESSION": 163,
+        "RANGE": 72,
+        "EXPANSION": 71,
+        "MODERATE_BULL": 266,
+        "STRONG_BULL": 393,
+        "UNCERTAIN": 21
+      },
+      "open_positions_at_end": [],
+      "start": "2026-09-15T20:00:00+00:00",
+      "end_exclusive": "2026-10-15T20:00:00+00:00",
+      "timeframe": "4h"
+    },
+    "B_COMPRESSION_BREAKOUT": {
+      "net_profit": -2.642859832447016,
+      "total_return": -0.005285719664893995,
+      "trades": 7,
+      "win_rate": 0.42857142857142855,
+      "profit_factor": 0.40504761760406,
+      "max_drawdown": 0.010330835048209544,
+      "expectancy": -0.37755140463528575,
+      "fees": "1.044534818275",
+      "spread_cost": "0.5222670439551776748374187093",
+      "slippage_cost": "0.8356273665005257660800000000",
+      "rejections": {
+        "regime_or_signal_ineligible": 1433
+      },
+      "regime_observations": {
+        "BEAR": 454,
+        "COMPRESSION": 163,
+        "RANGE": 72,
+        "EXPANSION": 71,
+        "MODERATE_BULL": 266,
+        "STRONG_BULL": 393,
+        "UNCERTAIN": 21
+      },
+      "open_positions_at_end": [],
+      "start": "2026-09-15T20:00:00+00:00",
+      "end_exclusive": "2026-10-15T20:00:00+00:00",
+      "timeframe": "4h"
+    },
+    "C_BREAKOUT_RETEST": {
+      "net_profit": 3.3165937492919966,
+      "total_return": 0.006633187498584103,
+      "trades": 12,
+      "win_rate": 0.5,
+      "profit_factor": 1.3269863895278242,
+      "max_drawdown": 0.011219179092111987,
+      "expectancy": 0.27638281244100005,
+      "fees": "1.798070821651",
+      "spread_cost": "0.8990398951245944488923032945",
+      "slippage_cost": "1.438460851333224154428571429",
+      "rejections": {
+        "regime_or_signal_ineligible": 1426,
+        "position_or_cooldown": 2
+      },
+      "regime_observations": {
+        "BEAR": 454,
+        "COMPRESSION": 163,
+        "RANGE": 72,
+        "EXPANSION": 71,
+        "MODERATE_BULL": 266,
+        "STRONG_BULL": 393,
+        "UNCERTAIN": 21
+      },
+      "open_positions_at_end": [],
+      "start": "2026-09-15T20:00:00+00:00",
+      "end_exclusive": "2026-10-15T20:00:00+00:00",
+      "timeframe": "4h"
+    },
+    "D_VOLUME_ACCUMULATION": {
+      "net_profit": -4.514030075521987,
+      "total_return": -0.00902806015104396,
+      "trades": 34,
+      "win_rate": 0.5294117647058824,
+      "profit_factor": 0.8709957450085276,
+      "max_drawdown": 0.03092809440018746,
+      "expectancy": -0.13276559045652941,
+      "fees": "5.045145315119",
+      "spread_cost": "2.522576256925831453673265204",
+      "slippage_cost": "4.036119175157061577034285714",
+      "rejections": {
+        "regime_or_signal_ineligible": 1366,
+        "correlation_concentration_limit": 2,
+        "position_or_cooldown": 31,
+        "position_count": 7,
+        "exit_limit_not_executable": 1
+      },
+      "regime_observations": {
+        "BEAR": 454,
+        "COMPRESSION": 163,
+        "RANGE": 72,
+        "EXPANSION": 71,
+        "MODERATE_BULL": 266,
+        "STRONG_BULL": 393,
+        "UNCERTAIN": 21
+      },
+      "open_positions_at_end": [],
+      "start": "2026-09-15T20:00:00+00:00",
+      "end_exclusive": "2026-10-15T20:00:00+00:00",
+      "timeframe": "4h"
+    },
+    "E_RELATIVE_STRENGTH": {
+      "net_profit": 11.345304856502992,
+      "total_return": 0.02269060971300596,
+      "trades": 43,
+      "win_rate": 0.4883720930232558,
+      "profit_factor": 1.2700211420635272,
+      "max_drawdown": 0.051184565238745566,
+      "expectancy": 0.26384429898844186,
+      "fees": "6.348741438684",
+      "spread_cost": "3.174386315450228557553197379",
+      "slippage_cost": "5.079007725744230844919073249",
+      "rejections": {
+        "regime_or_signal_ineligible": 1303,
+        "position_or_cooldown": 82,
+        "position_count": 9,
+        "correlation_concentration_limit": 3,
+        "exit_limit_not_executable": 1
+      },
+      "regime_observations": {
+        "BEAR": 454,
+        "COMPRESSION": 163,
+        "RANGE": 72,
+        "EXPANSION": 71,
+        "MODERATE_BULL": 266,
+        "STRONG_BULL": 393,
+        "UNCERTAIN": 21
+      },
+      "open_positions_at_end": [],
+      "start": "2026-09-15T20:00:00+00:00",
+      "end_exclusive": "2026-10-15T20:00:00+00:00",
+      "timeframe": "4h"
+    },
+    "F_MEAN_REVERSION": {
+      "net_profit": -7.529040259979979,
+      "total_return": -0.015058080519959938,
+      "trades": 6,
+      "win_rate": 0.0,
+      "profit_factor": 0.0,
+      "max_drawdown": 0.01754263002931998,
+      "expectancy": -1.25484004333,
+      "fees": "0.890046334079",
+      "spread_cost": "0.4450194257729447621667976846",
+      "slippage_cost": "0.7120332740132020652571428571",
+      "rejections": {
+        "regime_or_signal_ineligible": 1433,
+        "position_or_cooldown": 1
+      },
+      "regime_observations": {
+        "BEAR": 454,
+        "COMPRESSION": 163,
+        "RANGE": 72,
+        "EXPANSION": 71,
+        "MODERATE_BULL": 266,
+        "STRONG_BULL": 393,
+        "UNCERTAIN": 21
+      },
+      "open_positions_at_end": [],
+      "start": "2026-09-15T20:00:00+00:00",
+      "end_exclusive": "2026-10-15T20:00:00+00:00",
+      "timeframe": "4h"
+    }
+  }
+}

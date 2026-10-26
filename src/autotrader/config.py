@@ -42,6 +42,7 @@ class Settings(BaseSettings):
     approved_strategy_ids: str = ""
     shadow_enabled: bool = False
     shadow_archive_enabled: bool = False
+    personal_paper_enabled: bool = False
     allocation_profile: Literal["conservative", "balanced", "opportunistic"] = "balanced"
 
     paper_trading_enabled: bool = True

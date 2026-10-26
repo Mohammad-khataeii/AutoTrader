@@ -22,6 +22,7 @@ import { systemStatus } from "./model";
 import { Badge, ResourceState } from "./ui";
 const TradeGates = lazy(() => import("./TradeGates").then(m => ({ default: m.TradeGates })));
 import { Overview } from "./Overview";
+import { PersonalPaper } from "./PersonalPaper";
 const Opportunities = lazy(() => import("./Opportunities").then(m => ({ default: m.Opportunities })));
 const StrategiesWorkspace = lazy(() => import("./Opportunities").then(m => ({ default: m.StrategiesWorkspace })));
 const Trades = lazy(() => import("./Trades").then(m => ({ default: m.Trades })));
@@ -105,7 +106,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
               ))}
             </div>
           </details>
-          <p className="build-label">Interface 4.6 · Simulated Mode</p>
+          <p className="build-label">Interface 4.7 · Simulated Mode</p>
         </div>
       </aside>
       <main id="workspace" className="workspace">
@@ -175,17 +176,17 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
           </div>
         )}
         <Suspense fallback={<div className="loading" role="status">Loading workspace…</div>}>
-        {active === "Decision Insights" && <TradeGates />}
+        {active === "Decision Insights" && <><PersonalPaper view="monitor"/><TradeGates /></>}
         {active === "Overview" && (
           <Overview
             system={system}
             onExperiments={() => setActive("Strategies")}
           />
         )}{" "}
-        {active === "Opportunities" && <Opportunities />}
-        {active === "Strategies" && <StrategiesWorkspace />}
-        {active === "Activity" && <Trades />}
-        {active === "Research" && <Research auth={auth} />}{" "}
+        {active === "Opportunities" && <><PersonalPaper view="opportunities"/><Opportunities /></>}
+        {active === "Strategies" && <><PersonalPaper view="strategies"/><StrategiesWorkspace /></>}
+        {active === "Activity" && <><PersonalPaper view="activity"/><Trades /></>}
+        {active === "Research" && <><PersonalPaper view="research"/><Research auth={auth} /></>}{" "}
         {active === "Advanced" && (
           <AdvancedScreen key={advanced} page={advanced} auth={auth} />
         )}

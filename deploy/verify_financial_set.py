@@ -62,27 +62,36 @@ async def verify() -> dict:
                 if revision != "0011_v42_shadow_isolation":
                     raise ValueError("candidate_requires_schema_change")
                 funding = (await connection.execute(text("SELECT count(*),sum(cash_delta) FROM financial_journal WHERE event_type='INITIAL_FUNDING'"))).one()
-                if funding != (1, Decimal(500)):
+                initial = Decimal(7000) if record["account_id"] == "PERSONAL_PLAN_PAPER_7000" else Decimal(500)
+                if funding != (1, initial):
                     raise ValueError("missing_or_duplicate_funding")
                 runtime = None
                 if record["manifest"]:
                     marker = (await connection.execute(text("SELECT manifest_json,manifest_hash FROM shadow_identity WHERE singleton=1"))).one()
                     if json.loads(marker[0]) != record["manifest"] or marker[1] != record["manifest_hash"]:
                         raise ValueError("restored_immutable_manifest_changed")
-                    runtime = compatibility(record["manifest"])
+                    if record["account_id"] == "PERSONAL_PLAN_PAPER_7000":
+                        from autotrader.personal_paper.policy import fingerprint
+                        runtime = {"compatible": record.get('active_profile',record["manifest"])["runtime_fingerprint"] == fingerprint(), "runner": "personal-paper-v47"}
+                    else:
+                        runtime = compatibility(record["manifest"])
                     if not runtime["compatible"]:
                         raise ValueError("restored_runtime_incompatible:" + record["account_id"])
                 else:
                     registry = (await connection.execute(text("SELECT experiment_id,database_name,state,manifest_json FROM shadow_experiments ORDER BY experiment_id"))).all()
-                    expected = sorted([r for r in metadata["databases"] if r["manifest"]], key=lambda r: r["manifest"]["experiment_id"])
+                    expected = sorted([r for r in metadata["databases"] if r["account_id"].startswith('shadow:')], key=lambda r: r["manifest"]["experiment_id"])
                     if [(r[0], r[1], r[2], json.loads(r[3])) for r in registry] != [(r["manifest"]["experiment_id"], r["database"], r["state"], r["manifest"]) for r in expected]:
                         raise ValueError("restored_registry_incomplete_or_changed")
                     for child in expected:
                         archive = await connection.scalar(text("SELECT payload_json FROM system_state WHERE key=:key"), {"key": "shadow_archive:" + child["manifest"]["experiment_id"]})
                         if (json.loads(archive) if archive else None) != child.get("archive"):
                             raise ValueError("archive_marker_changed")
+                    primary = await connection.scalar(text("SELECT payload_json FROM system_state WHERE key='personal_paper_v47'"))
+                    expected_primary = [r['manifest'] for r in metadata['databases'] if r['account_id']=='PERSONAL_PLAN_PAPER_7000']
+                    if ([json.loads(primary)] if primary else []) != expected_primary:
+                        raise ValueError('restored_primary_registry_changed')
                 async with factory() as session:
-                    reconciliation = await repo._verify(session, Decimal(500))
+                    reconciliation = await repo._verify(session, initial)
                 if reconciliation or await seal() != before:
                     raise ValueError("restored_reconciliation_or_immutability_failed")
                 results.append({"account_id": record["account_id"], "database": record["database"],

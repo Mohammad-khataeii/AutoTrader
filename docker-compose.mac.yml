@@ -1,5 +1,11 @@
 # Local Mac hosting only. Always combine with docker-compose.yml and -p autotrader-v46-mac.
 services:
+  backend:
+    environment:
+      PERSONAL_PAPER_ENABLED: "true"
+  worker:
+    environment:
+      PERSONAL_PAPER_ENABLED: "true"
   postgres:
     # Use native PostgreSQL 16 rather than the VPS-specific Alpine backport build.
     image: postgres:16-alpine

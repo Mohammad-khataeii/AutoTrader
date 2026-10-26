@@ -1,0 +1,64 @@
+{
+  "status": "PASS",
+  "accounts": [
+    {
+      "account_id": "paper-eur",
+      "initial_cash": "500",
+      "funding_count": 1,
+      "reconciliation": [],
+      "financial_seals_unchanged": true
+    },
+    {
+      "account_id": "shadow:0cc6dc7d917248bfae0d6f9261e34387",
+      "initial_cash": "500",
+      "funding_count": 1,
+      "reconciliation": [],
+      "financial_seals_unchanged": true
+    },
+    {
+      "account_id": "shadow:1997266aac384275a1746ce25c259127",
+      "initial_cash": "500",
+      "funding_count": 1,
+      "reconciliation": [],
+      "financial_seals_unchanged": true
+    },
+    {
+      "account_id": "PERSONAL_PLAN_PAPER_7000",
+      "initial_cash": "7000",
+      "funding_count": 1,
+      "reconciliation": [],
+      "financial_seals_unchanged": true
+    }
+  ],
+  "read_only": true,
+  "schema_migration": false,
+  "synthetic_funding": false,
+  "backup_manifest_sha256": "f4979b41123c8c8b5b49b88e9bb3958b42aaed5cf4e742d6e21eafcacab2bdb7",
+  "database_count": 4,
+  "network_internal": true,
+  "vps_accessed": false,
+  "source_image": "autotrader-v46-mac-app:4.7.0-dev2",
+  "postgres_redis_restarted": true,
+  "preserved_tables": [
+    "accounts",
+    "balances",
+    "financial_journal",
+    "orders",
+    "fills",
+    "positions",
+    "capital_reservations",
+    "exit_intents",
+    "exit_targets",
+    "exit_plans",
+    "risk_periods",
+    "cooldowns",
+    "equity_snapshots",
+    "ai_budgets",
+    "ai_usage",
+    "order_transitions",
+    "risk_evaluations",
+    "portfolio_snapshots",
+    "market_marks"
+  ],
+  "mac_services_resumed_and_healthy": true
+}

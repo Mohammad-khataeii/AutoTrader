@@ -35,11 +35,22 @@ def validate_inventory(records: list[dict[str, Any]], *, required: frozenset[str
     if sum(r["account_id"] == "paper-eur" and r["database"] == "autotrader" for r in records) != 1:
         raise ValueError("official_financial_identity_mismatch")
     for record in records:
-        if record["state"] not in {"OFFICIAL", "SHADOW_ACTIVE", "PAUSED", "STOPPED"}:
+        if record["state"] not in {"OFFICIAL", "SHADOW_ACTIVE", "PAUSED", "STOPPED", "PAPER_EXPERIMENTAL_ACTIVE"}:
             raise ValueError("incomplete_shadow_provisioning")
         if record["account_id"] == "paper-eur":
             continue
         m = record["manifest"]
+        if record["account_id"] == "PERSONAL_PLAN_PAPER_7000":
+            if (not re.fullmatch(r"autotrader_paper_[a-f0-9]{32}", record["database"])
+                or m["database_name"] != record["database"] or m["official_database"] != "autotrader"
+                or m["account_id"] != record["account_id"] or m["initial_cash_eur"] != "7000"
+                or m["currency"] != "EUR" or m["live_authorized"] is not False
+                or manifest_hash(m) != record["manifest_hash"]):
+                raise ValueError("primary_paper_registry_manifest_identity_mismatch")
+            active = record.get('active_profile')
+            if active and (active.get('account_origin') != m or manifest_hash(active) != record.get('active_profile_hash')):
+                raise ValueError('primary_active_profile_identity_mismatch')
+            continue
         if (not re.fullmatch(r"autotrader_shadow_[a-f0-9]{32}", record["database"])
             or m["database_name"] != record["database"] or m["official_database"] != "autotrader"
             or "shadow:" + m["experiment_id"] != record["account_id"]
@@ -56,6 +67,15 @@ def discover(dc: Any, *, required: frozenset[str] = RETAINED_IDS) -> list[dict[s
     records += [{"database": r["database"], "account_id": "shadow:" + r["id"], "state": r["state"],
                  "manifest": r["manifest"], "manifest_hash": manifest_hash(r["manifest"]),
                  "archive": archives.get("shadow_archive:" + r["id"])} for r in rows]
+    primary = query("autotrader", "SELECT COALESCE(json_agg(json_build_object('state',state,'manifest',payload_json::json)),'[]'::json) FROM system_state WHERE key='personal_paper_v47'")
+    records += [{"database": r["manifest"]["database_name"], "account_id": r["manifest"]["account_id"],
+                 "state": r["state"], "manifest": r["manifest"], "manifest_hash": manifest_hash(r["manifest"]),
+                 "archive": None} for r in primary]
+    active = query('autotrader', "SELECT COALESCE(json_agg(json_build_object('pointer',a.payload_json::json,'profile',p.payload_json::json)),'[]'::json) FROM system_state a LEFT JOIN system_state p ON p.key=(a.payload_json::json->>'key') WHERE a.key='personal_paper_active_profile'")
+    if active:
+        if len(primary) != 1 or len(active) != 1 or not active[0]['profile']:
+            raise ValueError('incomplete_primary_profile_registry')
+        records[-1].update(active_profile=active[0]['profile'],active_profile_hash=active[0]['pointer']['hash'])
     validate_inventory(records, required=required)
     for record in records:
         accounts = query(record["database"], "SELECT COALESCE(json_agg(account_id),'[]'::json) FROM accounts")

@@ -82,6 +82,11 @@ class AccountingRepositoryMixin:
     RUNTIME_STATE_KEY: str
     account_id = "paper-eur"
     mark_max_age_seconds = 90
+    # Account policy is immutable per isolated financial domain. Official and
+    # historical shadows retain the original EUR500 policy.
+    expected_initial_cash = Decimal("500")
+    ledger_risk_limits = RiskLimits()
+    max_drawdown_fraction: Decimal | None = None
 
     @staticmethod
     def strategy_cooldown_key(strategy_id:str)->str:
@@ -111,8 +116,8 @@ class AccountingRepositoryMixin:
             order_id=order_id, fill_id=fill_id, reconciliation_state="CONFIRMED", payload_json="{}", created_at=utc_now()))
 
     async def initialize_portfolio(self, initial_cash: Decimal) -> None:
-        if initial_cash != Decimal("500") or self.quote_asset != "EUR":
-            raise ValueError("This paper account requires EUR 500 initial funding.")
+        if initial_cash != self.expected_initial_cash or self.quote_asset != "EUR":
+            raise ValueError(f"This paper account requires EUR {self.expected_initial_cash} initial funding.")
         async with self.session_factory() as session, session.begin():
             if session.bind.dialect.name == "postgresql":
                 await session.execute(text("SELECT pg_advisory_xact_lock(3400001)"))
@@ -217,7 +222,7 @@ class AccountingRepositoryMixin:
         if persist:
             if missing:
                 await self._health(session, RuntimeHealth.DATA_DEGRADED, "stale_or_missing_portfolio_marks:" + ",".join(sorted(missing)))
-            elif daily <= -Decimal("15") or weekly <= -Decimal("35"):
+            elif daily <= -self.ledger_risk_limits.daily_loss_threshold or weekly <= -self.ledger_risk_limits.weekly_loss_threshold:
                 await self._health(session, RuntimeHealth.RISK_HALTED, "equity_loss_limit_breached")
                 pending = list((await session.scalars(select(OrderModel).where(OrderModel.side == "BUY", OrderModel.status.in_(["PENDING", "ACCEPTED"])))).all())
                 for order in pending:
@@ -234,7 +239,7 @@ class AccountingRepositoryMixin:
             peak=Decimal(json.loads(peak_row.payload_json)['equity'])
         else:
             historical_peak=await session.scalar(select(func.max(EquitySnapshotModel.equity)).where(EquitySnapshotModel.account_id==self.account_id,EquitySnapshotModel.degraded.is_(False)))
-            peak=max(Decimal(500),historical_peak or Decimal(500))
+            peak=max(self.expected_initial_cash,historical_peak or self.expected_initial_cash)
         if not missing:
             peak=max(peak,equity)
             if persist:
@@ -242,14 +247,18 @@ class AccountingRepositoryMixin:
                     peak_row.payload_json=json.dumps({'equity':str(peak)})
                 else:
                     session.add(SystemStateModel(key='equity_high_water',state='OBSERVED',reason='fresh_paper_equity',payload_json=json.dumps({'equity':str(peak)})))
-        return {"initial_cash": "500", "cash": str(cash), "available_cash": str(balance.available),
+        if persist and not missing and self.max_drawdown_fraction is not None and (peak-equity)/peak >= self.max_drawdown_fraction:
+            await self._health(session, RuntimeHealth.RISK_HALTED, "portfolio_drawdown_limit_breached")
+            for order in (await session.scalars(select(OrderModel).where(OrderModel.side == "BUY", OrderModel.status.in_(["PENDING", "ACCEPTED"])))) .all():
+                await self._cancel(session, order, "drawdown_halt_cancel_entry")
+        return {"initial_cash": str(self.expected_initial_cash), "cash": str(cash), "available_cash": str(balance.available),
             "reserved_cash": str(balance.reserved), "open_exposure": str(exact(exposure)) if not missing else "",
             "equity": str(exact(equity)) if not missing else "", "realized_pnl": str(realized),
             "unrealized_pnl": str(exact(exposure - basis)) if not missing else "",
-            "total_net_pnl":str(exact(equity-500)) if not missing else "",
+            "total_net_pnl":str(exact(equity-self.expected_initial_cash)) if not missing else "",
             "current_drawdown":str((peak-equity)/peak) if not missing else "",
-            "daily_risk_status":"UNAVAILABLE" if missing else "HALTED" if daily<=-15 else "WITHIN_LIMIT",
-            "weekly_risk_status":"UNAVAILABLE" if missing else "HALTED" if weekly<=-35 else "WITHIN_LIMIT",
+            "daily_risk_status":"UNAVAILABLE" if missing else "HALTED" if daily<=-self.ledger_risk_limits.daily_loss_threshold else "WITHIN_LIMIT",
+            "weekly_risk_status":"UNAVAILABLE" if missing else "HALTED" if weekly<=-self.ledger_risk_limits.weekly_loss_threshold else "WITHIN_LIMIT",
             "daily_equity_change": str(daily) if not missing else "", "weekly_equity_change": str(weekly) if not missing else "",
             "valuation_degraded": str(bool(missing)).lower(), "missing_marks": ",".join(sorted(missing)),
             "positions": str(len(positions)), "orders": str(orders), "pending_orders": str(pending_count)}
@@ -266,7 +275,7 @@ class AccountingRepositoryMixin:
 
     async def _entry_risk(self, session: Any, pair: TradingPair, quote: Decimal, price: Decimal,
                           stop: Decimal | None,execution_cost_bps:Decimal=Decimal(25),*,own_order:OrderModel|None=None) -> str | None:
-        problems = await self._verify(session, Decimal("500"))
+        problems = await self._verify(session, self.expected_initial_cash)
         if problems:
             await self._health(session, RuntimeHealth.RECONCILIATION_REQUIRED, ",".join(problems))
             return "reconciliation_required"
@@ -310,8 +319,8 @@ class AccountingRepositoryMixin:
                 order.quote_amount/order.quantity if order.quantity>0 else price,order.created_at)
         day = utc_now().replace(hour=0, minute=0, second=0, microsecond=0)
         entries = await session.scalar(select(func.count()).select_from(OrderModel).where(OrderModel.side == "BUY", OrderModel.created_at >= day, OrderModel.status.not_in(["REJECTED", "CANCELLED", "EXPIRED"]),OrderModel.order_id!=(own_order.order_id if own_order else ''))) or 0
-        # Defaults are hard upper bounds; callers cannot relax the project policy.
-        risk = RiskEngine(RiskLimits(planned_loss_cost_bps=max(Decimal(25),execution_cost_bps))).evaluate_entry(portfolio, pair, quote, price, stop,
+        from dataclasses import replace
+        risk = RiskEngine(replace(self.ledger_risk_limits, planned_loss_cost_bps=max(Decimal(25),execution_cost_bps))).evaluate_entry(portfolio, pair, quote, price, stop,
             int(entries), Decimal(valuation["daily_equity_change"]), Decimal(valuation["weekly_equity_change"]))
         return None if risk.accepted else "risk_rejected:" + ",".join(risk.reasons)
 
@@ -346,6 +355,14 @@ class AccountingRepositoryMixin:
                     error = "invalid_limit_price"
                 if side is Side.BUY and not error:
                     worst_ask=max(level.price for level in order_book.asks)*(1+slippage_bps/10000)
+                    if self.account_id == "PERSONAL_PLAN_PAPER_7000":
+                        # Risk the liquidity this IOC can actually consume.
+                        # An unrelated remote ask level is not its entry price.
+                        entry_quote = quote_execution(order_book, Side.BUY, quantity,
+                            quantity_step=pair.quantity_step, fee_bps=fee_bps,
+                            slippage_bps=slippage_bps, quote_budget=quote_amount)
+                        if entry_quote.fillable_quantity > 0:
+                            worst_ask = entry_quote.vwap
                     spread_cost=(order_book.spread or ZERO)/(order_book.mid or Decimal(1))*10000
                     error = await self._entry_risk(session, pair, quote_amount, worst_ask, stop_loss,2*fee_bps+2*slippage_bps+spread_cost)
                 admission_quality = None
@@ -415,6 +432,8 @@ class AccountingRepositoryMixin:
                             evidence = json.loads(strongest.payload_json).get("evidence", {})
                             if evidence.get("strategy_version") in {"4.0.0", "4.2.0-experimental.1"}:
                                 holding_seconds = int(evidence.get("holding_bars", 12)) * timeframe_seconds(str(evidence.get("timeframe", "5m")))
+                            if self.account_id == "PERSONAL_PLAN_PAPER_7000":
+                                holding_seconds = int(evidence.get("holding_bars", 36)) * timeframe_seconds(str(evidence.get("timeframe", "5m")))
                 hours={"A_VOLUME_ACCUMULATION":12,"B_VOLATILITY_COMPRESSION":24,"C_BREAKOUT_RETEST":8,"D_MOMENTUM_ACCELERATION":6,"G_RELATIVE_STRENGTH":8,"H_LIQUIDITY_ORDER_BOOK":4}.get(primary_strategy,24)
                 if side is Side.BUY and not error:
                     promotion_failure = await self._entry_policy_error(session, primary_strategy, evidence, fee_bps, slippage_bps)
@@ -532,6 +551,12 @@ class AccountingRepositoryMixin:
                     return self._domain_order(row)
                 stop=Decimal(payload['stop_loss']) if payload['stop_loss'] else None
                 worst=max(l.price for l in book.asks)*(1+slippage)
+                if self.account_id == "PERSONAL_PLAN_PAPER_7000":
+                    entry_quote = quote_execution(book, Side.BUY, row.quantity,
+                        quantity_step=pair.quantity_step, fee_bps=fee_rate*10000,
+                        slippage_bps=slippage*10000, quote_budget=row.quote_amount)
+                    if entry_quote.fillable_quantity > 0:
+                        worst = entry_quote.vwap
                 spread_bps=(book.spread or ZERO)/(book.mid or Decimal(1))*10000
                 risk_error=await self._entry_risk(session,pair,row.quote_amount,worst,stop,
                     2*fee_rate*10000+2*slippage*10000+spread_bps,own_order=row)

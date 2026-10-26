@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "origin_preserved": true,
+  "account_id": "PERSONAL_PLAN_PAPER_7000",
+  "previous_profile_hash": "1bd8347d78b96521aeb133bc147cc2b495fe08bc4613bb3030a6380d3ef497b0",
+  "active_profile_hash": "be0a6ec6fe0f4146bc8bf0fef439e881aca2130bca653fc74af5c16214ead2e0",
+  "active_profile": "4.7.0-paper.2",
+  "frozen_at": "2026-10-26T16:41:24.774568+00:00",
+  "runtime_fingerprint": "fd20b6e6e61e5c775ff8bd62b3fc87095fa55c6ea7e0d290fb6209eb6a9c1e77",
+  "funding_count": 1,
+  "initial_funding_eur": "7000",
+  "previous_orders_preserved": 1,
+  "reconciliation": [],
+  "control": "RUNNING",
+  "real_orders_authorized": false
+}

@@ -13,6 +13,7 @@ import {
   systemStatus,
 } from "./model";
 import { Badge, EquityChart, Panel, Pnl, ResourceState } from "./ui";
+import { PersonalPaper } from "./PersonalPaper";
 import { OpportunityPreview } from "./OpportunityPreview";
 export function Overview({
   system,
@@ -74,6 +75,7 @@ export function Overview({
           : "Waiting for the first completed market scan.";
   return (
     <div className="page-stack">
+      <PersonalPaper />
       <ResourceState resource={overview} label="Official account" />
       {system.error && (
         <ResourceState resource={system} label="System status" />
@@ -102,9 +104,9 @@ export function Overview({
           </small>
         </div>
         <div className="kpi">
-          <span>Open positions</span>
+          <span>Other account positions</span>
           <strong>{open ?? "Unavailable"}</strong>
-          <small>Across identified virtual accounts</small>
+          <small>Official account and research shadows</small>
         </div>
         <div className="kpi">
           <span>System status</span>

@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir -r requirements.lock
 COPY src ./src
 COPY alembic ./alembic
 COPY --chmod=0644 docs/evidence/v4_6_rc2/research-comparison.json /app/evidence/v46/comparison-v46-rc2.json
+COPY --chmod=0644 docs/evidence/v4_7/research-results.json /app/evidence/v47/research-results.json
 COPY --chmod=0644 alembic.ini ./
 RUN find /app/src /app/alembic /app/evidence -type d -exec chmod 0755 {} + \
     && find /app/src /app/alembic /app/evidence -type f -exec chmod 0644 {} +

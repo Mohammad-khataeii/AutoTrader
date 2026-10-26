@@ -1,0 +1,50 @@
+[
+  {
+    "service": "backend",
+    "image": "sha256:c9bc0ef4b89cebbb2b448e59390d0f77c9d464d49d63462d00eec92963845baf",
+    "status": "running",
+    "health": "healthy",
+    "restart": "unless-stopped",
+    "restart_count": 0
+  },
+  {
+    "service": "worker",
+    "image": "sha256:c9bc0ef4b89cebbb2b448e59390d0f77c9d464d49d63462d00eec92963845baf",
+    "status": "running",
+    "health": "healthy",
+    "restart": "unless-stopped",
+    "restart_count": 0
+  },
+  {
+    "service": "research-worker",
+    "image": "sha256:c9bc0ef4b89cebbb2b448e59390d0f77c9d464d49d63462d00eec92963845baf",
+    "status": "running",
+    "health": null,
+    "restart": "unless-stopped",
+    "restart_count": 0
+  },
+  {
+    "service": "frontend",
+    "image": "sha256:93c12c14e5a02e7ac1358ba31eaf44c37d7a238bae82f2e0aaf29cbc59a40260",
+    "status": "running",
+    "health": "healthy",
+    "restart": "unless-stopped",
+    "restart_count": 0
+  },
+  {
+    "service": "postgres",
+    "image": "sha256:0cefaabd882e42bcb2a2f3dc56d3ce4770560ba62fd7f197f1a2e008fd5731ab",
+    "status": "running",
+    "health": "healthy",
+    "restart": "unless-stopped",
+    "restart_count": 0
+  },
+  {
+    "service": "redis",
+    "image": "sha256:957c914f895616455c9c25e23d7a5458d5d787e58d00c26b5098adcdf14b019b",
+    "status": "running",
+    "health": "healthy",
+    "restart": "unless-stopped",
+    "restart_count": 0
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "kind": "ACTUAL_PERSISTENT_LOCAL_SERVER",
+  "viewport_width": 1440,
+  "read_only": true,
+  "api_mutations": [],
+  "page_errors": [],
+  "dom_content_loaded_ms": 11,
+  "load_ms": 11,
+  "resource_count": 27,
+  "js_transfer_bytes": 643634
+}

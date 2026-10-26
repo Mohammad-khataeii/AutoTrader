@@ -23,9 +23,11 @@ for (const width of [375, 1440]) {
       await expect(page.getByRole('heading',{name:area,level:1,exact:true})).toBeVisible();
       await expect(page.getByText('Loading this workspace…',{exact:true})).toHaveCount(0);
       if(area==='Overview') {
+        await expect(page.getByRole('heading',{name:'€7,000 virtual portfolio',exact:true})).toBeVisible();
+        await expect(page.getByText('Starting virtual balance €7,000.00',{exact:true})).toBeVisible();
         const balances=page.getByLabel('Official simulated balance and results');
         await expect(page.getByText('Worker connected',{exact:true})).toBeVisible();
-        await expect(page.getByText('System running.',{exact:true})).toBeVisible();
+        await expect(page.getByLabel('Personal Plan shared paper portfolio').getByText(/Financial reconciliation passed/)).toBeVisible();
         await expect(balances.getByText('Unavailable',{exact:true})).toHaveCount(0);
         await expect(balances.locator('strong').first()).toHaveText('€500.00');
       }
@@ -45,7 +47,7 @@ for (const width of [375, 1440]) {
         await page.getByRole('tab',{name:'Research comparison',exact:true}).click();
         await expect(page.getByRole('table',{name:'Strategy research comparison'})).toBeVisible();
       }
-      expect(await page.locator('body').innerText()).not.toMatch(/\bAutoTrader\b|\bRevolut\b/i);
+      expect(await page.locator('body').innerText()).not.toMatch(/\bAutoTrader\b/i);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
       await page.screenshot({path:`${process.env.AUTOTRADER_BROWSER_EVIDENCE}/mac-live-${area.toLowerCase().replaceAll(' ','-')}-${width}.png`,fullPage:true});
     }

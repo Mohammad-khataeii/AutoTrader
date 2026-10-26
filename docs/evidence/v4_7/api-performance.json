@@ -1,0 +1,17 @@
+{
+  "/api/personal-paper": {
+    "median_ms": 12.882040999102173,
+    "max_ms": 13.977458000226761,
+    "response_bytes": 30704
+  },
+  "/api/overview/summary": {
+    "median_ms": 6.1360839990811655,
+    "max_ms": 6.532916999276495,
+    "response_bytes": 1069
+  },
+  "/api/opportunities?limit=12": {
+    "median_ms": 4.864500000621774,
+    "max_ms": 4.888834000666975,
+    "response_bytes": 52188
+  }
+}

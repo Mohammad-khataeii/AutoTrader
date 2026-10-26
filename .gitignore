@@ -21,3 +21,6 @@ docs/evidence/*.log
 .env.local
 .env.*
 !.env.example
+
+# macOS Finder metadata
+.DS_Store

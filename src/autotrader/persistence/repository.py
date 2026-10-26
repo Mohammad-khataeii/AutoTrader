@@ -246,7 +246,7 @@ class PersistentTradingRepository(MarketStateMixin, PilotMixin, OperationsMixin,
             freshness=[{'symbol':m.symbol,'source':m.source,'timestamp':m.timestamp.isoformat(),
                 'age_seconds':(utc_now()-aware(m.timestamp)).total_seconds()} for m in marks]
             dialect=cast(Any, session.bind).dialect.name
-        problems = await self.verify_invariants(Decimal("500"))
+        problems = await self.verify_invariants(self.expected_initial_cash)
         return {"operational_state":operation.state if operation else "INITIALIZING",
             "operation":json.loads(operation.payload_json) if operation else {},
             "coordinator":json.loads(lease.payload_json) if lease else {},

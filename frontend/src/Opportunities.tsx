@@ -15,7 +15,7 @@ export function Opportunities() {
   const rows: Row[] = data?.rows ?? [];
   return <div className="page-stack opportunities-view">
     <Panel><div className="section-heading"><div><p className="eyebrow">Observe · qualify · understand</p><h2>A clearer view of opportunity</h2></div><Compass size={22} /></div>
-      <p>Technical conditions, realistic costs and portfolio safeguards are evaluated separately. These successor models remain experimental; no orders or allocations are created from this view.</p>
+      <p>Technical conditions, realistic costs and portfolio safeguards are evaluated separately. These successor models remain experimental. The shared €7,000 account separately rechecks qualification and may execute simulated orders; this research view remains observation only.</p>
       <ResourceState resource={result} label="Opportunity observations" />
       <OpportunityHealth data={data} />
       {data?.runtime_incident && <p className="notice warning" role="alert">Observation incident: {data.runtime_incident}</p>}
