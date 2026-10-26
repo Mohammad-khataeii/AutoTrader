@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useApi, useResource, type Row } from "./api";
 import { date, money, percent, price, strategyName } from "./model";
+import { TradeReports } from "./TradeReports";
 import { Badge, CompactTable, Empty, EquityChart, Panel, Pnl, ResourceState } from "./ui";
 
 export function PersonalPaper({ view = "overview" }: { view?: "overview" | "activity" | "strategies" | "opportunities" | "monitor" | "research" }) {
@@ -65,24 +66,25 @@ export function PersonalPaper({ view = "overview" }: { view?: "overview" | "acti
       { label: "Net realized", render: (r: Row) => <Pnl value={r.net_realized_pnl}/> },
       { label: "Expectancy / position", render: (r: Row) => money(r.expectancy) },
       { label: "Evidence", render: (r: Row) => r.confidence.replaceAll("_", " ").toLowerCase() },
-    ]}/><p className="small muted">Frozen parameters. Equal prior weights; no automatic promotion based on a handful of trades. Maximum €700 per position, €35 planned stop risk, €140 aggregate stop risk and €2,100 crypto cluster exposure. Losses and missed opportunities remain recorded.</p></Panel>}
+    ]}/><p className="small muted">Frozen parameters. Conditional net economics and portfolio fit rank eligible candidates; expected profitability is unknown. No automatic promotion based on a handful of trades. Maximum €700 per position, €35 planned stop risk, €140 aggregate stop risk and €2,100 crypto cluster exposure. Losses and missed opportunities remain recorded.</p></Panel>}
     {view === "research" && <>
       <Panel><h2>Continuous prospective review</h2><p>{d?.research_review?.conclusion ?? "Waiting for the first hourly evidence review"}</p><p className="small muted">Evidence cutoff {date(d?.research_review?.evidence_cutoff, true)}. Active parameters are frozen. Research proposals require a separate evaluation identity.</p>
         <CompactTable label="Prospective research proposals" rows={d?.research_review?.proposals ?? []} columns={[
           { label: "Version", render: (r: Row) => r.version },{ label: "Hypothesis", render: (r: Row) => r.hypothesis },{ label: "Next evaluation", render: (r: Row) => r.required_evaluation },
         ]}/>
       </Panel>
-      <Panel><h2>Historical strategy comparison</h2><p className="small muted">Coinbase EUR historical proxy · original €500 research sizing · reused chronological holdout. This is separate from the €7,000 Revolut X prospective ledger. No validated edge is established.</p><ResourceState resource={historical} label="Historical evidence"/>
+      <Panel><h2>Historical strategy comparison</h2><p className="small muted">Coinbase EUR historical proxy · original €500 research sizing · new January 2025 chronological interval. Fixed alternatives and cost stress; no winner promotion. This is separate from the €7,000 Revolut X prospective ledger. No validated edge is established.</p><ResourceState resource={historical} label="Historical evidence"/>
         <CompactTable label="Historical strategies and timeframes" rows={historical.data?.results ?? []} columns={[
-          { label: "Strategy", render: (r: Row) => strategyName(r.strategy_id) },{ label: "Timeframe", render: (r: Row) => r.timeframe },
-          { label: "Status", render: (r: Row) => r.status?.replaceAll("_", " ").toLowerCase() },
-          { label: "Holdout positions", render: (r: Row) => (r.segments ?? r.trials?.[0]?.segments)?.reused_holdout?.trades ?? "—" },
-          { label: "Holdout net P&L", render: (r: Row) => money((r.segments ?? r.trials?.[0]?.segments)?.reused_holdout?.net_profit) },
-          { label: "Limitation", render: (r: Row) => r.reason ?? r.limitation ?? "Descriptive reused sample; no automatic strategy promotion" },
+          { label: "Strategy", render: (r: Row) => r.variant ?? strategyName(r.strategy_id) },{ label: "Timeframe", render: (r: Row) => r.timeframe },
+          { label: "Status", render: (r: Row) => r.status?.replaceAll("_", " ").toLowerCase() ?? "Fixed historical ablation" },
+          { label: "Holdout positions", render: (r: Row) => (r.segments ?? r.trials?.[0]?.segments)?.["sealed_test"]?.trades ?? r.segments?.reused_holdout?.trades ?? "—" },
+          { label: "Holdout net P&L", render: (r: Row) => money((r.segments ?? r.trials?.[0]?.segments)?.["sealed_test"]?.net_profit ?? r.segments?.reused_holdout?.net_profit) },
+          { label: "Limitation", render: (r: Row) => r.reason ?? r.limitation ?? "Entry-policy comparison; historical exit simulator unchanged. Edge unknown." },
         ]}/>
       </Panel>
     </>}
     {view === "activity" && <>
+      <TradeReports rows={d?.trade_reports}/>
       <Panel><h2>Primary portfolio positions</h2><CompactTable label="Primary paper positions" rows={d?.positions ?? []} empty={<Empty title="No primary positions yet">Only qualifying opportunities become durable broker fills.</Empty>} columns={[
         { label: "Market / strategy", render: (r: Row) => <><strong>{r.symbol}</strong><div>{strategyName(r.strategy_id)}</div></> },
         { label: "Quantity", render: (r: Row) => r.quantity },

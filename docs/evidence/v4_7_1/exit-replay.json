@@ -1,0 +1,57 @@
+{
+  "schema": "v471-recorded-book-replay/1",
+  "source_sha256": "d1611bf721e603003534ccd455a5de4424c43a2a980a729caa9be125ac80b2d2",
+  "ledger_writes": false,
+  "clock": "pinned to actual fill timestamps, no historical freshness bypass in runtime",
+  "reports": [
+    {
+      "symbol": "ENA-EUR",
+      "old_exit": "STOP",
+      "new_exit_with_same_open_position": "STOP",
+      "discretionary_signal_cannot_override_stop": true,
+      "net_pnl_unchanged": "-8.054783619034",
+      "entry_review": "WOULD_REJECT_USING_ENTRY_TIME_BENCHMARK_AND_RESISTANCE",
+      "legs": [
+        {
+          "side": "BUY",
+          "quantity": "3704.8798",
+          "vwap": "0.188150400000",
+          "fee_eur": "0.697074616321",
+          "same_finite_depth_pricing": true
+        },
+        {
+          "side": "SELL",
+          "quantity": "3704.8798",
+          "vwap": "0.186350800000",
+          "fee_eur": "0.690407314633",
+          "same_finite_depth_pricing": true
+        }
+      ]
+    },
+    {
+      "symbol": "INJ-EUR",
+      "old_exit": "STOP",
+      "new_exit_with_same_open_position": "STOP",
+      "discretionary_signal_cannot_override_stop": true,
+      "net_pnl_unchanged": "-5.233225556252",
+      "entry_review": "WOULD_REJECT_USING_ENTRY_TIME_BENCHMARK_AND_RESISTANCE",
+      "legs": [
+        {
+          "side": "BUY",
+          "quantity": "97.524140",
+          "vwap": "7.147713600000",
+          "fee_eur": "0.697074621806",
+          "same_finite_depth_pricing": true
+        },
+        {
+          "side": "SELL",
+          "quantity": "97.524140",
+          "vwap": "7.108308800000",
+          "fee_eur": "0.693231702574",
+          "same_finite_depth_pricing": true
+        }
+      ]
+    }
+  ],
+  "limitation": "Replays four executed observations, not an alternate prospective price path or new runtime historical performance."
+}

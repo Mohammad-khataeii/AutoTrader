@@ -5,6 +5,12 @@ import { date, money, price, strategyName } from "./model";
 import { Panel, ResourceState } from "./ui";
 
 const explanations: Record<string, string> = {
+  review_benchmark_support: "Synchronized Bitcoin and Ether context does not support this entry.",
+  review_bullish_continuation: "A bullish continuation trend is required for this strategy.",
+  review_completed_hourly_trend: "The completed one-hour trend does not confirm this setup.",
+  review_target_within_overhead: "The first target would require breaking nearby resistance, or resistance evidence is missing.",
+  review_target_cost_headroom: "Potential net profit at the first target is below twice the estimated round-trip cost, or the estimate is unavailable.",
+  review_stop_above_noise: "The initial stop is less than one observed ATR from entry, or volatility evidence is unavailable.",
   nonbearish_trend: "The broader trend is still bearish.",
   higher_15m_bullish: "The 15-minute trend has not turned bullish.",
   recovering: "The pullback has not shown a confirmed recovery.",
@@ -119,6 +125,7 @@ export function TraderLive({ paper, onSelectCoin }: { paper: Row; onSelectCoin?:
             <Stage name="Observed" state={true} detail="Recorded market candidate"/>
             <Stage name="Setup" state={candidate.technical ?? null} detail={candidate.technical === true ? "Technical checks passed" : candidate.technical === false ? "Conditions not met" : "Unverified"}/>
             <Stage name="Costs" state={candidate.technical === true ? candidate.economic ?? null : null} detail={candidate.technical !== true ? "Not reached" : candidate.economic === true ? "Economically feasible" : "Not qualified"}/>
+            <Stage name="Entry quality" state={candidate.quality_policy?.gates ? Object.values(candidate.quality_policy.gates).every(v=>v===true) : null} detail={candidate.quality_policy ? "Benchmark, resistance, volatility and cost headroom" : "Earlier profile · no quality policy recorded"}/>
             <Stage name="Account decision" state={candidate.accepted === true} detail={candidate.accepted ? "Sent for locked admission" : "Wait · no buy decision"}/>
             <Stage name="Paper broker" state={candidate.broker_status ? ["FILLED", "PARTIALLY_FILLED"].includes(candidate.broker_status) ? true : false : null} detail={candidate.broker_status?.replaceAll("_", " ").toLowerCase() ?? (candidate.accepted ? "Awaiting broker record" : "No order submitted")}/>
           </div>
@@ -132,6 +139,7 @@ export function TraderLive({ paper, onSelectCoin }: { paper: Row; onSelectCoin?:
             <div><span>Round-trip costs · estimate</span><strong>{money(measurements.estimated_total_round_trip_cost_eur)}</strong></div>
             <div><span>Net reward / risk · estimate</span><strong>{measurements.net_reward_risk ? Number(measurements.net_reward_risk).toFixed(2) : "Unavailable"}</strong></div>
           </div>}
+          {candidate.ranking_components && <p className="small muted">Ranking uses conditional net reward/risk × reward/cost × portfolio fit ({Number(candidate.ranking_components.portfolio_fit).toFixed(2)}). Technical score breaks ties. Expected profitability is unknown.</p>}
           <label className="trader-candidate-select">Inspect another recent candidate
             <select value={candidate.id} onChange={e => {setSelected(e.target.value);}}>
               {candidate && !candidates.some(e => e.id === candidate.id) && <option value={candidate.id}>{candidate.symbol} · pinned evaluation</option>}

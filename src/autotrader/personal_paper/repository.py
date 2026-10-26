@@ -2,21 +2,26 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import func, select
 
-from autotrader.domain import TradingPair
+from autotrader.domain import Candle, TradingPair
+from autotrader.persistence.accounting import aware
 from autotrader.persistence.models import (
     AccountModel,
     ExitPlanModel,
+    MarketCandle,
     MarketFeature,
     OrderModel,
     PositionModel,
     ShadowIdentityModel,
+    SystemStateModel,
 )
 from autotrader.persistence.repository import PersistentTradingRepository
+from autotrader.personal_paper.exits import assess_exit
 from autotrader.personal_paper.policy import (
     ACCOUNT,
     AGGREGATE_STOP_RISK,
@@ -29,6 +34,7 @@ from autotrader.personal_paper.policy import (
     fingerprint,
     risk_payload,
 )
+from autotrader.personal_paper.selection import POLICY, QUALITY_GATES
 from autotrader.research.data import canonical, digest
 
 D = Decimal
@@ -77,7 +83,7 @@ class PersonalPaperRepository(PersistentTradingRepository):
     async def _entry_policy_error(self, session: Any, strategy: str, evidence: dict[str, Any], fee: Any, slip: Any) -> str | None:
         await self.assert_scope(session)
         m = self.manifest
-        if m['runtime_fingerprint'] != fingerprint() or m['risk_limits'] != risk_payload():
+        if m['runtime_fingerprint'] != fingerprint() or m['risk_limits'] != risk_payload() or m.get('execution_policy') != POLICY:
             return 'paper_frozen_runtime_changed_new_experiment_required'
         selected = m['strategies'].get(strategy)
         if (selected != STRATEGIES.get(strategy) or not selected
@@ -86,6 +92,10 @@ class PersonalPaperRepository(PersistentTradingRepository):
             return 'paper_strategy_not_authorized_for_manifest'
         if str(fee) != m['fee_bps'] or str(slip) != m['slippage_bps']:
             return 'paper_frozen_cost_mismatch'
+        if (evidence.get('quality_policy', {}).get('version') != POLICY['version']
+                or set(evidence.get('quality_policy', {}).get('gates', {})) != QUALITY_GATES
+                or not all(v is True for v in evidence['quality_policy']['gates'].values())):
+            return 'paper_quality_policy_required'
         if not evidence.get('entry_eligible') or evidence.get('veto'):
             return 'paper_entry_ineligible'
         return None
@@ -120,10 +130,36 @@ class PersonalPaperRepository(PersistentTradingRepository):
                 return 'strategy_concentration_limit'
         return None
 
-    async def market_exit_reason(self, symbol: str) -> str | None:
-        # Keep the common reversal/emergency logic; successor regime metadata
-        # is persisted by the coordinator rather than inferred from UI signals.
-        return await super().market_exit_reason(symbol)
+    async def position_exit_reason(self, position_id: str, symbol: str, as_of: datetime) -> str | None:
+        async with self.session_factory() as session:
+            position = await session.get(PositionModel, position_id)
+            if not position or position.symbol != symbol or position.account_id != ACCOUNT:
+                return None
+            plan = await session.scalar(select(ExitPlanModel).where(ExitPlanModel.position_id == position_id))
+            entry = await session.scalar(select(OrderModel).where(OrderModel.position_id == position_id,
+                OrderModel.side == 'BUY', OrderModel.filled_quantity > 0).order_by(OrderModel.created_at).limit(1))
+            rows = (await session.scalars(select(MarketCandle).where(MarketCandle.symbol == symbol,
+                MarketCandle.timeframe == '5m', MarketCandle.timestamp <= as_of-timedelta(minutes=5),
+                MarketCandle.timestamp >= as_of-timedelta(hours=62)).order_by(MarketCandle.timestamp.desc(), MarketCandle.id.desc()).limit(3000))).all()
+            unique: dict[datetime, Candle] = {}
+            for c in rows:
+                stamp = aware(c.timestamp)
+                candle = Candle(c.symbol, stamp, c.open, c.high, c.low, c.close, c.volume, c.timeframe, c.source)
+                if stamp in unique and unique[stamp] != candle:
+                    return None  # Conflicting closed observations cannot authorize a discretionary exit.
+                unique[stamp] = candle
+            result = assess_exit(plan.strategy_id if plan else 'UNATTRIBUTED', aware(position.opened_at),
+                json.loads(entry.execution_json).get('strategy_evidence', {}) if entry else {},
+                list(unique.values()), as_of, genuine=self.manifest['data_kind']!='SYNTHETIC_ACCEPTANCE')
+        # Append-only causal assessments, separate from shared strategy features.
+        key = 'position_exit:'+digest(canonical([position_id, result.get('candle_at'), result['status'], POLICY['version']]))[:48]
+        from autotrader.persistence.repository import _json
+        async with self.session_factory() as session, session.begin():
+            await self._lock_account(session)
+            if not await session.get(SystemStateModel, key):
+                session.add(SystemStateModel(key=key, state='EXIT_ASSESSMENT', reason=result['status'],
+                    payload_json=_json({**result, 'position_id': position_id})))
+        return result['reason'] if isinstance(result['reason'], str) else None
 
     async def latest_features(self, symbol: str) -> dict[str, Any] | None:
         async with self.session_factory() as session:

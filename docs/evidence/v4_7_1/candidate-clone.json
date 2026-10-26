@@ -1,0 +1,57 @@
+{
+  "status": "PASS",
+  "accounts": [
+    {
+      "account_id": "paper-eur",
+      "initial_cash": "500",
+      "funding_count": 1,
+      "reconciliation": [],
+      "financial_seals_unchanged": true
+    },
+    {
+      "account_id": "shadow:0cc6dc7d917248bfae0d6f9261e34387",
+      "initial_cash": "500",
+      "funding_count": 1,
+      "reconciliation": [],
+      "financial_seals_unchanged": true
+    },
+    {
+      "account_id": "shadow:1997266aac384275a1746ce25c259127",
+      "initial_cash": "500",
+      "funding_count": 1,
+      "reconciliation": [],
+      "financial_seals_unchanged": true
+    },
+    {
+      "account_id": "PERSONAL_PLAN_PAPER_7000",
+      "initial_cash": "7000",
+      "funding_count": 1,
+      "reconciliation": [],
+      "financial_seals_unchanged": true
+    }
+  ],
+  "read_only": true,
+  "schema_migration": false,
+  "synthetic_funding": false,
+  "candidate_image": "autotrader-v46-mac-app:4.7.1-v471-candidate",
+  "candidate_image_id": "sha256:62f11d7cef3b0b375e3bc755f33f4f2ac8c92cc79080d5c64dfe92fc575bec9f",
+  "revision_rehearsal": {
+    "status": "PASS",
+    "origin_preserved": true,
+    "funding_count": 1,
+    "parent_profile_hash": "be0a6ec6fe0f4146bc8bf0fef439e881aca2130bca653fc74af5c16214ead2e0",
+    "profile_hash": "eeec194b8dc606e6c9991e35d19b6e2060b1636b6afbc75347de6060ee3aa51c",
+    "runtime_fingerprint": "cf6b01761f2f879f4ec2a82cfbb0c9e8aacc6bf69f5f8961eaafce7731b779d1",
+    "profile": "4.7.1-paper.1",
+    "cash_eur": "6986.711990824714",
+    "realized_pnl_eur": "-13.288009175286",
+    "control": "PAUSED",
+    "orders_preserved": 5,
+    "fills_preserved": 4,
+    "reconciliation": [],
+    "live_authorized": false
+  },
+  "source_databases_connected": false,
+  "isolated_internal_network": true,
+  "real_orders": false
+}

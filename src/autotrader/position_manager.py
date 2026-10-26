@@ -92,7 +92,7 @@ class PositionManager:
                     self._intent_key(position, "TIME_EXIT", order_book.timestamp.isoformat()), "time_exit", position_id=position.position_id)
                 actions.append(PositionAction(position.symbol, result.reason, result.order))
                 continue
-            reduction = "emergency" if await self.repository.control_state() == "EMERGENCY" else await self.repository.market_exit_reason(position.symbol)
+            reduction = "emergency" if await self.repository.control_state() == "EMERGENCY" else await self.repository.position_exit_reason(position.position_id, position.symbol, order_book.timestamp)
             if reduction:
                 result = await self.execution_gateway.execute_exit(pair, position.quantity, order_book,
                     self._intent_key(position, reduction, order_book.timestamp.isoformat()), reduction, position_id=position.position_id)

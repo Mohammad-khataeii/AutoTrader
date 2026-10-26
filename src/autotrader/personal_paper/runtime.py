@@ -1,23 +1,29 @@
 """Rank causal candidates, reserve shared capital, submit durable virtual orders."""
 from __future__ import annotations
 
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import replace
 from decimal import Decimal
 from typing import Any
 
+from sqlalchemy import select
+
 from autotrader.domain import DecisionAction, TradingDecision, quantize_down, utc_now
 from autotrader.execution_gateway import PaperExecutionGateway
+from autotrader.indicators import calculate_features
+from autotrader.market_data.revolut import MarketDataError
 from autotrader.opportunity.engine import SuccessorOpportunityEngine, SuccessorParameters
 from autotrader.opportunity.features import enrich
 from autotrader.opportunity.runtime import restore_decision, restore_signal
 from autotrader.persistence.models import (
+    ExitPlanModel,
     StrategySignalModel,
     SystemStateModel,
     TradingDecisionModel,
 )
 from autotrader.persistence.repository import _json
 from autotrader.personal_paper.policy import INITIAL, LIMITS, fingerprint
+from autotrader.personal_paper.selection import ranking, reviewed_signal
 from autotrader.personal_paper.service import PersonalPaperService
 from autotrader.portfolio import Portfolio
 from autotrader.position_manager import PositionManager
@@ -57,6 +63,22 @@ class PersonalPaperRuntime:
             await repo.operation_state('ENTRY_SUSPENDED', 'paper_frozen_runtime_changed_new_experiment_required')
             return
         prepared, failures = [], []
+        # A held coin can leave the scanner shortlist. Refresh its closed
+        # candles in the scan task; five-second protective monitoring never
+        # waits for historical downloads or other strategies.
+        observed = {c.market.pair.symbol for c in candidates}
+        for position in await repo.list_positions():
+            if position.closed_at is None and position.quantity > 0 and position.symbol not in observed:
+                try:
+                    pair = await self.market.resolve_pair(position.symbol)
+                    if pair is None:
+                        continue
+                    held = await self.market.get_validated_market(pair)
+                    if held.candles and (repo.manifest['data_kind']=='SYNTHETIC_ACCEPTANCE' or
+                            all(c.source.startswith('revolut-x') for c in held.candles)):
+                        await repo.store_market_analysis(held.candles, calculate_features(held.candles), held.order_book)
+                except MarketDataError as exc:
+                    failures.append({'symbol': position.symbol, 'reason': 'held_context_unavailable:'+str(exc)})
         for candidate in {c.market.pair.symbol: c for c in candidates}.values():
             market = candidate.market
             if market.pair.quote_asset != 'EUR' or not market.usable_for_entry:
@@ -75,12 +97,21 @@ class PersonalPaperRuntime:
                 order_book_age_seconds=market.metrics.age_seconds)
             if int(f.timestamp.timestamp())+300 < int(utc_now().timestamp())//300*300:
                 f.metadata['completed_context_delayed'] = True
+            await repo.store_market_analysis(market.candles, f, market.order_book)
             prepared.append(replace(candidate, features=f))
         context = {c.features.symbol: c.features for c in prepared}
         ranked = []
         blockers: Counter[str] = Counter()
         all_rows = []
         snapshot = await repo.snapshot()
+        async with repo.session_factory() as session:
+            plans = (await session.scalars(select(ExitPlanModel))).all()
+        identities = {p.position_id:p.strategy_id for p in plans}
+        committed: dict[str, Decimal] = defaultdict(lambda: D(0))
+        for position in await repo.list_positions():
+            if position.closed_at is None:
+                committed[identities.get(position.position_id, 'UNATTRIBUTED')] += position.cost_basis
+
         for candidate in prepared:
             for identity, spec in repo.manifest['strategies'].items():
                 engine = SuccessorOpportunityEngine(SuccessorParameters.from_payload(spec['parameters']), D(repo.manifest['fee_bps']), D(repo.manifest['slippage_bps']))
@@ -88,6 +119,8 @@ class PersonalPaperRuntime:
                     context.get('BTC-EUR'), context.get('ETH-EUR'), candidate.market.candles, quote_budget=LIMITS.max_position_size,
                     sizing_scope='SHARED_7000_ACCOUNT', sizing_context={'cash': D(snapshot['available_cash']),
                         'exposure': D(snapshot['open_exposure'] or 0), 'limits': LIMITS})
+                signal = reviewed_signal(signal, candidate.features)
+                ranking(signal, D(committed[identity]))
                 signal.evidence['paper_manifest'] = digest(canonical(repo.manifest))
                 signal.evidence['execution_profile'] = repo.manifest['version']
                 signal = replace(signal, signal_id='sig_'+digest((signal.signal_id+signal.evidence['paper_manifest']).encode())[:40])
@@ -97,11 +130,12 @@ class PersonalPaperRuntime:
                 row = {'strategy_id': identity, 'symbol': signal.symbol, 'score': str(signal.score),
                     'technical': signal.evidence['technical_eligible'], 'economic': signal.evidence['economic_eligible'],
                     'reasons': signal.evidence['reasons'], 'economics': signal.evidence.get('economics'),
-                    'as_of': signal.timestamp.isoformat(), 'execution': 'NOT_ELIGIBLE'}
+                    'as_of': signal.timestamp.isoformat(), 'execution': 'NOT_ELIGIBLE',
+                    'quality_policy': signal.evidence['quality_policy'], 'ranking_components': signal.evidence['ranking_components']}
                 all_rows.append(row)
                 ranked.append((candidate, signal, row))
-        # Economic qualification dominates ranking. No short-sample P&L chasing.
-        ranked.sort(key=lambda v: (not v[1].evidence['entry_eligible'], -v[1].score, v[1].symbol, v[1].strategy_id))
+        # Conditional economics and portfolio fit, never observed trade activity.
+        ranked.sort(key=lambda v: ranking(v[1], D(committed[v[1].strategy_id])))
         outcomes = []
         selected_symbols: set[str] = set()
         for candidate, signal, row in ranked:
@@ -136,8 +170,6 @@ class PersonalPaperRuntime:
                 'Shared capital rank; unvalidated paper hypothesis; '+(reason or 'eligible_for_locked_financial_admission'))
             if stored and original:
                 decision, signal = restore_decision(stored.payload_json), restore_signal(original.payload_json)
-            f.metadata['regime_assessment'] = {'regime': 'BEAR' if signal.evidence.get('regime')=='BEARISH' else signal.evidence.get('regime')}
-            await repo.store_market_analysis(market.candles, f, market.order_book)
             await repo.store_analysis([signal], None, decision)
             if decision.accepted:
                 result = await self.gateway(repo).execute_entry_decision(market.pair, decision, market.order_book, identity)

@@ -1,0 +1,509 @@
+{
+  "status": "PASS",
+  "observed_at": "2026-10-26T21:44:49.172366+00:00",
+  "profile": "4.7.1-paper.1",
+  "runtime_fingerprint": "cf6b01761f2f879f4ec2a82cfbb0c9e8aacc6bf69f5f8961eaafce7731b779d1",
+  "primary_state": "PAPER_EXPERIMENTAL_ACTIVE",
+  "worker_health": {
+    "monitor_age_seconds": 3.643448,
+    "scan_age_seconds": 46.112798,
+    "fresh": true
+  },
+  "portfolio": {
+    "initial_cash": "7000",
+    "cash": "6986.711990824714",
+    "available_cash": "6986.711990824714",
+    "reserved_cash": "0E-12",
+    "open_exposure": "0E-12",
+    "equity": "6986.711990824714",
+    "realized_pnl": "-13.288009175286",
+    "unrealized_pnl": "0E-12",
+    "total_net_pnl": "-13.288009175286",
+    "current_drawdown": "0.001898287025040857142857142857",
+    "daily_risk_status": "WITHIN_LIMIT",
+    "weekly_risk_status": "WITHIN_LIMIT",
+    "daily_equity_change": "-13.288009175286",
+    "weekly_equity_change": "-13.288009175286",
+    "valuation_degraded": "false",
+    "missing_marks": "",
+    "positions": "0",
+    "orders": "5",
+    "pending_orders": "0",
+    "control": "RUNNING",
+    "risk_state": "HEALTHY"
+  },
+  "performance": {
+    "modeled_slippage_and_impact_eur": "2.222225299952000000000000",
+    "buy_orders": 3,
+    "sell_orders": 2,
+    "buy_fills": 2,
+    "sell_fills": 2,
+    "fills": 4,
+    "open_positions": 0,
+    "closed_positions": 2,
+    "fees_eur": "2.777788255334",
+    "win_rate": 0.0,
+    "average_win": null,
+    "average_loss": "-6.644004587643",
+    "profit_factor": "0E+12",
+    "expectancy": "-6.644004587643",
+    "max_drawdown": "0.001898287025040857142857142857",
+    "risk_adjusted_return": null,
+    "statistics_limit": "Trade counts are not independent samples; risk-adjusted returns require a longer daily series.",
+    "capital_utilization": "0",
+    "closed_positions_per_day": 8.96462255609107,
+    "age_days": 0.22309918655092592,
+    "frequency_limit": "Rate since experiment creation; unstable in short windows."
+  },
+  "scan": {
+    "blockers": {
+      "benchmarks_not_adverse": 3,
+      "confirmed_delayed_retest": 3,
+      "higher_15m_bullish": 3,
+      "normalized_outperformance": 3,
+      "not_extended": 3,
+      "persistent_outperformance": 2,
+      "pullback_invalidation": 3,
+      "recovering": 2,
+      "relative_demand": 2,
+      "review_benchmark_support": 9,
+      "review_bullish_continuation": 9,
+      "review_completed_hourly_trend": 6,
+      "review_stop_above_noise": 1,
+      "review_target_cost_headroom": 9
+    },
+    "data_failures": [],
+    "execution_outcomes": [],
+    "markets": [
+      "ETH-EUR",
+      "SOL-EUR",
+      "BTC-EUR"
+    ],
+    "observed_at": "2026-10-26T21:44:03.053081+00:00",
+    "research_action": "Compare costs, regimes and chronological holdouts; retain losses; active parameters remain frozen.",
+    "rows": [
+      {
+        "as_of": "2026-10-26T21:35:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "higher_15m_bullish,pullback_invalidation,review_benchmark_support,review_bullish_continuation,review_completed_hourly_trend,review_target_cost_headroom",
+        "quality_policy": {
+          "as_of": "2026-10-26T21:35:00+00:00",
+          "gates": {
+            "review_benchmark_support": false,
+            "review_bullish_continuation": false,
+            "review_completed_hourly_trend": false,
+            "review_stop_above_noise": true,
+            "review_target_cost_headroom": false,
+            "review_target_within_overhead": true
+          },
+          "nearest_overhead": "2084.06",
+          "predictive_edge": "UNKNOWN",
+          "stop_distance_atr": "3.165501165501165501165501165",
+          "target_net_to_roundtrip_cost": null,
+          "version": "4.7.1-quality.1"
+        },
+        "ranking_components": {
+          "conditional_net_reward_risk": "0",
+          "expected_profitability": "UNKNOWN",
+          "portfolio_fit": "1",
+          "probability": null,
+          "quality_product": "0",
+          "strategy_committed_eur": "0",
+          "target_net_to_cost": "0",
+          "technical_tie_breaker": "0.4373399068108856110878595293"
+        },
+        "reasons": [
+          "higher_15m_bullish",
+          "pullback_invalidation",
+          "review_benchmark_support",
+          "review_bullish_continuation",
+          "review_completed_hourly_trend",
+          "review_target_cost_headroom"
+        ],
+        "score": "0.4373399068108856110878595293",
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "symbol": "ETH-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T21:35:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "confirmed_delayed_retest,review_benchmark_support,review_bullish_continuation,review_target_cost_headroom,review_stop_above_noise",
+        "quality_policy": {
+          "as_of": "2026-10-26T21:35:00+00:00",
+          "gates": {
+            "review_benchmark_support": false,
+            "review_bullish_continuation": false,
+            "review_completed_hourly_trend": true,
+            "review_stop_above_noise": false,
+            "review_target_cost_headroom": false,
+            "review_target_within_overhead": true
+          },
+          "nearest_overhead": "2084.06",
+          "predictive_edge": "UNKNOWN",
+          "stop_distance_atr": "-1.131313131313131313131313131",
+          "target_net_to_roundtrip_cost": null,
+          "version": "4.7.1-quality.1"
+        },
+        "ranking_components": {
+          "conditional_net_reward_risk": "0",
+          "expected_profitability": "UNKNOWN",
+          "portfolio_fit": "1",
+          "probability": null,
+          "quality_product": "0",
+          "strategy_committed_eur": "0",
+          "target_net_to_cost": "0",
+          "technical_tie_breaker": "0.4665065734775522777545261960"
+        },
+        "reasons": [
+          "confirmed_delayed_retest",
+          "review_benchmark_support",
+          "review_bullish_continuation",
+          "review_target_cost_headroom",
+          "review_stop_above_noise"
+        ],
+        "score": "0.4665065734775522777545261960",
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "symbol": "ETH-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T21:35:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "normalized_outperformance,persistent_outperformance,benchmarks_not_adverse,review_benchmark_support,review_bullish_continuation,review_completed_hourly_trend,review_target_cost_headroom",
+        "quality_policy": {
+          "as_of": "2026-10-26T21:35:00+00:00",
+          "gates": {
+            "review_benchmark_support": false,
+            "review_bullish_continuation": false,
+            "review_completed_hourly_trend": false,
+            "review_stop_above_noise": true,
+            "review_target_cost_headroom": false,
+            "review_target_within_overhead": true
+          },
+          "nearest_overhead": "2084.06",
+          "predictive_edge": "UNKNOWN",
+          "stop_distance_atr": "3.165501165501165501165501165",
+          "target_net_to_roundtrip_cost": null,
+          "version": "4.7.1-quality.1"
+        },
+        "ranking_components": {
+          "conditional_net_reward_risk": "0",
+          "expected_profitability": "UNKNOWN",
+          "portfolio_fit": "1",
+          "probability": null,
+          "quality_product": "0",
+          "strategy_committed_eur": "0",
+          "target_net_to_cost": "0",
+          "technical_tie_breaker": "0.4440706760416548418570902985"
+        },
+        "reasons": [
+          "normalized_outperformance",
+          "persistent_outperformance",
+          "benchmarks_not_adverse",
+          "review_benchmark_support",
+          "review_bullish_continuation",
+          "review_completed_hourly_trend",
+          "review_target_cost_headroom"
+        ],
+        "score": "0.4440706760416548418570902985",
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "symbol": "ETH-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T21:35:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "higher_15m_bullish,recovering,pullback_invalidation,review_benchmark_support,review_bullish_continuation,review_completed_hourly_trend,review_target_cost_headroom",
+        "quality_policy": {
+          "as_of": "2026-10-26T21:35:00+00:00",
+          "gates": {
+            "review_benchmark_support": false,
+            "review_bullish_continuation": false,
+            "review_completed_hourly_trend": false,
+            "review_stop_above_noise": true,
+            "review_target_cost_headroom": false,
+            "review_target_within_overhead": true
+          },
+          "nearest_overhead": "90.977",
+          "predictive_edge": "UNKNOWN",
+          "stop_distance_atr": "4.007352941176470588235294118",
+          "target_net_to_roundtrip_cost": null,
+          "version": "4.7.1-quality.1"
+        },
+        "ranking_components": {
+          "conditional_net_reward_risk": "0",
+          "expected_profitability": "UNKNOWN",
+          "portfolio_fit": "1",
+          "probability": null,
+          "quality_product": "0",
+          "strategy_committed_eur": "0",
+          "target_net_to_cost": "0",
+          "technical_tie_breaker": "0.3716223942268682927913658669"
+        },
+        "reasons": [
+          "higher_15m_bullish",
+          "recovering",
+          "pullback_invalidation",
+          "review_benchmark_support",
+          "review_bullish_continuation",
+          "review_completed_hourly_trend",
+          "review_target_cost_headroom"
+        ],
+        "score": "0.3716223942268682927913658669",
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "symbol": "SOL-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T21:35:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "confirmed_delayed_retest,review_benchmark_support,review_bullish_continuation,review_target_cost_headroom",
+        "quality_policy": {
+          "as_of": "2026-10-26T21:35:00+00:00",
+          "gates": {
+            "review_benchmark_support": false,
+            "review_bullish_continuation": false,
+            "review_completed_hourly_trend": true,
+            "review_stop_above_noise": true,
+            "review_target_cost_headroom": false,
+            "review_target_within_overhead": true
+          },
+          "nearest_overhead": "90.977",
+          "predictive_edge": "UNKNOWN",
+          "stop_distance_atr": "1.161764705882352941176470588",
+          "target_net_to_roundtrip_cost": null,
+          "version": "4.7.1-quality.1"
+        },
+        "ranking_components": {
+          "conditional_net_reward_risk": "0",
+          "expected_profitability": "UNKNOWN",
+          "portfolio_fit": "1",
+          "probability": null,
+          "quality_product": "0",
+          "strategy_committed_eur": "0",
+          "target_net_to_cost": "0",
+          "technical_tie_breaker": "0.4445390608935349594580325336"
+        },
+        "reasons": [
+          "confirmed_delayed_retest",
+          "review_benchmark_support",
+          "review_bullish_continuation",
+          "review_target_cost_headroom"
+        ],
+        "score": "0.4445390608935349594580325336",
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "symbol": "SOL-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T21:35:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "normalized_outperformance,persistent_outperformance,recovering,relative_demand,benchmarks_not_adverse,review_benchmark_support,review_bullish_continuation,review_completed_hourly_trend,review_target_cost_headroom",
+        "quality_policy": {
+          "as_of": "2026-10-26T21:35:00+00:00",
+          "gates": {
+            "review_benchmark_support": false,
+            "review_bullish_continuation": false,
+            "review_completed_hourly_trend": false,
+            "review_stop_above_noise": true,
+            "review_target_cost_headroom": false,
+            "review_target_within_overhead": true
+          },
+          "nearest_overhead": "90.977",
+          "predictive_edge": "UNKNOWN",
+          "stop_distance_atr": "4.007352941176470588235294118",
+          "target_net_to_roundtrip_cost": null,
+          "version": "4.7.1-quality.1"
+        },
+        "ranking_components": {
+          "conditional_net_reward_risk": "0",
+          "expected_profitability": "UNKNOWN",
+          "portfolio_fit": "1",
+          "probability": null,
+          "quality_product": "0",
+          "strategy_committed_eur": "0",
+          "target_net_to_cost": "0",
+          "technical_tie_breaker": "0.3682570096114836774067504823"
+        },
+        "reasons": [
+          "normalized_outperformance",
+          "persistent_outperformance",
+          "recovering",
+          "relative_demand",
+          "benchmarks_not_adverse",
+          "review_benchmark_support",
+          "review_bullish_continuation",
+          "review_completed_hourly_trend",
+          "review_target_cost_headroom"
+        ],
+        "score": "0.3682570096114836774067504823",
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "symbol": "SOL-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T21:35:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "not_extended,higher_15m_bullish,pullback_invalidation,review_benchmark_support,review_bullish_continuation,review_completed_hourly_trend,review_target_cost_headroom",
+        "quality_policy": {
+          "as_of": "2026-10-26T21:35:00+00:00",
+          "gates": {
+            "review_benchmark_support": false,
+            "review_bullish_continuation": false,
+            "review_completed_hourly_trend": false,
+            "review_stop_above_noise": true,
+            "review_target_cost_headroom": false,
+            "review_target_within_overhead": true
+          },
+          "nearest_overhead": "71875.42",
+          "predictive_edge": "UNKNOWN",
+          "stop_distance_atr": "3.709227439138451671521338286",
+          "target_net_to_roundtrip_cost": null,
+          "version": "4.7.1-quality.1"
+        },
+        "ranking_components": {
+          "conditional_net_reward_risk": "0",
+          "expected_profitability": "UNKNOWN",
+          "portfolio_fit": "1",
+          "probability": null,
+          "quality_product": "0",
+          "strategy_committed_eur": "0",
+          "target_net_to_cost": "0",
+          "technical_tie_breaker": "0.4005857401792658746723359650"
+        },
+        "reasons": [
+          "not_extended",
+          "higher_15m_bullish",
+          "pullback_invalidation",
+          "review_benchmark_support",
+          "review_bullish_continuation",
+          "review_completed_hourly_trend",
+          "review_target_cost_headroom"
+        ],
+        "score": "0.4005857401792658746723359650",
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "symbol": "BTC-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T21:35:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "not_extended,confirmed_delayed_retest,review_benchmark_support,review_bullish_continuation,review_target_cost_headroom",
+        "quality_policy": {
+          "as_of": "2026-10-26T21:35:00+00:00",
+          "gates": {
+            "review_benchmark_support": false,
+            "review_bullish_continuation": false,
+            "review_completed_hourly_trend": true,
+            "review_stop_above_noise": true,
+            "review_target_cost_headroom": false,
+            "review_target_within_overhead": true
+          },
+          "nearest_overhead": "71875.42",
+          "predictive_edge": "UNKNOWN",
+          "stop_distance_atr": "2.292055263087571149889099703",
+          "target_net_to_roundtrip_cost": null,
+          "version": "4.7.1-quality.1"
+        },
+        "ranking_components": {
+          "conditional_net_reward_risk": "0",
+          "expected_profitability": "UNKNOWN",
+          "portfolio_fit": "1",
+          "probability": null,
+          "quality_product": "0",
+          "strategy_committed_eur": "0",
+          "target_net_to_cost": "0",
+          "technical_tie_breaker": "0.4151690735125992080056692983"
+        },
+        "reasons": [
+          "not_extended",
+          "confirmed_delayed_retest",
+          "review_benchmark_support",
+          "review_bullish_continuation",
+          "review_target_cost_headroom"
+        ],
+        "score": "0.4151690735125992080056692983",
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "symbol": "BTC-EUR",
+        "technical": false
+      },
+      {
+        "as_of": "2026-10-26T21:35:00+00:00",
+        "economic": false,
+        "economics": null,
+        "execution": "not_extended,normalized_outperformance,relative_demand,benchmarks_not_adverse,review_benchmark_support,review_bullish_continuation,review_completed_hourly_trend,review_target_cost_headroom",
+        "quality_policy": {
+          "as_of": "2026-10-26T21:35:00+00:00",
+          "gates": {
+            "review_benchmark_support": false,
+            "review_bullish_continuation": false,
+            "review_completed_hourly_trend": false,
+            "review_stop_above_noise": true,
+            "review_target_cost_headroom": false,
+            "review_target_within_overhead": true
+          },
+          "nearest_overhead": "71875.42",
+          "predictive_edge": "UNKNOWN",
+          "stop_distance_atr": "3.709227439138451671521338286",
+          "target_net_to_roundtrip_cost": null,
+          "version": "4.7.1-quality.1"
+        },
+        "ranking_components": {
+          "conditional_net_reward_risk": "0",
+          "expected_profitability": "UNKNOWN",
+          "portfolio_fit": "1",
+          "probability": null,
+          "quality_product": "0",
+          "strategy_committed_eur": "0",
+          "target_net_to_cost": "0",
+          "technical_tie_breaker": "0.4241434324869581823646436573"
+        },
+        "reasons": [
+          "not_extended",
+          "normalized_outperformance",
+          "relative_demand",
+          "benchmarks_not_adverse",
+          "review_benchmark_support",
+          "review_bullish_continuation",
+          "review_completed_hourly_trend",
+          "review_target_cost_headroom"
+        ],
+        "score": "0.4241434324869581823646436573",
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "symbol": "BTC-EUR",
+        "technical": false
+      }
+    ],
+    "strategies_evaluated": 9
+  },
+  "new_profile_recent_evaluations": 9,
+  "raw_sell_labels_preserved": [
+    [
+      "INJ-EUR",
+      [
+        "ensemble-v3.4"
+      ]
+    ],
+    [
+      "ENA-EUR",
+      [
+        "ensemble-v3.4"
+      ]
+    ]
+  ],
+  "reconciliation": [],
+  "ready": {
+    "ready": true,
+    "live_trading_enabled": false
+  },
+  "no_real_orders": true
+}

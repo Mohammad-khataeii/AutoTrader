@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "accounts": [
+    {
+      "account_id": "paper-eur",
+      "initial_cash": "500",
+      "funding_count": 1,
+      "reconciliation": [],
+      "financial_seals_unchanged": true
+    },
+    {
+      "account_id": "shadow:0cc6dc7d917248bfae0d6f9261e34387",
+      "initial_cash": "500",
+      "funding_count": 1,
+      "reconciliation": [],
+      "financial_seals_unchanged": true
+    },
+    {
+      "account_id": "shadow:1997266aac384275a1746ce25c259127",
+      "initial_cash": "500",
+      "funding_count": 1,
+      "reconciliation": [],
+      "financial_seals_unchanged": true
+    },
+    {
+      "account_id": "PERSONAL_PLAN_PAPER_7000",
+      "initial_cash": "7000",
+      "funding_count": 1,
+      "reconciliation": [],
+      "financial_seals_unchanged": true
+    }
+  ],
+  "read_only": true,
+  "schema_migration": false,
+  "synthetic_funding": false,
+  "method": "EXPORTED_REPEATABLE_READ_SNAPSHOT",
+  "database_count": 4,
+  "worker_uninterrupted": true,
+  "source_databases_restored": false,
+  "backup_manifest_sha256": "5d65e0dd0b226d9086fdea599c7d2a2df023684d7a7dfd8a1626747b21fb57ed",
+  "vps_accessed": false
+}

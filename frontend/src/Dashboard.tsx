@@ -4,6 +4,7 @@ import { type Row, useResource } from "./api";
 import { date, money, percent, price } from "./model";
 import { Badge, CompactTable, Empty, Panel, Pnl, ResourceState } from "./ui";
 import { TraderLive } from "./TraderLive";
+import { TradeReports } from "./TradeReports";
 import { CoinChart } from "./CoinChart";
 
 export function Dashboard() {
@@ -52,6 +53,7 @@ export function Dashboard() {
         <div><dt>Realized P&L</dt><dd><Pnl value={p?.realized_pnl}/></dd></div><div><dt>Unrealized P&L</dt><dd><Pnl value={p?.unrealized_pnl}/></dd></div><div><dt>Received from sells</dt><dd>{money(d?.cash_flow?.sale_proceeds_eur)}</dd></div><div><dt>Completed positions</dt><dd>{d?.performance?.closed_positions ?? "—"}</dd></div><div><dt>Drawdown</dt><dd>{percent(p?.current_drawdown)}</dd></div><div><dt>Reconciliation</dt><dd>{d?.reconciliation?.length === 0 ? "Passed" : "Checking"}</dd></div>
       </dl></Panel>
     </div>
+    <TradeReports rows={d?.trade_reports}/>
     {d && p && <TraderLive paper={d} onSelectCoin={coin=>selectCoin(coin,true)}/>}
     <Panel><div className="section-heading"><h2>What you bought and sold</h2><span className="small muted">Actual paper fills</span></div><CompactTable label="Dashboard filled trades" rows={d?.fills ?? []} empty={<Empty title="No filled trades yet">The live trader explains why each candidate was bought or left waiting. An order becomes a purchase only when it fills.</Empty>} columns={[
       {label:"Coin",render:(r:Row)=><button className="coin-text-button" onClick={()=>selectCoin(r.symbol,true)}>{r.symbol} <ArrowUpRight size={13}/></button>},

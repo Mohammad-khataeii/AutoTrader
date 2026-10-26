@@ -1,0 +1,76 @@
+{
+  "schema": "v471-predeclared-study/1",
+  "registered_at": "2026-10-26T21:20:58.063473+00:00",
+  "symbols": [
+    "BTC-EUR",
+    "ETH-EUR",
+    "SOL-EUR"
+  ],
+  "source": "coinbase-exchange-public EUR OHLCV proxy",
+  "requested_start": "2025-01-01T00:00:00+00:00",
+  "requested_end_exclusive": "2025-02-01T00:00:00+00:00",
+  "segments": {
+    "training": [
+      "2025-01-04",
+      "2025-01-11"
+    ],
+    "validation": [
+      "2025-01-12",
+      "2025-01-21"
+    ],
+    "sealed_test": [
+      "2025-01-22",
+      "2025-02-01"
+    ]
+  },
+  "purge_hours": 24,
+  "warmup_days": 3,
+  "timeframes": [
+    "5m",
+    "15m",
+    "1h"
+  ],
+  "successor_variants": [
+    "A3-original",
+    "B3-original",
+    "E3-original",
+    "A3-reviewed-policy",
+    "B3-reviewed-policy",
+    "E3-reviewed-policy",
+    "A3-reviewed-pullback-IOC",
+    "B3-reviewed-retest-IOC",
+    "E3-reviewed-longer-horizon"
+  ],
+  "native_alternatives": [
+    "A_TREND_PULLBACK",
+    "C_BREAKOUT_RETEST",
+    "E_RELATIVE_STRENGTH",
+    "F_MEAN_REVERSION"
+  ],
+  "normal_costs": {
+    "fee_bps": 10,
+    "slippage_bps": 8,
+    "spread_bps": 10
+  },
+  "stress_costs": {
+    "fee_bps": 15,
+    "slippage_bps": 12,
+    "spread_bps": 20
+  },
+  "reviewed_policy": {
+    "benchmark": "synchronized supportive/mixed required",
+    "trend": "bullish continuation; A3/E3 completed bullish 1h",
+    "overhead": "TP1 cannot lie beyond nearest observed 15m/1h overhead resistance",
+    "net_target_to_roundtrip_cost_minimum": 2,
+    "initial_stop_atr_minimum": 1
+  },
+  "no_winner_promotion": true,
+  "profitability_unknown": true,
+  "limitations": [
+    "Fixed current liquid universe; survivorship selection",
+    "No historical L2; existing conservative finite-volume execution model",
+    "EUR500 historical simulator sizing, not EUR7000 prospective portfolio",
+    "All examined alternatives and costs reported; no repeated holdout retuning",
+    "New-to-this-project historical test is not prospective validation or statistical proof"
+  ]
+}

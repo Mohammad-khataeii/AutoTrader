@@ -1,0 +1,1755 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/node_modules/.bin/playwright",
+      "test"
+    ],
+    "configFile": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/playwright.config.ts",
+    "rootDir": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e",
+        "snapshotDir": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:13044",
+          "headless": true,
+          "trace": "off",
+          "screenshot": "only-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../docs/evidence/v4_7_1/browser.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "dashboard.spec.ts",
+      "file": "dashboard.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "authenticated runtime data, retained advanced research, paper controls and pilot exports",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 5536,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Overview', level: 1 })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('heading', { name: 'Overview', level: 1 }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Overview', level: 1 })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Overview', level: 1 })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('heading', { name: 'Overview', level: 1 }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Overview', level: 1 })\u001b[22m\n\n    at /Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/dashboard.spec.ts:38:5",
+                    "location": {
+                      "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/dashboard.spec.ts",
+                      "column": 5,
+                      "line": 38
+                    },
+                    "snippet": "  36 |   await expect(\n  37 |     page.getByRole(\"heading\", { name: \"Overview\", level: 1 }),\n> 38 |   ).toBeVisible();\n     |     ^\n  39 |   const headers = {\n  40 |     Authorization: `Basic ${Buffer.from(`${env.DASHBOARD_USERNAME}:${env.DASHBOARD_PASSWORD}`).toString(\"base64\")}`,\n  41 |   };"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/dashboard.spec.ts",
+                        "column": 5,
+                        "line": 38
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Overview', level: 1 })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('heading', { name: 'Overview', level: 1 }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Overview', level: 1 })\u001b[22m\n\n\n  36 |   await expect(\n  37 |     page.getByRole(\"heading\", { name: \"Overview\", level: 1 }),\n> 38 |   ).toBeVisible();\n     |     ^\n  39 |   const headers = {\n  40 |     Authorization: `Basic ${Buffer.from(`${env.DASHBOARD_USERNAME}:${env.DASHBOARD_PASSWORD}`).toString(\"base64\")}`,\n  41 |   };\n    at /Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/dashboard.spec.ts:38:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:31:55.151Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/test-results/dashboard-authenticated-ru-b1928--controls-and-pilot-exports/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/test-results/dashboard-authenticated-ru-b1928--controls-and-pilot-exports/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/dashboard.spec.ts",
+                    "column": 5,
+                    "line": 38
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "90cda532ab82d274b30b-b656f9bde8bdb5f8f3d1",
+          "file": "dashboard.spec.ts",
+          "line": 21,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "fetch-budget.spec.ts",
+      "file": "fetch-budget.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "V4.4 uses bounded APIs without increasing the V4.3 polling cadence over 65 seconds",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 116,
+                  "error": {
+                    "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:13045/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:13045/\", waiting until \"load\"\u001b[22m\n",
+                    "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:13045/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:13045/\", waiting until \"load\"\u001b[22m\n\n    at /Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/fetch-budget.spec.ts:13:18",
+                    "location": {
+                      "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/fetch-budget.spec.ts",
+                      "column": 18,
+                      "line": 13
+                    },
+                    "snippet": "  11 |     await page.clock.install();\n  12 |     if (version === \"V4.3\") {\n> 13 |       await page.goto(\n     |                  ^\n  14 |         process.env.AUTOTRADER_BEFORE_URL ?? \"http://127.0.0.1:13045\",\n  15 |       );\n  16 |       await page.getByLabel(\"Username\", { exact: true }).fill(\"admin\");"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/fetch-budget.spec.ts",
+                        "column": 18,
+                        "line": 13
+                      },
+                      "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:13045/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:13045/\", waiting until \"load\"\u001b[22m\n\n\n  11 |     await page.clock.install();\n  12 |     if (version === \"V4.3\") {\n> 13 |       await page.goto(\n     |                  ^\n  14 |         process.env.AUTOTRADER_BEFORE_URL ?? \"http://127.0.0.1:13045\",\n  15 |       );\n  16 |       await page.getByLabel(\"Username\", { exact: true }).fill(\"admin\");\n    at /Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/fetch-budget.spec.ts:13:18"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:01.227Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/test-results/fetch-budget-V4-4-uses-bou-d8b73-ing-cadence-over-65-seconds/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/test-results/fetch-budget-V4-4-uses-bou-d8b73-ing-cadence-over-65-seconds/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/fetch-budget.spec.ts",
+                    "column": 18,
+                    "line": 13
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c6da13e8a32dece1340c-ea4ae7aff33dd9f68378",
+          "file": "fetch-budget.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "live-desk.spec.ts",
+      "file": "live-desk.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "live desk distinguishes waiting, rejection and real fill records at 375px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15471,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:01.703Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "31727f935f1cae323b97-e65ae7dbbc330421c69f",
+          "file": "live-desk.spec.ts",
+          "line": 5,
+          "column": 3
+        },
+        {
+          "title": "live desk distinguishes waiting, rejection and real fill records at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15470,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:17.256Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "31727f935f1cae323b97-470dfdf0c9eca8d19875",
+          "file": "live-desk.spec.ts",
+          "line": 5,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "title": "mac-server.spec.ts",
+      "file": "mac-server.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Mac server read-only navigation at 375px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Local server review requires explicit opt-in",
+                  "location": {
+                    "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/mac-server.spec.ts",
+                    "line": 7,
+                    "column": 6
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": -1,
+                  "parallelIndex": -1,
+                  "status": "skipped",
+                  "duration": 0,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:32.733Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Local server review requires explicit opt-in",
+                      "location": {
+                        "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/mac-server.spec.ts",
+                        "line": 7,
+                        "column": 6
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "e7cb9b60645b2bcee0e1-2baff8f1d6772715f29b",
+          "file": "mac-server.spec.ts",
+          "line": 10,
+          "column": 3
+        },
+        {
+          "title": "Mac server read-only navigation at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Local server review requires explicit opt-in",
+                  "location": {
+                    "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/mac-server.spec.ts",
+                    "line": 7,
+                    "column": 6
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": -1,
+                  "parallelIndex": -1,
+                  "status": "skipped",
+                  "duration": 0,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:32.733Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Local server review requires explicit opt-in",
+                      "location": {
+                        "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/mac-server.spec.ts",
+                        "line": 7,
+                        "column": 6
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "e7cb9b60645b2bcee0e1-acfd0303d0953ff89afa",
+          "file": "mac-server.spec.ts",
+          "line": 10,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "title": "portfolio-dashboard.spec.ts",
+      "file": "portfolio-dashboard.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Dashboard keeps session on refresh and switches coin charts at 375px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 705,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:32.742Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "442841f9a1cebbea89a3-a09cfc698c35a6a4b65d",
+          "file": "portfolio-dashboard.spec.ts",
+          "line": 5,
+          "column": 3
+        },
+        {
+          "title": "Dashboard keeps session on refresh and switches coin charts at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 643,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:33.452Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "442841f9a1cebbea89a3-1197ea2091b232e9de6f",
+          "file": "portfolio-dashboard.spec.ts",
+          "line": 5,
+          "column": 3
+        },
+        {
+          "title": "Dashboard separates lifetime spending from remaining holdings and sale proceeds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 335,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:34.100Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "442841f9a1cebbea89a3-e38dbbb684bdba8f1a8e",
+          "file": "portfolio-dashboard.spec.ts",
+          "line": 35,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "v42.spec.ts",
+      "file": "v42.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "retained V4.2 shadow controls, five complete exports, official isolation and diagnostics",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 139,
+                  "error": {
+                    "message": "TypeError: Cannot read properties of undefined (reading 'find')",
+                    "stack": "TypeError: Cannot read properties of undefined (reading 'find')\n    at /Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/v42.spec.ts:29:37",
+                    "location": {
+                      "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/v42.spec.ts",
+                      "column": 37,
+                      "line": 29
+                    },
+                    "snippet": "  27 |   const before = await (await request.get(\"/api/overview\", { headers })).json();\n  28 |   const list = await (await request.get(\"/api/shadow\", { headers })).json();\n> 29 |   const existing = list.experiments.find(\n     |                                     ^\n  30 |     (e: any) => e.state === \"SHADOW_ACTIVE\",\n  31 |   );\n  32 |   expect(existing).toBeTruthy();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/v42.spec.ts",
+                        "column": 37,
+                        "line": 29
+                      },
+                      "message": "TypeError: Cannot read properties of undefined (reading 'find')\n\n  27 |   const before = await (await request.get(\"/api/overview\", { headers })).json();\n  28 |   const list = await (await request.get(\"/api/shadow\", { headers })).json();\n> 29 |   const existing = list.experiments.find(\n     |                                     ^\n  30 |     (e: any) => e.state === \"SHADOW_ACTIVE\",\n  31 |   );\n  32 |   expect(existing).toBeTruthy();\n    at /Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/v42.spec.ts:29:37"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:34.447Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/test-results/v42-retained-V4-2-shadow-c-01df5-l-isolation-and-diagnostics/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/test-results/v42-retained-V4-2-shadow-c-01df5-l-isolation-and-diagnostics/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/mohammadkhataei/Desktop/AutoTrader/frontend/e2e/v42.spec.ts",
+                    "column": 37,
+                    "line": 29
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "f7974523c52333c41901-27eb8b0983744809e94d",
+          "file": "v42.spec.ts",
+          "line": 18,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "v43.spec.ts",
+      "file": "v43.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "five primary routes, authentic status language and no default technical payloads",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 402,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:34.914Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-460e6406d22cdea7ff12",
+          "file": "v43.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "all four retained accounts are distinct, duplicates preserved and creation unavailable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 355,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:35.413Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-ff24af8ad81bd56f4e57",
+          "file": "v43.spec.ts",
+          "line": 40,
+          "column": 1
+        },
+        {
+          "title": "state-valid actions and confirmed permanent stop preserve the retained slot",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 710,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:35.776Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-3c3670d39e6f9a3750e5",
+          "file": "v43.spec.ts",
+          "line": 64,
+          "column": 1
+        },
+        {
+          "title": "one export menu retains all five authenticated complete exports",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 688,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:36.491Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-920a4590170edd9cf14b",
+          "file": "v43.spec.ts",
+          "line": 129,
+          "column": 1
+        },
+        {
+          "title": "stale refresh keeps the last values with a clear warning and recovers without navigation reset",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 488,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:37.183Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-22f6a9139ca874d1fcf2",
+          "file": "v43.spec.ts",
+          "line": 160,
+          "column": 1
+        },
+        {
+          "title": "research loads on demand, preserves negative results, and advanced capabilities remain reachable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 703,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:37.676Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-06e1c5a58e1611dfa09e",
+          "file": "v43.spec.ts",
+          "line": 183,
+          "column": 1
+        },
+        {
+          "title": "open trade detail does not invent prices or P&L without a valid timestamped mark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 426,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:38.384Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-722d2432c86ebd3286b1",
+          "file": "v43.spec.ts",
+          "line": 224,
+          "column": 1
+        },
+        {
+          "title": "refresh timers are sequential, hidden views stop polling and heavy data stays cached",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 604,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:38.815Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-4e403912eb03b651aecc",
+          "file": "v43.spec.ts",
+          "line": 267,
+          "column": 1
+        },
+        {
+          "title": "layout and keyboard navigation at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 491,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:39.423Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-714b77d6310b7b617596",
+          "file": "v43.spec.ts",
+          "line": 299,
+          "column": 3
+        },
+        {
+          "title": "layout and keyboard navigation at 1024px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 486,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:39.919Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-6af587a5c2b1bb5394c0",
+          "file": "v43.spec.ts",
+          "line": 299,
+          "column": 3
+        },
+        {
+          "title": "layout and keyboard navigation at 768px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 449,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:40.410Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-532640e610af68c8fc5c",
+          "file": "v43.spec.ts",
+          "line": 299,
+          "column": 3
+        },
+        {
+          "title": "layout and keyboard navigation at 375px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 431,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:40.863Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-17303da1c1b714e1b0cf",
+          "file": "v43.spec.ts",
+          "line": 299,
+          "column": 3
+        },
+        {
+          "title": "creating an experiment requires explicit slot-use review and cancellation has no side effect",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 541,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:41.298Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "20d41881eb1366b28df7-f9529a3ac23aee7392c0",
+          "file": "v43.spec.ts",
+          "line": 336,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "v44.spec.ts",
+      "file": "v44.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "deleting a paused experiment archives immutable history and frees a workspace slot",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 734,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:41.851Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c90f43e378e7718d520a-30d6c1256fd35de8125e",
+          "file": "v44.spec.ts",
+          "line": 14,
+          "column": 1
+        },
+        {
+          "title": "stopped accounts can be deleted but active accounts cannot",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 636,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:42.589Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c90f43e378e7718d520a-f31897b541a8158404eb",
+          "file": "v44.spec.ts",
+          "line": 62,
+          "column": 1
+        },
+        {
+          "title": "open-position archival failure retains the account and confirmation error",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 491,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:43.229Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c90f43e378e7718d520a-7e0d8dbe68c1e94133de",
+          "file": "v44.spec.ts",
+          "line": 90,
+          "column": 1
+        },
+        {
+          "title": "HTML readiness fails safely and official STOPPED remains independent of system health",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 337,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:43.724Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c90f43e378e7718d520a-8ffb336aa97a5964cc01",
+          "file": "v44.spec.ts",
+          "line": 113,
+          "column": 1
+        },
+        {
+          "title": "routine views use compact APIs and structured decision evidence stays contextual",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 434,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:44.067Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c90f43e378e7718d520a-61678d819c23f94436d7",
+          "file": "v44.spec.ts",
+          "line": 141,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "v45-rc2.spec.ts",
+      "file": "v45-rc2.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "frozen incompatibility is critical and missing stage evidence remains unknown",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 514,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:44.511Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d32503f09b5754ac2a54-3fe877538d0cc1b0e228",
+          "file": "v45-rc2.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "trace exceptions are distinct from refused and unreached stages",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 416,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:45.030Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d32503f09b5754ac2a54-3dacec2d31cd09aae856",
+          "file": "v45-rc2.spec.ts",
+          "line": 29,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "v45.spec.ts",
+      "file": "v45.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "trade gate dashboard distinguishes eligibility from orders and shows decision evidence",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 390,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:45.457Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2dcfa771c0a4eb29be52-fe5d55719b56f3473958",
+          "file": "v45.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "archiving is disabled by default while stopped history stays accessible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 335,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:45.851Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2dcfa771c0a4eb29be52-f1d34ca2fb378989aa13",
+          "file": "v45.spec.ts",
+          "line": 25,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "v46-rc2.spec.ts",
+      "file": "v46-rc2.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "RC2 separates current research, stale prices and failures at 375px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 547,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:46.198Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f56d335a000a12314e7d-01589365760a4f99d70b",
+          "file": "v46-rc2.spec.ts",
+          "line": 5,
+          "column": 3
+        },
+        {
+          "title": "RC2 separates current research, stale prices and failures at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 575,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:46.749Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f56d335a000a12314e7d-f60d4bf9e5b06c3973f2",
+          "file": "v46-rc2.spec.ts",
+          "line": 5,
+          "column": 3
+        },
+        {
+          "title": "RC2 loads full research evidence only on request",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 404,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:47.329Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f56d335a000a12314e7d-1c73e309b3314007c071",
+          "file": "v46-rc2.spec.ts",
+          "line": 42,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "v46.spec.ts",
+      "file": "v46.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Personal Plan qualification, comparison and visible language at 375px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 663,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:47.746Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4655c36ca79cad06d8ee-ae4fab3d4eb5b0207c66",
+          "file": "v46.spec.ts",
+          "line": 5,
+          "column": 3
+        },
+        {
+          "title": "Personal Plan qualification, comparison and visible language at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 688,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:48.412Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4655c36ca79cad06d8ee-84024f90c7197567301b",
+          "file": "v46.spec.ts",
+          "line": 5,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "title": "v47.spec.ts",
+      "file": "v47.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "V4.7 separates shared capital, broker fills and research at 375px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 433,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:49.112Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7a9f37376a0d51cd660e-cbe8cda91668958efaef",
+          "file": "v47.spec.ts",
+          "line": 5,
+          "column": 3
+        },
+        {
+          "title": "V4.7 separates shared capital, broker fills and research at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 459,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:49.549Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7a9f37376a0d51cd660e-598d269e18f762287049",
+          "file": "v47.spec.ts",
+          "line": 5,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "title": "v471.spec.ts",
+      "file": "v471.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Position reports explain loss and primary health is independent at 375px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 449,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:50.027Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c9fd5d1593ce5345f9e6-77311944d0336517132e",
+          "file": "v471.spec.ts",
+          "line": 5,
+          "column": 3
+        },
+        {
+          "title": "Position reports explain loss and primary health is independent at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 505,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T21:32:50.480Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c9fd5d1593ce5345f9e6-dd60e814b61fdff3f224",
+          "file": "v471.spec.ts",
+          "line": 5,
+          "column": 3
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-26T21:31:54.683Z",
+    "duration": 56330.225999999995,
+    "expected": 36,
+    "skipped": 2,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

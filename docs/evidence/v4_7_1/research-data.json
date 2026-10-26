@@ -1,0 +1,86 @@
+{
+  "registration_sha256": "383d43043b5b12e8c86cd31e95f15a8c63c14741973051ab2c66a3272d5aadfa",
+  "datasets": [
+    {
+      "symbol": "BTC-EUR",
+      "timeframe": "5m",
+      "bars": 8928,
+      "start": "2025-01-01T00:00:00+00:00",
+      "end": "2025-01-31T23:55:00+00:00",
+      "file": ".data/research-v471/BTC-EUR-5m.json.gz",
+      "sha256": "66692531bd73a181069ea18faf2290a3f65240dd0e5fdf110a5bfdec24d2ab79"
+    },
+    {
+      "symbol": "BTC-EUR",
+      "timeframe": "15m",
+      "bars": 2976,
+      "start": "2025-01-01T00:00:00+00:00",
+      "end": "2025-01-31T23:45:00+00:00",
+      "file": ".data/research-v471/BTC-EUR-15m.json.gz",
+      "sha256": "c980f5926bdb8f6dda3f570506ecba36ee7a77cae4758a9e4571b3f0d8cd4c43"
+    },
+    {
+      "symbol": "BTC-EUR",
+      "timeframe": "1h",
+      "bars": 744,
+      "start": "2025-01-01T00:00:00+00:00",
+      "end": "2025-01-31T23:00:00+00:00",
+      "file": ".data/research-v471/BTC-EUR-1h.json.gz",
+      "sha256": "d75217cede968e53d414fde60e91960ac0ce6d5399f35a121b47024d51a62e99"
+    },
+    {
+      "symbol": "ETH-EUR",
+      "timeframe": "5m",
+      "bars": 8924,
+      "start": "2025-01-01T00:00:00+00:00",
+      "end": "2025-01-31T23:55:00+00:00",
+      "file": ".data/research-v471/ETH-EUR-5m.json.gz",
+      "sha256": "d11b7f43aac3eb5007c5373ba3fd2b9e915f003324b9a2ef7c2215e4b6e93090"
+    },
+    {
+      "symbol": "ETH-EUR",
+      "timeframe": "15m",
+      "bars": 2972,
+      "start": "2025-01-01T00:00:00+00:00",
+      "end": "2025-01-31T23:45:00+00:00",
+      "file": ".data/research-v471/ETH-EUR-15m.json.gz",
+      "sha256": "56208b7751348600fa2e994fd34d525495670051fbd86e4fe26785de3f764c26"
+    },
+    {
+      "symbol": "ETH-EUR",
+      "timeframe": "1h",
+      "bars": 740,
+      "start": "2025-01-01T00:00:00+00:00",
+      "end": "2025-01-31T23:00:00+00:00",
+      "file": ".data/research-v471/ETH-EUR-1h.json.gz",
+      "sha256": "9cef9a24e7b14ff26ec86932faed8159de8ebc7cedcd295a952b02e9edad534f"
+    },
+    {
+      "symbol": "SOL-EUR",
+      "timeframe": "5m",
+      "bars": 8916,
+      "start": "2025-01-01T00:00:00+00:00",
+      "end": "2025-01-31T23:55:00+00:00",
+      "file": ".data/research-v471/SOL-EUR-5m.json.gz",
+      "sha256": "92edf0fd4fc7ab512cd1934eba82c4ebf55bebf2325f610a1b6ac82d0040921b"
+    },
+    {
+      "symbol": "SOL-EUR",
+      "timeframe": "15m",
+      "bars": 2964,
+      "start": "2025-01-01T00:00:00+00:00",
+      "end": "2025-01-31T23:45:00+00:00",
+      "file": ".data/research-v471/SOL-EUR-15m.json.gz",
+      "sha256": "bad4fd14f43120fbd398431dbd8d3b0a65c578ecbd26351eba669ff0a735455b"
+    },
+    {
+      "symbol": "SOL-EUR",
+      "timeframe": "1h",
+      "bars": 733,
+      "start": "2025-01-01T00:00:00+00:00",
+      "end": "2025-01-31T23:00:00+00:00",
+      "file": ".data/research-v471/SOL-EUR-1h.json.gz",
+      "sha256": "2ddb3feddb9d1f874d2e4e5a8e459deb4ff999e142f6ddef699b8d032a96c819"
+    }
+  ]
+}

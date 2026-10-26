@@ -23,7 +23,7 @@ def install(app: FastAPI, service: PersonalPaperService, require_user: Any) -> N
 
     @app.get('/api/personal-paper/research', dependencies=[Depends(require_user)])
     async def research() -> dict[str, Any]:
-        paths = [Path('/app/evidence/v47/research-results.json'), Path(__file__).parents[3]/'docs/evidence/v4_7/research-results.json']
+        paths = [Path('/app/evidence/v471/research-results.json'), Path(__file__).parents[3]/'docs/evidence/v4_7_1/research-results.json', Path('/app/evidence/v47/research-results.json'), Path(__file__).parents[3]/'docs/evidence/v4_7/research-results.json']
         for path in paths:
             if path.is_file():
                 return dict(json.loads(path.read_text()))

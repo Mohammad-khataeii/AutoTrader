@@ -1,0 +1,28 @@
+{
+  "read_only": true,
+  "cutoff": "PAUSED_SOURCE_AUDIT",
+  "strategies": {
+    "A3_COST_AWARE_CONTINUATION": {
+      "evaluations": 251,
+      "technical": 10,
+      "economic": 3,
+      "entry_eligible": 3,
+      "buy_orders": 3,
+      "filled_buys": 2
+    },
+    "B3_STATEFUL_BREAKOUT": {
+      "evaluations": 251,
+      "technical": 0,
+      "economic": 0,
+      "entry_eligible": 0
+    },
+    "E3_ADAPTIVE_RELATIVE_STRENGTH": {
+      "evaluations": 251,
+      "technical": 0,
+      "economic": 0,
+      "entry_eligible": 0
+    }
+  },
+  "multi_eligible_symbol_candles": {},
+  "selection_policy_before": "Eligible first, technical score second, then symbol and strategy ID; no fee/cost-normalized portfolio fit."
+}

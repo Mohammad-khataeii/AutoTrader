@@ -37,6 +37,7 @@ from autotrader.personal_paper.policy import (
     risk_payload,
 )
 from autotrader.personal_paper.repository import PersonalPaperRepository
+from autotrader.personal_paper.selection import POLICY
 from autotrader.research.data import canonical, digest
 
 D = Decimal
@@ -84,7 +85,8 @@ class PersonalPaperService:
         origin = current.get('account_origin', current)
         manifest = {**origin, 'version': VERSION, 'account_origin': origin,
             'parent_profile_hash': digest(canonical(current)), 'frozen_at': utc_now().isoformat(),
-            'runtime_fingerprint': fingerprint(), 'revision_reason': reason}
+            'runtime_fingerprint': fingerprint(), 'revision_reason': reason,
+            'strategies': STRATEGIES, 'risk_limits': risk_payload(), 'execution_policy': POLICY}
         key = 'paper_profile:'+VERSION
         async with repo.session_factory() as session, session.begin():
             account = await repo._lock_account(session)
@@ -136,7 +138,7 @@ class PersonalPaperService:
                 manifest = {'account_id': ACCOUNT, 'version': VERSION, 'official_database': url.database,
                     'database_name': 'autotrader_paper_'+digest(str(url.database).encode())[:32],
                     'initial_cash_eur': str(INITIAL), 'currency': 'EUR', 'strategies': STRATEGIES,
-                    'risk_limits': risk_payload(), 'runtime_fingerprint': fingerprint(),
+                    'risk_limits': risk_payload(), 'runtime_fingerprint': fingerprint(), 'execution_policy': POLICY,
                     'fee_bps': str(self.settings.default_fee_bps), 'slippage_bps': str(self.settings.default_slippage_bps),
                     'fee_tier': 'CONSERVATIVE_UNVERIFIED_TAKER_ASSUMPTION',
                     'data_kind': 'SYNTHETIC_ACCEPTANCE' if self.settings.environment == 'test' else 'REVOLUT_X_PROSPECTIVE_PAPER',
@@ -224,7 +226,7 @@ class PersonalPaperService:
                 pnl = sum((p.realized_pnl for p in sample), D(0))
                 strategies.append({'strategy_id': identity, **spec, 'state': 'EXPERIMENTAL_PAPER_SELECTED',
                     'closed_positions': len(sample), 'net_realized_pnl': str(pnl),
-                    'expectancy': str(pnl/len(sample)) if sample else None,
+                    'expectancy': str(pnl/len(sample)) if sample else None, 'expected_profitability': 'UNKNOWN',
                     'confidence': 'INSUFFICIENT_INDEPENDENT_EVIDENCE' if len(sample)<30 else 'REQUIRES_CHRONOLOGICAL_REVIEW',
                     'allocation_weight': '1', 'automatic_parameter_changes': False})
             wins = [p.realized_pnl for p in closed if p.realized_pnl>0]

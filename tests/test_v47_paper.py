@@ -21,7 +21,18 @@ from autotrader.personal_paper.policy import ACCOUNT, INITIAL
 from autotrader.personal_paper.runtime import PersonalPaperRuntime
 from autotrader.personal_paper.service import PersonalPaperService
 from autotrader.scanner import ScanCandidate
-from v46_support import successor_frame
+from v46_support import successor_frame as original_successor_frame
+
+
+def successor_frame(strategy):
+    """Explicit favorable geometry for the stricter profile, still synthetic."""
+    frame = original_successor_frame(strategy)
+    for market in frame["markets"].values():
+        old = market["candles"][-58]
+        old["high"] = str(D(old["close"])+D(40))
+        if strategy.startswith("A3"):
+            market["candles"][-5]["low"] = str(D(market["candles"][-5]["close"])-D(2))
+    return frame
 
 
 @pytest.fixture

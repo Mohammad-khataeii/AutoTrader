@@ -434,6 +434,19 @@ class AccountingRepositoryMixin:
                                 holding_seconds = int(evidence.get("holding_bars", 12)) * timeframe_seconds(str(evidence.get("timeframe", "5m")))
                             if self.account_id == "PERSONAL_PLAN_PAPER_7000":
                                 holding_seconds = int(evidence.get("holding_bars", 36)) * timeframe_seconds(str(evidence.get("timeframe", "5m")))
+                if side is Side.SELL and position_id:
+                    # Automatic exits have no decision. Inherit the immutable
+                    # entry plan and entry evidence, never a different signal.
+                    exit_plan = await session.scalar(select(ExitPlanModel).where(ExitPlanModel.position_id == position_id))
+                    original_entry = await session.scalar(select(OrderModel).where(
+                        OrderModel.position_id == position_id, OrderModel.side == 'BUY',
+                        OrderModel.filled_quantity > ZERO).order_by(OrderModel.created_at, OrderModel.order_id).limit(1))
+                    entry_payload = json.loads(original_entry.execution_json) if original_entry else {}
+                    primary_strategy = exit_plan.strategy_id if exit_plan else entry_payload.get('strategy_id', 'UNATTRIBUTED')
+                    evidence = entry_payload.get('strategy_evidence', {})
+                    holding_seconds = entry_payload.get('holding_seconds')
+                    payload['attribution_source'] = 'POSITION_ENTRY_PLAN' if exit_plan else 'ORIGINAL_BUY' if original_entry else 'MISSING_ENTRY_IDENTITY'
+                    payload['entry_order_id'] = original_entry.order_id if original_entry else None
                 hours={"A_VOLUME_ACCUMULATION":12,"B_VOLATILITY_COMPRESSION":24,"C_BREAKOUT_RETEST":8,"D_MOMENTUM_ACCELERATION":6,"G_RELATIVE_STRENGTH":8,"H_LIQUIDITY_ORDER_BOOK":4}.get(primary_strategy,24)
                 if side is Side.BUY and not error:
                     promotion_failure = await self._entry_policy_error(session, primary_strategy, evidence, fee_bps, slippage_bps)

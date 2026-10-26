@@ -10,6 +10,7 @@ from typing import Any
 from sqlalchemy import select
 
 from autotrader.api.dashboard import account_assets
+from autotrader.api.trade_reports import linked_attribution, trade_reports
 from autotrader.domain import utc_now
 from autotrader.persistence.accounting import aware
 from autotrader.persistence.models import OrderModel, PositionModel
@@ -27,6 +28,8 @@ async def attributed_summary(service: Any) -> dict[str, Any]:
     async with repo.session_factory() as session:
         positions = (await session.scalars(select(PositionModel))).all()
         entries = (await session.scalars(select(OrderModel))).all()
+        linked = await linked_attribution(session)
+    result['trade_reports'] = await trade_reports(repo)
     origin=repo.manifest.get('account_origin',repo.manifest)
     def profile(evidence: dict[str,Any]) -> str:
         return str(evidence.get('execution_profile') or (origin['version'] if evidence.get('paper_manifest')==digest(canonical(origin)) else 'UNATTRIBUTED'))
@@ -35,6 +38,16 @@ async def attributed_summary(service: Any) -> dict[str, Any]:
     for order in result.get('orders',[]):
         evidence = order_payloads.get(order['order_id'],{}).get('strategy_evidence',{})
         order['execution_profile'] = profile(evidence)
+        raw = order.get('strategy_id')
+        model = next((o for o in entries if o.order_id==order['order_id']),None)
+        order['raw_strategy_id'] = raw
+        order['strategy_id'] = linked.get(model.position_id,raw) if model else raw
+        order['attribution_corrected'] = order['strategy_id'] != raw
+    by_order = {o.order_id:o for o in entries}
+    for fill in result.get('fills',[]):
+        order = by_order.get(fill['order_id'])
+        if order:
+            fill['strategy_id'] = linked.get(order.position_id, json.loads(order.execution_json).get('strategy_id'))
     grouped: dict[str, dict[str, list[Any]]] = {k:defaultdict(list) for k in ('asset','strategy','timeframe','regime','execution_profile')}
     for p in positions:
         payload = payloads.get(p.position_id,{})

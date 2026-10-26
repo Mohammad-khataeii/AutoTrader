@@ -52,13 +52,16 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
   const menu = useRef<HTMLDetailsElement>(null);
   const overview = useResource("/api/overview/summary");
   const system = useResource("/api/monitoring/summary", { poll: 15000 });
+  const primary = useResource("/api/personal-paper", { poll: 15000 });
   const readiness = useResource("/readyz", { ttl: 60000 });
   const [refreshing, setRefreshing] = useState(false);
-  const status = systemStatus(
+  const legacyStatus = systemStatus(
     system.data,
     overview.data?.portfolio?.control,
     Boolean(system.error || overview.error),
   );
+  const primaryStatus = primary.error ? "Unavailable" : !primary.data?.portfolio ? "Checking" : primary.data?.reconciliation?.length || primary.data?.portfolio?.risk_state !== "HEALTHY" ? "Needs attention" : primary.data?.portfolio?.control !== "RUNNING" ? "Paused" : primary.data?.state === "PAPER_EXPERIMENTAL_ACTIVE" && primary.data?.worker_health?.fresh ? "Running" : primary.data?.runtime_matches === false ? "Entry suspended" : "Data syncing";
+  const status = active === "Advanced" ? legacyStatus : primaryStatus;
   return (
     <div className="app-shell">
       <a className="skip-link" href="#workspace">
@@ -107,7 +110,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
               ))}
             </div>
           </details>
-          <p className="build-label">Interface 4.7 · Simulated Mode</p>
+          <p className="build-label">Interface 4.7.1 · Simulated Mode</p>
         </div>
       </aside>
       <main id="workspace" className="workspace">
@@ -158,6 +161,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
             </button>
           </div>
         </header>
+        {legacyStatus !== "Running" && <details className="legacy-health"><summary>Separate official / legacy account status: {legacyStatus}</summary><p>The €7,000 primary portfolio has its own health checks. Historical shadow runtime incompatibilities suspend their entries independently. Open Settings for the full legacy account diagnostics.</p></details>}
         {readiness.error && (
           <ResourceState
             resource={readiness}

@@ -6,6 +6,7 @@ from typing import Any
 
 from sqlalchemy import or_, select, text
 
+from autotrader.api.trade_reports import linked_attribution
 from autotrader.domain import utc_now
 from autotrader.persistence.accounting import aware
 from autotrader.persistence.models import (
@@ -34,6 +35,7 @@ async def activity_feed(service: Any) -> dict[str, Any]:
             OrderModel.decision_id.in_(list(bodies)), OrderModel.order_id.in_(recent_orders))))).all()
         fills = (await session.scalars(select(FillModel).order_by(
             FillModel.created_at.desc(), FillModel.fill_id.desc()).limit(20))).all()
+        linked = await linked_attribution(session)
     by_decision = {o.decision_id: o for o in orders if o.decision_id}
     evaluations: list[dict[str, Any]] = []
     for decision in decisions:
@@ -49,6 +51,7 @@ async def activity_feed(service: Any) -> dict[str, Any]:
             'technical': evidence.get('technical_eligible'), 'economic': evidence.get('economic_eligible'),
             'accepted': decision.accepted, 'reasons': evidence.get('reasons', []),
             'decision_reason': decision.rejected_reason, 'economics': evidence.get('economics'),
+            'quality_policy': evidence.get('quality_policy'), 'ranking_components': evidence.get('ranking_components'),
             'entry_plan': evidence.get('entry_plan'), 'sizing': evidence.get('sizing'),
             'quote_amount': body.get('proposed_quote_amount'),
             'entry_price': body.get('entry_price'), 'stop_loss': body.get('stop_loss'),
@@ -61,13 +64,15 @@ async def activity_feed(service: Any) -> dict[str, Any]:
         payload = json.loads(order.execution_json)
         events.append({'id': order.order_id, 'kind': 'ORDER', 'timestamp': aware(order.created_at).isoformat(),
             'symbol': order.symbol, 'side': order.side, 'status': order.status,
-            'strategy_id': payload.get('strategy_id'), 'reason': payload.get('rejection_reason'),
+            'strategy_id': linked.get(order.position_id, payload.get('strategy_id')),
+            'raw_strategy_id': payload.get('strategy_id'), 'reason': payload.get('rejection_reason'),
             'quantity': str(order.quantity), 'filled_quantity': str(order.filled_quantity),
             'execution_profile': payload.get('strategy_evidence', {}).get('execution_profile'),
             'decision_id': order.decision_id})
     for fill in fills:
         events.append({'id': fill.fill_id, 'kind': 'FILL', 'timestamp': aware(fill.created_at).isoformat(),
             'symbol': fill.symbol, 'side': fill.side, 'quantity': str(fill.quantity),
+            'strategy_id': linked.get(fill.position_id),
             'price': str(fill.price), 'fee_eur': str(fill.fee), 'order_id': fill.order_id})
     events.sort(key=lambda e: (e['timestamp'], e['id']), reverse=True)
     return {'events': events[:80], 'evaluations': evaluations, 'observed_at': utc_now().isoformat(),

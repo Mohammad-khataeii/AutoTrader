@@ -21,3 +21,7 @@ docs/evidence/v4_7/*
 .env.local
 .env-dashboard-password
 **/.DS_Store
+
+!docs/evidence/v4_7_1
+docs/evidence/v4_7_1/*
+!docs/evidence/v4_7_1/research-results.json

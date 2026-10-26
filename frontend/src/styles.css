@@ -1478,3 +1478,17 @@ dialog h2 {
 @media (max-width: 1150px) { .dashboard-summary { grid-template-columns: 1fr; }.dashboard-market-panel { grid-template-columns: 210px minmax(0,1fr); }.dashboard-account-grid { grid-template-columns: 1fr; }.coin-chart-heading { flex-wrap: wrap; }.chart-options { align-items: flex-start; flex-direction: row; flex-wrap: wrap; } }
 @media (max-width: 700px) { .dashboard-market-panel { grid-template-columns: 1fr; }.dashboard-coin-list { padding: 16px; border-right: 0; border-bottom: 1px solid #e6ece6; }.dashboard-coins { display: flex; gap: 7px; overflow-x: auto; max-height: unset; padding-bottom: 5px; }.dashboard-coin { display: flex; width: auto; flex-shrink: 0; min-width: 110px; padding: 10px; border: 1px solid #e8eee6; }.dashboard-coin .coin-list-price { display: none; }.dashboard-coin-list > p { margin-bottom: 9px; }.coin-chart { padding: 20px 14px; }.price-chart-svg { min-height: 140px; }.chart-ohlc { margin-top: 18px; }.dashboard-money { padding: 18px; }.dashboard-money > strong { font-size: 21px; }.dashboard-equity { font-size: 36px; }.dashboard-value { padding: 22px; } }
 @media (prefers-reduced-motion: reduce) { .dashboard-market-panel { scroll-behavior: auto; } }
+
+.trade-report {border-top:1px solid var(--border, #293342); padding:14px 0;}
+.trade-report > summary {display:flex; gap:16px; align-items:center; flex-wrap:wrap; cursor:pointer;}
+.trade-report > summary > :last-child {margin-left:auto;}
+.trade-report-body {padding:10px 0; overflow-wrap:anywhere;}
+.trade-report-grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px;}
+.trade-report-grid dt {font-size:12px; color:var(--muted,#8994a8); margin-bottom:6px;}
+.trade-report-grid dd {margin:0; font-variant-numeric:tabular-nums;}
+.trade-report-body h3 {font-size:14px; margin-top:20px;}
+.trade-report-body ul {font-size:13px; line-height:1.8;}
+.trade-fill-evidence > div {padding:10px 0; border-bottom:1px solid var(--border,#293342);}
+.legacy-health {font-size:12px; color:var(--muted,#8994a8); padding:0 0 12px;}
+.legacy-health summary {cursor:pointer;}
+@media(max-width:600px){.trade-report > summary {gap:8px;} .trade-report > summary > span:nth-child(2){width:100%;order:4;} .trade-report-grid {grid-template-columns:1fr;} }

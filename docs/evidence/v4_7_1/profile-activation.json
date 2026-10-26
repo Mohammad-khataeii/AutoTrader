@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "origin_preserved": true,
+  "funding_count": 1,
+  "parent_profile_hash": "be0a6ec6fe0f4146bc8bf0fef439e881aca2130bca653fc74af5c16214ead2e0",
+  "profile_hash": "770ba3fb8e20cf494af0c43bd0ff30d072301923c89ca1eab96fc2d43dca347b",
+  "runtime_fingerprint": "cf6b01761f2f879f4ec2a82cfbb0c9e8aacc6bf69f5f8961eaafce7731b779d1",
+  "profile": "4.7.1-paper.1",
+  "cash_eur": "6986.711990824714",
+  "realized_pnl_eur": "-13.288009175286",
+  "control": "PAUSED",
+  "orders_preserved": 5,
+  "fills_preserved": 4,
+  "reconciliation": [],
+  "live_authorized": false
+}

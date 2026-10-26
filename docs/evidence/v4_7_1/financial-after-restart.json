@@ -1,0 +1,190 @@
+{
+  "status": "PASS",
+  "scope": "read-only local PostgreSQL; mutable marks/snapshots and control state excluded",
+  "accounts": [
+    {
+      "account_id": "paper-eur",
+      "preserved_tables": {
+        "balances": {
+          "rows": 1,
+          "sha256": "e396840b91d45751a4c1c9f360b65ab2fa8f39054b63ddc410d2e3bd93790cdf"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "5a82d04b144656a5bf6ca0e872c0a90b51b8ef4cd8f1f3542d5312a2eda0ecaf"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "immutable_rows_identical_to_backup": true
+    },
+    {
+      "account_id": "shadow:0cc6dc7d917248bfae0d6f9261e34387",
+      "preserved_tables": {
+        "balances": {
+          "rows": 1,
+          "sha256": "157026da19ef32ac633c8430d6321ac2c356cd1b62b4d3e8268644277c7b57a1"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "99e2a596394a3f968851e821e2b351941efaefe59ab2f37cb1b427b57ec69405"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "immutable_rows_identical_to_backup": true
+    },
+    {
+      "account_id": "shadow:1997266aac384275a1746ce25c259127",
+      "preserved_tables": {
+        "balances": {
+          "rows": 1,
+          "sha256": "46ff279b1fa991f44f1e1583f6ebbafc4a6a71b30b589b13320ba27b005d869b"
+        },
+        "financial_journal": {
+          "rows": 1,
+          "sha256": "5c3a192a20d9a75f58030c3b27c6246512c459211ec107d9b3df9a592d03773a"
+        },
+        "orders": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fills": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "positions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "capital_reservations": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_intents": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_targets": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "exit_plans": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "order_transitions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "immutable_rows_identical_to_backup": true
+    },
+    {
+      "account_id": "PERSONAL_PLAN_PAPER_7000",
+      "preserved_tables": {
+        "balances": {
+          "rows": 1,
+          "sha256": "c8f823475d58e6b405bd9b25ad282e19a6f9b115a006154946c0c63f8ac407c0"
+        },
+        "financial_journal": {
+          "rows": 13,
+          "sha256": "4775576e32d36600004f7a81634823a7edb73d809234c1dceafc583d679c9ed5"
+        },
+        "orders": {
+          "rows": 5,
+          "sha256": "62d3d9820ed613967887c4095f0614ca85e35bcb52c0e476aa9769cf97a601d5"
+        },
+        "fills": {
+          "rows": 4,
+          "sha256": "8e489f92c6896d086f23315d3410e6adb06d4e1c1bfdf57cdcfaca05f40acdcf"
+        },
+        "positions": {
+          "rows": 2,
+          "sha256": "3ed501eac209f16505fc92fa4c6f4ca70e47fcc7fbd65169e099c0c210ca5611"
+        },
+        "capital_reservations": {
+          "rows": 2,
+          "sha256": "ebe01868af7e5342e69e4a24d368b18b571d66805dbbfb686fad0f2224fe6911"
+        },
+        "exit_intents": {
+          "rows": 2,
+          "sha256": "9e492ad89a67e0147f0e6dbe8a0755b39fe177153dd90e2df1f0ddee75dff451"
+        },
+        "exit_targets": {
+          "rows": 6,
+          "sha256": "0d325945ddf8f7f45eee21018163ef24e08cda3a4567c1d6348f60e61eddecfe"
+        },
+        "exit_plans": {
+          "rows": 2,
+          "sha256": "4f47555d6905f038712b847807361c48104eee64626c256a457d3f779a797e77"
+        },
+        "order_transitions": {
+          "rows": 13,
+          "sha256": "4becaac2300f2dbdc81ab01ab68bd80d61ff95d430deafe0c90bee4d4b772e06"
+        }
+      },
+      "immutable_rows_identical_to_backup": true
+    }
+  ]
+}

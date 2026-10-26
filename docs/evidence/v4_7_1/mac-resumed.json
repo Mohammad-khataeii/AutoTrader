@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "profile": "4.7.1-paper.1",
+  "profile_hash": "770ba3fb8e20cf494af0c43bd0ff30d072301923c89ca1eab96fc2d43dca347b",
+  "observed_at": "2026-10-26T21:43:30.839888+00:00",
+  "state": "PAPER_EXPERIMENTAL_ACTIVE",
+  "control": "RUNNING",
+  "cash_eur": "6986.711990824714",
+  "equity_eur": "6986.711990824714",
+  "realized_pnl_eur": "-13.288009175286",
+  "worker_health": {
+    "monitor_age_seconds": 0.322502,
+    "scan_age_seconds": 118.394118,
+    "fresh": true
+  },
+  "reconciliation": [],
+  "actual_report_count": 2,
+  "raw_history_preserved": true,
+  "live_authorized": false
+}

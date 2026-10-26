@@ -12,7 +12,7 @@ D = Decimal
 ACCOUNT = "PERSONAL_PLAN_PAPER_7000"
 REGISTRY_KEY = "personal_paper_v47"
 INITIAL = D(7000)
-VERSION = "4.7.0-paper.2"
+VERSION = "4.7.1-paper.1"
 LIMITS = RiskLimits(max_allocated_capital=INITIAL, max_total_open_exposure=D(4200),
     min_uncommitted_reserve=D(2800), max_position_size=D(700), max_simultaneous_positions=6,
     max_planned_loss_per_trade=D(35), daily_loss_threshold=D(140),

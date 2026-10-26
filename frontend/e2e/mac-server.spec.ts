@@ -27,6 +27,17 @@ for (const width of [375, 1440]) {
       if(area==='Dashboard') {
         await expect(page.getByText('Budget €7,000.00',{exact:false})).toBeVisible();
         await expect(page.getByRole('heading',{name:'Your holdings',exact:true})).toBeVisible();
+        const reports=page.locator('.trade-reports');
+        await expect(reports.getByRole('heading',{name:'Completed position reports',exact:true})).toBeVisible();
+        const ena=reports.locator('.trade-report').filter({hasText:'ENA-EUR'}).first();
+        if(await ena.count()) {
+          await ena.locator(':scope > summary').click();
+          await expect(ena.getByText('Price P&L before fees',{exact:true})).toBeVisible();
+          await expect(ena.getByText('Original stop',{exact:true})).toBeVisible();
+          await expect(ena.getByText('The price move lost money before fees.',{exact:false})).toBeVisible();
+          await expect(ena.getByText('Historical SELL label differs from entry plan; linked attribution corrected, raw record retained.',{exact:true})).toBeVisible();
+          await reports.screenshot({path:`${process.env.AUTOTRADER_BROWSER_EVIDENCE}/actual-position-report-${width}.png`});
+        }
         const desk=page.locator('.trader-live');
         await expect(desk.getByRole('heading',{name:'What the trader is doing'})).toBeVisible();
         await expect(desk.getByText('Worker connected',{exact:true})).toBeVisible();

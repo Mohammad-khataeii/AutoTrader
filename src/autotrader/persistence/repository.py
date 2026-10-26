@@ -258,6 +258,11 @@ class PersistentTradingRepository(MarketStateMixin, PilotMixin, OperationsMixin,
             "risk_state": (await self.get_runtime_health()).value,
             "incidents": [{"message": r.message, "severity": r.severity, "state": r.status, "created_at": r.created_at.isoformat()} for r in incidents]}
 
+    async def position_exit_reason(self, position_id: str, symbol: str, as_of: Any) -> str | None:
+        # Legacy accounts retain their original policy. Personal paper overrides
+        # this hook with position-specific, completed and fresh candle evidence.
+        return await self.market_exit_reason(symbol)
+
     async def market_exit_reason(self, symbol: str) -> str | None:
         async with self.session_factory() as session:
             row = await session.scalar(select(MarketFeature).where(MarketFeature.symbol == symbol).order_by(MarketFeature.timestamp.desc()).limit(1))
