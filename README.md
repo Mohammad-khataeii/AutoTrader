@@ -4,6 +4,8 @@
 
 The Mac development setup adds one isolated EUR7,000 shared virtual portfolio with autonomous A3/B3/E3 paper execution. The official EUR500 account and research shadows remain separate. Live exchange trading remains disabled. Read the [V4.7 release report](docs/V4_7_RELEASE_REPORT.md), [Mac operating guide](docs/V4_7_MAC_OPERATIONS.md) and [future live-readiness limits](docs/V4_7_LIVE_READINESS.md). This development release does not authorize VPS deployment or establish a profitable strategy.
 
+[Live trader desk](docs/V4_7_LIVE_DESK.md) explains the real candidate, rejection, broker-order and fill timeline now shown in the app.
+
 
 V4.6 RC2: [engineering report, measured research and limitations](docs/V4_6_RC2_RELEASE.md) · [prepared deployment and rollback guide](docs/V4_6_RC2_DEPLOYMENT.md). Stage A only. Current production access and fresh backup verification are blocked; deployment also requires separate approval of the exact release commit. The [RC1 report](docs/V4_6_RELEASE.md) remains immutable historical evidence.
 

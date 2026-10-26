@@ -26,7 +26,18 @@ for (const width of [375, 1440]) {
         await expect(page.getByRole('heading',{name:'€7,000 virtual portfolio',exact:true})).toBeVisible();
         await expect(page.getByText('Starting virtual balance €7,000.00',{exact:true})).toBeVisible();
         const balances=page.getByLabel('Official simulated balance and results');
-        await expect(page.getByText('Worker connected',{exact:true})).toBeVisible();
+        const desk=page.locator('.trader-live');
+        await expect(desk.getByRole('heading',{name:'What the trader is doing'})).toBeVisible();
+        await expect(desk.getByText('Worker connected',{exact:true})).toBeVisible();
+        await expect(desk.locator('.trader-event').first()).toBeVisible();
+        const options=desk.locator('select option');
+        if(await options.count()>1) {
+          await desk.getByLabel('Inspect another recent candidate').selectOption({index:1});
+          await expect(desk.getByText(/Pinned evaluation/)).toBeVisible();
+          await desk.getByRole('button',{name:'Follow latest',exact:true}).click();
+        }
+        await page.waitForResponse(r=>r.url().endsWith('/api/personal-paper/activity') && r.status()===200,{timeout:12000});
+        await desk.screenshot({path:`${process.env.AUTOTRADER_BROWSER_EVIDENCE}/actual-live-desk-${width}.png`});
         await expect(page.getByLabel('Personal Plan shared paper portfolio').getByText(/Financial reconciliation passed/)).toBeVisible();
         await expect(balances.getByText('Unavailable',{exact:true})).toHaveCount(0);
         await expect(balances.locator('strong').first()).toHaveText('€500.00');

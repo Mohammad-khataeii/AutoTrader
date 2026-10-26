@@ -1378,3 +1378,70 @@ dialog h2 {
   .balance-summary, .insight-metrics, .opportunity-economics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; }
   .insight-metrics strong { font-size: 20px; }
 }
+
+/* The live desk only animates connectivity; candidate stages reflect saved evidence. */
+.trader-live { border: 1px solid #b9cfc1; padding: 0; overflow: hidden; }
+.trader-live-heading { padding: 24px 24px 18px; display: flex; justify-content: space-between; gap: 16px; align-items: center; background: #173f33; color: #fff; }
+.trader-live-heading .eyebrow { color: #b2d2bf; }
+.trader-live-heading h2 { font-size: 22px; margin: 0; letter-spacing: -.5px; }
+.trader-connection { display: inline-flex; align-items: center; gap: 7px; border: 1px solid #709986; border-radius: 24px; padding: 7px 10px; font-size: 12px; white-space: nowrap; }
+.trader-connection.connected svg { animation: trader-heartbeat 2.5s ease-in-out infinite; color: #b4f0c8; }
+.trader-connection.waiting { color: #ffdea8; border-color: #9d8b66; }
+.trader-live-status { display: flex; align-items: center; gap: 10px; padding: 13px 24px; background: #eef5ef; color: #2d5841; font-size: 13px; line-height: 1.5; }
+.trader-live-status svg { flex-shrink: 0; }
+.trader-vitals { display: flex; gap: 12px 24px; padding: 13px 24px; flex-wrap: wrap; border-bottom: 1px solid #e2eae3; color: #66746c; font-size: 11px; }
+.trader-vitals strong { color: #2b4435; margin-left: 4px; }
+.trader-workspace { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); }
+.trader-candidate { padding: 24px; min-width: 0; }
+.trader-candidate .eyebrow { display: flex; align-items: center; gap: 7px; margin: 0; }
+.trader-market { margin-top: 21px; display: flex; flex-direction: column; gap: 5px; }
+.trader-market > strong { font-size: 29px; letter-spacing: -1px; }
+.trader-market > span { color: #627367; font-size: 12px; }
+.trader-candidate h3 { font-size: 18px; margin: 20px 0 8px; }
+.trader-pipeline { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 20px 0; }
+.trader-stage { display: flex; gap: 8px; align-items: flex-start; padding: 11px; border: 1px solid #dce6df; border-radius: 8px; background: #f9fbf9; min-width: 0; }
+.trader-stage svg { flex-shrink: 0; margin-top: 1px; }
+.trader-stage strong { display: block; font-size: 12px; }
+.trader-stage span { display: block; font-size: 11px; margin-top: 4px; line-height: 1.4; }
+.trader-stage.passed { background: #edf6ef; color: #236346; border-color: #c8dfcd; }
+.trader-stage.blocked { background: #fff7eb; color: #7f561e; border-color: #edddc0; }
+.trader-stage.unreached { color: #6e7972; border-style: dashed; }
+.trader-explanation { border-left: 3px solid #c49b55; padding: 13px 15px; background: #fcf9f1; border-radius: 0 8px 8px 0; font-size: 13px; }
+.trader-explanation p { margin-bottom: 0; }
+.trader-explanation ul { padding-left: 18px; margin: 10px 0 0; }
+.trader-explanation li { line-height: 1.6; margin: 7px 0; }
+.trader-estimates { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 20px 0; }
+.trader-estimates span { display: block; color: #68796e; font-size: 11px; line-height: 1.4; }
+.trader-estimates strong { display: block; margin-top: 6px; font-size: 14px; }
+.trader-candidate-select { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; font-size: 12px; color: #56695b; }
+.trader-candidate-select select { width: 100%; min-width: 0; padding: 10px; border-radius: 8px; border: 1px solid #cbd8ce; background: #fff; color: #293d30; text-overflow: ellipsis; }
+.trader-feed { min-width: 0; padding: 24px; border-left: 1px solid #e2eae3; background: #fbfcfa; }
+.trader-feed-heading { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.trader-filter { display: flex; gap: 4px; padding: 4px; border: 1px solid #e0e6df; border-radius: 9px; margin: 14px 0 18px; }
+.trader-filter button { flex: 1; font-size: 11px; padding: 7px 5px; border: none; min-height: 34px; background: transparent; }
+.trader-filter button[aria-pressed="true"] { background: #e3ede4; color: #244d34; }
+.trader-events { list-style: none; margin: 0; padding: 0 8px 0 0; height: 510px; overflow-y: auto; scrollbar-width: thin; }
+.trader-event { display: grid; grid-template-columns: 29px minmax(0, 1fr); gap: 10px; position: relative; padding: 0 0 20px; }
+.trader-event:not(:last-child)::before { content: ""; position: absolute; width: 1px; background: #dae5db; top: 31px; bottom: 3px; left: 14px; }
+.trader-event-icon { width: 29px; height: 29px; border-radius: 50%; background: #eaf0e8; display: grid; place-items: center; color: #577260; }
+.trader-event.fill .trader-event-icon { background: #d4ebdc; color: #20623d; }
+.trader-event.order .trader-event-icon { background: #f4e8cf; color: #7b5b27; }
+.trader-event-meta { display: flex; justify-content: space-between; gap: 12px; color: #738073; font-size: 10px; margin: 2px 0 7px; }
+.trader-event > div > strong { font-size: 13px; line-height: 1.5; }
+.trader-event p { font-size: 12px; color: #5d6b60; margin: 6px 0; line-height: 1.5; }
+.trader-event .small { font-size: 10px; }
+.trader-inspect { display: flex; border: 0; background: transparent; padding: 7px 0; min-height: 30px; font-size: 11px; color: #377250; }
+.trader-evidence-note { margin: 0; padding: 13px 24px; font-size: 11px; color: #69786d; border-top: 1px solid #e1e8e0; }
+@keyframes trader-heartbeat { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .trader-connection.connected svg { animation: none; } }
+@media (max-width: 1000px) { .trader-workspace { grid-template-columns: 1fr; } .trader-feed { border-left: none; border-top: 1px solid #e2eae3; } .trader-events { height: 400px; } }
+@media (max-width: 520px) {
+  .trader-live-heading { align-items: flex-start; flex-direction: column; padding: 20px 16px; gap: 14px; }
+  .trader-live-heading h2 { font-size: 21px; }
+  .trader-live-status, .trader-vitals, .trader-evidence-note { padding-left: 16px; padding-right: 16px; }
+  .trader-vitals { gap: 9px 15px; }
+  .trader-candidate, .trader-feed { padding: 20px 16px; }
+  .trader-feed-heading { flex-direction: column; gap: 0; }
+  .trader-stage { padding: 10px 8px; gap: 6px; }
+  .trader-estimates { grid-template-columns: 1fr 1fr; }
+}

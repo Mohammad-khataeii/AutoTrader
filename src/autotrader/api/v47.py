@@ -5,6 +5,7 @@ from typing import Any, Literal
 
 from fastapi import Depends, FastAPI, HTTPException
 
+from autotrader.api.paper_activity import activity_feed
 from autotrader.api.paper_analytics import attributed_summary
 from autotrader.personal_paper.service import PersonalPaperService
 
@@ -13,6 +14,10 @@ def install(app: FastAPI, service: PersonalPaperService, require_user: Any) -> N
     @app.get('/api/personal-paper', dependencies=[Depends(require_user)])
     async def paper() -> dict[str, Any]:
         return await attributed_summary(service)
+
+    @app.get('/api/personal-paper/activity', dependencies=[Depends(require_user)])
+    async def activity() -> dict[str, Any]:
+        return await activity_feed(service)
 
     @app.get('/api/personal-paper/research', dependencies=[Depends(require_user)])
     async def research() -> dict[str, Any]:

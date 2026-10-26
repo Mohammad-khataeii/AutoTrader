@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "captured_at": "2026-10-26T19:32:01.814775+00:00",
+  "backend_source_fingerprint": "897fa2154a1384890d49d70161f0e91063a38f03034684b7ae79f39dc84457e9",
+  "execution_fingerprint": "fd20b6e6e61e5c775ff8bd62b3fc87095fa55c6ea7e0d290fb6209eb6a9c1e77",
+  "primary_tests": 15,
+  "api_and_frozen_identity_tests": 11,
+  "frontend_unit_tests": 16,
+  "scenario_browser_tests": 4,
+  "actual_readonly_browser_tests": 2,
+  "strict_mypy": "PASS",
+  "ruff": "PASS",
+  "typescript_build": "PASS",
+  "backend_source_matches_running_image": true,
+  "architecture": "aarch64",
+  "worker_uninterrupted": true,
+  "same_execution_profile": true,
+  "financial_migrations": false,
+  "synthetic_injections_into_primary": false,
+  "vps_accessed": false,
+  "real_trading_enabled": false,
+  "idle_sleep_guard_for_current_docker_session": true,
+  "remaining_limitations": [
+    "No natural fills at capture; no profitability claim",
+    "Overall monitoring still Degraded due preserved old shadow identities",
+    "Timeline is bounded to latest saved activity, not a complete financial export",
+    "Mac shutdown, lid closure, manual sleep or Docker shutdown can still interrupt operation"
+  ]
+}

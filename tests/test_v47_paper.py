@@ -117,9 +117,42 @@ async def test_ranked_buy_partial_target_stop_and_restart(paper, pg_repo, tmp_pa
         from autotrader.personal_paper.policy import VERSION
         attributed=await attributed_summary(service)
         assert all(o['execution_profile']==VERSION for o in attributed['orders'] if o['side']=='SELL' and o['status'] in {'FILLED','PARTIALLY_FILLED'})
+        from autotrader.api.paper_activity import activity_feed
+        feed = await activity_feed(service)
+        assert feed['read_only'] is True and feed['evidence_category'] == 'SYNTHETIC_ACCEPTANCE'
+        assert {'BUY', 'SELL'} <= {e['side'] for e in feed['events'] if e['kind'] == 'FILL'}
+        assert all(e['order_id'] for e in feed['events'] if e['kind'] == 'FILL')
+        assert any(e['accepted'] and e['order_id'] for e in feed['evaluations'])
+        assert len({e['id'] for e in feed['events']}) == len(feed['events'])
         assert D(detail['performance']['fees_eur'])>0
         assert len(await pg_repo.list_orders()) == 0
         assert D((await pg_repo.snapshot())['equity']) == 500
+    finally:
+        await market.close()
+
+
+async def test_activity_readmodel_keeps_rejected_orders_separate_from_fills(paper, tmp_path):
+    from autotrader.api.paper_activity import activity_feed
+    service, repo = paper
+    market, candidates = await candidates_for(tmp_path/'rejected-feed.json', successor_frame('A3_COST_AWARE_CONTINUATION'))
+    try:
+        c = candidates[0]
+        order = await repo.submit_order(c.market.pair, Side.BUY, OrderType.MARKET, D(1), D(150),
+            c.market.order_book, 'feed-rejection', stop_loss=D(120), targets=[D(140), D(145), D(150)])
+        assert order.status is OrderStatus.REJECTED
+        before = await repo.snapshot()
+        first = await activity_feed(service)
+        await service.close()
+        second = await activity_feed(service)
+        assert first['events'] == second['events']
+        assert first['events'][0]['kind'] == 'ORDER'
+        assert first['events'][0]['status'] == 'REJECTED'
+        assert not any(e['kind'] == 'FILL' for e in first['events'])
+        assert first['evaluations'] == []
+        repo = await service.repository()
+        after = await repo.snapshot()
+        assert all(before[k] == after[k] for k in ['equity', 'available_cash', 'reserved_cash', 'orders'])
+        assert await repo.verify_invariants(INITIAL) == []
     finally:
         await market.close()
 
