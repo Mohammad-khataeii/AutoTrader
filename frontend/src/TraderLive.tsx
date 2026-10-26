@@ -75,7 +75,7 @@ function Stage({ name, state, detail }: { name: string; state: boolean | null; d
   </div>;
 }
 
-export function TraderLive({ paper }: { paper: Row }) {
+export function TraderLive({ paper, onSelectCoin }: { paper: Row; onSelectCoin?: (symbol: string) => void }) {
   const feed = useResource("/api/personal-paper/activity", { poll: 5000 });
   const [now, setNow] = useState(Date.now());
   const [selected, setSelected] = useState("");
@@ -90,7 +90,7 @@ export function TraderLive({ paper }: { paper: Row }) {
   const state = !fresh ? "Waiting for fresh status" : running ? "Worker connected" : "Entries suspended";
   const measurements = candidate?.economics?.measurements;
   const blocked = candidate ? reasonsFor(candidate) : [];
-  const candidates = [...new Map(evaluations.map(e => [`${e.symbol}:${e.strategy_id}`, e])).values()];
+  const candidates = evaluations.filter((e, i) => evaluations.findIndex(r => r.symbol === e.symbol && r.strategy_id === e.strategy_id) === i);
   return <Panel className="trader-live">
     <div className="trader-live-heading">
       <div><p className="eyebrow">Live paper trader</p><h2>What the trader is doing</h2></div>
@@ -112,7 +112,7 @@ export function TraderLive({ paper }: { paper: Row }) {
         <div className="section-heading"><p className="eyebrow"><ScanEye size={15} aria-hidden="true"/> Latest completed evaluation</p>
           {selected && <button className="secondary" onClick={() => setSelected("")}>Follow latest</button>}</div>
         {candidate ? <>
-          <div className="trader-market"><strong>{candidate.symbol}</strong><span>{strategyName(candidate.strategy_id)}</span></div>
+          <div className="trader-market"><button className="trader-chart-link" onClick={() => onSelectCoin?.(candidate.symbol)} disabled={!onSelectCoin}>{candidate.symbol} <ArrowRight size={18}/></button><span>{strategyName(candidate.strategy_id)}</span></div>
           <h3>{eventTitle(candidate)}</h3>
           <p className="small muted">Recorded {date(candidate.timestamp, true)} · Candle {date(candidate.candle_at, true)}{selected && " · Pinned evaluation"}</p>
           <div className="trader-pipeline" aria-label="Candidate execution pipeline">
@@ -133,7 +133,7 @@ export function TraderLive({ paper }: { paper: Row }) {
             <div><span>Net reward / risk · estimate</span><strong>{measurements.net_reward_risk ? Number(measurements.net_reward_risk).toFixed(2) : "Unavailable"}</strong></div>
           </div>}
           <label className="trader-candidate-select">Inspect another recent candidate
-            <select value={candidate.id} onChange={e => setSelected(e.target.value)}>
+            <select value={candidate.id} onChange={e => {setSelected(e.target.value);}}>
               {candidate && !candidates.some(e => e.id === candidate.id) && <option value={candidate.id}>{candidate.symbol} · pinned evaluation</option>}
               {candidates.map(e => <option key={e.id} value={e.id}>{e.symbol} · {strategyName(e.strategy_id)} · {e.accepted ? "Qualified" : "Wait"}</option>)}
             </select>
@@ -151,6 +151,7 @@ export function TraderLive({ paper }: { paper: Row }) {
             <div><div className="trader-event-meta"><span>{e.kind === "FILL" ? "Actual paper fill" : e.kind === "ORDER" ? "Broker record" : "Candidate decision"}</span><time dateTime={e.timestamp} title={date(e.timestamp, true)}>{age(e.timestamp, now)}</time></div>
               <strong>{eventTitle(e)}</strong>
               {e.kind === "FILL" ? <p>{e.quantity} units at {price(e.price)} · Fee {money(e.fee_eur)}</p> : e.kind === "ORDER" ? <p>{e.symbol} · {e.reason ? explainReason(e.reason) : `Filled quantity ${e.filled_quantity} of ${e.quantity}.`}</p> : <p>{reasonsFor(e).length ? explainReason(reasonsFor(e)[0]) : "Setup passed; final account admission and broker execution are separate."}</p>}
+              {onSelectCoin && <button className="trader-inspect" onClick={() => onSelectCoin(e.symbol)}>View {e.symbol} chart <ArrowRight size={12}/></button>}
               {e.strategy_id && <span className="small muted">{strategyName(e.strategy_id)}</span>}
               {e.kind === "DECISION" && <button className="trader-inspect" onClick={() => setSelected(e.id)}>Inspect checks <ArrowRight size={12} aria-hidden="true"/></button>}
             </div>

@@ -1445,3 +1445,36 @@ dialog h2 {
   .trader-stage { padding: 10px 8px; gap: 6px; }
   .trader-estimates { grid-template-columns: 1fr 1fr; }
 }
+
+.dashboard-summary { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.1fr); gap: 20px; }
+.dashboard-value { background: #173f33; color: white; border-color: #173f33; }
+.dashboard-value .eyebrow { display: flex; align-items: center; gap: 8px; color: #b9d4c6; }
+.dashboard-value .muted { color: #b9d4c6; }
+.dashboard-value .badge { color: #d9eee0; background: #2c5344; }
+.dashboard-value .gain, .dashboard-value .loss { color: #fff; }
+.dashboard-equity { display: block; font-size: 42px; letter-spacing: -1.8px; margin: 8px 0 4px; }
+.dashboard-value > p { font-size: 12px; }
+.capital-bar { height: 7px; border-radius: 8px; background: #38604e; display: flex; overflow: hidden; margin: 26px 0 11px; }
+.capital-bar span:nth-child(1) { background: #a9d9bd; }.capital-bar span:nth-child(2) { background: #e1bf78; }.capital-bar span:nth-child(3) { background: #9aabc9; }
+.capital-legend { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 10px; color: #c4dbcc; }
+.dashboard-money-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dashboard-money { padding: 22px; background: white; border: 1px solid #e0e6e0; border-radius: 12px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.dashboard-money > span { color: #68776d; font-size: 12px; }.dashboard-money > strong { font-size: 23px; letter-spacing: -.7px; }.dashboard-money > small { color: #899188; font-size: 10px; line-height: 1.4; }
+.dashboard-market-panel { display: grid; grid-template-columns: 245px minmax(0,1fr); background: white; border: 1px solid #e0e6e0; border-radius: 12px; overflow: hidden; scroll-margin-top: 18px; }
+.dashboard-coin-list { padding: 22px 14px; border-right: 1px solid #e6ece6; min-width: 0; }
+.dashboard-coin-list > .section-heading, .dashboard-coin-list > p { padding: 0 8px; }
+.dashboard-coins { max-height: 415px; overflow-y: auto; scrollbar-width: thin; }
+.dashboard-coin { border: 0; display: grid; grid-template-columns: 32px minmax(0,1fr) minmax(0,1.1fr); gap: 9px; align-items: center; text-align: left; width: 100%; padding: 12px 8px; border-radius: 8px; margin-bottom: 3px; }
+.dashboard-coin[aria-pressed="true"] { background: #edf4ec; }.dashboard-coin strong { font-size: 11px; display: block; }.dashboard-coin small { font-size: 9px; color: #7b8a7e; display: block; margin-top: 5px; }
+.coin-monogram { width: 31px; height: 31px; border-radius: 50%; display: grid; place-items: center; background: #e9f0e8; color: #457859; font-size: 10px; font-weight: 650; }
+.coin-list-price { text-align: right; overflow-wrap: anywhere; }
+.coin-chart { padding: 24px; min-width: 0; }.coin-chart-heading { display: flex; justify-content: space-between; gap: 18px; }.coin-chart-heading h2 { font-size: 21px; margin-bottom: 10px; }
+.coin-chart-price { display: inline-block; font-size: 24px; letter-spacing: -.8px; }.coin-change { font-size: 11px; display: block; margin-top: 8px; }.coin-change > span { color: #829085; margin-left: 3px; }
+.chart-options { display: flex; flex-direction: column; gap: 7px; align-items: flex-end; }.chart-options > div { display: flex; gap: 3px; }.chart-options button { padding: 5px 9px; min-height: 29px; font-size: 10px; background: transparent; border-color: transparent; }.chart-options button[aria-pressed="true"] { background: #eaf2e9; color: #29613f; }
+.chart-ohlc { margin: 24px 0 5px; display: flex; flex-wrap: wrap; gap: 7px 12px; color: #7f8a80; font-size: 10px; min-height: 30px; align-items: center; }.chart-ohlc b { color: #425a4b; font-weight: 500; }
+.price-chart-svg { display: block; width: 100%; height: auto; min-height: 190px; outline-offset: 2px; }
+.dashboard-account-grid { display: grid; grid-template-columns: minmax(0,1.5fr) minmax(0,1fr); gap: 20px; }.dashboard-account-grid > .panel { min-width: 0; }.dashboard-results { margin: 20px 0 0; }.dashboard-results > div { display: flex; justify-content: space-between; gap: 15px; padding: 12px 0; border-bottom: 1px solid #edf0eb; font-size: 12px; }.dashboard-results dt { color: #79867b; }.dashboard-results dd { margin: 0; font-weight: 550; }
+.coin-text-button, .trader-chart-link { background: transparent; border: 0; padding: 4px 0; min-height: 30px; justify-content: flex-start; color: #286543; }.trader-market .trader-chart-link { font-size: 28px; font-weight: 620; letter-spacing: -.8px; }.trader-chart-link:disabled { opacity: 1; cursor: default; }.fill-direction { display: inline-flex; align-items: center; gap: 4px; }
+@media (max-width: 1150px) { .dashboard-summary { grid-template-columns: 1fr; }.dashboard-market-panel { grid-template-columns: 210px minmax(0,1fr); }.dashboard-account-grid { grid-template-columns: 1fr; }.coin-chart-heading { flex-wrap: wrap; }.chart-options { align-items: flex-start; flex-direction: row; flex-wrap: wrap; } }
+@media (max-width: 700px) { .dashboard-market-panel { grid-template-columns: 1fr; }.dashboard-coin-list { padding: 16px; border-right: 0; border-bottom: 1px solid #e6ece6; }.dashboard-coins { display: flex; gap: 7px; overflow-x: auto; max-height: unset; padding-bottom: 5px; }.dashboard-coin { display: flex; width: auto; flex-shrink: 0; min-width: 110px; padding: 10px; border: 1px solid #e8eee6; }.dashboard-coin .coin-list-price { display: none; }.dashboard-coin-list > p { margin-bottom: 9px; }.coin-chart { padding: 20px 14px; }.price-chart-svg { min-height: 140px; }.chart-ohlc { margin-top: 18px; }.dashboard-money { padding: 18px; }.dashboard-money > strong { font-size: 21px; }.dashboard-equity { font-size: 36px; }.dashboard-value { padding: 22px; } }
+@media (prefers-reduced-motion: reduce) { .dashboard-market-panel { scroll-behavior: auto; } }

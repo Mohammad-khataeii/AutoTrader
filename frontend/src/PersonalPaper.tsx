@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useApi, useResource, type Row } from "./api";
 import { date, money, percent, price, strategyName } from "./model";
 import { Badge, CompactTable, Empty, EquityChart, Panel, Pnl, ResourceState } from "./ui";
-import { TraderLive } from "./TraderLive";
 
 export function PersonalPaper({ view = "overview" }: { view?: "overview" | "activity" | "strategies" | "opportunities" | "monitor" | "research" }) {
   const resource = useResource("/api/personal-paper", { poll: 15000 });
@@ -22,7 +21,6 @@ export function PersonalPaper({ view = "overview" }: { view?: "overview" | "acti
   if (!p) return <><ResourceState resource={resource} label="€7,000 paper portfolio" />{d?.state === "NOT_INITIALIZED" && d?.enabled && <Panel><h2>€7,000 virtual portfolio</h2><p>Waiting for the worker to initialize the isolated paper account.</p></Panel>}</>;
   return <section className="page-stack personal-paper" aria-label="Personal Plan shared paper portfolio">
     <ResourceState resource={resource} label="€7,000 paper portfolio" />
-    {["overview", "activity", "opportunities", "monitor"].includes(view) && <TraderLive paper={d ?? {}}/>}
     <Panel>
       <div className="section-heading"><div><p className="eyebrow">Personal Plan · V4.7</p><h2>€7,000 virtual portfolio</h2></div><Badge>Paper only</Badge></div>
       <p>{d?.state === "PAPER_EXPERIMENTAL_ACTIVE" ? "Autonomous experimental execution active" : d?.state?.replaceAll("_", " ") ?? "Connecting to the paper account"} · One EUR pool shared by three selected strategies.</p>

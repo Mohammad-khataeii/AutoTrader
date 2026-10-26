@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "captured_at": "2026-10-26T21:08:32.488708+00:00",
+  "backend_tests": 24,
+  "frontend_unit_tests": 19,
+  "scenario_browser_tests": 27,
+  "actual_server_browser_tests": 2,
+  "typescript_build": "PASS",
+  "strict_mypy_source_files": 106,
+  "ruff": "PASS",
+  "backend_source_fingerprint": "f39d01195f123f4b2bf1a532a64d12bd5d8a85366952529406627b3cef882d4c",
+  "execution_fingerprint": "fd20b6e6e61e5c775ff8bd62b3fc87095fa55c6ea7e0d290fb6209eb6a9c1e77",
+  "unchanged_active_manifest": true,
+  "trading_worker_uninterrupted": true,
+  "architecture": "aarch64",
+  "frozen_v42_files_unchanged": 71,
+  "frozen_v44_files_unchanged": 76,
+  "primary_funding_events": 1,
+  "official_equity": "500.000000000000",
+  "retained_shadow_accounts": [
+    {
+      "id": "0cc6dc7d917248bfae0d6f9261e34387",
+      "equity": "500.000000000000"
+    },
+    {
+      "id": "1997266aac384275a1746ce25c259127",
+      "equity": "500.000000000000"
+    }
+  ],
+  "session_refresh_verified": true,
+  "session_restart_verified": true,
+  "http_only_cookie": true,
+  "csrf_protected_cookie_writes": true,
+  "logout_refresh_verified": true,
+  "no_financial_api_mutations_in_actual_browser_review": true,
+  "synthetic_injections_into_primary": false,
+  "vps_accessed": false,
+  "real_trading_enabled": false,
+  "release_tag_created": false
+}

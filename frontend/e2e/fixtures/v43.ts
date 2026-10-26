@@ -141,6 +141,7 @@ export function fixture() {
 export async function mockApi(page: Page, data: any = fixture()) {
   const requests: { path: string; method: string; wirePath: string }[] = [];
   let failOverview = false;
+  let signedIn = false;
   await page.route("**/readyz", (route) =>
     route.fulfill({ json: { ready: true, live_trading_enabled: false } }),
   );
@@ -159,6 +160,24 @@ export async function mockApi(page: Page, data: any = fixture()) {
           "history/page/equity": "history",
         } as Record<string, string>
       )[wirePath] ?? wirePath;
+    if (wirePath === "session") {
+      if (req.method() === "POST") signedIn = true;
+      if (req.method() === "DELETE") {signedIn = false;return route.fulfill({json:{signed_out:true}});}
+      return route.fulfill(signedIn ? {json:{username:"admin",csrf_token:"synthetic-csrf-session"}} : {status:401,json:{detail:"Sign in required"}});
+    }
+    if (wirePath === "personal-paper") return route.fulfill({json:data.personal_paper ?? {
+      state:"PAPER_EXPERIMENTAL_ACTIVE",observed_at:new Date().toISOString(),runtime_matches:true,evidence_category:"SYNTHETIC_ACCEPTANCE",
+      portfolio:{initial_cash:"7000",cash:"7000",equity:"7000",available_cash:"7000",reserved_cash:"0",open_exposure:"0",total_net_pnl:"0",realized_pnl:"0",unrealized_pnl:"0",current_drawdown:"0",risk_state:"HEALTHY",control:"RUNNING"},
+      cash_flow:{spent_on_buys_eur:"0",sale_proceeds_eur:"0",fees_total_eur:"0"},holdings:[],markets:[],fills:[],orders:[],strategies:[],reconciliation:[],
+      performance:{open_positions:0,closed_positions:0,buy_fills:0,sell_fills:0,capital_utilization:"0"},worker_health:{fresh:true},
+      scan:{observed_at:new Date().toISOString(),markets:["BTC-EUR","ETH-EUR","SOL-EUR"]},position_monitor:{heartbeat:new Date().toISOString()}
+    }});
+    if (wirePath === "personal-paper/activity") return route.fulfill({json:{evaluations:[],events:[],evidence_category:"SYNTHETIC_ACCEPTANCE"}});
+    if (/personal-paper\/markets\/.+\/chart/.test(wirePath)) {
+      const symbol=wirePath.split("/")[2];
+      const candles=Array.from({length:24},(_,i)=>({timestamp:new Date(Date.now()-(25-i)*300000).toISOString(),open:String(100+i),high:String(102+i),low:String(99+i),close:String(101+i),volume:"10",source:"synthetic-browser-fixture"}));
+      return route.fulfill({json:{symbol,candles,timeframe:"5m",range:url.searchParams.get("range"),evidence_category:"SYNTHETIC_ACCEPTANCE",expected_bars:72,missing_intervals:0}});
+    }
     requests.push({ path, method: req.method(), wirePath });
     if (wirePath === "shadow/summary")
       return route.fulfill({
@@ -385,5 +404,5 @@ export async function signIn(page: Page) {
   await page.getByLabel("Username", { exact: true }).fill("admin");
   await page.getByLabel("Password", { exact: true }).fill("fixture-password");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await page.getByRole("heading", { name: "Overview", exact: true }).waitFor();
+  await page.getByRole("heading", { name: "Dashboard", exact: true }).waitFor();
 }

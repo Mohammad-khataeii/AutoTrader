@@ -20,6 +20,8 @@ from starlette.responses import Response, StreamingResponse
 
 from autotrader.ai import make_ai_provider
 from autotrader.api.security import AuthenticationThrottle
+from autotrader.api.session import cookie_user
+from autotrader.api.session import install as install_session
 from autotrader.config import Settings, get_settings
 from autotrader.decision import DecisionEngine
 from autotrader.domain import Candle, OrderType, new_id, utc_now
@@ -120,6 +122,10 @@ def _settings() -> Settings:
 
 
 async def require_user(request: Request, credentials: HTTPBasicCredentials | None = Depends(security), settings: Settings = Depends(_settings)) -> str:
+    if credentials is None:
+        user = cookie_user(request, settings)
+        if user is not None:
+            return user
     client = request.client.host if request.client else "unknown"
     try:
         retry = await request.app.state.repository.authentication_attempt(client)
@@ -212,6 +218,7 @@ def create_app() -> FastAPI:
     app.state.market_data = market_data
     app.state.scanner = scanner_service
     app.state.execution_gateway = gateway
+    install_session(app, settings, require_user)
 
     from autotrader.api.v45 import install as install_v45
     install_v45(app, repository, shadow_lab, require_user)

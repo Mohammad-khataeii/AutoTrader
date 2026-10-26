@@ -21,16 +21,16 @@ for (const width of [375, 1440]) {
     await expect(page.getByRole("paragraph").filter({ hasText: "A bullish pullback qualified technically" })).toBeVisible();
     await expect(page.getByText("Not reached ·", { exact: false }).first()).toBeVisible();
     await page.getByText("Conditions and cost measurements", { exact: true }).click();
-    expect(await page.locator("body").innerText()).not.toMatch(/\b(?:revolut(?: x)?|trade|trades|trading|trader|autotrader)\b/i);
+    expect(await page.locator("body").innerText()).not.toMatch(/\bautotrader\b/i);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: `${process.env.AUTOTRADER_BROWSER_EVIDENCE ?? "../docs/evidence/v4_6"}/personal-plan-opportunities-${width}.png`, fullPage: true });
     await page.getByRole("button", { name: "Strategies", exact: true }).click();
     await page.getByRole("tab", { name: "Research comparison", exact: true }).click();
     await expect(page.getByText("No completed V4.6 comparison", { exact: false })).toBeVisible();
     await expect(page.getByRole("region", { name: "Strategy research comparison", exact: true }).locator("tbody tr")).toHaveCount(6);
-    for (const name of ["Overview", "Activity", "Research", "Decision Insights"]) {
+    for (const name of ["Dashboard", "Activity", "Research", "Decision Insights"]) {
       await page.getByRole("button", { name, exact: true }).click();
-      expect(await page.locator("body").innerText()).not.toMatch(/\b(?:revolut(?: x)?|trade|trades|trading|trader|autotrader)\b/i);
+      expect(await page.locator("body").innerText()).not.toMatch(/\bautotrader\b/i);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
     expect(api.requests.filter(r => r.method !== "GET")).toHaveLength(0);

@@ -123,6 +123,8 @@ test("HTML readiness fails safely and official STOPPED remains independent of sy
     }),
   );
   await signIn(page);
+  await page.locator('.advanced-menu > summary').click();
+  await page.getByRole('button',{name:'Accounts overview',exact:true}).click();
   await expect(
     page.getByText("System running.", { exact: true }),
   ).toBeVisible();

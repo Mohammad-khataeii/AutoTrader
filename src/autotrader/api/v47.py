@@ -5,12 +5,14 @@ from typing import Any, Literal
 
 from fastapi import Depends, FastAPI, HTTPException
 
+from autotrader.api.dashboard import install as install_dashboard
 from autotrader.api.paper_activity import activity_feed
 from autotrader.api.paper_analytics import attributed_summary
 from autotrader.personal_paper.service import PersonalPaperService
 
 
 def install(app: FastAPI, service: PersonalPaperService, require_user: Any) -> None:
+    install_dashboard(app, service, require_user)
     @app.get('/api/personal-paper', dependencies=[Depends(require_user)])
     async def paper() -> dict[str, Any]:
         return await attributed_summary(service)

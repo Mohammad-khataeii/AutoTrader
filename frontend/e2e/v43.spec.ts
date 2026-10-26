@@ -10,17 +10,13 @@ test("five primary routes, authentic status language and no default technical pa
       .getByRole("navigation", { name: "Primary navigation" })
       .getByRole("button")
       .allTextContents(),
-  ).toEqual(["Overview", "Opportunities", "Strategies", "Activity", "Research", "Decision Insights"]);
-  await expect(
-    page.getByText("The official portfolio is in research mode.", {
-      exact: false,
-    }),
-  ).toBeVisible();
+  ).toEqual(["Dashboard", "Opportunities", "Strategies", "Activity", "Research", "Decision Insights"]);
+  await expect(page.getByRole("heading", {name:"Your holdings",exact:true})).toBeVisible();
   await expect(
     page.getByText("Real-money execution disabled", { exact: true }),
   ).toBeVisible();
   await expect(page.locator("pre:visible")).toHaveCount(0);
-  expect(await page.locator(".kpi").count()).toBe(4);
+  expect(await page.locator(".dashboard-money").count()).toBe(4);
   expect(
     api.requests.some(
       (r) =>
@@ -166,7 +162,9 @@ test("stale refresh keeps the last values with a clear warning and recovers with
 }) => {
   const api = await mockApi(page);
   await signIn(page);
-  await expect(page.locator(".kpi").first().getByText("€500.00")).toBeVisible();
+  await page.locator(".advanced-menu > summary").click();
+  await page.getByRole("button", {name:"Accounts overview",exact:true}).click();
+  await expect(page.getByLabel("Official simulated balance and results").getByText("€500.00").first()).toBeVisible();
   api.failOverview();
   await page.getByRole("button", { name: "Refresh current view" }).click();
   await expect(
@@ -174,9 +172,9 @@ test("stale refresh keeps the last values with a clear warning and recovers with
       .getByRole("alert")
       .filter({ hasText: "Official account could not be refreshed" }),
   ).toBeVisible();
-  await expect(page.locator(".kpi").first().getByText("€500.00")).toBeVisible();
+  await expect(page.getByLabel("Official simulated balance and results").getByText("€500.00").first()).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Overview", exact: true }),
+    page.getByRole("heading", { name: "Accounts overview", exact: true }),
   ).toBeVisible();
   api.recoverOverview();
   await page.getByRole("button", { name: "Refresh current view" }).click();
@@ -194,7 +192,7 @@ test("research loads on demand, preserves negative results, and advanced capabil
     page.getByText("Not validated", { exact: true }).first(),
   ).toBeVisible();
   await expect(page.locator("pre:visible")).toHaveCount(0);
-  await page.getByRole("button", { name: "Overview", exact: true }).click();
+  await page.getByRole("button", { name: "Dashboard", exact: true }).click();
   await page.getByRole("button", { name: "Research", exact: true }).click();
   expect(api.requests.filter((r) => r.path === "research")).toHaveLength(1);
   await page
@@ -303,7 +301,7 @@ for (const width of [1440, 1024, 768, 375])
     await mockApi(page);
     await signIn(page);
     await expect(
-      page.getByRole("heading", { name: "Overview", exact: true }),
+      page.getByRole("heading", { name: "Dashboard", exact: true }),
     ).toBeVisible();
     expect(
       await page.evaluate(

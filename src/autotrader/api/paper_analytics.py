@@ -9,6 +9,7 @@ from typing import Any
 
 from sqlalchemy import select
 
+from autotrader.api.dashboard import account_assets
 from autotrader.domain import utc_now
 from autotrader.persistence.accounting import aware
 from autotrader.persistence.models import OrderModel, PositionModel
@@ -22,6 +23,7 @@ async def attributed_summary(service: Any) -> dict[str, Any]:
     repo = await service.repository()
     if repo is None:
         return result
+    result.update(await account_assets(repo))
     async with repo.session_factory() as session:
         positions = (await session.scalars(select(PositionModel))).all()
         entries = (await session.scalars(select(OrderModel))).all()

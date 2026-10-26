@@ -1,4 +1,5 @@
 export const advancedItems = [
+  "Accounts overview",
   "Official Account Controls",
   "Market monitor",
   "Decision journal",

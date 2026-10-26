@@ -100,3 +100,22 @@ describe("readiness and mounted resource refresh", () => {
     expect(transport.mock.calls[0][0]).toBe("/visible");
   });
 });
+
+describe("browser cookie sessions", () => {
+  it("sends same-origin cookies and CSRF proof without a stored password", async () => {
+    const transport = vi.fn(async () => Response.json({ok:true}));
+    const api = new ApiClient("", transport as typeof fetch);
+    api.csrfToken = "fixture-csrf";
+    await api.request("/api/personal-paper/control/pause", "POST");
+    const options = (transport.mock.calls as any)[0][1];
+    expect(options.credentials).toBe("same-origin");
+    expect(options.headers["X-CSRF-Token"]).toBe("fixture-csrf");
+    expect(options.headers.Authorization).toBeUndefined();
+  });
+  it("expires the workspace on an unauthorized response", async () => {
+    const api = new ApiClient("", async () => new Response("expired", {status:401}));
+    const expired = vi.fn();api.onUnauthorized = expired;
+    await expect(api.request("/api/personal-paper")).rejects.toThrow(/sign-in/);
+    expect(expired).toHaveBeenCalledTimes(1);
+  });
+});

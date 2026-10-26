@@ -124,6 +124,7 @@ async def test_ranked_buy_partial_target_stop_and_restart(paper, pg_repo, tmp_pa
         assert all(e['order_id'] for e in feed['events'] if e['kind'] == 'FILL')
         assert any(e['accepted'] and e['order_id'] for e in feed['evaluations'])
         assert len({e['id'] for e in feed['events']}) == len(feed['events'])
+        assert D(7000)-D(attributed['cash_flow']['spent_on_buys_eur'])+D(attributed['cash_flow']['sale_proceeds_eur']) == D(detail['portfolio']['cash'])
         assert D(detail['performance']['fees_eur'])>0
         assert len(await pg_repo.list_orders()) == 0
         assert D((await pg_repo.snapshot())['equity']) == 500
@@ -371,3 +372,26 @@ async def test_explicit_flat_revision_preserves_origin_orders_funding_and_uses_c
         await market.close();await service.close()
         with psycopg.connect(os.environ['AUTOTRADER_TEST_PG_ADMIN_URL'],autocommit=True) as conn:
             conn.execute(sql.SQL('DROP DATABASE {} WITH (FORCE)').format(sql.Identifier(old.manifest['database_name'])))
+
+
+async def test_dashboard_chart_deduplicates_closed_candles_and_exposes_gaps(paper):
+    from datetime import timedelta
+
+    from autotrader.api.dashboard import account_assets, chart_data
+    from autotrader.domain import utc_now
+    from autotrader.persistence.models import MarketCandle
+    service, repo = paper
+    boundary = utc_now().replace(second=0, microsecond=0)
+    async with repo.session_factory() as session, session.begin():
+        for minute, close in [(30, 100), (30, 101), (20, 103), (10, 104), (0, 200)]:
+            session.add(MarketCandle(symbol='BTC-EUR', timeframe='5m', timestamp=boundary-timedelta(minutes=minute),
+                open=D(close-1), high=D(close+1), low=D(close-2), close=D(close), volume=D(100), source='replay:chart-test'))
+    chart = await chart_data(service, 'BTC-EUR', '1h')
+    assert [D(c['close']) for c in chart['candles']] == [101, 103, 104]
+    assert chart['missing_intervals'] == 2
+    assert chart['timeframe'] == '5m'
+    assert (await chart_data(service, 'ETH-EUR', '1h'))['candles'] == []
+    assets = await account_assets(repo)
+    assert D(assets['cash_flow']['spent_on_buys_eur']) == 0
+    assert assets['holdings'] == []
+    assert await repo.verify_invariants(INITIAL) == []

@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useRef, useState } from "react";
+import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Activity,
@@ -22,6 +22,7 @@ import { systemStatus } from "./model";
 import { Badge, ResourceState } from "./ui";
 const TradeGates = lazy(() => import("./TradeGates").then(m => ({ default: m.TradeGates })));
 import { Overview } from "./Overview";
+import { Dashboard } from "./Dashboard";
 import { PersonalPaper } from "./PersonalPaper";
 const Opportunities = lazy(() => import("./Opportunities").then(m => ({ default: m.Opportunities })));
 const StrategiesWorkspace = lazy(() => import("./Opportunities").then(m => ({ default: m.StrategiesWorkspace })));
@@ -37,7 +38,7 @@ export function displayMoney(value: unknown): string {
     : `EUR ${Number(value).toFixed(2)}`;
 }
 const navigation = [
-  { name: "Overview", icon: LayoutDashboard },
+  { name: "Dashboard", icon: LayoutDashboard },
   { name: "Opportunities", icon: Activity },
   { name: "Strategies", icon: FlaskConical },
   { name: "Activity", icon: ArrowRightLeft },
@@ -46,7 +47,7 @@ const navigation = [
 ];
 function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
   const api = useApi();
-  const [active, setActive] = useState("Overview");
+  const [active, setActive] = useState("Dashboard");
   const [advanced, setAdvanced] = useState("Official Account Controls");
   const menu = useRef<HTMLDetailsElement>(null);
   const overview = useResource("/api/overview/summary");
@@ -169,7 +170,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
             configuration.
           </div>
         )}
-        {system.error && active !== "Overview" && (
+        {system.error && active !== "Dashboard" && (
           <div className="notice warning" role="alert">
             Status refresh unavailable. Displayed information is from the last
             successful update.
@@ -177,18 +178,13 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
         )}
         <Suspense fallback={<div className="loading" role="status">Loading workspace…</div>}>
         {active === "Decision Insights" && <><PersonalPaper view="monitor"/><TradeGates /></>}
-        {active === "Overview" && (
-          <Overview
-            system={system}
-            onExperiments={() => setActive("Strategies")}
-          />
-        )}{" "}
+        {active === "Dashboard" && <Dashboard/>}
         {active === "Opportunities" && <><PersonalPaper view="opportunities"/><Opportunities /></>}
         {active === "Strategies" && <><PersonalPaper view="strategies"/><StrategiesWorkspace /></>}
         {active === "Activity" && <><PersonalPaper view="activity"/><Trades /></>}
         {active === "Research" && <><PersonalPaper view="research"/><Research auth={auth} /></>}{" "}
         {active === "Advanced" && (
-          <AdvancedScreen key={advanced} page={advanced} auth={auth} />
+          advanced === "Accounts overview" ? <Overview system={system} onExperiments={() => setActive("Strategies")}/> : <AdvancedScreen key={advanced} page={advanced} auth={auth} />
         )}
         </Suspense>
         <footer className="workspace-footer">
@@ -214,15 +210,38 @@ function App() {
     [password, setPassword] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
+  const [restoring, setRestoring] = useState(true);
+  const [restoreError, setRestoreError] = useState("");
+  const enter = (csrf: string) => {
+    const api = new ApiClient("");
+    api.csrfToken = csrf;
+    api.onUnauthorized = () => {
+      api.dispose(); setSession(null); setError("Your session expired. Please sign in again.");
+    };
+    setSession({api, auth: ""});
+  };
+  const restore = async () => {
+    setRestoreError("");
+    try {
+      const response = await fetch("/api/session", {credentials: "same-origin", cache: "no-store"});
+      if (response.status === 401) { setRestoring(false); return; }
+      if (!response.ok) throw new Error("The server is temporarily unavailable. Retry to restore your session.");
+      const body = await response.json();
+      if (!body.csrf_token) throw new Error("The session response could not be verified.");
+      enter(body.csrf_token); setRestoring(false);
+    } catch (e) { setRestoreError(errorMessage(e)); }
+  };
+  useEffect(() => { void restore(); }, []);
+  if (restoring) return <main className="login-page"><section className="login-card"><h1>Opening your dashboard</h1>{restoreError ? <><p role="alert">{restoreError}</p><button onClick={() => void restore()}>Retry connection</button></> : <p role="status">Restoring your session…</p>}</section></main>;
   if (session)
     return (
       <ApiContext.Provider value={session.api}>
         <Workspace
           auth={session.auth}
-          onLogout={() => {
-            session.api.dispose();
-            setSession(null);
-            setError("");
+          onLogout={async () => {
+            try { await session.api.request("/api/session", "DELETE"); }
+            catch (e) { setError(errorMessage(e)); return; }
+            session.api.dispose(); setSession(null); setError("");
           }}
         />
       </ApiContext.Provider>
@@ -248,13 +267,10 @@ function App() {
             const credential = `Basic ${btoa(String.fromCharCode(...new TextEncoder().encode(`${username}:${password}`)))}`;
             const api = new ApiClient(credential);
             try {
-              const data = await api.load("/api/overview/summary", true);
-              if (!data?.portfolio)
-                throw new Error(
-                  api.entry("/api/overview/summary").snapshot.error ??
-                    "Account data is unavailable.",
-                );
-              setSession({ api, auth: credential });
+              const data = await api.request("/api/session", "POST");
+              if (!data?.csrf_token) throw new Error("The session response could not be verified.");
+              api.dispose();
+              enter(data.csrf_token);
               setPassword("");
             } catch (reason) {
               api.dispose();

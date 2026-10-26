@@ -71,3 +71,5 @@ An earlier authorized rollout completed while the later local-first instruction 
 Earlier V1–V4.1 reports remain historical evidence. Thirty prospective days and a defensible net advantage require future observations under a frozen configuration; failed gates are never lowered to force trades.
 
 V4.5 Stage A trade-gate investigation and deployment limitations: [report](docs/V4_5_TRADE_GATE_INVESTIGATION.md). Production deployment requires separate exact-release approval.
+
+[Dashboard and coin charts](docs/V4_7_DASHBOARD.md) combine the primary paper account and live work timeline, with refresh-safe sign-in.

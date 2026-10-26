@@ -16,10 +16,10 @@ for (const width of [375, 1440]) {
       orders:[{order_id:'synthetic-1',symbol:'BTC-EUR',side:'BUY',status:'FILLED',quantity:'.01',average_fill_price:'70000',fee_eur:'.7',order_type:'MARKET',strategy_id:'A3_COST_AWARE_CONTINUATION',created_at:new Date().toISOString()}],research_review:{conclusion:'Insufficient independent prospective evidence',proposals:[]},
     }}));
     await signIn(page);
-    await expect(page.getByRole('heading',{name:'€7,000 virtual portfolio',exact:true})).toBeVisible();
+    await expect(page.getByRole('heading',{name:'Dashboard',exact:true})).toBeVisible();
     await expect(page.getByText('€7,002.00',{exact:true})).toBeVisible();
-    await expect(page.getByText('Official equity',{exact:true})).toBeVisible();
-    await expect(page.getByText('DETERMINISTIC ACCEPTANCE',{exact:false})).toBeVisible();
+    await expect(page.getByText('Budget €7,000.00',{exact:false})).toBeVisible();
+    await expect(page.getByText('Deterministic test fixtures',{exact:false})).toBeVisible();
     await page.getByRole('button',{name:'Activity',exact:true}).click();
     await expect(page.getByRole('heading',{name:'Persisted simulated orders'})).toBeVisible();
     await expect(page.getByRole('table',{name:'Primary paper orders'}).getByText('BUY',{exact:true})).toBeVisible();

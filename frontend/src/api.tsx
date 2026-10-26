@@ -26,6 +26,8 @@ export function errorMessage(error: unknown): string {
     : "The request could not be completed. Please try again.";
 }
 export class ApiClient {
+  csrfToken = "";
+  onUnauthorized?: () => void;
   private entries = new Map<string, Entry>();
   private disposed = false;
   constructor(
@@ -62,7 +64,9 @@ export class ApiClient {
     const response = await this.transport(path, {
       method,
       signal,
-      headers: { Authorization: this.auth, "Content-Type": "application/json" },
+      credentials: "same-origin",
+      headers: { ...(this.auth ? { Authorization: this.auth } : {}), "Content-Type": "application/json",
+        ...(this.csrfToken && method !== "GET" ? { "X-CSRF-Token": this.csrfToken } : {}) },
       body: body ? JSON.stringify(body) : undefined,
       cache: "no-store",
     });
@@ -73,10 +77,12 @@ export class ApiClient {
       } catch {
         /* A gateway may return HTML. */
       }
-      if (response.status === 401)
+      if (response.status === 401) {
+        this.onUnauthorized?.();
         throw new Error(
           "Your sign-in was not accepted. Sign out and sign in again.",
         );
+      }
       if (response.status >= 500)
         throw new Error(
           "The server is temporarily unavailable. Your last successful data is still shown.",
@@ -149,7 +155,8 @@ export class ApiClient {
   }
   async download(path: string, filename: string) {
     const response = await this.transport(path, {
-      headers: { Authorization: this.auth },
+      credentials: "same-origin",
+      headers: this.auth ? { Authorization: this.auth } : {},
       cache: "no-store",
     });
     if (!response.ok)

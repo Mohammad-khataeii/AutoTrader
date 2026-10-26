@@ -1,6 +1,6 @@
 import { personalText } from "./presentation";
 import { ResourceState, Technical } from "./ui";
-import { useResource } from "./api";
+import { useApi, useResource } from "./api";
 import React, { useState } from "react";
 import {
   Area,
@@ -206,6 +206,7 @@ export function StrategyLab({
   auth: string;
   refresh: () => Promise<void>;
 }) {
+  const api = useApi();
   const [timeframe, setTimeframe] = useState("5m");
   const [strategy, setStrategy] = useState("A_TREND_PULLBACK");
   const [asset, setAsset] = useState("ALL");
@@ -367,22 +368,7 @@ export function StrategyLab({
                       ),
                     )
                   : [asset.split("-")[0]];
-              const response = await fetch("/api/research/jobs", {
-                method: "POST",
-                headers: {
-                  Authorization: auth,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  strategies: [strategy],
-                  timeframes: [timeframe],
-                  assets,
-                  grid,
-                }),
-              });
-              const body = await response.json();
-              if (!response.ok)
-                throw new Error(JSON.stringify(body.detail ?? body));
+              const body = await api.request("/api/research/jobs", "POST", {strategies: [strategy], timeframes: [timeframe], assets, grid});
               setMessage(`Research job ${body.job_id}: ${body.status}`);
               await refresh();
             } catch (e) {
@@ -491,12 +477,7 @@ export function StrategyLab({
             setBusy(true);
             setError("");
             try {
-              const response = await fetch(
-                `/api/research/runs/${latest.run_id}/${timeframe}-${strategy}-test.json`,
-                { headers: { Authorization: auth }, cache: "no-store" },
-              );
-              const body = await response.json();
-              if (!response.ok) throw new Error(body.detail ?? response.status);
+              const body = await api.request(`/api/research/runs/${latest.run_id}/${timeframe}-${strategy}-test.json`);
               setArtifact({
                 ...body,
                 _run_id: latest.run_id,
