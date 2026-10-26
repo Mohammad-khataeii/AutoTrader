@@ -1,0 +1,18 @@
+{
+  "funding_count": 1,
+  "account_count": 1,
+  "decisions": [
+    {
+      "action": "WAIT",
+      "accepted": false,
+      "rejected_reason": "strategy_not_approved_and_validated",
+      "count": 35
+    },
+    {
+      "action": "WAIT",
+      "accepted": false,
+      "rejected_reason": "Entry conditions not met.",
+      "count": 88
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "disposable_services_removed": [
+    "autotrader-v46-mac-test-pg",
+    "autotrader-v46-mac-test-redis"
+  ],
+  "owned_native_test_harness_and_vites_stopped": true,
+  "persistent_mac_project_left_running": true,
+  "production_or_unrelated_resources_modified": false,
+  "backups_and_images_retained": true
+}

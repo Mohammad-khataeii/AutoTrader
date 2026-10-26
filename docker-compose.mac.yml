@@ -1,0 +1,14 @@
+# Local Mac hosting only. Always combine with docker-compose.yml and -p autotrader-v46-mac.
+services:
+  postgres:
+    # Use native PostgreSQL 16 rather than the VPS-specific Alpine backport build.
+    image: postgres:16-alpine
+    build: !reset null
+  redis:
+    image: ${COMPOSE_PROJECT_NAME}-redis:${AUTOTRADER_IMAGE_TAG}
+  frontend:
+    ports: !override
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:80"
+      - "${MAC_LAN_IP:?Set the Mac private LAN IPv4 address}:${FRONTEND_PORT:-3000}:80"
+    volumes:
+      - ./deploy/mac/nginx.conf:/etc/nginx/conf.d/default.conf:ro

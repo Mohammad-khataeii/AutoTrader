@@ -1,0 +1,694 @@
+{
+  "kind": "REAL_PUBLIC_FEED_LOCAL_PAPER_ACCOUNT",
+  "cycles": [
+    {
+      "cycle_bucket": 5976708,
+      "observed_at": "2026-10-26T11:02:29.297254+00:00",
+      "markets": [
+        "ADA-EUR",
+        "BCH-EUR",
+        "BTC-EUR",
+        "ENA-EUR",
+        "ETH-EUR",
+        "INJ-EUR",
+        "PEPE-EUR",
+        "SOL-EUR",
+        "XRP-EUR"
+      ],
+      "strategy_evaluations": 27,
+      "technical_candidates": 0,
+      "economic_candidates": 0,
+      "data_failures": [],
+      "first_blocking_stage_counts": {
+        "TECHNICAL_SETUP": 27
+      },
+      "observer_measurement": {
+        "counter_scope": "Shared provider window may include concurrent protective requests; not exclusively discovery traffic.",
+        "duration_seconds": 7.016812879000014,
+        "false_positive_limit": "Unknown until independent subsequent outcome evidence exists.",
+        "false_positive_rate": null,
+        "feasible_per_successful_request": 0.0,
+        "shared_counter_deltas": {
+          "request_429": 0,
+          "request_failure": 0,
+          "request_success": 13
+        },
+        "valid_markets": 9
+      },
+      "research_state": "WAITING_NEXT_CANDLE",
+      "worker_state": "HEALTHY"
+    },
+    {
+      "cycle_bucket": 5976709,
+      "observed_at": "2026-10-26T11:05:28.848761+00:00",
+      "markets": [
+        "ADA-EUR",
+        "BTC-EUR",
+        "ENA-EUR",
+        "ETH-EUR",
+        "INJ-EUR",
+        "PEPE-EUR",
+        "SOL-EUR",
+        "USDC-EUR",
+        "XRP-EUR"
+      ],
+      "strategy_evaluations": 27,
+      "technical_candidates": 0,
+      "economic_candidates": 0,
+      "data_failures": [],
+      "first_blocking_stage_counts": {
+        "TECHNICAL_SETUP": 27
+      },
+      "observer_measurement": {
+        "counter_scope": "Shared provider window may include concurrent protective requests; not exclusively discovery traffic.",
+        "duration_seconds": 6.020236127999965,
+        "false_positive_limit": "Unknown until independent subsequent outcome evidence exists.",
+        "false_positive_rate": null,
+        "feasible_per_successful_request": 0.0,
+        "shared_counter_deltas": {
+          "request_429": 0,
+          "request_failure": 0,
+          "request_success": 13
+        },
+        "valid_markets": 9
+      },
+      "research_state": "WAITING_NEXT_CANDLE",
+      "worker_state": "RECOVERING"
+    },
+    {
+      "cycle_bucket": 5976710,
+      "observed_at": "2026-10-26T11:10:39.840231+00:00",
+      "markets": [
+        "ADA-EUR",
+        "BCH-EUR",
+        "BTC-EUR",
+        "ENA-EUR",
+        "ETH-EUR",
+        "INJ-EUR",
+        "PEPE-EUR",
+        "SOL-EUR",
+        "XRP-EUR"
+      ],
+      "strategy_evaluations": 27,
+      "technical_candidates": 0,
+      "economic_candidates": 0,
+      "data_failures": [],
+      "first_blocking_stage_counts": {
+        "TECHNICAL_SETUP": 27
+      },
+      "observer_measurement": {
+        "counter_scope": "Shared provider window may include concurrent protective requests; not exclusively discovery traffic.",
+        "duration_seconds": 7.946014545999901,
+        "false_positive_limit": "Unknown until independent subsequent outcome evidence exists.",
+        "false_positive_rate": null,
+        "feasible_per_successful_request": 0.0,
+        "shared_counter_deltas": {
+          "request_429": 0,
+          "request_failure": 0,
+          "request_success": 13
+        },
+        "valid_markets": 9
+      },
+      "research_state": "WAITING_NEXT_CANDLE",
+      "worker_state": "RECOVERING"
+    },
+    {
+      "cycle_bucket": 5976711,
+      "observed_at": "2026-10-26T11:16:03.815916+00:00",
+      "markets": [
+        "ADA-EUR",
+        "BCH-EUR",
+        "BTC-EUR",
+        "ENA-EUR",
+        "ETH-EUR",
+        "INJ-EUR",
+        "PEPE-EUR",
+        "SOL-EUR",
+        "XRP-EUR"
+      ],
+      "strategy_evaluations": 27,
+      "technical_candidates": 0,
+      "economic_candidates": 0,
+      "data_failures": [],
+      "first_blocking_stage_counts": {
+        "TECHNICAL_SETUP": 27
+      },
+      "observer_measurement": {
+        "counter_scope": "Shared provider window may include concurrent protective requests; not exclusively discovery traffic.",
+        "duration_seconds": 7.960725169999932,
+        "false_positive_limit": "Unknown until independent subsequent outcome evidence exists.",
+        "false_positive_rate": null,
+        "feasible_per_successful_request": 0.0,
+        "shared_counter_deltas": {
+          "request_429": 0,
+          "request_failure": 0,
+          "request_success": 14
+        },
+        "valid_markets": 9
+      },
+      "research_state": "WAITING_NEXT_CANDLE",
+      "worker_state": "HEALTHY"
+    },
+    {
+      "cycle_bucket": 5976712,
+      "observed_at": "2026-10-26T11:21:02.001599+00:00",
+      "markets": [
+        "ADA-EUR",
+        "BTC-EUR",
+        "ENA-EUR",
+        "ETH-EUR",
+        "INJ-EUR",
+        "PEPE-EUR",
+        "SOL-EUR",
+        "USDC-EUR",
+        "XRP-EUR"
+      ],
+      "strategy_evaluations": 27,
+      "technical_candidates": 0,
+      "economic_candidates": 0,
+      "data_failures": [],
+      "first_blocking_stage_counts": {
+        "TECHNICAL_SETUP": 27
+      },
+      "observer_measurement": {
+        "counter_scope": "Shared provider window may include concurrent protective requests; not exclusively discovery traffic.",
+        "duration_seconds": 6.830542378000018,
+        "false_positive_limit": "Unknown until independent subsequent outcome evidence exists.",
+        "false_positive_rate": null,
+        "feasible_per_successful_request": 0.0,
+        "shared_counter_deltas": {
+          "request_429": 0,
+          "request_failure": 0,
+          "request_success": 13
+        },
+        "valid_markets": 9
+      },
+      "research_state": "CURRENT",
+      "worker_state": "RECOVERING"
+    },
+    {
+      "cycle_bucket": 5976713,
+      "observed_at": "2026-10-26T11:25:09.662313+00:00",
+      "markets": [
+        "ADA-EUR",
+        "BCH-EUR",
+        "BTC-EUR",
+        "ENA-EUR",
+        "ETH-EUR",
+        "INJ-EUR",
+        "PEPE-EUR",
+        "SOL-EUR",
+        "XRP-EUR"
+      ],
+      "strategy_evaluations": 27,
+      "technical_candidates": 1,
+      "economic_candidates": 0,
+      "data_failures": [
+        {
+          "reason": "latest_completed_candle_missing",
+          "stage": "DATA_VALIDATION",
+          "symbol": "SOL-EUR"
+        }
+      ],
+      "first_blocking_stage_counts": {
+        "COST_FEASIBILITY": 1,
+        "TECHNICAL_SETUP": 23,
+        "DATA_VALIDATION": 3
+      },
+      "observer_measurement": {
+        "counter_scope": "Shared provider window may include concurrent protective requests; not exclusively discovery traffic.",
+        "duration_seconds": 7.9875237520000155,
+        "false_positive_limit": "Unknown until independent subsequent outcome evidence exists.",
+        "false_positive_rate": null,
+        "feasible_per_successful_request": 0.0,
+        "shared_counter_deltas": {
+          "request_429": 0,
+          "request_failure": 0,
+          "request_success": 13
+        },
+        "valid_markets": 9
+      },
+      "research_state": "PARTIAL",
+      "worker_state": "HEALTHY"
+    },
+    {
+      "cycle_bucket": 5976714,
+      "observed_at": "2026-10-26T11:30:10.891914+00:00",
+      "markets": [
+        "ADA-EUR",
+        "BCH-EUR",
+        "BTC-EUR",
+        "ENA-EUR",
+        "ETH-EUR",
+        "INJ-EUR",
+        "PEPE-EUR",
+        "SOL-EUR",
+        "XRP-EUR"
+      ],
+      "strategy_evaluations": 27,
+      "technical_candidates": 1,
+      "economic_candidates": 0,
+      "data_failures": [
+        {
+          "reason": "latest_completed_candle_missing",
+          "stage": "DATA_VALIDATION",
+          "symbol": "ETH-EUR"
+        }
+      ],
+      "first_blocking_stage_counts": {
+        "COST_FEASIBILITY": 1,
+        "TECHNICAL_SETUP": 23,
+        "DATA_VALIDATION": 3
+      },
+      "observer_measurement": {
+        "counter_scope": "Shared provider window may include concurrent protective requests; not exclusively discovery traffic.",
+        "duration_seconds": 7.979720460999943,
+        "false_positive_limit": "Unknown until independent subsequent outcome evidence exists.",
+        "false_positive_rate": null,
+        "feasible_per_successful_request": 0.0,
+        "shared_counter_deltas": {
+          "request_429": 0,
+          "request_failure": 0,
+          "request_success": 13
+        },
+        "valid_markets": 9
+      },
+      "research_state": "PARTIAL",
+      "worker_state": "HEALTHY"
+    }
+  ],
+  "cycle_count": 7,
+  "raw_samples": 111,
+  "raw_sample_sha256": {
+    "public-observation-00.json": "a040b45b9301421915e7331fffb6d3a4ba5e6706c1ae3424acaef474104d189a",
+    "public-observation-01.json": "91d79febd8787be764e1202d7ebb8785a3e621760d03727cb71620263601ad63",
+    "public-observation-02.json": "997a1102744f491ecfdcea1dcc6f03a694fa3b3177d93df0a57edd7ddb5ebb79",
+    "public-observation-03.json": "ce99a92c399689fc6627297e68e37bcdab989f914aed5100aa01c201e2ffb9d2",
+    "public-observation-04.json": "45088ae18a4ae032112bd5787192f4008f03cc49be336fd478c1802bf15f6083",
+    "public-observation-05.json": "26b72322fa5099af8eff5961224af05d535e201174503cbcbc7f7f68d1a8398b",
+    "public-observation-06.json": "f52f68fff62944c67cbe3fcef62379be9e5eec4146951428e6959e22d44b1ddf",
+    "public-observation-07.json": "33fb9b542692559845692f37a24c15d12b947fc759665e0650cfc67740326628",
+    "public-observation-08.json": "0bb5445e9d00844bd4bc9baf50960c7e0025584ccc92a1abefc3dcfa785f0d7d",
+    "public-observation-09.json": "9239b96dc563052814d5aaa8f0c19ceec868a055d4225c884e22209dfd087205",
+    "public-observation-10.json": "3cd7d8e4cec9fbc64d2c672cd4f32f0e5698dd65607bd86dd47cd6588275dc11",
+    "public-observation-100.json": "283fe5a092b564674b5573393019513e0fe95e7ed1fc3057714ebfcac31b1cf3",
+    "public-observation-101.json": "c7dbccd9973c89ede7dd3218cd9d35cfff572d44e2027987cec2fdbd44d9b672",
+    "public-observation-102.json": "17824688d85f23efd982003a8e14b9f7142ffdfbd3b63c80508bf7c857633989",
+    "public-observation-103.json": "b5be0e6db4571b93b1fe63af1fafa555ce04a0ffe63cc4b73a999ff7101897f4",
+    "public-observation-104.json": "9c9250136b42751bd329fe714db40341258a576acce392d397fd833012a18231",
+    "public-observation-105.json": "20778cd40b07d9ee6f69b3efaef1b97eef6e516314032851af8766b5822d99a8",
+    "public-observation-106.json": "a766aabee152a1bf55ec6e6c073c214b6498846f2b6bff05111418f567589e69",
+    "public-observation-107.json": "dee263f8e8d5c723234a89dcc46a7aa05ee2a40a6e14e66bf4e7c896efaa8883",
+    "public-observation-108.json": "c19e46a7c09ce7edbeb564609fb3059dcc20ea6b88b49c0fec26c6cba2b6feb4",
+    "public-observation-109.json": "ec673cafd7b50b068c1ea2b0882fd84b055235e2836bd1b8f29cedbb762844a5",
+    "public-observation-11.json": "2b1fc2c3adf14eaf74cdd919826b80deeab3208739f333bcb3a6fdc805e6e6a5",
+    "public-observation-110.json": "ab8f63443a284c800be70a6587bdf80452cd16d230e6edc73ee207be3d48b1d5",
+    "public-observation-111.json": "ff44cb4684adb946d89198445b573cee50f6a03bf329a6fc81d66c8a3cf129c5",
+    "public-observation-112.json": "850b02d1f336d7fdc9d08ec9e8cd1ff5abf39be10ea59a816b3f0b33821059e1",
+    "public-observation-113.json": "7a031256b7cb040f55bbd13ee2d74af09935875d15dd0e259ce65f8736e8a4bf",
+    "public-observation-114.json": "6921c5bd36bb45e0d8ac698b6aa751ae86f1c6ae145af82ec9c91d58c26f8256",
+    "public-observation-115.json": "4ab0b7c49bdfa396f6049e4188efa1459208079a59429280ab8fe1934a9772e0",
+    "public-observation-116.json": "97fb8aba6c9d315fa7976e72260b26dffe76f17e16c95d5d5a58359c0a977c07",
+    "public-observation-117.json": "998f61e6a70adfeb162a4d0c6ae5258a81b0b4f4e0d987f005b5571b66c8d595",
+    "public-observation-118.json": "b8e8b55600525671faf3ceab1c6b8355afb708f48457bf375254d56cf807513e",
+    "public-observation-119.json": "94f146adccdd10b97ef8c52905a2759e573ccbd86c955c8607bc6c10f2f09352",
+    "public-observation-12.json": "ce527846e41a1588295e19f1485abee54b35d5ed4d0e6f8313f7d91b03e67124",
+    "public-observation-120.json": "7ea9369a7e6361ce28f8dbd499fd1dec106be524ab1886cdb34730b524d4f26f",
+    "public-observation-121.json": "e8a9b462daf47dece93fea3799805acda8728c7596a3f56f6cfca929305133e8",
+    "public-observation-122.json": "1db2172a0274c1887b4cb0784b323a5ea4abfa60e4f3425165bfb18f346c50dd",
+    "public-observation-123.json": "2922e9ad3e8472f3781aa4e094c9e6f3bfa5fa6c34a055487eaa6e328107f4da",
+    "public-observation-124.json": "7ffc265b7419fcd5362ac7af33bc6ee5e643436cf3406ef72bc96489cc2f2126",
+    "public-observation-13.json": "87902ec702db77b14dc30346890c6d0df7aa0e482df9570947a0549a67b86c79",
+    "public-observation-14.json": "a0569228fefa50aa86870129617067b54df97587e34fb7b3ba57591fec7fc88b",
+    "public-observation-15.json": "ba2963cfebc0b5f5cd564de866adbd2d9518c2d61bef05617ae6174028dd598f",
+    "public-observation-16.json": "8f351f400358b467aa0773b051a43f30e1e04f921a22cdb076ca5e7194576923",
+    "public-observation-17.json": "dddea4ab71d731649cf922a5d8dc98fead59084fa5985a174409ebd23dd057ca",
+    "public-observation-18.json": "6a9ab3a3bbe3e5e77127a5a45331c4c9a36d09c1598c5542fbc9a31d6bedf62d",
+    "public-observation-19.json": "73d086d9f10bc893b38415c42d737cb4744a60a3d76d57a657b271bcab5c4fd7",
+    "public-observation-20.json": "e8ba1962bf75c1a42e8e166315b8677866382270270cbb0bb4935f821d9a967e",
+    "public-observation-200.json": "bb7bdb305d095fc7e4b5ef3044824297d69da3f17d9c1125ceb28b5ebb92b840",
+    "public-observation-201.json": "d4f2a8a1e2235a2d7fa74662fdda0a92245f782f8e3d9677f581a2ce17b745e5",
+    "public-observation-202.json": "da523b80ae9a2bc56421b760d8a6efe9411818267f0ba9cdc4f8a8a279e76aae",
+    "public-observation-203.json": "c4d4adb0513487b0f8611f71fd6a8b8bd062da5712b9ff02955a930be74100fb",
+    "public-observation-204.json": "3553c2b24eab8a8bcc4cafe7c3794308c79cda8526e4adb17297fc64699f020f",
+    "public-observation-205.json": "c572a6548a93ea26ed761e8ea99ea508a7a9f888759fffa7ee40837edef802d5",
+    "public-observation-206.json": "b6e1937e50d723aa889cd13a99d3bd44e1b71bb526f26e810fe246ae6d95d474",
+    "public-observation-207.json": "80bd832428dfa1fa42a98d9e739049b223785f110fe067859fce7d76c1b35acb",
+    "public-observation-208.json": "d1c9e4472875b0d9edd6a9152c1b50773ae11f5cf1e712e8db1c0ff6746f41bd",
+    "public-observation-209.json": "0a6e66afacdf95f39c9eac854475e920ca0185ba333c20762db619aaea0e5961",
+    "public-observation-21.json": "d36310476bac91cc43a2c1a1fe02664b38a0a6f1f6dd082def3c856381f506f7",
+    "public-observation-210.json": "36a07530de7d0a877339b979ec71ece573300b9c9715d7a8ed4eeeb621251f6f",
+    "public-observation-211.json": "a33e65f5b8d679792b6c78e07fd0d3f8dfd04d71fb6af0fa44b9611f3ebae6dd",
+    "public-observation-212.json": "c23338eac297f9b28f2c9eea0b86f6b2f3c9b47892acadda62c9544e83372ce6",
+    "public-observation-213.json": "bc81656f96ec1629305e0c9fb44ec3403d90bffa4c9e92050443c185c316c260",
+    "public-observation-214.json": "6984c33944af479676b8f0371ec2b45f392bc503fa05d468bbb58671cae9cc1d",
+    "public-observation-215.json": "9a1053095ecf12272a83090e06c0882c0de97344da753d9c1c76dd2f53b36f5c",
+    "public-observation-216.json": "644a1044b079f3ada887ff674c5f7619c127e3056528264ba862a9f4502cf200",
+    "public-observation-217.json": "f0a82ae6ed23ef4a635ae136713191f89fdefb21eea7ec305e46769860ff5546",
+    "public-observation-218.json": "b57cb0309ddee33b7a01a3fd713f5a30c10d904e18a909036d5cc7c31ec89d70",
+    "public-observation-219.json": "e2338c37c4501d800fd316dcaf31921d4ba891e08e3eed4ed5bbc5058deed4f5",
+    "public-observation-22.json": "9aa73e47fec08f63e2933c9c9d15485fabb315b731aec120b1c8e15d0814eeb3",
+    "public-observation-220.json": "f7c9f94ee7b2d6e49bc481eb54b6011a81d9510372450bc7444ea1d01798693c",
+    "public-observation-221.json": "3257d619bf0278635429c8482c7db6286eebc1cb7d4ddd250ce5d6be57d1ea33",
+    "public-observation-222.json": "eb75b78be584f5bc10394abbb6d97322ed3601092cc83e357c70c30fde88016c",
+    "public-observation-223.json": "e7635d36ec6137df1f506820072a364c4892909a7ac5e1bc072a56e40979dd1f",
+    "public-observation-224.json": "d34ed1e4e6faafb010a590848833b66a422ef8a91030025e6eb1d4eea9e39590",
+    "public-observation-225.json": "83e3870e889866c55ae68537fbc4af2108c92c965317315c55d4e78305c30165",
+    "public-observation-226.json": "d08ae0aeeb30b217b64b653bf6b65aef590f3e13c237d4e068e5e1a15cc53009",
+    "public-observation-227.json": "255506a3ad6893f0b1a4b250d40ffcd10edaddd9e8a3ce8de01d58815d2ed667",
+    "public-observation-228.json": "982366d965ad5c3be79b6afdc4cc9efcb8697b7fff8874bc851574fe44d256f3",
+    "public-observation-229.json": "f02b5e96be96e5a87752a1bf6f11b60add5ee3da360c0a505a91833b5235ccb7",
+    "public-observation-23.json": "c0c7938075fe2e5ddc2f288bc413b4dc24352dab8612a313f2c1e21ad0b8a582",
+    "public-observation-230.json": "391cbb3a434dc08f2f2b1cf6f539abbef07fc0ed8d095edd7d15e6e109addec3",
+    "public-observation-231.json": "6725d02f0a877d3c6405e5d0df8024c9558900f280b618534f78dde1ba22d709",
+    "public-observation-232.json": "356843594837c07d0fe8df40c085fafef89b14f496dbc6b9fb58a5f3aa04223e",
+    "public-observation-233.json": "c5864bc5bf3bba93bcaf5f769fcda53fdc4e2b7cdc035bad05047c3934caf24f",
+    "public-observation-234.json": "c8d315ad5caa349af00300dbef4e608722b1e2c8d98bb98d1ac941d3176b9560",
+    "public-observation-235.json": "dbc85a1f8afd4264810e817aec744848f60e2cf0bed0ef18b6bfc2a8cde5dc9b",
+    "public-observation-236.json": "9eed005a672c0ecd0020487f7e8dec67d3864b1fa3a31e16d6d2a8f675456110",
+    "public-observation-24.json": "9f099462132a7bcacd8f97eefd9bcf0fcda7119e9c0e33b87661bbffbdcf7d64",
+    "public-observation-25.json": "5aa399bf6407193264cd50be48b2d0693729098f5458a7c87d605b1b4a801530",
+    "public-observation-26.json": "fce8da12a641ab4f5aa29a8fd16f5eff06bfa4267eaf5aec3e03d213730515cd",
+    "public-observation-27.json": "c0fc66361a4dc78fb94c6396944b8e3377a4db98274d0d41906257ff5fd14d03",
+    "public-observation-28.json": "5a3e6921eb52fe204d4c6b05524cf004ec6876599fccd5f08f323acb5581a281",
+    "public-observation-29.json": "93861a57af00fbcaa7edf342059b9cdeba14eb99f3d80face4ceb1a31d523a44",
+    "public-observation-30.json": "9e422394ce7bf1943ea55c63d641c7bc2fb4f2e6e6b0089ab9b2474c09221bb1",
+    "public-observation-31.json": "4a8a0164b2bc44029e6d8a5446d83d3f3bcf93d57883ca3cabbc89b7b726d12d",
+    "public-observation-32.json": "c9fe7470b0872e4ac01d0a24665bca94843eed2fbce855e62191b1b828ffd461",
+    "public-observation-33.json": "5fbd9d01a05d9b08d0d46b229daf8b0b9bb7c24906723bedcaebcec759b66201",
+    "public-observation-34.json": "d718f52eb02adc123b244e4e580f7ee0bd1da6567e7c1130924c462e95c8430e",
+    "public-observation-35.json": "b3bba7dcf4c12d290f8a58ecbb81f235c7bff17f9334edfba6a35149c0952cc8",
+    "public-observation-36.json": "0939b3394f58b28f6925a45890ee007db373a127ea8c98e8c843184fa8ad77b8",
+    "public-observation-37.json": "e6efd15c107340f219634a4865af9b3a1d850edd284304f8057a24f33ac8e2ca",
+    "public-observation-38.json": "487ed8060cb82d41d407ac3d92fcaf776bad186a87d4f5726e0ba97a46df63f7",
+    "public-observation-39.json": "3db4767663064a87ea3392637267dca9e2aead96f78c3f00ef3de0804717bbba",
+    "public-observation-40.json": "b488a113b8552d05932e51fd4c1e2ee523eb0b2f76a48950d150be8487110b23",
+    "public-observation-41.json": "37e00e5956d67fa28e99e1018d4f49405d87cf6b6de96631842c5444ccc47b73",
+    "public-observation-42.json": "f6c2e41155c1bf8b76a943e637b863ddfdfe481ecf77be1e9323ede32800694f",
+    "public-observation-43.json": "5d879a242179a6607e35b9c60e1d47dffdeb4b2b04749797ff0a89b5bf10df44",
+    "public-observation-44.json": "73628f1ac7b19a36d93641564559c3493563984a60b87067e4789bac35bc5618",
+    "public-observation-45.json": "c2d974e8322593688a9bc6fb042a21b9a5c7163859f18b5817ba7cd078caf35a",
+    "public-observation-46.json": "32ae672cd38dd163a6d03da3d25d0b6d5d0a0b5a69ef32826981c5d39a2483bc",
+    "public-observation-47.json": "d716686ddc38046ff95265fcc7c7e60c381b4e41e0049478c26d7c456d6c26b7",
+    "public-observation-48.json": "0c6ec988f0361688641d79d73d3023ad73a08ae75281f941aadf92c58974d931"
+  },
+  "overlapping_failed_conditions": {
+    "B3_STATEFUL_BREAKOUT:confirmed_delayed_retest": 63,
+    "E3_ADAPTIVE_RELATIVE_STRENGTH:normalized_outperformance": 58,
+    "A3_COST_AWARE_CONTINUATION:pullback_invalidation": 57,
+    "E3_ADAPTIVE_RELATIVE_STRENGTH:relative_demand": 54,
+    "E3_ADAPTIVE_RELATIVE_STRENGTH:recent_positive_returns": 52,
+    "E3_ADAPTIVE_RELATIVE_STRENGTH:persistent_outperformance": 43,
+    "E3_ADAPTIVE_RELATIVE_STRENGTH:positive_local_trend": 42,
+    "A3_COST_AWARE_CONTINUATION:recovering": 40,
+    "E3_ADAPTIVE_RELATIVE_STRENGTH:recovering": 40,
+    "A3_COST_AWARE_CONTINUATION:higher_15m_bullish": 27,
+    "B3_STATEFUL_BREAKOUT:entry_not_chased": 11,
+    "A3_COST_AWARE_CONTINUATION:entry_not_chased": 11,
+    "E3_ADAPTIVE_RELATIVE_STRENGTH:entry_not_chased": 11,
+    "E3_ADAPTIVE_RELATIVE_STRENGTH:benchmarks_not_adverse": 10,
+    "B3_STATEFUL_BREAKOUT:nonbearish_trend": 5,
+    "A3_COST_AWARE_CONTINUATION:nonbearish_trend": 5,
+    "E3_ADAPTIVE_RELATIVE_STRENGTH:nonbearish_trend": 5,
+    "E3_ADAPTIVE_RELATIVE_STRENGTH:synchronized_relative_strength": 3,
+    "A3_COST_AWARE_CONTINUATION:completed_data": 2,
+    "B3_STATEFUL_BREAKOUT:completed_data": 2,
+    "E3_ADAPTIVE_RELATIVE_STRENGTH:completed_data": 2,
+    "B3_STATEFUL_BREAKOUT:not_extended": 1,
+    "E3_ADAPTIVE_RELATIVE_STRENGTH:not_extended": 1,
+    "A3_COST_AWARE_CONTINUATION:not_extended": 1
+  },
+  "cost_constrained_example": {
+    "as_of": "2026-10-26T11:25:00+00:00",
+    "conditions": {
+      "completed_data": true,
+      "entry_not_chased": true,
+      "higher_15m_bullish": true,
+      "nonbearish_trend": true,
+      "not_extended": true,
+      "pullback_invalidation": true,
+      "recovering": true,
+      "valid_precision": true
+    },
+    "data_errors": [],
+    "economic_eligible": false,
+    "economics": {
+      "expected_value_status": "NOT_ESTIMATED_NO_CALIBRATED_EDGE",
+      "feasible": false,
+      "measurements": {
+        "assumptions": {
+          "entry_fee_bps": "10",
+          "exit_fee_bps": "10",
+          "maximum_spread_bps": "25",
+          "minimum_net_reward_risk": "1.2",
+          "slippage_bps": "8"
+        },
+        "atr": "8.328571428571428571428571429E-9",
+        "binary_target_stop_breakeven_probability": "0.4554715697984336327594265405",
+        "breakeven_bid": "0.000003924903614583341632137291987",
+        "conditional_target_net_eur": [
+          "0.6534500968206231999999999967",
+          "1.115881788076381599999999997",
+          "1.578313479332139999999999997"
+        ],
+        "cost_basis_eur": "74.999992417670",
+        "entry": {
+          "allocations": [
+            [
+              0,
+              "19143190"
+            ]
+          ],
+          "ask_depth": "657921717440",
+          "best_ask": "0.0000039108",
+          "best_bid": "0.0000039069",
+          "bid_depth": "658663867170",
+          "book_age_seconds": "6.121174",
+          "depth_impact_bps": "0",
+          "fee": "0.074925067350",
+          "fillable_quantity": "19143190",
+          "gross_notional": "74.925067350320",
+          "midpoint_mark": "0.00000390885",
+          "net_cash_change": "-74.999992417670",
+          "net_unit_proceeds": "0",
+          "participation": "1",
+          "requested_quantity": "19143200",
+          "side": "BUY",
+          "slippage_bps": "8",
+          "spread_bps": "9.977359069803139030661191911",
+          "unfilled_quantity": "10",
+          "vwap": "0.000003913928"
+        },
+        "estimated_total_round_trip_cost_eur": "0.344035706009",
+        "estimates_available": true,
+        "exit_now": {
+          "allocations": [
+            [
+              0,
+              "19143190"
+            ]
+          ],
+          "ask_depth": "657921717440",
+          "best_ask": "0.0000039108",
+          "best_bid": "0.0000039069",
+          "bid_depth": "658663867170",
+          "book_age_seconds": "6.121318",
+          "depth_impact_bps": "0",
+          "fee": "0.074730687399",
+          "fillable_quantity": "19143190",
+          "gross_notional": "74.730687399060",
+          "midpoint_mark": "0.00000390885",
+          "net_cash_change": "74.655956711661",
+          "net_unit_proceeds": "0.000003899870226000003134273859268",
+          "participation": "1",
+          "requested_quantity": "19143190",
+          "side": "SELL",
+          "slippage_bps": "8",
+          "spread_bps": "9.977359069803139030661191911",
+          "unfilled_quantity": "0",
+          "vwap": "0.000003903774"
+        },
+        "expected_net_stop_loss_eur": "0.5465792507356424000000000033",
+        "fillable_quantity": "19143190",
+        "future_depth": "Assumed current depth-impact fraction; future depth and gap loss can be worse",
+        "gross_target_return": "0.012350414237496164467628107",
+        "holding_bars": 36,
+        "minimum_economically_feasible_target": "0.0000039593",
+        "net_reward_risk": "1.195526716283399081046639097",
+        "net_target_return": "0.008712668838439380183520873915",
+        "partial_entry": true,
+        "partial_exit_fractions": [
+          "0.3",
+          "0.4",
+          "0.3"
+        ],
+        "plausible_target_ceiling": "0.000004007571428571428571428571429",
+        "probability_limit": "Binary conditional payoff threshold only; no forecast, calibrated probability or partial-exit distribution",
+        "proposed_quantity": "19143200",
+        "quote_budget_eur": "75",
+        "size_scope": "Conditional estimate at stated size; account admission is separate",
+        "spread_counted": "Once through actual ask-side entry and bid-side exit; never added again",
+        "stop": "0.0000038963",
+        "targets": [
+          "0.0000039591",
+          "0.0000039833",
+          "0.0000040075"
+        ]
+      },
+      "reasons": [
+        "net_reward_risk_below_research_minimum"
+      ]
+    },
+    "entry_eligible": false,
+    "entry_plan": {
+      "stop": "0.0000038963",
+      "targets": [
+        "0.0000039591",
+        "0.0000039833",
+        "0.0000040075"
+      ]
+    },
+    "execution_quality_required": true,
+    "expected_value": {
+      "confidence": "UNVALIDATED",
+      "probability": null,
+      "status": "NOT_ESTIMATED"
+    },
+    "explanation": "Valid technical setup, but expected exit proceeds do not cover estimated costs or net risk requirements.",
+    "holding_bars": 36,
+    "parameters": {
+      "breakout_hold_bars": "2",
+      "breakout_volume": "1.3",
+      "compression_width": "0.02",
+      "entry_mode": "EARLY_RECLAIM",
+      "entry_reference": "MIDPOINT",
+      "holding_bars": "36",
+      "minimum_net_reward_risk": "1.2",
+      "relative_model": "RESIDUAL_VOLATILITY",
+      "relative_volume": "1.2",
+      "relative_z": "0.75",
+      "retest_bars": "8",
+      "stop_atr": "2",
+      "stop_basis": "STRUCTURE",
+      "target_atr": "2",
+      "target_basis": "15m"
+    },
+    "pattern_state": null,
+    "pipeline": [
+      {
+        "passed": true,
+        "reached": true,
+        "reason": "completed_context_available",
+        "stage": "DATA_VALIDATION"
+      },
+      {
+        "passed": true,
+        "reached": true,
+        "reason": "NEUTRAL",
+        "stage": "REGIME"
+      },
+      {
+        "passed": true,
+        "reached": true,
+        "reason": "technical_setup_qualified",
+        "stage": "TECHNICAL_SETUP"
+      },
+      {
+        "passed": false,
+        "reached": true,
+        "reason": "net_reward_risk_below_research_minimum",
+        "stage": "COST_FEASIBILITY"
+      },
+      {
+        "passed": null,
+        "reached": false,
+        "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+        "stage": "EXPECTED_VALUE"
+      },
+      {
+        "passed": null,
+        "reached": false,
+        "reason": "NOT_REACHED",
+        "stage": "PORTFOLIO_RISK"
+      },
+      {
+        "passed": null,
+        "reached": false,
+        "reason": "NOT_REACHED",
+        "stage": "PAPER_EXECUTION"
+      }
+    ],
+    "qualification_state": "COST_CONSTRAINED",
+    "qualified": false,
+    "quote_observed_at": "2026-10-26T11:30:04.763000+00:00",
+    "reasons": [
+      "net_reward_risk_below_research_minimum"
+    ],
+    "regime": "NEUTRAL",
+    "regime_assessment": {
+      "as_of": "2026-10-26T11:25:00+00:00",
+      "benchmark": "UNKNOWN",
+      "evidence": {
+        "atr_fraction": "0.002128110033874547365961920337",
+        "benchmark_support": {
+          "BTC": true
+        },
+        "bollinger_width": "0.005677712911779753598993738991",
+        "ema_separation_atr": "-0.08975706962909892165485432247",
+        "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+      },
+      "liquidity": "HEALTHY",
+      "missing": [],
+      "structure": [
+        "COMPRESSION",
+        "RANGING"
+      ],
+      "timeframes": {
+        "15m": {
+          "atr": "2.419285714285714285714285714E-8",
+          "available_at": "2026-10-26T11:30:00+00:00",
+          "bear": false,
+          "bull": true,
+          "ready": true,
+          "resistance": "0.0000039673"
+        },
+        "60m": {
+          "atr": "7.062857142857142857142857143E-8",
+          "available_at": "2026-10-26T11:00:00+00:00",
+          "bear": false,
+          "bull": false,
+          "ready": true,
+          "resistance": "0.000003979"
+        }
+      },
+      "trend": "NEUTRAL",
+      "version": "multidimensional-regime/4.6.0",
+      "volatility": "LOW"
+    },
+    "relative_strength": null,
+    "score": "0.5498829085271348264911530712",
+    "score_components": {
+      "economics": "0.07970178108555993873644260646",
+      "liquidity": "0.1201811274415748877547104647",
+      "technical": "0.35",
+      "trend": "0.00"
+    },
+    "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+    "sizing": {
+      "actual_account_admission": false,
+      "quote_budget_eur": "75",
+      "scope": "RESEARCH_ASSUMPTION"
+    },
+    "strategy_id": "A3_COST_AWARE_CONTINUATION",
+    "strategy_version": "4.6.0-experimental.2",
+    "symbol": "PEPE-EUR",
+    "technical_eligible": true,
+    "timeframe": "5m",
+    "unvalidated": true,
+    "veto": false
+  },
+  "research_stays_current_past_90_seconds": true,
+  "quotes_never_authorize_execution": true,
+  "counts_are_observation_events_not_independent_opportunities": true,
+  "planned_restart_samples_with_api_unavailable": 1
+}

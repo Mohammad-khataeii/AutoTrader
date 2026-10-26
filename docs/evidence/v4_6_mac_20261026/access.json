@@ -1,0 +1,33 @@
+{
+  "http://127.0.0.1:8000": {
+    "authenticated_overview": "PASS",
+    "without_auth_status": 401,
+    "readiness": {
+      "ready": true,
+      "live_trading_enabled": false
+    }
+  },
+  "http://127.0.0.1:3000": {
+    "authenticated_overview": "PASS",
+    "without_auth_status": 401,
+    "readiness": {
+      "ready": true,
+      "live_trading_enabled": false
+    }
+  },
+  "http://10.0.0.183:3000": {
+    "authenticated_overview": "PASS",
+    "without_auth_status": 401,
+    "readiness": {
+      "ready": true,
+      "live_trading_enabled": false
+    }
+  },
+  "status": "PASS",
+  "no_private_service_ports": true,
+  "restart_policy": "unless-stopped",
+  "new_local_credentials_permissions": "0600",
+  "lan_verified_from_same_mac": true,
+  "second_physical_device_verified": false,
+  "production_connections": false
+}

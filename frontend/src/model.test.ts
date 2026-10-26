@@ -4,6 +4,7 @@ import {
   date,
   lastEvaluation,
   money,
+  price,
   officialActions,
   percent,
   rejection,
@@ -11,6 +12,12 @@ import {
   systemStatus,
 } from "./model";
 describe("honest financial presentation", () => {
+  it("keeps distinct sub-cent entry, stop and target prices while account cash uses cents", () => {
+    expect(["0.182646", "0.18162", "0.18415"].map(price)).toEqual(["€0.182646", "€0.18162", "€0.18415"]);
+    expect(price("0.00000123")).toBe("€0.00000123");
+    expect(money("0.182646")).toBe("€0.18");
+    expect(price(null)).toBe("Unavailable");
+  });
   it("distinguishes zero from unavailable and preserves losses", () => {
     expect(money(0)).toBe("€0.00");
     expect(money(-3.8036)).toBe("-€3.80");

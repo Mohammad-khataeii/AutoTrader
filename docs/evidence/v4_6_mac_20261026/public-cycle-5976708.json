@@ -1,0 +1,5304 @@
+{
+  "observed_at": "2026-10-26T11:05:18.670234+00:00",
+  "kind": "REAL_PUBLIC_FEED_LOCAL_PAPER_ACCOUNT",
+  "sample": 9,
+  "opportunities": {
+    "calibrated_positive_expected_value_candidates": null,
+    "cycle_bucket": 5976708,
+    "data_failures": [],
+    "discovery": {
+      "configured_maximum": 6,
+      "counts": {
+        "expensive_or_thin": 51,
+        "missing_or_invalid_summary": 0,
+        "screened": 7,
+        "supported_eur": 61
+      },
+      "detail_attempts": 6,
+      "detail_time_budget_seconds": 12,
+      "extra_detail_budget": 6,
+      "interval_seconds": 300,
+      "mode": "cached_ticker_then_bounded_details",
+      "planned_initial_endpoint_calls": 13,
+      "ranking": [
+        {
+          "daily_range_bps": "303.7688223518147793541648533",
+          "evidence": "Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified",
+          "quote_volume": "893632.73",
+          "score": "3.801179270248063364957785708",
+          "spread_bps": "3.481591087126816955348594308",
+          "symbol": "XRP-EUR"
+        },
+        {
+          "daily_range_bps": "638.1865291587425172629456137",
+          "evidence": "Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified",
+          "quote_volume": "739260.93",
+          "score": "2.764442623340268293616858335",
+          "spread_bps": "8.934611408222395241681238592",
+          "symbol": "PEPE-EUR"
+        },
+        {
+          "daily_range_bps": "332.6471799094277480444627419",
+          "evidence": "Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified",
+          "quote_volume": "159938.78",
+          "score": "1.102796428192671881432688349",
+          "spread_bps": "7.135995608618087004254151228",
+          "symbol": "ADA-EUR"
+        },
+        {
+          "daily_range_bps": "1093.161012385568120624663436",
+          "evidence": "Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified",
+          "quote_volume": "312953.41",
+          "score": "1.042887216736672051696284330",
+          "spread_bps": "21.54011847065158858373721055",
+          "symbol": "ENA-EUR"
+        },
+        {
+          "daily_range_bps": "878.5416209092905776411157479",
+          "evidence": "Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified",
+          "quote_volume": "199941.33",
+          "score": "1.013320403681089391609927520",
+          "spread_bps": "16.10659638333699392342045538",
+          "symbol": "INJ-EUR"
+        },
+        {
+          "daily_range_bps": "434.9355051975636859799412021",
+          "evidence": "Liquidity-weighted capped range screen with bounded revisit priority; setup and depth remain unverified",
+          "quote_volume": "277198.22",
+          "score": "0.9668303067990523212703235493",
+          "spread_bps": "22.30541539314801753085080088",
+          "symbol": "BCH-EUR"
+        }
+      ],
+      "recent_details": {
+        "ADA-EUR": {
+          "bucket": 5976708,
+          "data_failed": false
+        },
+        "BCH-EUR": {
+          "bucket": 5976708,
+          "data_failed": false
+        },
+        "ENA-EUR": {
+          "bucket": 5976708,
+          "data_failed": false
+        },
+        "INJ-EUR": {
+          "bucket": 5976708,
+          "data_failed": false
+        },
+        "PEPE-EUR": {
+          "bucket": 5976708,
+          "data_failed": false
+        },
+        "XRP-EUR": {
+          "bucket": 5976708,
+          "data_failed": false
+        }
+      },
+      "request_budget": 16
+    },
+    "economically_viable_candidates": 0,
+    "evaluated_markets": 9,
+    "evaluation_grace_seconds": 90,
+    "evaluation_interval_seconds": 300,
+    "financial_actions": false,
+    "measurement": {
+      "counter_scope": "Shared provider window may include concurrent protective requests; not exclusively discovery traffic.",
+      "duration_seconds": 7.016812879000014,
+      "false_positive_limit": "Unknown until independent subsequent outcome evidence exists.",
+      "false_positive_rate": null,
+      "feasible_per_successful_request": 0.0,
+      "shared_counter_deltas": {
+        "request_429": 0,
+        "request_failure": 0,
+        "request_success": 13
+      },
+      "valid_markets": 9
+    },
+    "observer_process_id": 1,
+    "paper_observation_only": true,
+    "schema": "opportunity-snapshot/4.6-rc2",
+    "technical_candidates": 0,
+    "updated_at": "2026-10-26T11:02:29.297254+00:00",
+    "research_freshness": {
+      "state": "WAITING_NEXT_CANDLE",
+      "current": true,
+      "observed_at": "2026-10-26T11:02:29.297254+00:00",
+      "age_seconds": 169.393644,
+      "next_evaluation_due_at": "2026-10-26T11:06:30+00:00",
+      "interval_seconds": 300,
+      "grace_seconds": 90
+    },
+    "market_freshness": {
+      "state": "STALE_QUOTES",
+      "oldest_quote_age_seconds": 178.888898,
+      "execution_authorized": false,
+      "reason": "Every order requires a new executable book and current account admission"
+    },
+    "worker_health": {
+      "state": "HEALTHY",
+      "reported_state": "RUNNING",
+      "age_seconds": 179.305401,
+      "reason": "cycle_completed",
+      "process_id": 1
+    },
+    "scanner_health": {
+      "state": "HEALTHY",
+      "reported_state": "OK",
+      "age_seconds": 56.978287,
+      "reason": "worker_scan",
+      "process_id": null
+    },
+    "status": "OBSERVED",
+    "runtime_incident": null,
+    "age_seconds": 169.393644,
+    "stale": false,
+    "quote_status": "STALE_QUOTES",
+    "rows": [
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "confirmed_delayed_retest": false,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "71745.52",
+          "targets": [
+            "71986.94",
+            "72152.07",
+            "72317.19"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: confirmed_delayed_retest",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": {
+          "atr": "61.62",
+          "breakout_at": null,
+          "breakout_volume": null,
+          "compressed_at": "2026-10-26T10:10:00+00:00",
+          "confirmed_at": null,
+          "event_id": null,
+          "hold_count": 0,
+          "last_candle": "2026-10-26T10:55:00+00:00",
+          "level": "71800.75",
+          "range_low": "71387.08",
+          "reason": "compression_expired_without_breakout",
+          "retest_age": 0,
+          "stage": "EXPIRED",
+          "transitions": [
+            {
+              "at": "2026-10-26T10:10:00+00:00",
+              "reason": "completed_twenty_bar_range",
+              "stage": "COMPRESSED"
+            },
+            {
+              "at": "2026-10-26T10:55:00+00:00",
+              "reason": "compression_expired_without_breakout",
+              "stage": "EXPIRED"
+            }
+          ]
+        },
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "confirmed_delayed_retest",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:19.802000+00:00",
+        "reasons": [
+          "confirmed_delayed_retest"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.0006286257718525128135815142737",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.001742282344157709294825462166",
+            "ema_separation_atr": "2.619822514884447628439519242",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "EXPANSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "165.1242857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "71800.75"
+            },
+            "60m": {
+              "atr": "397.2392857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "72150"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.7325225469239162111877625850",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1908558802572495445210959183",
+          "technical": "0.2916666666666666666666666667",
+          "trend": "0.25"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "BTC-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "confirmed_delayed_retest": false,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "2082.03",
+          "targets": [
+            "2089.11",
+            "2095.67",
+            "2102.23"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: confirmed_delayed_retest",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": {
+          "atr": "2.011428571428571428571428571",
+          "breakout_at": null,
+          "breakout_volume": null,
+          "compressed_at": "2026-10-26T10:45:00+00:00",
+          "confirmed_at": null,
+          "event_id": null,
+          "hold_count": 0,
+          "last_candle": "2026-10-26T10:55:00+00:00",
+          "level": "2083.94",
+          "range_low": "2069.17",
+          "reason": "completed_twenty_bar_range",
+          "retest_age": 0,
+          "stage": "COMPRESSED",
+          "transitions": [
+            {
+              "at": "2026-10-26T10:45:00+00:00",
+              "reason": "completed_twenty_bar_range",
+              "stage": "COMPRESSED"
+            }
+          ]
+        },
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "confirmed_delayed_retest",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:20.810000+00:00",
+        "reasons": [
+          "confirmed_delayed_retest"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.0009639172386092355857748787279",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.002885400986492426839991764749",
+            "ema_separation_atr": "1.878771487873498186328315947",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "6.559285714285714285714285714",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "2083.94"
+            },
+            "60m": {
+              "atr": "17.31571428571428571428571429",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "2108.07"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.7103264941788986843682679221",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1838133915280447444105617620",
+          "technical": "0.2916666666666666666666666667",
+          "trend": "0.2348464359841872732910394934"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "ETH-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "entry_not_chased": true,
+          "higher_15m_bullish": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "pullback_invalidation": false,
+          "recovering": false,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "71651.84",
+          "targets": [
+            "71986.94",
+            "72152.07",
+            "72317.19"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: recovering, pullback_invalidation",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "recovering,pullback_invalidation",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:19.802000+00:00",
+        "reasons": [
+          "recovering",
+          "pullback_invalidation"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.0006286257718525128135815142737",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.001742282344157709294825462166",
+            "ema_separation_atr": "2.619822514884447628439519242",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "EXPANSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "165.1242857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "71800.75"
+            },
+            "60m": {
+              "atr": "397.2392857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "72150"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.7033558802572495445210959183",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1908558802572495445210959183",
+          "technical": "0.2625",
+          "trend": "0.25"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "BTC-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "benchmarks_not_adverse": true,
+          "completed_data": true,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "normalized_outperformance": false,
+          "not_extended": true,
+          "persistent_outperformance": true,
+          "positive_local_trend": false,
+          "recent_positive_returns": false,
+          "recovering": false,
+          "relative_demand": true,
+          "synchronized_relative_strength": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "71651.84",
+          "targets": [
+            "71986.94",
+            "72152.07",
+            "72317.19"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: normalized_outperformance, recovering, positive_local_trend, recent_positive_returns",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "normalized_outperformance,recovering,positive_local_trend,recent_positive_returns",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:19.802000+00:00",
+        "reasons": [
+          "normalized_outperformance",
+          "recovering",
+          "positive_local_trend",
+          "recent_positive_returns"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.0006286257718525128135815142737",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.001742282344157709294825462166",
+            "ema_separation_atr": "2.619822514884447628439519242",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "EXPANSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "165.1242857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "71800.75"
+            },
+            "60m": {
+              "atr": "397.2392857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "72150"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmarks": [
+            "ETH-EUR"
+          ],
+          "excess_return_20": "-0.0028074896528646685062340027",
+          "normalization": "excess return / max(5-minute residual return volatility, asset volatility / 4) / sqrt(20); not a calibrated probability",
+          "normalized_excess": "-0.8917011342284790129285739152",
+          "persistent_60": true,
+          "ready": true
+        },
+        "score": "0.6831635725649418522134036106",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1908558802572495445210959183",
+          "technical": "0.2423076923076923076923076923",
+          "trend": "0.25"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "BTC-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "entry_not_chased": true,
+          "higher_15m_bullish": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "pullback_invalidation": false,
+          "recovering": false,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "2076.59",
+          "targets": [
+            "2089.11",
+            "2095.67",
+            "2102.23"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: recovering, pullback_invalidation",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "recovering,pullback_invalidation",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:20.810000+00:00",
+        "reasons": [
+          "recovering",
+          "pullback_invalidation"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.0009639172386092355857748787279",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.002885400986492426839991764749",
+            "ema_separation_atr": "1.878771487873498186328315947",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "6.559285714285714285714285714",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "2083.94"
+            },
+            "60m": {
+              "atr": "17.31571428571428571428571429",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "2108.07"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.6811598275122320177016012554",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1838133915280447444105617620",
+          "technical": "0.2625",
+          "trend": "0.2348464359841872732910394934"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "ETH-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "confirmed_delayed_retest": false,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "90.599",
+          "targets": [
+            "91.026",
+            "91.356",
+            "91.685"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: confirmed_delayed_retest",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": {
+          "atr": "0.1070714285714285714285714286",
+          "breakout_at": null,
+          "breakout_volume": null,
+          "compressed_at": "2026-10-26T10:50:00+00:00",
+          "confirmed_at": null,
+          "event_id": null,
+          "hold_count": 0,
+          "last_candle": "2026-10-26T10:55:00+00:00",
+          "level": "90.701",
+          "range_low": "89.898",
+          "reason": "completed_twenty_bar_range",
+          "retest_age": 0,
+          "stage": "COMPRESSED",
+          "transitions": [
+            {
+              "at": "2026-10-26T10:50:00+00:00",
+              "reason": "completed_twenty_bar_range",
+              "stage": "COMPRESSED"
+            }
+          ]
+        },
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "confirmed_delayed_retest",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:21.810000+00:00",
+        "reasons": [
+          "confirmed_delayed_retest"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.001178514518413597733711048159",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.004829221132429322587471744318",
+            "ema_separation_atr": "1.755412892497380099758781221",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.3293571428571428571428571429",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "90.701"
+            },
+            "60m": {
+              "atr": "0.7847857142857142857142857143",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "91.212"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.6730176471861313819335236113",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1619243689572922027970092920",
+          "technical": "0.2916666666666666666666666667",
+          "trend": "0.2194266115621725124698476526"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "SOL-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "entry_not_chased": true,
+          "higher_15m_bullish": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "pullback_invalidation": false,
+          "recovering": false,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "90.346",
+          "targets": [
+            "91.026",
+            "91.356",
+            "91.685"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: recovering, pullback_invalidation",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "recovering,pullback_invalidation",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:21.810000+00:00",
+        "reasons": [
+          "recovering",
+          "pullback_invalidation"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.001178514518413597733711048159",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.004829221132429322587471744318",
+            "ema_separation_atr": "1.755412892497380099758781221",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.3293571428571428571428571429",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "90.701"
+            },
+            "60m": {
+              "atr": "0.7847857142857142857142857143",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "91.212"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.6438509805194647152668569446",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1619243689572922027970092920",
+          "technical": "0.2625",
+          "trend": "0.2194266115621725124698476526"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "SOL-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "confirmed_delayed_retest": false,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "1.1503",
+          "targets": [
+            "1.1570",
+            "1.1609",
+            "1.1649"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: confirmed_delayed_retest",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": {
+          "atr": "0.001707142857142857142857142857",
+          "breakout_at": null,
+          "breakout_volume": null,
+          "compressed_at": "2026-10-26T10:25:00+00:00",
+          "confirmed_at": null,
+          "event_id": null,
+          "hold_count": 0,
+          "last_candle": "2026-10-26T10:55:00+00:00",
+          "level": "1.1519",
+          "range_low": "1.1445",
+          "reason": "completed_twenty_bar_range",
+          "retest_age": 0,
+          "stage": "COMPRESSED",
+          "transitions": [
+            {
+              "at": "2026-10-26T10:25:00+00:00",
+              "reason": "completed_twenty_bar_range",
+              "stage": "COMPRESSED"
+            }
+          ]
+        },
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "confirmed_delayed_retest",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:22.812000+00:00",
+        "reasons": [
+          "confirmed_delayed_retest"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.001031594123642148698699942828",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.003471260340791471823454224525",
+            "ema_separation_atr": "1.421866764329403285164960120",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "EXPANSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.003957142857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "1.1519"
+            },
+            "60m": {
+              "atr": "0.009657142857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": true,
+              "bull": false,
+              "ready": true,
+              "resistance": "1.1688"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.6415472835108275416694979272",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1721472713029854643572112455",
+          "technical": "0.2916666666666666666666666667",
+          "trend": "0.1777333455411754106456200150"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "XRP-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "benchmarks_not_adverse": true,
+          "completed_data": true,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "normalized_outperformance": true,
+          "not_extended": true,
+          "persistent_outperformance": false,
+          "positive_local_trend": false,
+          "recent_positive_returns": false,
+          "recovering": false,
+          "relative_demand": false,
+          "synchronized_relative_strength": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "2076.59",
+          "targets": [
+            "2089.11",
+            "2095.67",
+            "2102.23"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: persistent_outperformance, recovering, relative_demand, positive_local_trend, recent_positive_returns",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "persistent_outperformance,recovering,relative_demand,positive_local_trend,recent_positive_returns",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:20.810000+00:00",
+        "reasons": [
+          "persistent_outperformance",
+          "recovering",
+          "relative_demand",
+          "positive_local_trend",
+          "recent_positive_returns"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.0009639172386092355857748787279",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.002885400986492426839991764749",
+            "ema_separation_atr": "1.878771487873498186328315947",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "6.559285714285714285714285714",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "2083.94"
+            },
+            "60m": {
+              "atr": "17.31571428571428571428571429",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "2108.07"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmarks": [
+            "BTC-EUR"
+          ],
+          "excess_return_20": "0.0028074896528646685062340027",
+          "normalization": "excess return / max(5-minute residual return volatility, asset volatility / 4) / sqrt(20); not a calibrated probability",
+          "normalized_excess": "0.8917011342284790129285739152",
+          "persistent_60": false,
+          "ready": true
+        },
+        "score": "0.6340444428968474023169858708",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1838133915280447444105617620",
+          "technical": "0.2153846153846153846153846154",
+          "trend": "0.2348464359841872732910394934"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "ETH-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "confirmed_delayed_retest": false,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "0.18234",
+          "targets": [
+            "0.18394",
+            "0.18479",
+            "0.18563"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: confirmed_delayed_retest",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": {
+          "atr": "0.0003021428571428571428571428571",
+          "breakout_at": null,
+          "breakout_volume": null,
+          "compressed_at": "2026-10-26T10:35:00+00:00",
+          "confirmed_at": null,
+          "event_id": null,
+          "hold_count": 0,
+          "last_candle": "2026-10-26T10:55:00+00:00",
+          "level": "0.18264",
+          "range_low": "0.18105",
+          "reason": "completed_twenty_bar_range",
+          "retest_age": 0,
+          "stage": "COMPRESSED",
+          "transitions": [
+            {
+              "at": "2026-10-26T10:35:00+00:00",
+              "reason": "completed_twenty_bar_range",
+              "stage": "COMPRESSED"
+            }
+          ]
+        },
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "confirmed_delayed_retest",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:24.817000+00:00",
+        "reasons": [
+          "confirmed_delayed_retest"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.001851416019455558170549933317",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.003956011248850907614925978948",
+            "ema_separation_atr": "1.375517342276525122039120593",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.0008471428571428571428571428571",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "0.18271"
+            },
+            "60m": {
+              "atr": "0.001976428571428571428571428571",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "0.18456"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.6021286749935530885660841313",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1385223405423207816445273905",
+          "technical": "0.2916666666666666666666666667",
+          "trend": "0.1719396677845656402548900741"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "ADA-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "entry_not_chased": true,
+          "higher_15m_bullish": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "pullback_invalidation": false,
+          "recovering": false,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "0.18187",
+          "targets": [
+            "0.18394",
+            "0.18479",
+            "0.18563"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: recovering, pullback_invalidation",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "recovering,pullback_invalidation",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:24.817000+00:00",
+        "reasons": [
+          "recovering",
+          "pullback_invalidation"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.001851416019455558170549933317",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.003956011248850907614925978948",
+            "ema_separation_atr": "1.375517342276525122039120593",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.0008471428571428571428571428571",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "0.18271"
+            },
+            "60m": {
+              "atr": "0.001976428571428571428571428571",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "0.18456"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.5729620083268864218994174646",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1385223405423207816445273905",
+          "technical": "0.2625",
+          "trend": "0.1719396677845656402548900741"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "ADA-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "benchmarks_not_adverse": true,
+          "completed_data": true,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "normalized_outperformance": false,
+          "not_extended": true,
+          "persistent_outperformance": false,
+          "positive_local_trend": false,
+          "recent_positive_returns": false,
+          "recovering": false,
+          "relative_demand": false,
+          "synchronized_relative_strength": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "90.346",
+          "targets": [
+            "91.026",
+            "91.356",
+            "91.685"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: normalized_outperformance, persistent_outperformance, recovering, relative_demand, positive_local_trend, recent_positive_returns",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "normalized_outperformance,persistent_outperformance,recovering,relative_demand,positive_local_trend,recent_positive_returns",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:21.810000+00:00",
+        "reasons": [
+          "normalized_outperformance",
+          "persistent_outperformance",
+          "recovering",
+          "relative_demand",
+          "positive_local_trend",
+          "recent_positive_returns"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.001178514518413597733711048159",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.004829221132429322587471744318",
+            "ema_separation_atr": "1.755412892497380099758781221",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.3293571428571428571428571429",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "90.701"
+            },
+            "60m": {
+              "atr": "0.7847857142857142857142857143",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "91.212"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmarks": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "excess_return_20": "0.00033796890593960335222717435",
+          "normalization": "excess return / max(5-minute residual return volatility, asset volatility / 4) / sqrt(20); not a calibrated probability",
+          "normalized_excess": "0.1125751627451362991165891735",
+          "persistent_60": false,
+          "ready": true
+        },
+        "score": "0.5698125189810031768053184831",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1619243689572922027970092920",
+          "technical": "0.1884615384615384615384615385",
+          "trend": "0.2194266115621725124698476526"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "SOL-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "entry_not_chased": true,
+          "higher_15m_bullish": false,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "pullback_invalidation": false,
+          "recovering": false,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "1.1491",
+          "targets": [
+            "1.1570",
+            "1.1609",
+            "1.1649"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: higher_15m_bullish, recovering, pullback_invalidation",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "higher_15m_bullish,recovering,pullback_invalidation",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:22.812000+00:00",
+        "reasons": [
+          "higher_15m_bullish",
+          "recovering",
+          "pullback_invalidation"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.001031594123642148698699942828",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.003471260340791471823454224525",
+            "ema_separation_atr": "1.421866764329403285164960120",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "EXPANSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.003957142857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "1.1519"
+            },
+            "60m": {
+              "atr": "0.009657142857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": true,
+              "bull": false,
+              "ready": true,
+              "resistance": "1.1688"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.5686306168441608750028312605",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1721472713029854643572112455",
+          "technical": "0.21875",
+          "trend": "0.1777333455411754106456200150"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "XRP-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "benchmarks_not_adverse": true,
+          "completed_data": true,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "normalized_outperformance": false,
+          "not_extended": true,
+          "persistent_outperformance": false,
+          "positive_local_trend": false,
+          "recent_positive_returns": false,
+          "recovering": false,
+          "relative_demand": true,
+          "synchronized_relative_strength": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "1.1491",
+          "targets": [
+            "1.1570",
+            "1.1609",
+            "1.1649"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: normalized_outperformance, persistent_outperformance, recovering, positive_local_trend, recent_positive_returns",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "normalized_outperformance,persistent_outperformance,recovering,positive_local_trend,recent_positive_returns",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:22.812000+00:00",
+        "reasons": [
+          "normalized_outperformance",
+          "persistent_outperformance",
+          "recovering",
+          "positive_local_trend",
+          "recent_positive_returns"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.001031594123642148698699942828",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.003471260340791471823454224525",
+            "ema_separation_atr": "1.421866764329403285164960120",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "EXPANSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.003957142857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "1.1519"
+            },
+            "60m": {
+              "atr": "0.009657142857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": true,
+              "bull": false,
+              "ready": true,
+              "resistance": "1.1688"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmarks": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "excess_return_20": "-0.00145423523685472595906245895",
+          "normalization": "excess return / max(5-minute residual return volatility, asset volatility / 4) / sqrt(20); not a calibrated probability",
+          "normalized_excess": "-0.3981392749269882984574633856",
+          "persistent_60": false,
+          "ready": true
+        },
+        "score": "0.5652652322287762596182158759",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1721472713029854643572112455",
+          "technical": "0.2153846153846153846153846154",
+          "trend": "0.1777333455411754106456200150"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "XRP-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "benchmarks_not_adverse": true,
+          "completed_data": true,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "normalized_outperformance": false,
+          "not_extended": true,
+          "persistent_outperformance": false,
+          "positive_local_trend": false,
+          "recent_positive_returns": false,
+          "recovering": false,
+          "relative_demand": false,
+          "synchronized_relative_strength": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "0.18187",
+          "targets": [
+            "0.18394",
+            "0.18479",
+            "0.18563"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: normalized_outperformance, persistent_outperformance, recovering, relative_demand, positive_local_trend, recent_positive_returns",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "normalized_outperformance,persistent_outperformance,recovering,relative_demand,positive_local_trend,recent_positive_returns",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:24.817000+00:00",
+        "reasons": [
+          "normalized_outperformance",
+          "persistent_outperformance",
+          "recovering",
+          "relative_demand",
+          "positive_local_trend",
+          "recent_positive_returns"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.001851416019455558170549933317",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.003956011248850907614925978948",
+            "ema_separation_atr": "1.375517342276525122039120593",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.0008471428571428571428571428571",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "0.18271"
+            },
+            "60m": {
+              "atr": "0.001976428571428571428571428571",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "0.18456"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmarks": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "excess_return_20": "0.00390852171505789222118566935",
+          "normalization": "excess return / max(5-minute residual return volatility, asset volatility / 4) / sqrt(20); not a calibrated probability",
+          "normalized_excess": "0.6182264183811179353272063892",
+          "persistent_60": false,
+          "ready": true
+        },
+        "score": "0.4989235467884248834378790031",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1385223405423207816445273905",
+          "technical": "0.1884615384615384615384615385",
+          "trend": "0.1719396677845656402548900741"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "ADA-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "confirmed_delayed_retest": false,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "6.895",
+          "targets": [
+            "6.946",
+            "7.001",
+            "7.057"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: confirmed_delayed_retest",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": {
+          "atr": "0.02307142857142857142857142857",
+          "breakout_at": null,
+          "breakout_volume": null,
+          "compressed_at": "2026-10-26T10:55:00+00:00",
+          "confirmed_at": null,
+          "event_id": null,
+          "hold_count": 0,
+          "last_candle": "2026-10-26T10:55:00+00:00",
+          "level": "6.917",
+          "range_low": "6.826",
+          "reason": "completed_twenty_bar_range",
+          "retest_age": 0,
+          "stage": "COMPRESSED",
+          "transitions": [
+            {
+              "at": "2026-10-26T10:55:00+00:00",
+              "reason": "completed_twenty_bar_range",
+              "stage": "COMPRESSED"
+            }
+          ]
+        },
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "NEUTRAL",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "confirmed_delayed_retest",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:27.131000+00:00",
+        "reasons": [
+          "confirmed_delayed_retest"
+        ],
+        "regime": "NEUTRAL",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.003336122150177787073833925958",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.01196316882681463055191495558",
+            "ema_separation_atr": "0.6303681914724980878121433792",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.05557142857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": true,
+              "bull": false,
+              "ready": true,
+              "resistance": "6.917"
+            },
+            "60m": {
+              "atr": "0.1454285714285714285714285714",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "7.3"
+            }
+          },
+          "trend": "NEUTRAL",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "NORMAL"
+        },
+        "relative_strength": null,
+        "score": "0.4416099195340329762558209461",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.07114722893330404861263635696",
+          "technical": "0.2916666666666666666666666667",
+          "trend": "0.07879602393406226097651792240"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "INJ-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "confirmed_delayed_retest": false,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "0.0000039367",
+          "targets": [
+            "0.0000039701",
+            "0.0000039956",
+            "0.0000040211"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: confirmed_delayed_retest",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": {
+          "atr": "8.092857142857142857142857143E-9",
+          "breakout_at": null,
+          "breakout_volume": null,
+          "compressed_at": "2026-10-26T10:45:00+00:00",
+          "confirmed_at": null,
+          "event_id": null,
+          "hold_count": 0,
+          "last_candle": "2026-10-26T10:55:00+00:00",
+          "level": "0.0000039447",
+          "range_low": "0.0000039",
+          "reason": "completed_twenty_bar_range",
+          "retest_age": 0,
+          "stage": "COMPRESSED",
+          "transitions": [
+            {
+              "at": "2026-10-26T10:45:00+00:00",
+              "reason": "completed_twenty_bar_range",
+              "stage": "COMPRESSED"
+            }
+          ]
+        },
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "confirmed_delayed_retest",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:23.814000+00:00",
+        "reasons": [
+          "confirmed_delayed_retest"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.002351827581185379350516965196",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.006629754590902135103626777604",
+            "ema_separation_atr": "0.1411061494433595326251965325",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "RANGING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "2.550714285714285714285714286E-8",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "0.0000039673"
+            },
+            "60m": {
+              "atr": "7.062857142857142857142857143E-8",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "0.000003979"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.4378280440813074463113663246",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1285231087342208380665500913",
+          "technical": "0.2916666666666666666666666667",
+          "trend": "0.01763826868041994157814956656"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "PEPE-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "entry_not_chased": true,
+          "higher_15m_bullish": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "pullback_invalidation": false,
+          "recovering": false,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "0.0000039062",
+          "targets": [
+            "0.0000039701",
+            "0.0000039956",
+            "0.0000040211"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: recovering, pullback_invalidation",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "recovering,pullback_invalidation",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:23.814000+00:00",
+        "reasons": [
+          "recovering",
+          "pullback_invalidation"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.002351827581185379350516965196",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.006629754590902135103626777604",
+            "ema_separation_atr": "0.1411061494433595326251965325",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "RANGING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "2.550714285714285714285714286E-8",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "0.0000039673"
+            },
+            "60m": {
+              "atr": "7.062857142857142857142857143E-8",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "0.000003979"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.4086613774146407796446996579",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1285231087342208380665500913",
+          "technical": "0.2625",
+          "trend": "0.01763826868041994157814956656"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "PEPE-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "confirmed_delayed_retest": false,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "0.1857",
+          "targets": [
+            "0.1899",
+            "0.1919",
+            "0.1939"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: confirmed_delayed_retest",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": {
+          "atr": "0.0008428571428571428571428571429",
+          "breakout_at": null,
+          "breakout_volume": null,
+          "compressed_at": "2026-10-26T10:45:00+00:00",
+          "confirmed_at": null,
+          "event_id": null,
+          "hold_count": 0,
+          "last_candle": "2026-10-26T10:55:00+00:00",
+          "level": "0.1866",
+          "range_low": "0.1831",
+          "reason": "completed_twenty_bar_range",
+          "retest_age": 0,
+          "stage": "COMPRESSED",
+          "transitions": [
+            {
+              "at": "2026-10-26T10:45:00+00:00",
+              "reason": "completed_twenty_bar_range",
+              "stage": "COMPRESSED"
+            }
+          ]
+        },
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "confirmed_delayed_retest",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:25.820000+00:00",
+        "reasons": [
+          "confirmed_delayed_retest"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.005077313639510731594738056774",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.01782513263512915331312256388",
+            "ema_separation_atr": "0.2306356986799457566111189394",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "RANGING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.002007142857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "0.1895"
+            },
+            "60m": {
+              "atr": "0.004071428571428571428571428571",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "0.1895"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "NORMAL"
+        },
+        "relative_strength": null,
+        "score": "0.3912902070635710571717240980",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.07079407806191117092866756392",
+          "technical": "0.2916666666666666666666666667",
+          "trend": "0.02882946233499321957638986742"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "ENA-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "benchmarks_not_adverse": true,
+          "completed_data": true,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "normalized_outperformance": false,
+          "not_extended": true,
+          "persistent_outperformance": false,
+          "positive_local_trend": true,
+          "recent_positive_returns": true,
+          "recovering": false,
+          "relative_demand": false,
+          "synchronized_relative_strength": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "0.0000039062",
+          "targets": [
+            "0.0000039701",
+            "0.0000039956",
+            "0.0000040211"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: normalized_outperformance, persistent_outperformance, recovering, relative_demand",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "normalized_outperformance,persistent_outperformance,recovering,relative_demand",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:23.814000+00:00",
+        "reasons": [
+          "normalized_outperformance",
+          "persistent_outperformance",
+          "recovering",
+          "relative_demand"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.002351827581185379350516965196",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.006629754590902135103626777604",
+            "ema_separation_atr": "0.1411061494433595326251965325",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "RANGING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "2.550714285714285714285714286E-8",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "0.0000039673"
+            },
+            "60m": {
+              "atr": "7.062857142857142857142857143E-8",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "0.000003979"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmarks": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "excess_return_20": "-0.00652780902283843508003993075",
+          "normalization": "excess return / max(5-minute residual return volatility, asset volatility / 4) / sqrt(20); not a calibrated probability",
+          "normalized_excess": "-0.7382681271861052460290894452",
+          "persistent_60": false,
+          "ready": true
+        },
+        "score": "0.3884690697223330873370073502",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.1285231087342208380665500913",
+          "technical": "0.2423076923076923076923076923",
+          "trend": "0.01763826868041994157814956656"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "PEPE-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "entry_not_chased": true,
+          "higher_15m_bullish": false,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "pullback_invalidation": true,
+          "recovering": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "248.428",
+          "targets": [
+            "251.887",
+            "253.282",
+            "254.678"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: higher_15m_bullish",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "higher_15m_bullish",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:28.613000+00:00",
+        "reasons": [
+          "higher_15m_bullish"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.002637003882311419129207174255",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.01086494345267846838982376757",
+            "ema_separation_atr": "0.4156420961391374469139368821",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "RANGING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "1.3955",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "252"
+            },
+            "60m": {
+              "atr": "3.606714285714285714285714286",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "252.789"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.3797619388722080406174357032",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.02155667685481585975319359296",
+          "technical": "0.30625",
+          "trend": "0.05195526201739218086424211025"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "BCH-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "entry_not_chased": true,
+          "higher_15m_bullish": false,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "pullback_invalidation": false,
+          "recovering": false,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "6.824",
+          "targets": [
+            "6.946",
+            "7.001",
+            "7.057"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: higher_15m_bullish, recovering, pullback_invalidation",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "NEUTRAL",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "higher_15m_bullish,recovering,pullback_invalidation",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:27.131000+00:00",
+        "reasons": [
+          "higher_15m_bullish",
+          "recovering",
+          "pullback_invalidation"
+        ],
+        "regime": "NEUTRAL",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.003336122150177787073833925958",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.01196316882681463055191495558",
+            "ema_separation_atr": "0.6303681914724980878121433792",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.05557142857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": true,
+              "bull": false,
+              "ready": true,
+              "resistance": "6.917"
+            },
+            "60m": {
+              "atr": "0.1454285714285714285714285714",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "7.3"
+            }
+          },
+          "trend": "NEUTRAL",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "NORMAL"
+        },
+        "relative_strength": null,
+        "score": "0.3686932528673663095891542794",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.07114722893330404861263635696",
+          "technical": "0.21875",
+          "trend": "0.07879602393406226097651792240"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "INJ-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "benchmarks_not_adverse": true,
+          "completed_data": true,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "normalized_outperformance": false,
+          "not_extended": true,
+          "persistent_outperformance": false,
+          "positive_local_trend": false,
+          "recent_positive_returns": false,
+          "recovering": false,
+          "relative_demand": true,
+          "synchronized_relative_strength": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "6.824",
+          "targets": [
+            "6.946",
+            "7.001",
+            "7.057"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: normalized_outperformance, persistent_outperformance, recovering, positive_local_trend, recent_positive_returns",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "NEUTRAL",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "normalized_outperformance,persistent_outperformance,recovering,positive_local_trend,recent_positive_returns",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:27.131000+00:00",
+        "reasons": [
+          "normalized_outperformance",
+          "persistent_outperformance",
+          "recovering",
+          "positive_local_trend",
+          "recent_positive_returns"
+        ],
+        "regime": "NEUTRAL",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.003336122150177787073833925958",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.01196316882681463055191495558",
+            "ema_separation_atr": "0.6303681914724980878121433792",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "TRENDING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.05557142857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": true,
+              "bull": false,
+              "ready": true,
+              "resistance": "6.917"
+            },
+            "60m": {
+              "atr": "0.1454285714285714285714285714",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "7.3"
+            }
+          },
+          "trend": "NEUTRAL",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "NORMAL"
+        },
+        "relative_strength": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmarks": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "excess_return_20": "-0.00390876635373243718247051965",
+          "normalization": "excess return / max(5-minute residual return volatility, asset volatility / 4) / sqrt(20); not a calibrated probability",
+          "normalized_excess": "-0.2843060429552514286184087880",
+          "persistent_60": false,
+          "ready": true
+        },
+        "score": "0.3653278682519816942045388948",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.07114722893330404861263635696",
+          "technical": "0.2153846153846153846153846154",
+          "trend": "0.07879602393406226097651792240"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "INJ-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "confirmed_delayed_retest": false,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "248.843",
+          "targets": [
+            "251.887",
+            "253.282",
+            "254.678"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: confirmed_delayed_retest",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": {
+          "atr": "0.6322857142857142857142857143",
+          "breakout_at": null,
+          "breakout_volume": null,
+          "compressed_at": "2026-10-26T10:45:00+00:00",
+          "confirmed_at": null,
+          "event_id": null,
+          "hold_count": 0,
+          "last_candle": "2026-10-26T10:55:00+00:00",
+          "level": "249.449",
+          "range_low": "246",
+          "reason": "completed_twenty_bar_range",
+          "retest_age": 0,
+          "stage": "COMPRESSED",
+          "transitions": [
+            {
+              "at": "2026-10-26T10:45:00+00:00",
+              "reason": "completed_twenty_bar_range",
+              "stage": "COMPRESSED"
+            }
+          ]
+        },
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "confirmed_delayed_retest",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:28.613000+00:00",
+        "reasons": [
+          "confirmed_delayed_retest"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.002637003882311419129207174255",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.01086494345267846838982376757",
+            "ema_separation_atr": "0.4156420961391374469139368821",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "RANGING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "1.3955",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "252"
+            },
+            "60m": {
+              "atr": "3.606714285714285714285714286",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "252.789"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": null,
+        "score": "0.3651786055388747072841023700",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.02155667685481585975319359296",
+          "technical": "0.2916666666666666666666666667",
+          "trend": "0.05195526201739218086424211025"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "BCH-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "completed_data": true,
+          "entry_not_chased": true,
+          "higher_15m_bullish": true,
+          "nonbearish_trend": true,
+          "not_extended": true,
+          "pullback_invalidation": false,
+          "recovering": false,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "0.1834",
+          "targets": [
+            "0.1899",
+            "0.1919",
+            "0.1939"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: recovering, pullback_invalidation",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "recovering,pullback_invalidation",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:25.820000+00:00",
+        "reasons": [
+          "recovering",
+          "pullback_invalidation"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.005077313639510731594738056774",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.01782513263512915331312256388",
+            "ema_separation_atr": "0.2306356986799457566111189394",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "RANGING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.002007142857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "0.1895"
+            },
+            "60m": {
+              "atr": "0.004071428571428571428571428571",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "0.1895"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "NORMAL"
+        },
+        "relative_strength": null,
+        "score": "0.3621235403969043905050574313",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.07079407806191117092866756392",
+          "technical": "0.2625",
+          "trend": "0.02882946233499321957638986742"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "ENA-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "benchmarks_not_adverse": true,
+          "completed_data": true,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "normalized_outperformance": false,
+          "not_extended": true,
+          "persistent_outperformance": false,
+          "positive_local_trend": true,
+          "recent_positive_returns": true,
+          "recovering": false,
+          "relative_demand": false,
+          "synchronized_relative_strength": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "0.1834",
+          "targets": [
+            "0.1899",
+            "0.1919",
+            "0.1939"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: normalized_outperformance, persistent_outperformance, recovering, relative_demand",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "normalized_outperformance,persistent_outperformance,recovering,relative_demand",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:25.820000+00:00",
+        "reasons": [
+          "normalized_outperformance",
+          "persistent_outperformance",
+          "recovering",
+          "relative_demand"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.005077313639510731594738056774",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.01782513263512915331312256388",
+            "ema_separation_atr": "0.2306356986799457566111189394",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "RANGING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "0.002007142857142857142857142857",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "0.1895"
+            },
+            "60m": {
+              "atr": "0.004071428571428571428571428571",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "0.1895"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "NORMAL"
+        },
+        "relative_strength": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmarks": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "excess_return_20": "-0.00235610891052862446032566235",
+          "normalization": "excess return / max(5-minute residual return volatility, asset volatility / 4) / sqrt(20); not a calibrated probability",
+          "normalized_excess": "-0.1608098311001496662399065528",
+          "persistent_60": false,
+          "ready": true
+        },
+        "score": "0.3419312327045966981973651236",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.07079407806191117092866756392",
+          "technical": "0.2423076923076923076923076923",
+          "trend": "0.02882946233499321957638986742"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "ENA-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      },
+      {
+        "as_of": "2026-10-26T10:55:00+00:00",
+        "conditions": {
+          "benchmarks_not_adverse": true,
+          "completed_data": true,
+          "entry_not_chased": true,
+          "nonbearish_trend": true,
+          "normalized_outperformance": false,
+          "not_extended": true,
+          "persistent_outperformance": false,
+          "positive_local_trend": true,
+          "recent_positive_returns": false,
+          "recovering": true,
+          "relative_demand": false,
+          "synchronized_relative_strength": true,
+          "valid_precision": true
+        },
+        "data_errors": [],
+        "economic_eligible": false,
+        "economics": null,
+        "entry_eligible": false,
+        "entry_plan": {
+          "stop": "248.428",
+          "targets": [
+            "251.887",
+            "253.282",
+            "254.678"
+          ]
+        },
+        "execution_quality_required": true,
+        "expected_value": {
+          "confidence": "UNVALIDATED",
+          "probability": null,
+          "status": "NOT_ESTIMATED"
+        },
+        "explanation": "Missing technical evidence: normalized_outperformance, persistent_outperformance, relative_demand, recent_positive_returns",
+        "holding_bars": 36,
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "pattern_state": null,
+        "pipeline": [
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "completed_context_available",
+            "stage": "DATA_VALIDATION"
+          },
+          {
+            "passed": true,
+            "reached": true,
+            "reason": "MODERATE_BULLISH",
+            "stage": "REGIME"
+          },
+          {
+            "passed": false,
+            "reached": true,
+            "reason": "normalized_outperformance,persistent_outperformance,relative_demand,recent_positive_returns",
+            "stage": "TECHNICAL_SETUP"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "COST_FEASIBILITY"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "UNCALIBRATED_RESEARCH_PAPER_ONLY",
+            "stage": "EXPECTED_VALUE"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PORTFOLIO_RISK"
+          },
+          {
+            "passed": null,
+            "reached": false,
+            "reason": "NOT_REACHED",
+            "stage": "PAPER_EXECUTION"
+          }
+        ],
+        "qualification_state": "WATCH",
+        "qualified": false,
+        "quote_observed_at": "2026-10-26T11:02:28.613000+00:00",
+        "reasons": [
+          "normalized_outperformance",
+          "persistent_outperformance",
+          "relative_demand",
+          "recent_positive_returns"
+        ],
+        "regime": "MODERATE_BULLISH",
+        "regime_assessment": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmark": "SUPPORTIVE",
+          "evidence": {
+            "atr_fraction": "0.002637003882311419129207174255",
+            "benchmark_support": {
+              "BTC": true,
+              "ETH": true
+            },
+            "bollinger_width": "0.01086494345267846838982376757",
+            "ema_separation_atr": "0.4156420961391374469139368821",
+            "threshold_policy": "Unvalidated deterministic research parameters; separate from frozen classifier"
+          },
+          "liquidity": "HEALTHY",
+          "missing": [],
+          "structure": [
+            "COMPRESSION",
+            "RANGING"
+          ],
+          "timeframes": {
+            "15m": {
+              "atr": "1.3955",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": false,
+              "ready": true,
+              "resistance": "252"
+            },
+            "60m": {
+              "atr": "3.606714285714285714285714286",
+              "available_at": "2026-10-26T11:00:00+00:00",
+              "bear": false,
+              "bull": true,
+              "ready": true,
+              "resistance": "252.789"
+            }
+          },
+          "trend": "MODERATE_BULLISH",
+          "version": "multidimensional-regime/4.6.0",
+          "volatility": "LOW"
+        },
+        "relative_strength": {
+          "as_of": "2026-10-26T10:55:00+00:00",
+          "benchmarks": [
+            "BTC-EUR",
+            "ETH-EUR"
+          ],
+          "excess_return_20": "0.00266972925955251048345162235",
+          "normalization": "excess return / max(5-minute residual return volatility, asset volatility / 4) / sqrt(20); not a calibrated probability",
+          "normalized_excess": "0.2524864934564941218797399195",
+          "persistent_60": false,
+          "ready": true
+        },
+        "score": "0.3158196311799003483097433956",
+        "score_components": {
+          "economics": "0.00",
+          "liquidity": "0.02155667685481585975319359296",
+          "technical": "0.2423076923076923076923076923",
+          "trend": "0.05195526201739218086424211025"
+        },
+        "score_interpretation": "Transparent ranking, not a calibrated probability or independent predictive edge",
+        "sizing": {
+          "actual_account_admission": false,
+          "quote_budget_eur": "75",
+          "scope": "RESEARCH_ASSUMPTION"
+        },
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "strategy_version": "4.6.0-experimental.2",
+        "symbol": "BCH-EUR",
+        "technical_eligible": false,
+        "timeframe": "5m",
+        "unvalidated": true,
+        "veto": false
+      }
+    ],
+    "total": 27,
+    "next_cursor": null,
+    "read_only": true,
+    "predictive_edge": "UNVALIDATED"
+  },
+  "opportunities_ms": 26.7,
+  "overview": {
+    "application_version": "4.5.0",
+    "portfolio": {
+      "equity": "500.000000000000",
+      "total_net_pnl": "0E-12",
+      "positions": "0",
+      "valuation_degraded": "false",
+      "control": "RUNNING",
+      "risk_state": "HEALTHY"
+    },
+    "performance": {
+      "net_pnl": "0E-12",
+      "closed_trades": 0,
+      "fees": "0"
+    },
+    "scan_observation": null,
+    "runtime_incidents": [],
+    "last_evaluation_at": "2026-10-26T11:04:21.703114+00:00",
+    "latest_decision": {
+      "decision_id": "dec_a9ebe4cfb74c4d6e90c5edf312ea60c2",
+      "symbol": "ETH-EUR",
+      "evaluated_at": "2026-10-26T11:04:21.703114+00:00",
+      "reason": "Entry conditions not met.",
+      "decision_accepted": false,
+      "structured_evidence_available": false
+    },
+    "reconciliation_status": {
+      "status": "CONSISTENT",
+      "observed": {
+        "checked_at": "2026-10-26T11:03:22.674560+00:00",
+        "problems": []
+      },
+      "stale": false
+    },
+    "health": {
+      "mode": "paper",
+      "api": "ok",
+      "risk": "HEALTHY",
+      "reconciliation": {
+        "status": "CONSISTENT",
+        "observed": {
+          "checked_at": "2026-10-26T11:03:22.674560+00:00",
+          "problems": []
+        },
+        "stale": false
+      }
+    }
+  },
+  "overview_ms": 15.81,
+  "system": {
+    "operational_state": "RESEARCH_ONLY",
+    "operation": {
+      "observed_at": "2026-10-26T11:04:21.728576+00:00",
+      "last_completed_scan": "2026-10-26T11:04:21.728067+00:00",
+      "scan_duration_seconds": 2.189231251000024,
+      "schedule_overrun_seconds": 0,
+      "markets_scanned": 3,
+      "successful_observations": 3,
+      "data_failures": 0,
+      "strategies_evaluated": 24,
+      "qualified_signals": 0,
+      "rejected_signals": 3,
+      "paper_entries_filled": 0,
+      "execution_outcomes": [
+        {
+          "symbol": "SOL-EUR",
+          "accepted": false,
+          "reason": "decision_not_accepted",
+          "order_id": null
+        },
+        {
+          "symbol": "BTC-EUR",
+          "accepted": false,
+          "reason": "decision_not_accepted",
+          "order_id": null
+        },
+        {
+          "symbol": "ETH-EUR",
+          "accepted": false,
+          "reason": "decision_not_accepted",
+          "order_id": null
+        }
+      ],
+      "next_scan_at": "2026-10-26T11:05:19.538848+00:00"
+    },
+    "coordinator": {
+      "owner": "coordinator_5c1667bb92594d0d8e12a1952e4dbdbc",
+      "heartbeat": "2026-10-26T11:05:14.890415+00:00",
+      "expires_at": "2026-10-26T11:05:29.890415+00:00"
+    },
+    "postgresql": "ok",
+    "database_engine": "postgresql",
+    "exchange_data": "OK",
+    "data_freshness": [
+      {
+        "symbol": "SOL-EUR",
+        "source": "revolut-x",
+        "timestamp": "2026-10-26T11:04:19.775000+00:00",
+        "age_seconds": 58.944968
+      },
+      {
+        "symbol": "BTC-EUR",
+        "source": "revolut-x",
+        "timestamp": "2026-10-26T11:04:20.646000+00:00",
+        "age_seconds": 58.073974
+      },
+      {
+        "symbol": "ETH-EUR",
+        "source": "revolut-x",
+        "timestamp": "2026-10-26T11:04:21.662000+00:00",
+        "age_seconds": 57.057977
+      }
+    ],
+    "position_monitor_heartbeat": "2026-10-26T11:05:14.737806+00:00",
+    "worker": "ok",
+    "worker_heartbeat": "2026-10-26T11:04:21.722514+00:00",
+    "worker_age_seconds": 56.995179,
+    "pending_intents": 0,
+    "reconciliation": {
+      "checked_at": "2026-10-26T11:05:18.722751+00:00",
+      "problems": []
+    },
+    "risk_state": "HEALTHY",
+    "incidents": [
+      {
+        "message": "scan_cycle_completed",
+        "severity": "INFO",
+        "state": "RESEARCH_ONLY",
+        "created_at": "2026-10-26T11:02:29.383078+00:00"
+      },
+      {
+        "message": "fresh_portfolio_valuation",
+        "severity": "INFO",
+        "state": "HEALTHY",
+        "created_at": "2026-10-26T11:02:19.415686+00:00"
+      },
+      {
+        "message": "waiting_for_completed_market_observations",
+        "severity": "INFO",
+        "state": "DATA_SYNCING",
+        "created_at": "2026-10-26T11:02:19.388448+00:00"
+      },
+      {
+        "message": "coordinator_acquired",
+        "severity": "INFO",
+        "state": "INITIALIZING",
+        "created_at": "2026-10-26T11:02:19.294867+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_CANDIDATE",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_REJECTED",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_CANDIDATE",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_REJECTED",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_CANDIDATE",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_REJECTED",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_CANDIDATE",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_REJECTED",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_CANDIDATE",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_REJECTED",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_CANDIDATE",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_REJECTED",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_CANDIDATE",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_REJECTED",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_CANDIDATE",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      },
+      {
+        "message": "research_promotion_transition",
+        "severity": "INFO",
+        "state": "RESEARCH_REJECTED",
+        "created_at": "2026-10-26T11:02:14.009540+00:00"
+      }
+    ],
+    "redis": "ok"
+  },
+  "system_ms": 15.2,
+  "market_data": {
+    "request_latency_ms": 14004.313046999894,
+    "observed_at": "2026-10-26T11:04:21.657934+00:00",
+    "request_success": 26,
+    "last_successful_refresh": "2026-10-26T11:04:21.655558+00:00",
+    "candle_refresh": 9,
+    "candles_downloaded": 6471,
+    "candle_cache_hit": 6,
+    "request_429": 1,
+    "request_429:order-book:SOL-EUR": 1,
+    "requests": 27,
+    "mean_request_latency_ms": 518.678260999996,
+    "caches": [
+      {
+        "key": "ETH-EUR:5:720",
+        "bucket": 5976708,
+        "observations": 719,
+        "refreshed_at": "2026-10-26T11:02:20.956729+00:00",
+        "age_seconds": 177.77949
+      },
+      {
+        "key": "SOL-EUR:5:720",
+        "bucket": 5976708,
+        "observations": 719,
+        "refreshed_at": "2026-10-26T11:02:22.014778+00:00",
+        "age_seconds": 176.722213
+      },
+      {
+        "key": "BTC-EUR:5:720",
+        "bucket": 5976708,
+        "observations": 719,
+        "refreshed_at": "2026-10-26T11:02:19.904320+00:00",
+        "age_seconds": 178.833433
+      },
+      {
+        "key": "XRP-EUR:5:720",
+        "bucket": 5976708,
+        "observations": 719,
+        "refreshed_at": "2026-10-26T11:02:23.009578+00:00",
+        "age_seconds": 175.728928
+      },
+      {
+        "key": "PEPE-EUR:5:720",
+        "bucket": 5976708,
+        "observations": 719,
+        "refreshed_at": "2026-10-26T11:02:24.291055+00:00",
+        "age_seconds": 174.448241
+      },
+      {
+        "key": "ADA-EUR:5:720",
+        "bucket": 5976708,
+        "observations": 719,
+        "refreshed_at": "2026-10-26T11:02:24.979688+00:00",
+        "age_seconds": 173.76037
+      },
+      {
+        "key": "ENA-EUR:5:720",
+        "bucket": 5976708,
+        "observations": 719,
+        "refreshed_at": "2026-10-26T11:02:27.056265+00:00",
+        "age_seconds": 171.684545
+      },
+      {
+        "key": "INJ-EUR:5:720",
+        "bucket": 5976708,
+        "observations": 719,
+        "refreshed_at": "2026-10-26T11:02:28.547385+00:00",
+        "age_seconds": 170.194147
+      },
+      {
+        "key": "BCH-EUR:5:720",
+        "bucket": 5976708,
+        "observations": 719,
+        "refreshed_at": "2026-10-26T11:02:29.225685+00:00",
+        "age_seconds": 169.516556
+      }
+    ],
+    "measurement_windows": [
+      {
+        "started_at": "2026-10-26T11:02:19.733980+00:00",
+        "bucket_seconds": 900,
+        "request_latency_ms": 14004.313046999894,
+        "observed_until": "2026-10-26T11:04:21.657939+00:00",
+        "request_success": 26,
+        "candle_refresh": 9,
+        "candles_downloaded": 6471,
+        "candle_cache_hit": 6,
+        "request_429": 1,
+        "request_429:order-book:SOL-EUR": 1
+      }
+    ],
+    "policy": "public REST, one request/second/family; provider Retry-After milliseconds; completed-candle incremental cache; protective book priority"
+  },
+  "market_data_ms": 16.22
+}

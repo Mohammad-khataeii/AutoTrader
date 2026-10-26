@@ -181,6 +181,9 @@ async def account_summary(repo: Any) -> dict[str, Any]:
             .where(m.PositionModel.closed_at.is_not(None))
         )
         fees = await session.scalar(select(func.coalesce(func.sum(m.FillModel.fee), 0)))
+        realized = await session.scalar(select(func.coalesce(func.sum(m.JournalEventModel.realized_pnl_delta), 0)))
+        exposure = sum((p.quantity * mark.price for p, mark in positions if mark), D(0)) if not missing else None
+        basis = sum((p.cost_basis for p, _ in positions), D(0))
         last = await session.scalar(
             select(m.TradingDecisionModel)
             .order_by(
@@ -202,6 +205,12 @@ async def account_summary(repo: Any) -> dict[str, Any]:
         return {
             "portfolio": {
                 "equity": str(equity) if equity is not None else "",
+                "cash": str(cash) if cash is not None else "",
+                "available_cash": str(balance.available) if balance else "",
+                "reserved_cash": str(balance.reserved) if balance else "",
+                "open_exposure": str(exposure) if exposure is not None else "",
+                "realized_pnl": str(realized),
+                "unrealized_pnl": str(exposure - basis) if exposure is not None else "",
                 "total_net_pnl": str(equity - 500) if equity is not None else "",
                 "positions": str(len(positions)),
                 "valuation_degraded": str(bool(missing)).lower(),

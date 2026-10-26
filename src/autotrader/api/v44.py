@@ -74,7 +74,7 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
     @app.get("/api/overview/summary", dependencies=auth)
     async def overview_summary() -> dict[str, Any]:
         summary = await views.account_summary(repository)
-        return {"application_version": "4.5.0", **summary, "health": {"mode": "paper", "api": "ok", "risk": (await repository.get_runtime_health()).value, "reconciliation": summary["reconciliation_status"]}}
+        return {"application_version": app.version, **summary, "health": {"mode": "paper", "api": "ok", "risk": (await repository.get_runtime_health()).value, "reconciliation": summary["reconciliation_status"]}}
 
     @app.get("/api/shadow/summary", dependencies=auth)
     async def shadow_summary(archived: bool = False) -> dict[str, Any]:
@@ -421,8 +421,14 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
             redis_status = "unavailable"
         market_quality = await repository.market_data_health()
         caches = market_quality.get("caches", [])
-        live_fresh = all(c.get("age_seconds") is not None and 0 <= c["age_seconds"] < 390
-                         and c.get("observations", 0) >= 50 for c in caches) if caches else None
+        # Old discovery caches are retained for reuse. They are not evidence
+        # that today's active scanner markets have lost their live coverage.
+        active_symbols = {c["symbol"] for c in scan.get("candidates", []) if c.get("symbol")}
+        active_caches = [c for c in caches if str(c.get("key", "")).split(":", 1)[0] in active_symbols]
+        covered_symbols = {str(c.get("key", "")).split(":", 1)[0] for c in active_caches}
+        live_fresh = (active_symbols <= covered_symbols and all(
+            c.get("age_seconds") is not None and 0 <= c["age_seconds"] < 390
+            and c.get("observations", 0) >= 50 for c in active_caches)) if active_symbols else None
         return {
             "as_of": utc_now().isoformat(),
             "opportunity_engine": {'state': opportunity_state.state if opportunity_state else 'NOT_RECORDED',
@@ -438,6 +444,8 @@ def install(app: FastAPI, repository: Any, lab: Any, settings: Any, require_user
                 else "not_configured",
             },
             "market_data": {
+                "active_scanner_symbols": sorted(active_symbols),
+                "historical_cache_entries": len(caches) - len(active_caches),
                 "live_observations_fresh": live_fresh,
                 "freshness_status": "UNKNOWN" if live_fresh is None else "FRESH" if live_fresh else "STALE",
                 "state": states["scanner"].state if "scanner" in states else "no_scan_yet",

@@ -52,6 +52,28 @@ def test_failure_missing_recovery_partial_and_future_are_not_zero_opportunities(
     assert freshness(body(),'OBSERVED',NOW,{'scanner':row('DATA_UNAVAILABLE')},NOW)['scanner_health']['state']=='FAILED'
 
 
+def test_worker_startup_marker_does_not_override_a_current_periodic_heartbeat():
+    prior={**body(),'observer_process_id':1}
+    health={'worker_instance':row(age=1200,payload={'process_id':1}),
+            'worker':row(age=10,payload={'process_id':1})}
+    current=freshness(prior,'OBSERVED',NOW,health,NOW)
+    assert current['worker_health']['state']=='HEALTHY'
+    assert current['worker_health']['age_seconds']==10
+    health['worker']=row(age=600,payload={'process_id':1})
+    assert freshness(prior,'OBSERVED',NOW,health,NOW)['worker_health']['state']=='DELAYED'
+
+
+def test_container_restart_reusing_pid_one_keeps_prior_research_in_recovery():
+    prior={**body(),'observer_process_id':1}
+    health={'worker_instance':row(age=5,payload={'process_id':1}),
+            'worker':row(age=1,payload={'process_id':1})}
+    current=freshness(prior,'OBSERVED',NOW,health,NOW)
+    assert current['worker_health']['state']=='RECOVERING'
+    assert current['research_freshness']['current']
+    refreshed={**prior,'updated_at':NOW.isoformat()}
+    assert freshness(refreshed,'OBSERVED',NOW,health,NOW)['worker_health']['state']=='HEALTHY'
+
+
 def test_observed_size_changes_depth_cost_and_gateway_agrees_on_target_scenario():
     pair,_,book=setup_observation()
     book=replace(book,bids=(OrderBookLevel(D('100.3'),D('.1')),OrderBookLevel(D('98'),D(10))))

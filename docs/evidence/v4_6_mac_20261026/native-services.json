@@ -1,0 +1,88 @@
+[
+  {
+    "service": "backend",
+    "name": "autotrader-v46-mac-backend-1",
+    "image_id": "sha256:33ee67b7fc7a3e66a2de6066424e7fdb8aff3aff36db93e1ed121c98cd00989f",
+    "architecture": "arm64",
+    "state": "running",
+    "health": "healthy",
+    "restart_policy": "unless-stopped",
+    "ports": {
+      "8000/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "8000"
+        }
+      ]
+    }
+  },
+  {
+    "service": "frontend",
+    "name": "autotrader-v46-mac-frontend-1",
+    "image_id": "sha256:cb983ec4f5ef8c86cc6729cac7fa736d9f889204c4efb754d5c964c054039cc9",
+    "architecture": "arm64",
+    "state": "running",
+    "health": "healthy",
+    "restart_policy": "unless-stopped",
+    "ports": {
+      "80/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "3000"
+        },
+        {
+          "HostIp": "10.0.0.183",
+          "HostPort": "3000"
+        }
+      ]
+    }
+  },
+  {
+    "service": "postgres",
+    "name": "autotrader-v46-mac-postgres-1",
+    "image_id": "sha256:0cefaabd882e42bcb2a2f3dc56d3ce4770560ba62fd7f197f1a2e008fd5731ab",
+    "architecture": "arm64",
+    "state": "running",
+    "health": "healthy",
+    "restart_policy": "unless-stopped",
+    "ports": {
+      "5432/tcp": null
+    }
+  },
+  {
+    "service": "redis",
+    "name": "autotrader-v46-mac-redis-1",
+    "image_id": "sha256:957c914f895616455c9c25e23d7a5458d5d787e58d00c26b5098adcdf14b019b",
+    "architecture": "arm64",
+    "state": "running",
+    "health": "healthy",
+    "restart_policy": "unless-stopped",
+    "ports": {
+      "6379/tcp": null
+    }
+  },
+  {
+    "service": "research-worker",
+    "name": "autotrader-v46-mac-research-worker-1",
+    "image_id": "sha256:33ee67b7fc7a3e66a2de6066424e7fdb8aff3aff36db93e1ed121c98cd00989f",
+    "architecture": "arm64",
+    "state": "running",
+    "health": "not configured",
+    "restart_policy": "unless-stopped",
+    "ports": {
+      "8000/tcp": null
+    }
+  },
+  {
+    "service": "worker",
+    "name": "autotrader-v46-mac-worker-1",
+    "image_id": "sha256:33ee67b7fc7a3e66a2de6066424e7fdb8aff3aff36db93e1ed121c98cd00989f",
+    "architecture": "arm64",
+    "state": "running",
+    "health": "healthy",
+    "restart_policy": "unless-stopped",
+    "ports": {
+      "8000/tcp": null
+    }
+  }
+]

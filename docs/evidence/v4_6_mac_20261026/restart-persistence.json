@@ -1,0 +1,63 @@
+{
+  "status": "PASS",
+  "kind": "LOCAL_PERSISTENT_SERVER_RESTART",
+  "before": {
+    "accounts": 1,
+    "funding": 1,
+    "orders": 0,
+    "fills": 0,
+    "positions": 0,
+    "schema": "0011_v42_shadow_isolation"
+  },
+  "after": {
+    "accounts": 1,
+    "funding": 1,
+    "orders": 0,
+    "fills": 0,
+    "positions": 0,
+    "schema": "0011_v42_shadow_isolation"
+  },
+  "postgres_and_redis_restarted": true,
+  "application_containers_restarted_or_recreated": true,
+  "ledger_seals_unchanged": true,
+  "preserved_tables": [
+    "accounts",
+    "balances",
+    "financial_journal",
+    "orders",
+    "fills",
+    "positions",
+    "capital_reservations",
+    "exit_intents",
+    "exit_targets",
+    "exit_plans",
+    "order_transitions"
+  ],
+  "market_marks_and_observation_snapshots_may_advance": true,
+  "funding_exactly_once": true,
+  "equity_eur": "500",
+  "reconciliation": {
+    "checked_at": "2026-10-26T11:23:03.444917+00:00",
+    "problems": []
+  },
+  "backup_before_sha256": "d47dd90fef8f8fd1251df5fa95315e301b787f549090470ccded89ce33bdde2e",
+  "backup_after_sha256": "bb3bb45b8a937ca0b765163433c8f6049a1dcfb39e9dd59619fb0aaf17f042f1",
+  "worker_health_immediately_after": {
+    "state": "RECOVERING",
+    "reported_state": "RUNNING",
+    "age_seconds": 1.85832,
+    "reason": "Worker restarted; prior research remains historical evidence",
+    "process_id": 1
+  },
+  "research_freshness_after": {
+    "state": "CURRENT",
+    "current": true,
+    "observed_at": "2026-10-26T11:21:02.001599+00:00",
+    "age_seconds": 121.58854,
+    "next_evaluation_due_at": "2026-10-26T11:26:30+00:00",
+    "interval_seconds": 300,
+    "grace_seconds": 90
+  },
+  "production_connections": false,
+  "whole_docker_engine_restart_tested": false
+}

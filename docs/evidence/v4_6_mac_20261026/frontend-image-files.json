@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "running_image_matches_local_production_build": true,
+  "files": {
+    "assets/AreaChart-CSkW3BGZ.js": "3fadfd38a680ad2456be0eea240694d379550d1c25bce9789287559517b164bb",
+    "assets/Chart-DALGHUyo.js": "6d6977fb06798e6b1a3c9ba42abe60f08b76faca12fd36ea80afad7cd2dc1fb5",
+    "assets/Opportunities-xwj8U1eL.js": "7894e556953ec1250fbb2a35aaa427b16010b4815c0b9dd96d57a83241320f08",
+    "assets/Research-CNYSqJi4.js": "479cdc82a5a77aabc1289bb540f8034c531f5586ac89b9a239c27ddc3a5f4d60",
+    "assets/TradeGates-DwiUqb4s.js": "bbd1f55f199b3b71ccb6b9458556dc4b5b88d2ce2aac2b5fdcd360670d7f3d7a",
+    "assets/Trades-DzOUP8Yx.js": "6d38de77ef5f0d9b5879cde6bd11d36d7be820829dda822328d4423edaa47025",
+    "assets/advanced-CM1i3e0w.js": "764dfa7cc604920692952cdd574b4024a6376fcf2ca8eb5217ebd9ca4ebbbd66",
+    "assets/index-H6xR_qXe.js": "8a0fbdf22b9beb1680fc19b77a8059a783d4ae4140e53ce86d4a127fdea5bbfe",
+    "assets/index-iKvJk3pk.css": "0375ca590e4fa9991f8c7d6c1fd8b8a289f84cb391cdb4ef3488f1e393b45669",
+    "index.html": "b654215d1f60c7002b2a2029eda7c061e047732bd3f9df521346eeab6c61524d"
+  }
+}

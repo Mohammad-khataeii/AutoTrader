@@ -11,6 +11,10 @@ export const money = (value: unknown) =>
         style: "currency",
         currency: "EUR",
       }).format(number(value)!);
+export const price = (value: unknown) =>
+  number(value) == null ? "Unavailable" : new Intl.NumberFormat("en-IE", {
+    style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 12,
+  }).format(number(value)!);
 export const percent = (value: unknown) =>
   number(value) == null
     ? "Unavailable"

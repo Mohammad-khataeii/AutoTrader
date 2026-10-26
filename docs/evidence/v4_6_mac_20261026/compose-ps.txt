@@ -1,0 +1,7 @@
+NAME                                   IMAGE                                                 COMMAND                  SERVICE           CREATED          STATUS                    PORTS
+autotrader-v46-mac-backend-1           autotrader-v46-mac-app:4.6.0-rc2-mac-20261026         "autotrader-api"         backend           20 minutes ago   Up 20 minutes (healthy)   127.0.0.1:8000->8000/tcp
+autotrader-v46-mac-frontend-1          autotrader-v46-mac-frontend:4.6.0-rc2-mac-20261026    "/docker-entrypoint.…"   frontend          5 minutes ago    Up 5 minutes (healthy)    10.0.0.183:3000->80/tcp, 127.0.0.1:3000->80/tcp
+autotrader-v46-mac-postgres-1          postgres:16-alpine                                    "docker-entrypoint.s…"   postgres          42 minutes ago   Up 20 minutes (healthy)   5432/tcp
+autotrader-v46-mac-redis-1             autotrader-v46-mac-redis:4.6.0-rc2-mac-ed0b53ec5be8   "docker-entrypoint.s…"   redis             40 minutes ago   Up 20 minutes (healthy)   6379/tcp
+autotrader-v46-mac-research-worker-1   autotrader-v46-mac-app:4.6.0-rc2-mac-20261026         "autotrader-research…"   research-worker   20 minutes ago   Up 19 minutes             8000/tcp
+autotrader-v46-mac-worker-1            autotrader-v46-mac-app:4.6.0-rc2-mac-20261026         "autotrader-worker"      worker            20 minutes ago   Up 19 minutes (healthy)   8000/tcp

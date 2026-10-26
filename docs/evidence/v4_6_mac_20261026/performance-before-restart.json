@@ -1,0 +1,447 @@
+[
+  {
+    "at": "2026-10-26T11:05:11.076390+00:00",
+    "container_stats": [
+      {
+        "BlockIO": "8.19kB / 0B",
+        "CPUPerc": "6.11%",
+        "Container": "dd1d52b9e1aba50a71a263e89c122e7ed9811aff58e0737097db553b0681973b",
+        "ID": "dd1d52b9e1ab",
+        "MemPerc": "17.97%",
+        "MemUsage": "92.02MiB / 512MiB",
+        "Name": "autotrader-v46-mac-backend-1",
+        "NetIO": "18.4MB / 1.85MB",
+        "PIDs": "8"
+      },
+      {
+        "BlockIO": "0B / 4.1kB",
+        "CPUPerc": "0.27%",
+        "Container": "b3e01ad59452476202ee9f8704d6aef390dafaed93895ad5f40863f962cb82c9",
+        "ID": "b3e01ad59452",
+        "MemPerc": "8.06%",
+        "MemUsage": "10.31MiB / 128MiB",
+        "Name": "autotrader-v46-mac-frontend-1",
+        "NetIO": "452kB / 1.94MB",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 66.2MB",
+        "CPUPerc": "1.05%",
+        "Container": "7f5b250a9438d6fc82b4928e164e65b4681f76ca54d4d494ca6cc79071d3c880",
+        "ID": "7f5b250a9438",
+        "MemPerc": "14.11%",
+        "MemUsage": "72.23MiB / 512MiB",
+        "Name": "autotrader-v46-mac-postgres-1",
+        "NetIO": "4.33MB / 20.3MB",
+        "PIDs": "15"
+      },
+      {
+        "BlockIO": "7.2MB / 8.19kB",
+        "CPUPerc": "0.36%",
+        "Container": "2041ebb51dcf56d3fc81c5a9da5af11ed2c0030a040c367a42f31f1547a60a00",
+        "ID": "2041ebb51dcf",
+        "MemPerc": "6.70%",
+        "MemUsage": "17.15MiB / 256MiB",
+        "Name": "autotrader-v46-mac-redis-1",
+        "NetIO": "14.2kB / 10.1kB",
+        "PIDs": "6"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.83%",
+        "Container": "7a430d3871407f39364c4e36cfc61581d8d51096c9cac015149fadc31635d8c4",
+        "ID": "7a430d387140",
+        "MemPerc": "3.52%",
+        "MemUsage": "54.14MiB / 1.5GiB",
+        "Name": "autotrader-v46-mac-research-worker-1",
+        "NetIO": "36.8kB / 43.7kB",
+        "PIDs": "2"
+      },
+      {
+        "BlockIO": "1.77MB / 0B",
+        "CPUPerc": "0.00%",
+        "Container": "fd5a0b9b8215d70e26bbb06ef7b6ec587db7582c466d80aa15011aa62e4fd67c",
+        "ID": "fd5a0b9b8215",
+        "MemPerc": "15.86%",
+        "MemUsage": "81.21MiB / 512MiB",
+        "Name": "autotrader-v46-mac-worker-1",
+        "NetIO": "3MB / 3.96MB",
+        "PIDs": "3"
+      }
+    ],
+    "concurrent_disposable_tests": true,
+    "/api/overview/summary": {
+      "ms": 20.56,
+      "bytes": 915
+    },
+    "/api/opportunities?limit=12": {
+      "ms": 7.29,
+      "bytes": 48041
+    },
+    "/api/monitoring/summary": {
+      "ms": 25.0,
+      "bytes": 4835
+    },
+    "/api/strategies/comparison": {
+      "ms": 10.75,
+      "bytes": 20104
+    },
+    "database_probe_host_exec_ms": 78.98
+  },
+  {
+    "at": "2026-10-26T11:06:13.421261+00:00",
+    "container_stats": [
+      {
+        "BlockIO": "8.19kB / 0B",
+        "CPUPerc": "0.23%",
+        "Container": "dd1d52b9e1aba50a71a263e89c122e7ed9811aff58e0737097db553b0681973b",
+        "ID": "dd1d52b9e1ab",
+        "MemPerc": "18.01%",
+        "MemUsage": "92.2MiB / 512MiB",
+        "Name": "autotrader-v46-mac-backend-1",
+        "NetIO": "26.7MB / 2.49MB",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 4.1kB",
+        "CPUPerc": "0.00%",
+        "Container": "b3e01ad59452476202ee9f8704d6aef390dafaed93895ad5f40863f962cb82c9",
+        "ID": "b3e01ad59452",
+        "MemPerc": "7.53%",
+        "MemUsage": "9.637MiB / 128MiB",
+        "Name": "autotrader-v46-mac-frontend-1",
+        "NetIO": "533kB / 2.02MB",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 89MB",
+        "CPUPerc": "0.03%",
+        "Container": "7f5b250a9438d6fc82b4928e164e65b4681f76ca54d4d494ca6cc79071d3c880",
+        "ID": "7f5b250a9438",
+        "MemPerc": "15.14%",
+        "MemUsage": "77.5MiB / 512MiB",
+        "Name": "autotrader-v46-mac-postgres-1",
+        "NetIO": "7.69MB / 31.9MB",
+        "PIDs": "15"
+      },
+      {
+        "BlockIO": "7.2MB / 8.19kB",
+        "CPUPerc": "2.66%",
+        "Container": "2041ebb51dcf56d3fc81c5a9da5af11ed2c0030a040c367a42f31f1547a60a00",
+        "ID": "2041ebb51dcf",
+        "MemPerc": "6.66%",
+        "MemUsage": "17.05MiB / 256MiB",
+        "Name": "autotrader-v46-mac-redis-1",
+        "NetIO": "19kB / 14kB",
+        "PIDs": "6"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.00%",
+        "Container": "7a430d3871407f39364c4e36cfc61581d8d51096c9cac015149fadc31635d8c4",
+        "ID": "7a430d387140",
+        "MemPerc": "3.52%",
+        "MemUsage": "54.07MiB / 1.5GiB",
+        "Name": "autotrader-v46-mac-research-worker-1",
+        "NetIO": "44.7kB / 54kB",
+        "PIDs": "2"
+      },
+      {
+        "BlockIO": "1.77MB / 0B",
+        "CPUPerc": "0.00%",
+        "Container": "fd5a0b9b8215d70e26bbb06ef7b6ec587db7582c466d80aa15011aa62e4fd67c",
+        "ID": "fd5a0b9b8215",
+        "MemPerc": "16.20%",
+        "MemUsage": "82.93MiB / 512MiB",
+        "Name": "autotrader-v46-mac-worker-1",
+        "NetIO": "6.51MB / 7.22MB",
+        "PIDs": "3"
+      }
+    ],
+    "concurrent_disposable_tests": true,
+    "/api/overview/summary": {
+      "ms": 34.9,
+      "bytes": 915
+    },
+    "/api/opportunities?limit=12": {
+      "ms": 11.03,
+      "bytes": 47995
+    },
+    "/api/monitoring/summary": {
+      "ms": 38.77,
+      "bytes": 5034
+    },
+    "/api/strategies/comparison": {
+      "ms": 9.05,
+      "bytes": 20104
+    },
+    "database_probe_host_exec_ms": 205.19
+  },
+  {
+    "at": "2026-10-26T11:07:15.927665+00:00",
+    "container_stats": [
+      {
+        "BlockIO": "8.19kB / 0B",
+        "CPUPerc": "0.20%",
+        "Container": "dd1d52b9e1aba50a71a263e89c122e7ed9811aff58e0737097db553b0681973b",
+        "ID": "dd1d52b9e1ab",
+        "MemPerc": "17.94%",
+        "MemUsage": "91.87MiB / 512MiB",
+        "Name": "autotrader-v46-mac-backend-1",
+        "NetIO": "35.4MB / 3.14MB",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 4.1kB",
+        "CPUPerc": "0.00%",
+        "Container": "b3e01ad59452476202ee9f8704d6aef390dafaed93895ad5f40863f962cb82c9",
+        "ID": "b3e01ad59452",
+        "MemPerc": "7.78%",
+        "MemUsage": "9.961MiB / 128MiB",
+        "Name": "autotrader-v46-mac-frontend-1",
+        "NetIO": "614kB / 2.1MB",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 90.4MB",
+        "CPUPerc": "0.42%",
+        "Container": "7f5b250a9438d6fc82b4928e164e65b4681f76ca54d4d494ca6cc79071d3c880",
+        "ID": "7f5b250a9438",
+        "MemPerc": "15.33%",
+        "MemUsage": "78.49MiB / 512MiB",
+        "Name": "autotrader-v46-mac-postgres-1",
+        "NetIO": "8.29MB / 41.2MB",
+        "PIDs": "15"
+      },
+      {
+        "BlockIO": "7.2MB / 8.19kB",
+        "CPUPerc": "0.52%",
+        "Container": "2041ebb51dcf56d3fc81c5a9da5af11ed2c0030a040c367a42f31f1547a60a00",
+        "ID": "2041ebb51dcf",
+        "MemPerc": "6.63%",
+        "MemUsage": "16.97MiB / 256MiB",
+        "Name": "autotrader-v46-mac-redis-1",
+        "NetIO": "23.8kB / 17.8kB",
+        "PIDs": "6"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.62%",
+        "Container": "7a430d3871407f39364c4e36cfc61581d8d51096c9cac015149fadc31635d8c4",
+        "ID": "7a430d387140",
+        "MemPerc": "3.53%",
+        "MemUsage": "54.25MiB / 1.5GiB",
+        "Name": "autotrader-v46-mac-research-worker-1",
+        "NetIO": "53.5kB / 65.4kB",
+        "PIDs": "2"
+      },
+      {
+        "BlockIO": "1.77MB / 0B",
+        "CPUPerc": "1.65%",
+        "Container": "fd5a0b9b8215d70e26bbb06ef7b6ec587db7582c466d80aa15011aa62e4fd67c",
+        "ID": "fd5a0b9b8215",
+        "MemPerc": "16.34%",
+        "MemUsage": "83.68MiB / 512MiB",
+        "Name": "autotrader-v46-mac-worker-1",
+        "NetIO": "7.19MB / 7.69MB",
+        "PIDs": "3"
+      }
+    ],
+    "concurrent_disposable_tests": true,
+    "/api/overview/summary": {
+      "ms": 24.7,
+      "bytes": 915
+    },
+    "/api/opportunities?limit=12": {
+      "ms": 9.3,
+      "bytes": 47985
+    },
+    "/api/monitoring/summary": {
+      "ms": 25.5,
+      "bytes": 5113
+    },
+    "/api/strategies/comparison": {
+      "ms": 7.9,
+      "bytes": 20104
+    },
+    "database_probe_host_exec_ms": 203.5
+  },
+  {
+    "at": "2026-10-26T11:08:18.257574+00:00",
+    "container_stats": [
+      {
+        "BlockIO": "8.19kB / 0B",
+        "CPUPerc": "0.10%",
+        "Container": "dd1d52b9e1aba50a71a263e89c122e7ed9811aff58e0737097db553b0681973b",
+        "ID": "dd1d52b9e1ab",
+        "MemPerc": "17.86%",
+        "MemUsage": "91.45MiB / 512MiB",
+        "Name": "autotrader-v46-mac-backend-1",
+        "NetIO": "44MB / 3.78MB",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 4.1kB",
+        "CPUPerc": "0.00%",
+        "Container": "b3e01ad59452476202ee9f8704d6aef390dafaed93895ad5f40863f962cb82c9",
+        "ID": "b3e01ad59452",
+        "MemPerc": "7.17%",
+        "MemUsage": "9.172MiB / 128MiB",
+        "Name": "autotrader-v46-mac-frontend-1",
+        "NetIO": "695kB / 2.18MB",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 91.6MB",
+        "CPUPerc": "0.02%",
+        "Container": "7f5b250a9438d6fc82b4928e164e65b4681f76ca54d4d494ca6cc79071d3c880",
+        "ID": "7f5b250a9438",
+        "MemPerc": "15.35%",
+        "MemUsage": "78.58MiB / 512MiB",
+        "Name": "autotrader-v46-mac-postgres-1",
+        "NetIO": "8.86MB / 50.5MB",
+        "PIDs": "15"
+      },
+      {
+        "BlockIO": "7.2MB / 8.19kB",
+        "CPUPerc": "0.33%",
+        "Container": "2041ebb51dcf56d3fc81c5a9da5af11ed2c0030a040c367a42f31f1547a60a00",
+        "ID": "2041ebb51dcf",
+        "MemPerc": "6.62%",
+        "MemUsage": "16.95MiB / 256MiB",
+        "Name": "autotrader-v46-mac-redis-1",
+        "NetIO": "28.6kB / 21.6kB",
+        "PIDs": "6"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.00%",
+        "Container": "7a430d3871407f39364c4e36cfc61581d8d51096c9cac015149fadc31635d8c4",
+        "ID": "7a430d387140",
+        "MemPerc": "3.52%",
+        "MemUsage": "54.07MiB / 1.5GiB",
+        "Name": "autotrader-v46-mac-research-worker-1",
+        "NetIO": "61.5kB / 75.7kB",
+        "PIDs": "2"
+      },
+      {
+        "BlockIO": "1.77MB / 0B",
+        "CPUPerc": "0.00%",
+        "Container": "fd5a0b9b8215d70e26bbb06ef7b6ec587db7582c466d80aa15011aa62e4fd67c",
+        "ID": "fd5a0b9b8215",
+        "MemPerc": "16.48%",
+        "MemUsage": "84.38MiB / 512MiB",
+        "Name": "autotrader-v46-mac-worker-1",
+        "NetIO": "7.86MB / 8.15MB",
+        "PIDs": "3"
+      }
+    ],
+    "concurrent_disposable_tests": true,
+    "/api/overview/summary": {
+      "ms": 28.48,
+      "bytes": 915
+    },
+    "/api/opportunities?limit=12": {
+      "ms": 7.67,
+      "bytes": 47986
+    },
+    "/api/monitoring/summary": {
+      "ms": 27.13,
+      "bytes": 5115
+    },
+    "/api/strategies/comparison": {
+      "ms": 7.87,
+      "bytes": 20104
+    },
+    "database_probe_host_exec_ms": 133.99
+  },
+  {
+    "at": "2026-10-26T11:09:20.523447+00:00",
+    "container_stats": [
+      {
+        "BlockIO": "8.19kB / 0B",
+        "CPUPerc": "6.47%",
+        "Container": "dd1d52b9e1aba50a71a263e89c122e7ed9811aff58e0737097db553b0681973b",
+        "ID": "dd1d52b9e1ab",
+        "MemPerc": "17.85%",
+        "MemUsage": "91.41MiB / 512MiB",
+        "Name": "autotrader-v46-mac-backend-1",
+        "NetIO": "54.4MB / 4.56MB",
+        "PIDs": "7"
+      },
+      {
+        "BlockIO": "0B / 4.1kB",
+        "CPUPerc": "0.00%",
+        "Container": "b3e01ad59452476202ee9f8704d6aef390dafaed93895ad5f40863f962cb82c9",
+        "ID": "b3e01ad59452",
+        "MemPerc": "7.61%",
+        "MemUsage": "9.742MiB / 128MiB",
+        "Name": "autotrader-v46-mac-frontend-1",
+        "NetIO": "777kB / 2.27MB",
+        "PIDs": "11"
+      },
+      {
+        "BlockIO": "0B / 93.2MB",
+        "CPUPerc": "2.60%",
+        "Container": "7f5b250a9438d6fc82b4928e164e65b4681f76ca54d4d494ca6cc79071d3c880",
+        "ID": "7f5b250a9438",
+        "MemPerc": "15.49%",
+        "MemUsage": "79.31MiB / 512MiB",
+        "Name": "autotrader-v46-mac-postgres-1",
+        "NetIO": "9.46MB / 61.5MB",
+        "PIDs": "15"
+      },
+      {
+        "BlockIO": "7.2MB / 8.19kB",
+        "CPUPerc": "0.26%",
+        "Container": "2041ebb51dcf56d3fc81c5a9da5af11ed2c0030a040c367a42f31f1547a60a00",
+        "ID": "2041ebb51dcf",
+        "MemPerc": "6.48%",
+        "MemUsage": "16.59MiB / 256MiB",
+        "Name": "autotrader-v46-mac-redis-1",
+        "NetIO": "34.4kB / 26.2kB",
+        "PIDs": "6"
+      },
+      {
+        "BlockIO": "0B / 0B",
+        "CPUPerc": "0.70%",
+        "Container": "7a430d3871407f39364c4e36cfc61581d8d51096c9cac015149fadc31635d8c4",
+        "ID": "7a430d387140",
+        "MemPerc": "3.53%",
+        "MemUsage": "54.16MiB / 1.5GiB",
+        "Name": "autotrader-v46-mac-research-worker-1",
+        "NetIO": "70.1kB / 86.9kB",
+        "PIDs": "2"
+      },
+      {
+        "BlockIO": "1.77MB / 0B",
+        "CPUPerc": "0.00%",
+        "Container": "fd5a0b9b8215d70e26bbb06ef7b6ec587db7582c466d80aa15011aa62e4fd67c",
+        "ID": "fd5a0b9b8215",
+        "MemPerc": "16.48%",
+        "MemUsage": "84.38MiB / 512MiB",
+        "Name": "autotrader-v46-mac-worker-1",
+        "NetIO": "8.61MB / 8.6MB",
+        "PIDs": "3"
+      }
+    ],
+    "concurrent_disposable_tests": false,
+    "/api/overview/summary": {
+      "ms": 16.29,
+      "bytes": 915
+    },
+    "/api/opportunities?limit=12": {
+      "ms": 9.6,
+      "bytes": 47987
+    },
+    "/api/monitoring/summary": {
+      "ms": 34.63,
+      "bytes": 5119
+    },
+    "/api/strategies/comparison": {
+      "ms": 9.86,
+      "bytes": 20104
+    },
+    "database_probe_host_exec_ms": 216.53
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "application_source_fingerprint": "a8056c98601d5ce10e4169cf0643cb8b9fec9a5cd9d335cac88a98999ded853e",
+  "backend_passed": 275,
+  "frontend_unit_passed": 14,
+  "browser_disposable_passed": 30,
+  "browser_live_read_only_passed": 2,
+  "compiled_lifecycles_passed": 3,
+  "arm64_container_lifecycles": 15,
+  "ruff": "PASS",
+  "mypy": "PASS (95 files)",
+  "typescript_and_frontend_build": "PASS",
+  "persistent_account_restart": "PASS",
+  "fresh_local_funding_events": 1,
+  "live_money": false,
+  "production_connections": false,
+  "known_limits": [
+    "Another physical LAN device unverified",
+    "Whole Docker Desktop/host reboot not exercised",
+    "Mac sleep/network/Docker interruptions remain possible",
+    "Occasional public provider 429/late candles are explicitly rejected or marked partial",
+    "Short observation is not strategy validation"
+  ],
+  "logs_sha256": {
+    "backend-tests-complete.log": "f918c9944237e46840d53c2b931a02c6cb2c8bc0e58a293b7ba20ed32783b05e",
+    "compiled-lifecycles-complete.log": "292c3cba9d693c80a224b60b28fee7493e458571a497488f45a02c8954d13274",
+    "browser-tests-complete.log": "115c668a4b8e0296bb3884cf44adcafa0fb582ec7d8a6a4a24a59b73da6006f1",
+    "mac-live-browser-complete.log": "f263b6cdf8ac92b46fcf331da1a3544e4444bc8d85d97ccc488fa97d292aa0da",
+    "frontend-unit.log": "2b979585607af1b77d38a87811dae1ef6c34b5714c28d94873a171b5548e791b",
+    "frontend-build.log": "2afa2b0b0572c8f9f8eebe091950272b61489b0d0251009ea1240ed46be99630",
+    "ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "mypy.log": "787fb5f4281ca29d54908fb6f304c60aaf529c36739cf0420d75b382addef0b7",
+    "container-lifecycles-complete.log": "4c336b40d08240b3bb9e3517231b2af5b7d651ac60a9d827b4eb4fea4f2d17b5",
+    "restart-final.log": "d620d5f8af6fac80fd7690feefbf8fe8bc04b47ff2454b7b2d6999486ccec1da",
+    "browser-price-regression.log": "dabb2c83ae01d90dc0413c95baedfd93768c05198df72814b8b772e1fba25f3a"
+  },
+  "additional_focused_browser_rerun_passed": 3
+}

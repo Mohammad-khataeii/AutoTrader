@@ -1,0 +1,13 @@
+{
+  "data_kind": "SYNTHETIC_ACCEPTANCE",
+  "source_fingerprint": "a8056c98601d5ce10e4169cf0643cb8b9fec9a5cd9d335cac88a98999ded853e",
+  "real_test_api": true,
+  "actual_react_build": true,
+  "persisted_fills_displayed": 5,
+  "closed_trades_displayed": 1,
+  "net_pnl": "2.666667935680",
+  "fees": "0.152191992199",
+  "official_equity": 500,
+  "reconciliation": [],
+  "page_errors": []
+}

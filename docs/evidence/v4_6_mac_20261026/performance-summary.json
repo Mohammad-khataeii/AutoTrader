@@ -1,0 +1,102 @@
+{
+  "kind": "MEASURED_LOCAL_WITH_CONCURRENT_DISPOSABLE_TESTS",
+  "samples": 5,
+  "api": {
+    "/api/overview/summary": {
+      "median_ms": 16.82,
+      "max_ms": 23.3,
+      "last_bytes": 1070
+    },
+    "/api/opportunities?limit=12": {
+      "median_ms": 8.9,
+      "max_ms": 11.54,
+      "last_bytes": 50200
+    },
+    "/api/monitoring/summary": {
+      "median_ms": 29.82,
+      "max_ms": 33.4,
+      "last_bytes": 5823
+    },
+    "/api/strategies/comparison": {
+      "median_ms": 9.29,
+      "max_ms": 12.9,
+      "last_bytes": 20104
+    }
+  },
+  "containers": {
+    "autotrader-v46-mac-backend-1": {
+      "memory_observations": [
+        "91.62MiB / 512MiB",
+        "91.84MiB / 512MiB",
+        "91.46MiB / 512MiB",
+        "90.65MiB / 512MiB",
+        "90.87MiB / 512MiB"
+      ],
+      "min_cpu_percent": 0.09,
+      "max_cpu_percent": 16.51,
+      "last_memory_observed": "90.87MiB / 512MiB"
+    },
+    "autotrader-v46-mac-frontend-1": {
+      "memory_observations": [
+        "10.84MiB / 128MiB",
+        "10.03MiB / 128MiB",
+        "10.22MiB / 128MiB",
+        "9.125MiB / 128MiB",
+        "9.117MiB / 128MiB"
+      ],
+      "min_cpu_percent": 0.0,
+      "max_cpu_percent": 1.07,
+      "last_memory_observed": "9.117MiB / 128MiB"
+    },
+    "autotrader-v46-mac-postgres-1": {
+      "memory_observations": [
+        "59.93MiB / 512MiB",
+        "59.73MiB / 512MiB",
+        "60.54MiB / 512MiB",
+        "59.08MiB / 512MiB",
+        "59.29MiB / 512MiB"
+      ],
+      "min_cpu_percent": 0.0,
+      "max_cpu_percent": 1.63,
+      "last_memory_observed": "59.29MiB / 512MiB"
+    },
+    "autotrader-v46-mac-redis-1": {
+      "memory_observations": [
+        "9.73MiB / 256MiB",
+        "10.21MiB / 256MiB",
+        "9.996MiB / 256MiB",
+        "9.68MiB / 256MiB",
+        "9.738MiB / 256MiB"
+      ],
+      "min_cpu_percent": 0.22,
+      "max_cpu_percent": 1.31,
+      "last_memory_observed": "9.738MiB / 256MiB"
+    },
+    "autotrader-v46-mac-research-worker-1": {
+      "memory_observations": [
+        "54.12MiB / 1.5GiB",
+        "53.91MiB / 1.5GiB",
+        "53.77MiB / 1.5GiB",
+        "53.77MiB / 1.5GiB",
+        "53.78MiB / 1.5GiB"
+      ],
+      "min_cpu_percent": 0.0,
+      "max_cpu_percent": 0.0,
+      "last_memory_observed": "53.78MiB / 1.5GiB"
+    },
+    "autotrader-v46-mac-worker-1": {
+      "memory_observations": [
+        "93.28MiB / 512MiB",
+        "82.74MiB / 512MiB",
+        "83.41MiB / 512MiB",
+        "81.91MiB / 512MiB",
+        "82.07MiB / 512MiB"
+      ],
+      "min_cpu_percent": 0.0,
+      "max_cpu_percent": 8.7,
+      "last_memory_observed": "82.07MiB / 512MiB"
+    }
+  },
+  "database_probe_includes_docker_exec_overhead": true,
+  "long_term_memory_growth_not_established": true
+}

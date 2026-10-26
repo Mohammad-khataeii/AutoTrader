@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ArrowUpRight, Compass, ShieldCheck } from "lucide-react";
 import { type Row, useResource } from "./api";
-import { date, humanize, money, number, percent, strategyName } from "./model";
+import { date, humanize, money, number, percent, price, strategyName } from "./model";
 import { Badge, CompactTable, Empty, Panel, Pnl, ResourceState, Technical } from "./ui";
 import { Experiments } from "./Experiments";
 import { qualificationLabel } from "./presentation";
@@ -28,15 +28,17 @@ export function Opportunities() {
         { label: "Market conditions", render: r => <><span>{humanize(r.regime_assessment?.trend)}</span><div className="small muted">{(r.regime_assessment?.structure ?? []).map(humanize).join(" · ")}</div></> },
         { label: "Gross target", render: r => percent(r.economics?.measurements?.gross_target_return) },
         { label: "Modeled costs", render: r => money(r.economics?.measurements?.estimated_total_round_trip_cost_eur) },
-        { label: "Net reward / risk", render: r => number(r.economics?.measurements?.net_reward_risk)?.toFixed(2) ?? "Not assessed" },
+        { label: "Net reward / risk", render: r => number(r.economics?.measurements?.net_reward_risk)?.toFixed(4) ?? "Not assessed" },
         { label: "Qualification", render: r => <Badge tone={r.economic_eligible && !data?.stale ? "positive" : r.technical_eligible ? "warning" : "neutral"}>{qualificationLabel(opportunityState(r))}</Badge> },
       ]} />
       <div className="toolbar"><button disabled={!cursor} onClick={() => setCursor(0)}>Latest observations</button><button disabled={data?.next_cursor == null} onClick={() => setCursor(data.next_cursor)}>More markets</button></div>
     </Panel>
     {selected && <Panel><div className="section-heading"><h2>{selected.symbol} · {strategyName(selected.strategy_id)}</h2><button onClick={() => setSelected(undefined)}>Close evidence</button></div>
       <p>{selected.explanation}</p><p className="small muted">Plan observed {date(selected.as_of, true)} · indicative evidence; no execution authority.</p><p className="small muted">Score {number(selected.score)?.toFixed(2) ?? "Unknown"} ranks observations. It is not a probability of profit.</p>
-      <div className="opportunity-economics"><div><span>Full-size first-target scenario</span><strong>{money(selected.economics?.measurements?.conditional_target_net_eur?.[0])}</strong></div><div><span>Modeled loss at stop</span><strong>{money(selected.economics?.measurements?.expected_net_stop_loss_eur)}</strong></div><div><span>Break-even bid</span><strong>{money(selected.economics?.measurements?.breakeven_bid)}</strong></div></div>
-      <div className="opportunity-economics"><div><span>Proposed stop</span><strong>{money(selected.entry_plan?.stop)}</strong></div><div><span>Proposed targets</span><strong>{selected.entry_plan?.targets?.map(money).join(" / ") ?? "Unavailable"}</strong></div><div><span>Modeled size</span><strong>{money(selected.sizing?.quote_budget_eur)}</strong><span className="small muted">{humanize(selected.sizing?.scope)}</span></div></div>
+      <div className="opportunity-economics"><div><span>Full-size first-target scenario</span><strong>{money(selected.economics?.measurements?.conditional_target_net_eur?.[0])}</strong></div><div><span>Modeled loss at stop</span><strong>{money(selected.economics?.measurements?.expected_net_stop_loss_eur)}</strong></div><div><span>Break-even bid</span><strong>{price(selected.economics?.measurements?.breakeven_bid)}</strong></div></div>
+      <div className="opportunity-economics"><div><span>Proposed stop</span><strong>{price(selected.entry_plan?.stop)}</strong></div><div><span>Proposed targets</span><strong>{selected.entry_plan?.targets?.map(price).join(" / ") ?? "Unavailable"}</strong></div><div><span>Modeled size</span><strong>{money(selected.sizing?.quote_budget_eur)}</strong><span className="small muted">{humanize(selected.sizing?.scope)}</span></div></div>
+      <p className="small muted">Indicative entry {price(selected.economics?.measurements?.entry?.vwap)} · prices retain sub-cent precision; account amounts use cents.</p>
+      <p className="small muted">Net reward / risk {number(selected.economics?.measurements?.net_reward_risk)?.toFixed(4) ?? "Unverified"} · minimum {number(selected.economics?.measurements?.assumptions?.minimum_net_reward_risk) ?? "Unverified"}.</p>
       <p className="small muted">Payoffs assume the full size reaches each price. Partial exits and gaps change the realized result. No calibrated hit probability is available.</p>
       <p className="small muted">The spread is counted once through bid/ask prices. Future liquidity, gaps and target-hit probabilities remain uncertain.</p>
       <ol className="qualification-path">{(selected.pipeline ?? []).map((stage: Row) => <li key={stage.stage}><ShieldCheck size={16} /><div><strong>{humanize(stage.stage)}</strong><p>{!stage.reached ? "Not reached" : stage.passed === true ? "Passed" : stage.passed === false ? "Not selected" : "Unverified"} · {humanize(stage.reason)}</p></div></li>)}</ol>

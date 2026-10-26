@@ -15,6 +15,7 @@ def main() -> None:
     parser.add_argument('--output', type=Path, default=Path('docs/evidence/v4_5_rc2/amd64-lifecycles.json'))
     parser.add_argument('--script', type=Path, default=Path('scripts/rc2_container_acceptance.py'))
     parser.add_argument('--expected-accounts', type=int, default=12)
+    parser.add_argument('--platform', choices=('linux/amd64', 'linux/arm64'), default='linux/amd64')
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     token = 'autotrader-rc2-engine-' + uuid4().hex[:12]
@@ -33,7 +34,7 @@ def main() -> None:
             time.sleep(.5)
         else:
             raise RuntimeError('owned_acceptance_postgres_unavailable')
-        result = run(['docker', 'run', '--rm', '--platform', 'linux/amd64', '--network', network, '--read-only', '--tmpfs', '/tmp',
+        result = run(['docker', 'run', '--rm', '--platform', args.platform, '--network', network, '--read-only', '--tmpfs', '/tmp',
             '-e', 'PYTHONDONTWRITEBYTECODE=1', '-e', 'LIVE_TRADING_ENABLED=false', '-e', 'AUTOTRADER_SYNTHETIC_ACCEPTANCE=1',
             '-e', 'DATABASE_URL=postgresql+asyncpg://autotrader@acceptance-postgres:5432/postgres',
             '-v', str(root/args.script)+':/acceptance/main.py:ro',
@@ -41,10 +42,11 @@ def main() -> None:
         report = json.loads(result)
         report['image_id'] = run(['docker', 'image', 'inspect', '--format', '{{.Id}}', args.image]).decode().strip()
         report['network_internal'] = json.loads(run(['docker', 'network', 'inspect', network]))[0]['Internal']
-        assert report['status'] == 'PASS' and report['architecture'] == 'x86_64' and len(report['accounts']) == args.expected_accounts and report['network_internal']
+        expected_architecture = {'linux/amd64': 'x86_64', 'linux/arm64': 'aarch64'}[args.platform]
+        assert report['status'] == 'PASS' and report['architecture'] == expected_architecture and len(report['accounts']) == args.expected_accounts and report['network_internal']
         args.output.write_text(json.dumps(report, indent=2)+'\n')
         success = True
-        print(f'PASS: {len(report["accounts"])} synthetic lifecycles inside AMD64 candidate')
+        print(f'PASS: {len(report["accounts"])} synthetic lifecycles inside {args.platform} candidate')
     except subprocess.CalledProcessError as exc:
         Path('.tools/rc2-container-failure.log').write_bytes(exc.stderr or b'')
         print('Owned diagnostic cluster retained: '+postgres+' / '+network)

@@ -2,6 +2,8 @@
 
 V4.6 RC2: [engineering report, measured research and limitations](docs/V4_6_RC2_RELEASE.md) · [prepared deployment and rollback guide](docs/V4_6_RC2_DEPLOYMENT.md). Stage A only. Current production access and fresh backup verification are blocked; deployment also requires separate approval of the exact release commit. The [RC1 report](docs/V4_6_RELEASE.md) remains immutable historical evidence.
 
+Local Mac hosting uses its own persistent simulated account and native containers: [operating guide](docs/V4_6_MAC_SERVER.md) · [October 26 validation](docs/V4_6_MAC_VALIDATION.md). This local setup does not deploy the VPS or modify RC2's tag.
+
 V4.6 adds multidimensional regimes, cost-aware A3/B3/E3 research, adaptive budgeted EUR discovery and seven navigation destinations. Source-pinned V4.2/V4.4 runners and all eight historical experiment identities remain intact. Flat paused/stopped accounts can be archived through the existing explicit controls; no account is created or promoted automatically. Prior [V4.4 evidence](docs/V4_4_RELEASE_REPORT.md) and the [deployment/rollback workflow](docs/V4_4_DEPLOYMENT_AND_ROLLBACK.md) remain available.
 
 An autonomous EUR500 **paper-trading research platform** using public Revolut X observations, FastAPI, React and authoritative PostgreSQL accounting. The existing journal, realistic bid/ask execution, partial targets, protective stops, reservations and recovery remain intact. Real-money trading stays disabled. AI defaults to mock with persistent30/day,6/rolling-hour and USD10/month paid-mode limits.

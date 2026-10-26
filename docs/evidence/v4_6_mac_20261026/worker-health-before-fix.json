@@ -1,0 +1,45 @@
+{
+  "observed_at": "2026-10-26T11:05:33.756282+00:00",
+  "displayed_worker_health": {
+    "state": "DELAYED",
+    "reported_state": "RUNNING",
+    "age_seconds": 194.378023,
+    "reason": "cycle_completed",
+    "process_id": 1
+  },
+  "actual_worker": "ok",
+  "operation": {
+    "observed_at": "2026-10-26T11:05:28.870721+00:00",
+    "last_completed_scan": "2026-10-26T11:05:28.870130+00:00",
+    "scan_duration_seconds": 9.286279463000028,
+    "schedule_overrun_seconds": 0,
+    "markets_scanned": 3,
+    "successful_observations": 3,
+    "data_failures": 0,
+    "strategies_evaluated": 24,
+    "qualified_signals": 0,
+    "rejected_signals": 3,
+    "paper_entries_filled": 0,
+    "execution_outcomes": [
+      {
+        "symbol": "BTC-EUR",
+        "accepted": false,
+        "reason": "decision_not_accepted",
+        "order_id": null
+      },
+      {
+        "symbol": "ETH-EUR",
+        "accepted": false,
+        "reason": "decision_not_accepted",
+        "order_id": null
+      },
+      {
+        "symbol": "SOL-EUR",
+        "accepted": false,
+        "reason": "decision_not_accepted",
+        "order_id": null
+      }
+    ],
+    "next_scan_at": "2026-10-26T11:06:19.583874+00:00"
+  }
+}

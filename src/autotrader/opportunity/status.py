@@ -30,7 +30,12 @@ def freshness(body: dict[str, Any], state: str, updated: datetime | None,
                       else 'INVALID_TIMESTAMP' if age is not None and age < -5
                       else 'DELAYED' if not valid else 'PARTIAL' if state == 'DEGRADED'
                       else 'WAITING_NEXT_CANDLE' if int(now.timestamp())//cadence > int(bucket or 0) else 'CURRENT')
-    worker = health.get('worker_instance') or health.get('worker')
+    instance = health.get('worker_instance')
+    worker = health.get('worker')
+    # worker_instance records startup, not a periodic heartbeat. Prefer the
+    # newest observation so a healthy long-running worker never ages from boot.
+    if instance is not None and (worker is None or aware(instance.updated_at) > aware(worker.updated_at)):
+        worker = instance
     scan = health.get('scanner')
     operation = health.get('operation')
     def observation(row: Any, threshold: int) -> dict[str, Any]:
@@ -46,11 +51,15 @@ def freshness(body: dict[str, Any], state: str, updated: datetime | None,
     scan_state = observation(scan, cadence+grace)
     if operation is not None and operation.state in {'INITIALIZING','DATA_SYNCING','RECOVERY_REQUIRED','SYSTEM_ERROR'}:
         op_age = (now-aware(operation.updated_at)).total_seconds()
-        if op_age < cadence+grace:
+        if -5 <= op_age < cadence+grace:
             worker_state['state'] = 'FAILED' if operation.state == 'SYSTEM_ERROR' else 'RECOVERING'
             worker_state['reason'] = operation.reason
     source_pid = body.get('observer_process_id')
-    if source_pid and worker_state.get('process_id') and source_pid != worker_state['process_id'] and worker_state['state']=='HEALTHY':
+    # Container processes commonly restart with PID 1 again. The persisted
+    # startup timestamp distinguishes that restart from the prior observation.
+    restarted = instance is not None and observed is not None and observed < aware(instance.updated_at) <= now
+    changed_pid = source_pid and worker_state.get('process_id') and source_pid != worker_state['process_id']
+    if (restarted or changed_pid) and worker_state['state']=='HEALTHY':
         worker_state.update(state='RECOVERING', reason='Worker restarted; prior research remains historical evidence')
     quote_times = [timestamp(r.get('quote_observed_at')) for r in body.get('rows', [])]
     quote_ages = [(now-t).total_seconds() for t in quote_times if t is not None]
