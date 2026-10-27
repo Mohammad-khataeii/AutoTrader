@@ -1492,3 +1492,9 @@ dialog h2 {
 .legacy-health {font-size:12px; color:var(--muted,#8994a8); padding:0 0 12px;}
 .legacy-health summary {cursor:pointer;}
 @media(max-width:600px){.trade-report > summary {gap:8px;} .trade-report > summary > span:nth-child(2){width:100%;order:4;} .trade-report-grid {grid-template-columns:1fr;} }
+
+/* Preserve readable market and status labels; Android can swipe the table. */
+.raoe-intelligence .table-wrap table { min-width: 1080px; }
+.raoe-intelligence .table-wrap td { min-width: 100px; overflow-wrap: normal; }
+.raoe-intelligence .table-wrap td:first-child { min-width: 145px; }
+.raoe-intelligence .badge { white-space: nowrap; }

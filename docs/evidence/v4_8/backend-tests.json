@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "full_suite": {
+    "tests": 325,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "focused_final_suite": {
+    "tests": 25,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "mypy_source_files": 120,
+  "lint": "PASS",
+  "initial_run": {
+    "passed": 314,
+    "failed": 4,
+    "corrected": "Legacy Noop client refresh hook and omitted replay-clock fixture"
+  },
+  "post_target_alignment_full_suite": 325,
+  "warning": "Upstream Starlette AnyIO deprecation"
+}

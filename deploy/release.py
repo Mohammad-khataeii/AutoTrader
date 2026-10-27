@@ -46,6 +46,8 @@ def verify_release_preflight(root: Path) -> dict:
     version = tomllib.loads(version_file.read_text()).get('project', {}).get('version', '') if version_file.exists() else ''
     if version.startswith('4.7.'):
         raise ValueError('V4.7 is a Mac-only paper development release; VPS deployment is not authorized')
+    if version.startswith('4.8.'):
+        raise ValueError('V4.8 is experimental staging-only; production activation is not authorized')
     v46 = version.startswith('4.6.')
     folder = root / ('docs/evidence/v4_6_rc2' if 'rc2' in version else 'docs/evidence/v4_6' if v46 else 'docs/evidence/v4_5_rc2')
     readiness = json.loads((folder/'deployment-readiness.json').read_bytes())

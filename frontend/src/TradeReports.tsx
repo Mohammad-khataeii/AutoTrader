@@ -20,6 +20,7 @@ export function TradeReports({rows = []}: {rows?: Row[]}) {
           <div><dt>Entry → exit</dt><dd>{price(r.entry_price)} → {price(r.exit_price)}</dd></div>
           <div><dt>Original stop</dt><dd>{price(r.initial_stop)}</dd></div>
           <div><dt>TP1 · TP2 · TP3</dt><dd>{r.targets?.map((t:string)=>price(t)).join(" · ")}</dd></div>
+          {r.target_semantics === "MINIMUM_NET_UNIT_EXIT_PROCEEDS" && <div><dt>Broker minimum net proceeds per unit</dt><dd>{r.broker_net_unit_targets?.map((t:string)=>price(t)).join(" · ")}</dd><p className="small muted">Original targets are supported bid scenarios. The broker floors account for exit fees, modeled slippage and assumed depth once.</p></div>}
           <div><dt>Planned → actual holding</dt><dd>{duration(r.planned_holding_seconds)} → {duration(r.actual_holding_seconds)}</dd></div>
           <div><dt>Opened</dt><dd>{date(r.opened_at,true)}</dd></div><div><dt>Closed</dt><dd>{date(r.closed_at,true)}</dd></div>
           <div><dt>Planned net reward / risk</dt><dd>{r.expected_net_reward_risk == null ? "Unavailable" : Number(r.expected_net_reward_risk).toFixed(2)}</dd></div>

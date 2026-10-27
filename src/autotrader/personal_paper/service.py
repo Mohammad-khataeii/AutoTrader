@@ -29,6 +29,7 @@ from autotrader.persistence.models import (
 from autotrader.persistence.repository import PersistentTradingRepository, _json
 from autotrader.personal_paper.policy import (
     ACCOUNT,
+    EXECUTION_POLICY,
     INITIAL,
     REGISTRY_KEY,
     STRATEGIES,
@@ -37,7 +38,6 @@ from autotrader.personal_paper.policy import (
     risk_payload,
 )
 from autotrader.personal_paper.repository import PersonalPaperRepository
-from autotrader.personal_paper.selection import POLICY
 from autotrader.research.data import canonical, digest
 
 D = Decimal
@@ -86,7 +86,7 @@ class PersonalPaperService:
         manifest = {**origin, 'version': VERSION, 'account_origin': origin,
             'parent_profile_hash': digest(canonical(current)), 'frozen_at': utc_now().isoformat(),
             'runtime_fingerprint': fingerprint(), 'revision_reason': reason,
-            'strategies': STRATEGIES, 'risk_limits': risk_payload(), 'execution_policy': POLICY}
+            'strategies': STRATEGIES, 'risk_limits': risk_payload(), 'execution_policy': EXECUTION_POLICY}
         key = 'paper_profile:'+VERSION
         async with repo.session_factory() as session, session.begin():
             account = await repo._lock_account(session)
@@ -138,7 +138,7 @@ class PersonalPaperService:
                 manifest = {'account_id': ACCOUNT, 'version': VERSION, 'official_database': url.database,
                     'database_name': 'autotrader_paper_'+digest(str(url.database).encode())[:32],
                     'initial_cash_eur': str(INITIAL), 'currency': 'EUR', 'strategies': STRATEGIES,
-                    'risk_limits': risk_payload(), 'runtime_fingerprint': fingerprint(), 'execution_policy': POLICY,
+                    'risk_limits': risk_payload(), 'runtime_fingerprint': fingerprint(), 'execution_policy': EXECUTION_POLICY,
                     'fee_bps': str(self.settings.default_fee_bps), 'slippage_bps': str(self.settings.default_slippage_bps),
                     'fee_tier': 'CONSERVATIVE_UNVERIFIED_TAKER_ASSUMPTION',
                     'data_kind': 'SYNTHETIC_ACCEPTANCE' if self.settings.environment == 'test' else 'REVOLUT_X_PROSPECTIVE_PAPER',

@@ -88,6 +88,7 @@ class RevolutXPublicClient:
         self.cooldown_publisher=cooldown_publisher
         self.event_recorder=event_recorder
         self._gate=PriorityGate()
+        self._family_gates: dict[str, PriorityGate] = {}
         self._cooldowns:dict[str,float]={}
         self._client = httpx.AsyncClient(base_url=self.base_url, timeout=timeout)
         self._limiters: dict[str, TokenBucket] = {
@@ -102,6 +103,7 @@ class RevolutXPublicClient:
         self._pairs_cache: tuple[datetime, list[TradingPair]] | None = None
         self._ticker_cache: tuple[datetime, list[dict[str, Any]]] | None = None
         self._ticker_lock = asyncio.Lock()
+        self._pairs_lock = asyncio.Lock()
 
     async def close(self) -> None:
         await self._client.aclose()
@@ -122,7 +124,7 @@ class RevolutXPublicClient:
             if local_delay>0:
                 await asyncio.sleep(min(local_delay,1))
                 continue
-            async with self._gate.slot():
+            async with self._family_gates.setdefault(family, PriorityGate()).slot():
                 await self._limiter_for(path).acquire()
                 delay=await self.rate_reserver(family) if self.rate_reserver else 0
                 if delay<=0:
@@ -154,6 +156,7 @@ class RevolutXPublicClient:
                     retry_after=float(_retry_after_seconds(response.headers.get("Retry-After")))
                     delay=max(retry_after,0.25*(2**attempt)+random.uniform(0,.1))
                     family=self._family(path)
+                    await self._event('backoff_seconds',delay)
                     self._cooldowns[family]=max(self._cooldowns.get(family,0),time.monotonic()+delay)
                     if self.cooldown_publisher:
                         await self.cooldown_publisher(family,delay)
@@ -185,6 +188,10 @@ class RevolutXPublicClient:
         return TokenBucket(Decimal("1"), Decimal("1"))
 
     async def get_pairs(self) -> list[TradingPair]:
+        async with self._pairs_lock:
+            return await self._load_pairs()
+
+    async def _load_pairs(self) -> list[TradingPair]:
         if self._pairs_cache and (datetime.now(tz=UTC) - self._pairs_cache[0]).total_seconds() < 300:
             return self._pairs_cache[1]
         payload = await self._request("/1.0/public/configuration/pairs")

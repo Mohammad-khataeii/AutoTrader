@@ -26,6 +26,7 @@ from autotrader.personal_paper.policy import (
     ACCOUNT,
     AGGREGATE_STOP_RISK,
     CORRELATED_CAPITAL,
+    EXECUTION_POLICY,
     INITIAL,
     LIMITS,
     MAX_DRAWDOWN,
@@ -83,7 +84,7 @@ class PersonalPaperRepository(PersistentTradingRepository):
     async def _entry_policy_error(self, session: Any, strategy: str, evidence: dict[str, Any], fee: Any, slip: Any) -> str | None:
         await self.assert_scope(session)
         m = self.manifest
-        if m['runtime_fingerprint'] != fingerprint() or m['risk_limits'] != risk_payload() or m.get('execution_policy') != POLICY:
+        if m['runtime_fingerprint'] != fingerprint() or m['risk_limits'] != risk_payload() or m.get('execution_policy') != EXECUTION_POLICY:
             return 'paper_frozen_runtime_changed_new_experiment_required'
         selected = m['strategies'].get(strategy)
         if (selected != STRATEGIES.get(strategy) or not selected
@@ -92,8 +93,12 @@ class PersonalPaperRepository(PersistentTradingRepository):
             return 'paper_strategy_not_authorized_for_manifest'
         if str(fee) != m['fee_bps'] or str(slip) != m['slippage_bps']:
             return 'paper_frozen_cost_mismatch'
-        if (evidence.get('quality_policy', {}).get('version') != POLICY['version']
-                or set(evidence.get('quality_policy', {}).get('gates', {})) != QUALITY_GATES
+        from autotrader.raoe import IDENTITIES
+        from autotrader.raoe import POLICY as RAOE_POLICY
+        from autotrader.raoe import QUALITY_GATES as RAOE_GATES
+        policy, gates = (RAOE_POLICY, RAOE_GATES) if strategy in IDENTITIES else (POLICY, QUALITY_GATES)
+        if (evidence.get('quality_policy', {}).get('version') != policy['version']
+                or set(evidence.get('quality_policy', {}).get('gates', {})) != gates
                 or not all(v is True for v in evidence['quality_policy']['gates'].values())):
             return 'paper_quality_policy_required'
         if not evidence.get('entry_eligible') or evidence.get('veto'):
@@ -133,7 +138,7 @@ class PersonalPaperRepository(PersistentTradingRepository):
     async def position_exit_reason(self, position_id: str, symbol: str, as_of: datetime) -> str | None:
         async with self.session_factory() as session:
             position = await session.get(PositionModel, position_id)
-            if not position or position.symbol != symbol or position.account_id != ACCOUNT:
+            if not position or position.symbol != symbol or position.account_id != self.account_id:
                 return None
             plan = await session.scalar(select(ExitPlanModel).where(ExitPlanModel.position_id == position_id))
             entry = await session.scalar(select(OrderModel).where(OrderModel.position_id == position_id,

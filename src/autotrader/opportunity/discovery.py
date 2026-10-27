@@ -33,6 +33,10 @@ def rank_markets(pairs: list[TradingPair], tickers: list[dict[str, Any]], *,
     seen = set()
     for ticker in tickers:
         symbol = str(ticker.get('symbol', '')).replace('/', '-')
+        from autotrader.raoe.discovery import PEGGED
+        if symbol.split('-')[0] in PEGGED:
+            counts['pegged_directional_excluded'] = counts.get('pegged_directional_excluded',0)+1
+            continue
         if symbol not in supported or symbol in seen or symbol in (excluded or set()):
             continue
         seen.add(symbol)

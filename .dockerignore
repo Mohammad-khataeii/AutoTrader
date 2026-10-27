@@ -25,3 +25,7 @@ docs/evidence/v4_7/*
 !docs/evidence/v4_7_1
 docs/evidence/v4_7_1/*
 !docs/evidence/v4_7_1/research-results.json
+
+!docs/evidence/v4_8
+docs/evidence/v4_8/*
+!docs/evidence/v4_8/research-results.json

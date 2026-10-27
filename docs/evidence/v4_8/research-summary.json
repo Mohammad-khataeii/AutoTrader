@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "runs": 72,
+  "profitability": "UNKNOWN",
+  "verdict": "RAOE_TOO_INACTIVE_ON_UNTOUCHED_TEST",
+  "study_source_fingerprint": "aae2e1022663186d9c994d90204b85408987786aa4d30c23b266d0d8c6e2bd19",
+  "final_source_fingerprint": "f1b695da05d0ab89948400e0e42c63166b113d286ef2c849205b5b74258f62fc",
+  "model_code_matches": true,
+  "registered_parameters_changed": false,
+  "pre_target_alignment_result_retained": true,
+  "normal_test_raoe_closed_trades": 0
+}

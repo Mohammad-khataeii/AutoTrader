@@ -270,7 +270,8 @@ async def summaries(lab: Any, archived: bool = False) -> dict[str, Any]:
                 **(
                     await account_summary(await lab.repository(record["experiment_id"]))
                     if record["state"] != "CREATING"
-                    else {}
+                    else {"reconciliation_status": {"status": "NOT_CHECKED", "stale": True, "observed": None},
+                          "portfolio": {"risk_state": "UNKNOWN"}, "scan_observation": None, "runtime_incidents": []}
                 ),
             }
         )

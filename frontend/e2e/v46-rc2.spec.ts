@@ -20,6 +20,7 @@ for (const width of [375, 1440]) {
       research_freshness:{state,current:state==='CURRENT',age_seconds:170,next_evaluation_due_at:'2026-10-22T12:06:30Z'},
       market_freshness:{state:'STALE_QUOTES',execution_authorized:false},worker_health:{state:state==='FAILED'?'FAILED':state==='DELAYED'?'DELAYED':'HEALTHY',reason:'Current observation'},scanner_health:{state:'HEALTHY'},next_cursor:null}}));
     await signIn(page);await page.getByRole('button',{name:'Opportunities',exact:true}).click();
+    await page.getByRole("tab", { name: "Baseline observations", exact: true }).click();
     await expect(page.getByRole('cell',{name:'Research candidate · unvalidated',exact:true})).toBeVisible();
     await expect(page.getByText('Stale quotes',{exact:true})).toBeVisible();
     await expect(page.getByText('Current completed-candle research.',{exact:false})).toBeVisible();

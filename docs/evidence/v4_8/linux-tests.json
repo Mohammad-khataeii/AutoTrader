@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "platform": "linux/amd64",
+  "installed_image": "autotrader-v48-app:complete",
+  "final_clean_suite": {
+    "tests": 69,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "installed_source_fingerprint": "f1b695da05d0ab89948400e0e42c63166b113d286ef2c849205b5b74258f62fc",
+  "runtime_fingerprint": "5e6065aff4a26e4340a18e1192edfb2f5b19bb84432907f791380a046de87401",
+  "prior_failures": "A stale static fixture and a replay created immediately before a five-minute boundary. Fresh-window setup fixes the process fixture; production freshness remains unchanged.",
+  "earlier_passed_cohorts": [
+    64,
+    66
+  ]
+}

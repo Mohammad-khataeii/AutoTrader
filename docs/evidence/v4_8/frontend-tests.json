@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "production_build": "PASS",
+  "typescript": "PASS",
+  "vitest_tests": 19,
+  "test_files": 6
+}

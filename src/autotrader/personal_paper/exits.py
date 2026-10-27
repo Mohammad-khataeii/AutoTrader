@@ -33,7 +33,8 @@ def assess_exit(strategy: str, opened_at: datetime, entry_evidence: dict[str, An
             or any(b.timestamp-a.timestamp != timedelta(minutes=5) for a,b in itertools.pairwise(closed))
             or (genuine and any(not c.source.startswith('revolut-x') for c in closed))):
         return result
-    if strategy not in {'A3_COST_AWARE_CONTINUATION','B3_STATEFUL_BREAKOUT','E3_ADAPTIVE_RELATIVE_STRENGTH'}:
+    if strategy not in {'A3_COST_AWARE_CONTINUATION','B3_STATEFUL_BREAKOUT','E3_ADAPTIVE_RELATIVE_STRENGTH',
+            'RAOE_EARLY_RECOVERY','RAOE_TREND_PULLBACK','RAOE_BREAKOUT_RETEST'}:
         result['status'] = 'UNKNOWN_ENTRY_STRATEGY'
         return result
     result['candle_at'] = closed[-1].timestamp.isoformat()
@@ -48,7 +49,7 @@ def assess_exit(strategy: str, opened_at: datetime, entry_evidence: dict[str, An
     h15 = f.metadata['successor_context']['15m']
     reversal = bool(post_entry and bearish(f) and bearish(prior) and h15.get('ready') and h15.get('bear'))
     level = number((entry_evidence.get('pattern_state') or {}).get('level'))
-    failed = bool(strategy.startswith('B3') and post_entry and level and f.atr and
+    failed = bool(strategy.startswith(('B3','RAOE_BREAKOUT')) and post_entry and level and f.atr and
                   all(c.close < level-D('.25')*f.atr for c in closed[-2:]))
     result.update(status='ASSESSED', local_trend=assess_regime(f).trend,
         higher_15m=h15, two_post_entry_bars=post_entry, confirmed_reversal=reversal,

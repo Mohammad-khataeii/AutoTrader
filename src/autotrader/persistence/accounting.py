@@ -430,7 +430,7 @@ class AccountingRepositoryMixin:
                         if strongest:
                             primary_strategy=strongest.strategy_id
                             evidence = json.loads(strongest.payload_json).get("evidence", {})
-                            if evidence.get("strategy_version") in {"4.0.0", "4.2.0-experimental.1"}:
+                            if evidence.get("strategy_version") in {"4.0.0", "4.2.0-experimental.1", "4.8.0-raoe.1"}:
                                 holding_seconds = int(evidence.get("holding_bars", 12)) * timeframe_seconds(str(evidence.get("timeframe", "5m")))
                             if self.account_id == "PERSONAL_PLAN_PAPER_7000":
                                 holding_seconds = int(evidence.get("holding_bars", 36)) * timeframe_seconds(str(evidence.get("timeframe", "5m")))
@@ -450,6 +450,10 @@ class AccountingRepositoryMixin:
                 hours={"A_VOLUME_ACCUMULATION":12,"B_VOLATILITY_COMPRESSION":24,"C_BREAKOUT_RETEST":8,"D_MOMENTUM_ACCELERATION":6,"G_RELATIVE_STRENGTH":8,"H_LIQUIDITY_ORDER_BOOK":4}.get(primary_strategy,24)
                 if side is Side.BUY and not error:
                     promotion_failure = await self._entry_policy_error(session, primary_strategy, evidence, fee_bps, slippage_bps)
+                    if not promotion_failure and evidence.get('strategy_version')=='4.8.0-raoe.1':
+                        from autotrader.raoe.admission import validate
+                        promotion_failure = validate(pair,order_book,quote_amount,stop_loss,targets or [],evidence,
+                            fee_bps,slippage_bps,self.ledger_risk_limits.max_planned_loss_per_trade)
                     if promotion_failure:
                         error = promotion_failure
                         payload["rejection_reason"] = error
@@ -639,9 +643,14 @@ class AccountingRepositoryMixin:
                     position_id=position.position_id, order_id=row.order_id, fill_id=fill_id)
                 await self._release(session, row)
                 if payload["stop_loss"]:
-                    await self._create_plan(session, position, Decimal(payload["stop_loss"]), [Decimal(t) for t in payload["targets"]], step,
+                    plan_targets=[Decimal(t) for t in payload["targets"]]
+                    target_metadata = None
+                    if payload.get('strategy_evidence',{}).get('strategy_version')=='4.8.0-raoe.1':
+                        from autotrader.raoe.exits import net_exit_targets
+                        plan_targets,target_metadata=net_exit_targets(plan_targets,book,filled,step,fee_rate*10000,slippage*10000)
+                    await self._create_plan(session, position, Decimal(payload["stop_loss"]), plan_targets, step,
                         strategy_id=payload.get('strategy_id','ensemble-v3.4'),holding_hours=payload.get('holding_hours',24),
-                        holding_seconds=payload.get("holding_seconds"))
+                        holding_seconds=payload.get("holding_seconds"),target_metadata=target_metadata)
             else:
                 if position is None or filled > position.quantity:
                     raise ValueError("Exit would oversell; transaction rolled back.")
@@ -743,7 +752,7 @@ class AccountingRepositoryMixin:
 
     async def _create_plan(self, session: Any, p: PositionModel, stop: Decimal | None,
                            targets: list[Decimal], step: Decimal,*,strategy_id:str='ensemble-v3.4',holding_hours:int=24,
-                           holding_seconds:int|None=None) -> None:
+                           holding_seconds:int|None=None,target_metadata:dict[str,Any]|None=None) -> None:
         existing = await session.scalar(select(ExitPlanModel).where(ExitPlanModel.position_id == p.position_id))
         if existing and await session.scalar(select(func.count()).select_from(ExitTargetModel).where(ExitTargetModel.exit_plan_id == existing.exit_plan_id)):
             return
@@ -751,7 +760,7 @@ class AccountingRepositoryMixin:
         plan = existing or ExitPlanModel(exit_plan_id=new_id("plan"), position_id=p.position_id,
             strategy_id=strategy_id, settings_json=json.dumps({"holding_hours": holding_hours,
                 "holding_seconds": holding_seconds or holding_hours*3600, "cooldown_minutes": 30, "stop_priority": True,
-                "trailing_policy":"v4-volatility-bid-trailing-1"}))
+                "trailing_policy":"v4-volatility-bid-trailing-1",**(target_metadata or {})}))
         session.add(plan)
         await session.flush()
         from autotrader.persistence.repository import _default_target_quantities

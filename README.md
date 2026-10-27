@@ -1,6 +1,12 @@
-# Personal Plan — V4.6 RC2
+# Personal Plan — V4.8 RAOE
 
-## Personal Plan V4.7 Mac paper portfolio
+## V4.8 Aruba paper staging
+
+V4.8 adds three separate regime-adaptive playbooks, dynamic non-pegged EUR discovery, structural entry plans, fresh cost admission, independent forward ledgers and Opportunity Intelligence. [Engineering report and all fixed research results](docs/V4_8_ENGINEERING_REPORT.md). No strategy has demonstrated reliable positive net expectancy; the new playbooks were too inactive on the untouched test interval.
+
+The dedicated `deploy/staging.py` workflow targets only the existing `autotrader-aruba-test` project after immutable source/image checks and verified backup/isolated-restore/profile rehearsal. The current user explicitly authorized this staging update; V4.8 remains blocked by the production preflight. Keep Tailscale, the existing EUR7,000 primary account, separate shadows and rollback images. Real exchange trading stays disabled.
+
+## Historical V4.7 Mac paper portfolio
 
 The Mac development setup adds one isolated EUR7,000 shared virtual portfolio with autonomous A3/B3/E3 paper execution. The official EUR500 account and research shadows remain separate. Live exchange trading remains disabled. Read the [V4.7 release report](docs/V4_7_RELEASE_REPORT.md), [Mac operating guide](docs/V4_7_MAC_OPERATIONS.md) and [future live-readiness limits](docs/V4_7_LIVE_READINESS.md). This development release does not authorize VPS deployment or establish a profitable strategy.
 

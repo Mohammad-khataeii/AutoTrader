@@ -1,3 +1,4 @@
+import { OpportunityIntelligence, RAOECompetition } from "./OpportunityIntelligence";
 import React, { useState } from "react";
 import { ArrowUpRight, Compass, ShieldCheck } from "lucide-react";
 import { type Row, useResource } from "./api";
@@ -7,7 +8,7 @@ import { Experiments } from "./Experiments";
 import { qualificationLabel } from "./presentation";
 import { OpportunityHealth, opportunityState } from "./OpportunityPreview";
 
-export function Opportunities() {
+export function BaselineOpportunities() {
   const [cursor, setCursor] = useState(0);
   const [selected, setSelected] = useState<Row>();
   const result = useResource(`/api/opportunities?limit=12&cursor=${cursor}`, { poll: cursor ? undefined : 15000 });
@@ -80,6 +81,11 @@ export function StrategyComparison() {
 }
 
 export function StrategiesWorkspace() {
-  const [view, setView] = useState("Accounts");
-  return <div className="page-stack"><div className="segmented" role="tablist" aria-label="Strategy workspace">{["Accounts", "Research comparison"].map(name => <button key={name} role="tab" aria-selected={view === name} onClick={() => setView(name)}>{name}</button>)}</div>{view === "Accounts" ? <Experiments /> : <StrategyComparison />}</div>;
+  const [view, setView] = useState("Strategy Competition");
+  return <div className="page-stack"><div className="segmented" role="tablist" aria-label="Strategy workspace">{["Strategy Competition", "Accounts", "Research comparison"].map(name => <button key={name} role="tab" aria-selected={view === name} onClick={() => setView(name)}>{name}</button>)}</div>{view === "Strategy Competition" ? <RAOECompetition /> : view === "Accounts" ? <Experiments /> : <StrategyComparison />}</div>;
+}
+
+export function Opportunities() {
+ const [view, setView] = useState("Opportunity Intelligence");
+ return <div className="page-stack"><div className="segmented" role="tablist" aria-label="Opportunity views">{["Opportunity Intelligence", "Baseline observations"].map(name => <button key={name} role="tab" aria-selected={view===name} onClick={() => setView(name)}>{name}</button>)}</div>{view === "Opportunity Intelligence" ? <OpportunityIntelligence /> : <BaselineOpportunities />}</div>;
 }

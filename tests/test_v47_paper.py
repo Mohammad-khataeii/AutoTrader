@@ -260,7 +260,14 @@ async def test_committed_reservation_recovers_without_duplicate_funding_or_buy(p
 
 async def test_actual_worker_opens_protects_and_recovers_primary_portfolio(paper, pg_repo, tmp_path, monkeypatch):
     _service,repo=paper
+    from autotrader.domain import utc_now
     from process_support import WorkerProcess, wait_for, write_frame
+    # This static external replay is not a rolling provider. Give process
+    # startup a fresh completed-bar window, instead of intermittently creating
+    # it just before a five-minute boundary and testing a stale fixture.
+    elapsed=utc_now().timestamp()%300
+    if elapsed>275:
+        await asyncio.sleep(300-elapsed+.1)
     monkeypatch.setenv('PERSONAL_PAPER_ENABLED','true')
     monkeypatch.setenv('SHADOW_ENABLED','true')
     path=tmp_path/'worker.json'

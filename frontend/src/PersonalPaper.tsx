@@ -23,8 +23,8 @@ export function PersonalPaper({ view = "overview" }: { view?: "overview" | "acti
   return <section className="page-stack personal-paper" aria-label="Personal Plan shared paper portfolio">
     <ResourceState resource={resource} label="€7,000 paper portfolio" />
     <Panel>
-      <div className="section-heading"><div><p className="eyebrow">Personal Plan · V4.7</p><h2>€7,000 virtual portfolio</h2></div><Badge>Paper only</Badge></div>
-      <p>{d?.state === "PAPER_EXPERIMENTAL_ACTIVE" ? "Autonomous experimental execution active" : d?.state?.replaceAll("_", " ") ?? "Connecting to the paper account"} · One EUR pool shared by three selected strategies.</p>
+      <div className="section-heading"><div><p className="eyebrow">Personal Plan · V4.8</p><h2>€7,000 virtual portfolio</h2></div><Badge>Paper only</Badge></div>
+      <p>{d?.state === "PAPER_EXPERIMENTAL_ACTIVE" ? "Autonomous experimental execution active" : d?.state?.replaceAll("_", " ") ?? "Connecting to the paper account"} · One EUR pool shared by the selected strategies.</p>
       <p className="small muted">Execution profile {d?.manifest?.version ?? "unavailable"} · {d?.evidence_category === "SYNTHETIC_ACCEPTANCE" ? "DETERMINISTIC ACCEPTANCE — synthetic fixtures" : "Prospective paper evidence · live Revolut X observations"}. Official €500 and research shadows are separate.</p>
       {view === "overview" && <>
         <div className="kpi-grid">

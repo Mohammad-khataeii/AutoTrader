@@ -66,7 +66,7 @@ def execution_fingerprint() -> str:
     paths = {p for p in EXECUTION_FILES if (ROOT / p).is_file()}
     paths.update(
         str(p.relative_to(ROOT))
-        for folder in ("execution", "persistence", "opportunity")
+        for folder in ("execution", "persistence", "opportunity", "raoe")
         for p in (ROOT / folder).rglob("*.py")
     )
     paths.add("shadow/v45-boundary.json")
@@ -89,6 +89,7 @@ BOUNDARY_FILES += ('opportunity/__init__.py', 'opportunity/regime.py', 'opportun
     'opportunity/runtime.py', 'opportunity/service.py', 'opportunity/discovery.py', 'opportunity/research.py',
     'opportunity/status.py', 'opportunity/sizing.py', 'opportunity/rc1.py', 'opportunity/rc1_economics.py')
 
+BOUNDARY_FILES += tuple('raoe/'+p.name for p in sorted((ROOT/'raoe').glob('*.py')))
 
 def verify_boundary() -> None:
     """Review-pinned bridge closure, separate from immutable V4.2 strategy bytes."""

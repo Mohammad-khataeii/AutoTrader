@@ -35,7 +35,13 @@ from autotrader.shadow.versions import CURRENT_RUNTIME, compatibility, execution
 log = logging.getLogger(__name__)
 D = Decimal
 PRESETS = {s.strategy_id: s for s in (*REGISTRY, *EXPERIMENTAL_REGISTRY, *SUCCESSOR_REGISTRY) if not s.filter_only}
-MAX_EXPERIMENTS = 4
+MAX_EXPERIMENTS = 8
+from autotrader.raoe import IDENTITIES, PARAMETERS, STRATEGY_VERSION
+from autotrader.research.strategies import BULL, StrategySpec
+
+PRESETS.update({identity: StrategySpec(identity, 'Unvalidated regime-adaptive paper hypothesis',
+    ('completed causal observations',), 'structural reaction', 'structural invalidation',
+    'protective stop, targets and time limit', 72, BULL, version=STRATEGY_VERSION) for identity in IDENTITIES})
 
 
 class ShadowLab:
@@ -171,8 +177,8 @@ class ShadowLab:
                         "official_database": url.database,
                         "strategy_id": strategy_id,
                         "strategy_version": spec.version,
-                        "parameters": params.payload(),
-                        "parameter_hash": digest(canonical(params.payload())),
+                        "parameters": PARAMETERS if strategy_id in IDENTITIES else params.payload(),
+                        "parameter_hash": digest(canonical(PARAMETERS if strategy_id in IDENTITIES else params.payload())),
                         "source_fingerprint": source_fingerprint()[0],
                         "execution_fingerprint": execution_fingerprint(),
                         "execution_runtime": CURRENT_RUNTIME,

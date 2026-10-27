@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "study_source_fingerprint": "aae2e1022663186d9c994d90204b85408987786aa4d30c23b266d0d8c6e2bd19",
+  "final_source_fingerprint": "f1b695da05d0ab89948400e0e42c63166b113d286ef2c849205b5b74258f62fc",
+  "changed_after_study": [
+    "api/v48.py"
+  ],
+  "change_scope": "Read-only dashboard lifecycle projection; all strategy, cost, pricing, accounting, exit and simulation bytes unchanged",
+  "research_engine_closure_matches": true
+}

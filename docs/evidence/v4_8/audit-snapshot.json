@@ -1,0 +1,93 @@
+{
+  "status": "PASS",
+  "evidence_category": "READ_ONLY_V471_ARUBA_DIAGNOSTIC_SNAPSHOT",
+  "funding_count": 1,
+  "initial_capital": "7000",
+  "counts": {
+    "orders": 0,
+    "fills": 0,
+    "positions": 0,
+    "trading_decisions": 1662,
+    "financial_journal": 1
+  },
+  "distinct_markets": 14,
+  "decision_window": [
+    "2026-10-27 09:54:14.808082+00:00",
+    "2026-10-27 15:10:29.909014+00:00"
+  ],
+  "strategies": {
+    "A3_COST_AWARE_CONTINUATION": {
+      "evaluations": 554,
+      "technical": 37,
+      "economic": 3,
+      "rejections": {
+        "not_extended": 87,
+        "recovering": 315,
+        "review_benchmark_support": 96,
+        "review_target_within_overhead": 441,
+        "review_target_cost_headroom": 546,
+        "higher_15m_bullish": 257,
+        "pullback_invalidation": 463,
+        "review_stop_above_noise": 153,
+        "review_bullish_continuation": 176,
+        "review_completed_hourly_trend": 357,
+        "entry_not_chased": 60,
+        "nonbearish_trend": 84,
+        "first_target_destroyed_by_execution_costs": 3,
+        "net_reward_risk_below_research_minimum": 34
+      }
+    },
+    "B3_STATEFUL_BREAKOUT": {
+      "evaluations": 554,
+      "technical": 4,
+      "economic": 0,
+      "rejections": {
+        "not_extended": 87,
+        "confirmed_delayed_retest": 537,
+        "review_benchmark_support": 96,
+        "review_target_within_overhead": 441,
+        "review_target_cost_headroom": 554,
+        "review_stop_above_noise": 406,
+        "review_bullish_continuation": 176,
+        "entry_not_chased": 60,
+        "nonbearish_trend": 84,
+        "first_target_destroyed_by_execution_costs": 1,
+        "net_reward_risk_below_research_minimum": 4
+      }
+    },
+    "E3_ADAPTIVE_RELATIVE_STRENGTH": {
+      "evaluations": 554,
+      "technical": 1,
+      "economic": 0,
+      "rejections": {
+        "not_extended": 87,
+        "normalized_outperformance": 479,
+        "persistent_outperformance": 279,
+        "recovering": 315,
+        "relative_demand": 433,
+        "benchmarks_not_adverse": 96,
+        "recent_positive_returns": 313,
+        "review_benchmark_support": 96,
+        "review_target_within_overhead": 441,
+        "review_target_cost_headroom": 554,
+        "positive_local_trend": 189,
+        "review_stop_above_noise": 158,
+        "review_bullish_continuation": 176,
+        "review_completed_hourly_trend": 357,
+        "entry_not_chased": 60,
+        "nonbearish_trend": 84,
+        "synchronized_relative_strength": 15,
+        "net_reward_risk_below_research_minimum": 1
+      }
+    }
+  },
+  "technical_payoff_summary": {
+    "samples": 42,
+    "median_net_reward_risk": "0.564240719549573750560923613",
+    "best_net_reward_risk": "2.018905312301502970363530572",
+    "median_first_target_net_gain": "3.106193858787332000000000051",
+    "median_stop_loss": "5.586324594577989200000000055",
+    "median_roundtrip_cost": "3.020736193602"
+  },
+  "audit_limit": "Later equivalent saved history, not a claim that this is exactly the earlier 14:24:49 archive. All are development observations, never a fresh holdout."
+}

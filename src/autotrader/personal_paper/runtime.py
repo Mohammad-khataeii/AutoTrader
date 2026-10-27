@@ -114,12 +114,16 @@ class PersonalPaperRuntime:
 
         for candidate in prepared:
             for identity, spec in repo.manifest['strategies'].items():
-                engine = SuccessorOpportunityEngine(SuccessorParameters.from_payload(spec['parameters']), D(repo.manifest['fee_bps']), D(repo.manifest['slippage_bps']))
+                from autotrader.raoe import IDENTITIES
+                from autotrader.raoe.engine import RAOEEngine
+                is_raoe = identity in IDENTITIES
+                engine: Any = RAOEEngine(D(repo.manifest['fee_bps']), D(repo.manifest['slippage_bps'])) if is_raoe else SuccessorOpportunityEngine(SuccessorParameters.from_payload(spec['parameters']), D(repo.manifest['fee_bps']), D(repo.manifest['slippage_bps']))
                 signal = engine.evaluate(identity, candidate.features, candidate.market.pair, candidate.market.order_book,
                     context.get('BTC-EUR'), context.get('ETH-EUR'), candidate.market.candles, quote_budget=LIMITS.max_position_size,
+                    **({'benchmarks': {c.features.symbol: c.market.candles for c in prepared}} if is_raoe else {}),
                     sizing_scope='SHARED_7000_ACCOUNT', sizing_context={'cash': D(snapshot['available_cash']),
                         'exposure': D(snapshot['open_exposure'] or 0), 'limits': LIMITS})
-                signal = reviewed_signal(signal, candidate.features)
+                signal = signal if is_raoe else reviewed_signal(signal, candidate.features)
                 ranking(signal, D(committed[identity]))
                 signal.evidence['paper_manifest'] = digest(canonical(repo.manifest))
                 signal.evidence['execution_profile'] = repo.manifest['version']
@@ -131,6 +135,8 @@ class PersonalPaperRuntime:
                     'technical': signal.evidence['technical_eligible'], 'economic': signal.evidence['economic_eligible'],
                     'reasons': signal.evidence['reasons'], 'economics': signal.evidence.get('economics'),
                     'as_of': signal.timestamp.isoformat(), 'execution': 'NOT_ELIGIBLE',
+                    'raoe_regime': signal.evidence.get('raoe_regime'), 'entry_plan': signal.evidence['entry_plan'],
+                    'pipeline': signal.evidence['pipeline'], 'entry_eligible': signal.evidence['entry_eligible'],
                     'quality_policy': signal.evidence['quality_policy'], 'ranking_components': signal.evidence['ranking_components']}
                 all_rows.append(row)
                 ranked.append((candidate, signal, row))
@@ -170,7 +176,13 @@ class PersonalPaperRuntime:
                 'Shared capital rank; unvalidated paper hypothesis; '+(reason or 'eligible_for_locked_financial_admission'))
             if stored and original:
                 decision, signal = restore_decision(stored.payload_json), restore_signal(original.payload_json)
+            if is_raoe_signal := signal.strategy_id.startswith('RAOE_'):
+                from autotrader.raoe.analytics import risk_stage
+                risk_stage(signal.evidence['pipeline'], bool(signal.evidence['entry_eligible']), bool(accepted), reason)
             await repo.store_analysis([signal], None, decision)
+            if is_raoe_signal:
+                from autotrader.raoe.analytics import record_candidate
+                await record_candidate(repo, signal, decision)
             if decision.accepted:
                 result = await self.gateway(repo).execute_entry_decision(market.pair, decision, market.order_book, identity)
                 row['execution'] = result.reason
@@ -197,6 +209,8 @@ class PersonalPaperRuntime:
                 state.payload_json, state.updated_at = _json(payload), utc_now()
             else:
                 session.add(SystemStateModel(key='paper_scan', state='PAPER_EXPERIMENTAL_ACTIVE', reason='shared_strategy_coordinator', payload_json=_json(payload)))
+        from autotrader.raoe.analytics import assess_due
+        await assess_due(repo)
         from autotrader.personal_paper.review import review_once
         await review_once(repo)
         await repo.worker_heartbeat()

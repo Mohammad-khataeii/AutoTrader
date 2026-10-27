@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "f1b695da05d0ab89948400e0e42c63166b113d286ef2c849205b5b74258f62fc",
+  "paper_runtime_fingerprint": "5e6065aff4a26e4340a18e1192edfb2f5b19bb84432907f791380a046de87401",
+  "target_project": "autotrader-aruba-test",
+  "live_authorized": false,
+  "gates": {
+    "backend-tests.json": "e01f2d1408a169956f7b56e4aee4a4b8f95185100d40af1486a1a625b7a69bbd",
+    "linux-tests.json": "38b7434170ef99f4dc8b535aa2b70028698cd2fb7fb991e4c21092708030ab52",
+    "frontend-tests.json": "882373255b24e78fefa5e7e6213049804bf26bd3ba14ceb6ddc5ba73c548aa0f",
+    "browser-tests.json": "ffdb048e43fde7301b5d9375cfdc5fc257358364cfd9d1d52774c7cb1f6753ee",
+    "research-summary.json": "f5e76896fd0d7e69f521119b97d1ce35516a99efe703100a0ad7b83f7273e711",
+    "research-code-proof.json": "da4dfc04221e7768b698fc45010acca8aa2266c609fb73f9e124d0ba17e2cd64",
+    "staging-compose.json": "0d65fb678a4dfa0a8a94d10f3c663587bd608bddfe7d4c099b94d75be79d8821"
+  }
+}

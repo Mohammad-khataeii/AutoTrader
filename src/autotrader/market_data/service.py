@@ -65,6 +65,7 @@ class MarketDataService:
         self._candle_locks:dict[str,asyncio.Lock]={}
         self._protective_books:dict[str,OrderBook]|None=None
         self._discovery_rotation = 0
+        self._discovery_state: dict[str, Any] = {}
 
     @asynccontextmanager
     async def protective_cycle(self) -> AsyncIterator[None]:
@@ -129,6 +130,9 @@ class MarketDataService:
 
     async def discover_pairs(self, quote_assets: tuple[str, ...] = ("EUR",), limit: int = 20) -> list[TradingPair]:
         pairs = await self.client.get_pairs()
+        if quote_assets == ('EUR',) and isinstance(self.client, RevolutXPublicClient):
+            from autotrader.raoe.discovery import discover
+            return await discover(self,pairs,limit)
         eligible = [pair for pair in pairs if pair.quote_asset in quote_assets]
         eligible.sort(key=lambda pair: (quote_assets.index(pair.quote_asset), _asset_priority(pair.base_asset), pair.symbol))
         selected = eligible[:limit]
@@ -155,11 +159,22 @@ class MarketDataService:
             raise MarketDataError(",".join(reasons))
         return book
 
+    async def get_execution_book(self, pair: TradingPair) -> OrderBook:
+        from autotrader.market_data.scheduling import request_priority
+        token=request_priority.set(5)
+        try:
+            book=await self.client.get_order_book(pair.symbol,limit=50)
+            reasons,_=self.validate_order_book(book)
+            if reasons: raise MarketDataError(','.join(reasons))
+            return book
+        finally:
+            request_priority.reset(token)
+
     async def get_validated_market(self, pair: TradingPair) -> ValidatedMarket:
         started = time.perf_counter()
+        candles = await self.completed_candles(pair)
         order_book = await self.client.get_order_book(pair.symbol, limit=50)
         provider_latency_ms = Decimal(str(round((time.perf_counter() - started) * 1000, 3)))
-        candles = await self.completed_candles(pair)
         book_reasons, metrics = self.validate_order_book(order_book, provider_latency_ms)
         candle_reasons = self.validate_candles(candles, self.candle_interval_minutes)
         pair_reasons = self.validate_pair(pair)

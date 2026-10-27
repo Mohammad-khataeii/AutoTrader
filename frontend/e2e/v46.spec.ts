@@ -16,6 +16,7 @@ for (const width of [375, 1440]) {
     await page.route("**/api/strategies/comparison", route => route.fulfill({ json: { status: "NOT_RECORDED", successors: [], research: null } }));
     await signIn(page);
     await page.getByRole("button", { name: "Opportunities", exact: true }).click();
+    await page.getByRole("tab", { name: "Baseline observations", exact: true }).click();
     await expect(page.getByRole("cell", { name: "Cost constrained", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "ETH-EUR A3 Cost-Aware Continuation", exact: true }).click();
     await expect(page.getByRole("paragraph").filter({ hasText: "A bullish pullback qualified technically" })).toBeVisible();

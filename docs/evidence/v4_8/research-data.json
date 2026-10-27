@@ -1,0 +1,23 @@
+{
+  "registration_sha256": "d5b7a77bba2e583e63ef84146f416b76a2739242c933e83726a411e1df9eafcf",
+  "datasets": [
+    {
+      "symbol": "BTC-EUR",
+      "bars": 4318,
+      "sha256": "61ef608082a5d4fe43a904998d6dfa4c961f29cb6587acac39cef604c469c656",
+      "path": ".data/research-v48/BTC-EUR-5m.json.gz"
+    },
+    {
+      "symbol": "ETH-EUR",
+      "bars": 4318,
+      "sha256": "15b5048d46c3b37a9ae0521f314499a7f0d483ef8d18a35754588b943dfa0ac6",
+      "path": ".data/research-v48/ETH-EUR-5m.json.gz"
+    },
+    {
+      "symbol": "SOL-EUR",
+      "bars": 4320,
+      "sha256": "d817a021f011012ae071242967b89f505ce35d03afd2605e6746db4ec59791ba",
+      "path": ".data/research-v48/SOL-EUR-5m.json.gz"
+    }
+  ]
+}

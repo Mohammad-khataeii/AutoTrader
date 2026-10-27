@@ -25,7 +25,7 @@ async def test_archive_paused_or_stopped_accounts_releases_slots_preserving_iden
     lab,
 ):
     records = [
-        await lab.create(str(i), f"Account {i}", "B2_CONFIRMED_COMPRESSION") for i in range(4)
+        await lab.create(str(i), f"Account {i}", "B2_CONFIRMED_COMPRESSION") for i in range(8)
     ]
     original = [r["manifest"] for r in records]
     with pytest.raises(ValueError, match="pause_or_stop"):
@@ -45,8 +45,8 @@ async def test_archive_paused_or_stopped_accounts_releases_slots_preserving_iden
         await lab.control(records[0]["experiment_id"], "resume")
     new = await lab.create("replacement", "New independent account", "A2_CONFIRMED_PULLBACK")
     assert new["experiment_id"] not in [r["experiment_id"] for r in records]
-    assert len(await lab.records()) == 5
-    assert len((await summaries(lab))["experiments"]) == 4
+    assert len(await lab.records()) == 9
+    assert len((await summaries(lab))["experiments"]) == 8
     assert len((await summaries(lab, archived=True))["experiments"]) == 1
     await lab.control(records[1]["experiment_id"], "stop")
     await lab.archive(records[1]["experiment_id"])

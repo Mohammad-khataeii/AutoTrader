@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "project": "autotrader-aruba-test",
+  "postgres_healthcheck": [
+    "CMD-SHELL",
+    "pg_isready -U \"$${POSTGRES_USER:-autotrader}\" -d \"$${POSTGRES_DB:-autotrader}\""
+  ],
+  "live_enabled": false,
+  "private_data_ports": true,
+  "nondefault_database_runtime_healthcheck": "PASS"
+}

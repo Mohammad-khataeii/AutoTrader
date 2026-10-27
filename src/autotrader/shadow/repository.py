@@ -43,6 +43,7 @@ class ShadowTradingRepository(PersistentTradingRepository):
         ):
             raise ValueError("shadow_manifest_scope_mismatch")
         self.scope = scope
+        self.manifest = scope.manifest
         super().__init__(session_factory)
 
     @property
@@ -92,6 +93,12 @@ class ShadowTradingRepository(PersistentTradingRepository):
         if not evidence.get("entry_eligible") or evidence.get("veto"):
             return "shadow_entry_ineligible"
         return None
+
+    async def position_exit_reason(self, position_id: str, symbol: str, as_of: Any) -> str | None:
+        if self.scope.manifest['strategy_version']=='4.8.0-raoe.1':
+            from autotrader.personal_paper.repository import PersonalPaperRepository
+            return await PersonalPaperRepository.position_exit_reason(self, position_id, symbol, as_of)  # type: ignore[arg-type]
+        return await super().position_exit_reason(position_id,symbol,as_of)
 
     async def claim_candle(self, symbol: str, stamp: str) -> bool:
         key = "shadow_candle:" + symbol

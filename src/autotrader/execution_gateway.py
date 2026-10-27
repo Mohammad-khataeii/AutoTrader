@@ -98,6 +98,13 @@ class PaperExecutionGateway:
         reconciliation = await self.repository.reconcile_runtime_health(self.initial_cash)
         if reconciliation:
             return ExecutionResult(False, f"reconciliation_required:{','.join(reconciliation)}")
+        from autotrader.market_data.revolut import RevolutXPublicClient
+        if isinstance(getattr(self.market_data,'client',None),RevolutXPublicClient):
+            from autotrader.market_data.revolut import MarketDataError
+            try:
+                order_book = await self.market_data.get_execution_book(pair)
+            except MarketDataError as exc:
+                return ExecutionResult(False,'execution_book_unavailable:'+str(exc))
         reasons, _ = self.market_data.validate_order_book(order_book)
         if reasons:
             return ExecutionResult(False, ",".join(reasons))

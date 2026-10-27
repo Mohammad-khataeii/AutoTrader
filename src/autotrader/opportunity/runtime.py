@@ -52,7 +52,9 @@ async def scan_successor(runtime: Any, repo: Any, manifest: dict[str, Any], cand
             last_price=market.metrics.mid, liquidity_quote=market.metrics.liquidity_quote, order_book_age_seconds=market.metrics.age_seconds)
         prepared.append(replace(candidate, features=features))
     context = {c.features.symbol: c.features for c in prepared}
-    engine = SuccessorOpportunityEngine(SuccessorParameters.from_payload(manifest['parameters']),
+    from autotrader.raoe.engine import RAOEEngine
+    is_raoe = manifest['strategy_version']=='4.8.0-raoe.1'
+    engine: Any = RAOEEngine(D(manifest['fee_bps']),D(manifest['slippage_bps'])) if is_raoe else SuccessorOpportunityEngine(SuccessorParameters.from_payload(manifest['parameters']),
         D(manifest['fee_bps']), D(manifest['slippage_bps']))
     completed_decisions = []
     for candidate in prepared:
@@ -70,6 +72,7 @@ async def scan_successor(runtime: Any, repo: Any, manifest: dict[str, Any], cand
         portfolio.positions = {p.symbol: p for p in await repo.list_positions() if p.closed_at is None and p.quantity > 0}
         signal = engine.evaluate(manifest['strategy_id'], f, market.pair, market.order_book,
             context.get('BTC-EUR'), context.get('ETH-EUR'), market.candles,
+            **({'benchmarks': {c.features.symbol: c.market.candles for c in prepared}} if is_raoe else {}),
             sizing_scope='ACCOUNT_CONSTRAINED_PROPOSAL',
             sizing_context={'cash': portfolio.cash, 'exposure': portfolio.open_exposure, 'limits': runtime.risk.limits})
         identity = 'dec_' + digest((manifest['experiment_id'] + ':' + signal.signal_id).encode())[:40]
@@ -82,7 +85,7 @@ async def scan_successor(runtime: Any, repo: Any, manifest: dict[str, Any], cand
             decision, signal = restore_decision(stored.payload_json), restore_signal(original.payload_json)
         else:
             decision = replace(DecisionEngine(runtime.risk).decide(market.pair, f, [signal], portfolio, None), decision_id=identity)
-            signal.evidence['pipeline'][-2] = {'stage': 'PORTFOLIO_RISK', 'reached': signal.evidence['entry_eligible'],
+            signal.evidence['pipeline'][6 if is_raoe else -2] = {'stage': 'PORTFOLIO_RISK', 'reached': signal.evidence['entry_eligible'],
                 'passed': decision.accepted if signal.evidence['entry_eligible'] else None, 'reason': decision.rejected_reason or 'risk_checks_passed'}
         await repo.store_market_analysis(market.candles, f, market.order_book)
         await repo.store_analysis([signal], None, decision)

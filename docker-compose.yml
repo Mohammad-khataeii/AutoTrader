@@ -124,7 +124,7 @@ services:
     cpus: 1.0
     mem_limit: 512m
     healthcheck:
-      test: [CMD-SHELL, pg_isready -U autotrader]
+      test: ["CMD-SHELL", 'pg_isready -U "$${POSTGRES_USER:-autotrader}" -d "$${POSTGRES_DB:-autotrader}"']
       interval: 5s
       timeout: 5s
       retries: 10

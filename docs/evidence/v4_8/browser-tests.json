@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "passed": 11,
+  "failed": 0,
+  "viewports": [
+    375,
+    1440
+  ],
+  "evidence_category": "SYNTHETIC_UI_ACCEPTANCE",
+  "private_staging_browser_verification": "REQUIRED_AFTER_ACTIVATION"
+}

@@ -110,7 +110,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
               ))}
             </div>
           </details>
-          <p className="build-label">Interface 4.7.1 · Simulated Mode</p>
+          <p className="build-label">Interface 4.8.0 · Simulated Mode</p>
         </div>
       </aside>
       <main id="workspace" className="workspace">
