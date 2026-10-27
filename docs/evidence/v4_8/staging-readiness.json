@@ -8,10 +8,11 @@
     "backend-tests.json": "e01f2d1408a169956f7b56e4aee4a4b8f95185100d40af1486a1a625b7a69bbd",
     "linux-tests.json": "38b7434170ef99f4dc8b535aa2b70028698cd2fb7fb991e4c21092708030ab52",
     "frontend-tests.json": "882373255b24e78fefa5e7e6213049804bf26bd3ba14ceb6ddc5ba73c548aa0f",
-    "browser-tests.json": "ffdb048e43fde7301b5d9375cfdc5fc257358364cfd9d1d52774c7cb1f6753ee",
+    "browser-tests.json": "a81b97eab7d129ae78189706377d5f3d9f796169558a28baae98cff1c3f37646",
     "research-summary.json": "f5e76896fd0d7e69f521119b97d1ce35516a99efe703100a0ad7b83f7273e711",
     "research-code-proof.json": "da4dfc04221e7768b698fc45010acca8aa2266c609fb73f9e124d0ba17e2cd64",
     "staging-compose.json": "0d65fb678a4dfa0a8a94d10f3c663587bd608bddfe7d4c099b94d75be79d8821",
-    "staging-correction.json": "0fd12ffd16cbca55cc3bb5f67030039c5785ce1fca8b3d26bccefcdf07ff6e8a"
+    "staging-correction.json": "0fd12ffd16cbca55cc3bb5f67030039c5785ce1fca8b3d26bccefcdf07ff6e8a",
+    "mobile-layout-correction.json": "c354bee699ec70e143ab59c8636363f1dde8d538a04d88af41d40eeab3ce16d9"
   }
 }

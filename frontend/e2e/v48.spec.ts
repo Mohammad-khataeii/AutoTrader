@@ -1,6 +1,35 @@
 import { expect, test } from '@playwright/test';
 import { mockApi, signIn } from './fixtures/v43';
 
+for (const width of [320, 375, 390, 1440]) {
+  test(`Strategy workspace tabs stay reachable without page overflow at ${width}px`, async ({page}) => {
+    await mockApi(page);
+    await page.setViewportSize({width,height:1000});
+    const strategies=['B2_CONFIRMED_COMPRESSION','C2_LIQUIDITY_RETEST',
+      'A3_COST_AWARE_CONTINUATION','B3_STATEFUL_BREAKOUT','E3_ADAPTIVE_RELATIVE_STRENGTH',
+      'RAOE_EARLY_RECOVERY','RAOE_TREND_PULLBACK','RAOE_BREAKOUT_RETEST'];
+    await page.route('**/api/intelligence/competition',route=>route.fulfill({json:{
+      experiments:strategies.map((strategy_id,i)=>({experiment_id:`synthetic-${i}`,strategy_id,
+        version:i<2?'4.2.0-experimental.1':'4.8.0-raoe.1',evidence_category:'SYNTHETIC_ACCEPTANCE',
+        portfolio:{realized_pnl:'0',unrealized_pnl:'0'},performance:{closed_trades:0,fees:'0',max_drawdown:'0'}}))
+    }}));
+    await signIn(page);
+    await page.getByRole('button',{name:'Strategies',exact:true}).click();
+    await expect(page.getByRole('table',{name:'Prospective strategy competition'}).locator('tbody tr')).toHaveCount(8);
+    const tabs=page.getByRole('tablist',{name:'Strategy workspace'});
+    for (const name of ['Strategy Competition','Accounts','Research comparison']) {
+      const tab=tabs.getByRole('tab',{name,exact:true});
+      await expect(tab).toBeVisible();
+      const bounds=await tab.boundingBox();
+      expect(bounds).not.toBeNull();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(width);
+    }
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    await page.screenshot({path:`${process.env.AUTOTRADER_BROWSER_EVIDENCE}/strategy-tabs-${width}.png`,fullPage:true});
+  });
+}
+
 for (const width of [375, 1440]) {
   test(`RAOE radar, uncertainty and prospective review at ${width}px`, async ({page}) => {
     await mockApi(page);

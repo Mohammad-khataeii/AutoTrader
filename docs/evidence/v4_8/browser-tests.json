@@ -1,11 +1,16 @@
 {
   "status": "PASS",
-  "passed": 11,
+  "passed": 15,
   "failed": 0,
   "viewports": [
+    320,
     375,
+    390,
     1440
   ],
   "evidence_category": "SYNTHETIC_UI_ACCEPTANCE",
-  "private_staging_browser_verification": "REQUIRED_AFTER_ACTIVATION"
+  "production_nginx_bundle": true,
+  "deployment_matching_chromium_and_fonts": true,
+  "private_staging_browser_verification": "REQUIRED_AFTER_ACTIVATION",
+  "regression": "Strategy workspace tab overflow reproduced before fix at320/375/390px; resolved with wrapping"
 }

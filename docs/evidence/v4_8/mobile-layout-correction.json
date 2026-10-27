@@ -1,0 +1,50 @@
+{
+  "status": "PASS",
+  "change_scope": "Two CSS rules enable wrapping and allow the segmented tab group to shrink; test config and viewport regression coverage added",
+  "application_source_fingerprint": "f1b695da05d0ab89948400e0e42c63166b113d286ef2c849205b5b74258f62fc",
+  "paper_runtime_fingerprint": "5e6065aff4a26e4340a18e1192edfb2f5b19bb84432907f791380a046de87401",
+  "application_modules_unchanged": 268,
+  "live_failed_candidate": "4b9c68862ef7d697f973614bd529362daf43b74e",
+  "live_failure": "Strategies page document width397 at viewport375; no JavaScript errors or financial mutations",
+  "live_response": "Entries paused; verified V4.8 protection retained; no financial rewind",
+  "production_bundle_native_browser": {
+    "passed": 15,
+    "failed": 0,
+    "chromium": "/usr/bin/chromium-browser",
+    "fonts": "Noto",
+    "server": "Production Nginx image; isolated mocked API",
+    "viewports": [
+      320,
+      375,
+      390,
+      1440
+    ]
+  },
+  "before_fix_regression": {
+    "failed_viewports": [
+      320,
+      375,
+      390
+    ],
+    "passed_viewports": [
+      1440
+    ]
+  },
+  "frontend_build": "PASS",
+  "typescript": "PASS",
+  "frontend_unit_tests": 19,
+  "tested_frontend_assets": {
+    "50x.html": "876766b4e80133fd490603e073d3567425b88794828a9292104244c9e40875ed",
+    "index.html": "91076cfd6bb657e4326241a90e9c7011c07940f17876a6c63876a9e1a16b03ca",
+    "assets/index-4gyjx7ss.js": "aefc425260ade5812ae417ac9b0ac5973c0bd68bfec5b7a1a32d55e09f656677",
+    "assets/Trades-CiEZvIMn.js": "1edebee9373cce9bd4bd49b4dc9243d71fec1aefbc97a5f0f8be619d4ed620a3",
+    "assets/index-VJJeH6Dh.css": "df5af3229ee41bd654e096cbe8a37ddfe53b89b81fd9f4d84beb9bfcc85a820c",
+    "assets/TradeGates-1b7PkARm.js": "bc71ff73dc82373d23a22c96ee076e65dfe7aa243eb246cad4b58e86d5197b04",
+    "assets/Research-BYczMNvn.js": "3e7f34ae039332a71ea22f0596a29496914fba56965e36d22fd61cb2e9764113",
+    "assets/Chart-DfpgyYZI.js": "9d5862cae88eefd7a08982b7e12b1661ae6ed0b93b5d81ee53a3cfdb710b66cf",
+    "assets/advanced-DYXWfXrT.js": "cd2483a8a8590f9d5b82ae201d8138cb69a93e548d222824b13984475326d4e0",
+    "assets/AreaChart-CaBvH5TF.js": "760ec5744ec47c66d1eeb8dc845b40225266b2ca5f7c015fb18fd5e7fa028999",
+    "assets/Opportunities-DSuygmw3.js": "f947a27948c77c139d3da0f6ff187d750b8e67499f2ec8cd24d64557708fabb0"
+  },
+  "activation_status": "LOCAL_CORRECTION_NOT_DEPLOYED_SEPARATE_APPROVAL_REQUIRED"
+}

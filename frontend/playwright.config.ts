@@ -3,11 +3,15 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "./e2e",
   workers: 1,
+  outputDir: process.env.AUTOTRADER_BROWSER_OUTPUT ?? "test-results",
   use: {
     baseURL: process.env.AUTOTRADER_BROWSER_URL ?? "http://127.0.0.1:13044",
     headless: true,
     trace: "off",
     screenshot: "only-on-failure",
+    launchOptions: {
+      executablePath: process.env.AUTOTRADER_BROWSER_EXECUTABLE || undefined,
+    },
   },
   reporter: [
     ["list"],

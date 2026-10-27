@@ -765,6 +765,8 @@ tr:last-child td {
 }
 .segmented {
   display: inline-flex;
+  flex-wrap: wrap;
+  min-width: 0;
   gap: 3px;
   padding: 4px;
   border-radius: 8px;
