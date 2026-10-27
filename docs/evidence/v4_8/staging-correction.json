@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "change_scope": "Deployment orchestration, tests and release documentation only; application source and execution fingerprint unchanged",
+  "source_fingerprint": "f1b695da05d0ab89948400e0e42c63166b113d286ef2c849205b5b74258f62fc",
+  "runtime_fingerprint": "5e6065aff4a26e4340a18e1192edfb2f5b19bb84432907f791380a046de87401",
+  "tests": {
+    "local": {
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "linux_amd64": {
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "lint": "PASS",
+  "embedded_operator_programs_compile": true,
+  "regression": "Two retained incompatible flat/paused historical ledgers alongside six exact compatible V4.8 ledgers",
+  "safety_guards": [
+    "All retained ledgers flat and paused before maintenance",
+    "Retained unknown runtimes never resumed",
+    "Exact six V4.8 identities and runtimes required",
+    "All-ledger backup and isolated restore before any new entries",
+    "Fresh observations/protection before resume",
+    "Image recovery refuses pending orders and reservations"
+  ],
+  "failed_candidate": "1c4aab10bb936a66aa0e7769ee1c19ac13c6e317",
+  "failed_activation": "forward_experiment_integrity_failed",
+  "financial_recovery": {
+    "registered_databases": 10,
+    "isolated_restore": "PASS",
+    "financial_table_seals_per_database": 19,
+    "funding_count_each": 1,
+    "financial_rewind": false,
+    "offsite_dump_hashes": "MATCH",
+    "primary_cash_eur": "7003.532190559225",
+    "primary_fills": 4
+  },
+  "activation_status": "CORRECTION_NOT_DEPLOYED_SEPARATE_APPROVAL_REQUIRED"
+}

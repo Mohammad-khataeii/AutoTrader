@@ -18,6 +18,7 @@ import sys
 import time
 import urllib.request
 from datetime import UTC, datetime
+from decimal import Decimal
 from pathlib import Path
 
 from release import verify_source_release
@@ -137,11 +138,94 @@ async def main():
   for identity in [*[x.strategy_id for x in SUCCESSOR_REGISTRY],*IDENTITIES]:
    record=await lab.create('v48-forward-1-'+identity,'V4.8 forward comparison '+identity,identity)
    assert record['reconciliation']==[] and record['manifest']['data_kind']=='LIVE_MARKET_SHADOW'
+   await lab.control(record['experiment_id'],'pause')
    result.append({'experiment_id':record['experiment_id'],'strategy_id':identity,'account_id':record['account_id'],'initial_cash':'500'})
   print(json.dumps({'status':'PASS','independent_ledgers':result,'primary_funding_created':False}))
  finally:await lab.close();await e.dispose()
 asyncio.run(main())
 '''
+
+LEDGER_INVENTORY='''import asyncio,json
+from decimal import Decimal
+from autotrader.config import get_settings
+from autotrader.persistence.database import make_engine,make_session_factory
+from autotrader.persistence.repository import PersistentTradingRepository
+from autotrader.shadow.lab import ShadowLab
+from autotrader.shadow.versions import compatibility
+async def main():
+ s=get_settings();assert s.environment=='staging' and not s.live_trading_enabled
+ e=make_engine(s);lab=ShadowLab(PersistentTradingRepository(make_session_factory(e)),s)
+ try:
+  rows=[]
+  for record in await lab.records():
+   assert record['state']!='CREATING','incomplete_retained_shadow'
+   repo=await lab.repository(record['experiment_id'])
+   rows.append({'experiment_id':record['experiment_id'],'strategy_id':record['manifest']['strategy_id'],
+    'portfolio':await repo.snapshot(),'runtime_compatibility':compatibility(record['manifest']),
+    'reconciliation':await repo.verify_invariants(Decimal(500))})
+  print(json.dumps(rows))
+ finally:await lab.close();await e.dispose()
+asyncio.run(main())
+'''
+
+SHADOW_RESUME='''import asyncio,json,sys
+from autotrader.config import get_settings
+from autotrader.persistence.database import make_engine,make_session_factory
+from autotrader.persistence.repository import PersistentTradingRepository
+from autotrader.shadow.lab import ShadowLab
+from autotrader.shadow.versions import compatibility
+from autotrader.raoe import IDENTITIES
+from autotrader.opportunity.engine import SUCCESSOR_REGISTRY
+async def main():
+ s=get_settings();assert s.environment=='staging' and not s.live_trading_enabled
+ selected=json.loads(sys.argv[1]);assert len(selected)==6
+ assert set(selected.values())=={*[x.strategy_id for x in SUCCESSOR_REGISTRY],*IDENTITIES}
+ e=make_engine(s);lab=ShadowLab(PersistentTradingRepository(make_session_factory(e)),s)
+ try:
+  records={r['experiment_id']:r for r in await lab.records()}
+  for identity,strategy in selected.items():
+   record=records[identity]
+   assert record['manifest']['strategy_id']==strategy
+   assert record['name']=='V4.8 forward comparison '+strategy
+   assert compatibility(record['manifest'])['compatible']
+  for identity in selected:await lab.control(identity,'resume')
+  print(json.dumps({'status':'PASS','resumed_experiment_ids':list(selected)}))
+ finally:await lab.close();await e.dispose()
+asyncio.run(main())
+'''
+
+
+def flat_portfolio(portfolio: dict) -> bool:
+    """Unknown exposure is never eligible for image recovery or quarantine."""
+    return all(Decimal(str(portfolio[key])) == 0
+               for key in ('positions', 'pending_orders', 'reserved_cash'))
+
+
+def validate_ledgers(rows: list[dict], selected: dict[str, str], *, running: bool=False,
+                     maintenance: bool=False) -> dict:
+    """Retain old frozen identities without authorizing them on a new runtime."""
+    identities=[r['experiment_id'] for r in rows]
+    if len(set(identities))!=len(identities) or not set(selected).issubset(identities):
+        raise ValueError('forward_experiment_identity_missing_or_duplicate')
+    quarantined=[]
+    for row in rows:
+        identity=row['experiment_id'];portfolio=row['portfolio']
+        if row.get('reconciliation')!=[]:
+            raise ValueError('forward_experiment_reconciliation_failed:'+identity)
+        if maintenance and (portfolio['control'] not in {'PAUSED','STOPPED'} or not flat_portfolio(portfolio)):
+            raise ValueError('maintenance_requires_all_retained_ledgers_flat_paused:'+identity)
+        compatible=row.get('runtime_compatibility',{}).get('compatible') is True
+        if identity in selected:
+            if row['strategy_id']!=selected[identity] or not compatible:
+                raise ValueError('selected_forward_runtime_or_identity_failed:'+identity)
+            if running and portfolio['control']!='RUNNING':
+                raise ValueError('selected_forward_experiment_not_running:'+identity)
+        elif not compatible:
+            if portfolio['control'] not in {'PAUSED','STOPPED'} or not flat_portfolio(portfolio):
+                raise ValueError('retained_unknown_runtime_requires_flat_paused_account:'+identity)
+            quarantined.append(identity)
+    return {'status':'PASS','selected_experiments':len(selected),
+            'retained_incompatible_paused':quarantined,'registered_experiments':len(rows)}
 
 
 def save(path: Path, value: dict) -> None:
@@ -188,7 +272,7 @@ def main() -> None:
     manifest=json.loads((ROOT/'release-manifest.json').read_text())
     if not manifest['version'].startswith('4.8.'):raise ValueError('V48_staging_only')
     readiness=json.loads((ROOT/'docs/evidence/v4_8/staging-readiness.json').read_text())
-    required={'backend-tests.json','frontend-tests.json','browser-tests.json','linux-tests.json','research-summary.json'}
+    required={'backend-tests.json','frontend-tests.json','browser-tests.json','linux-tests.json','research-summary.json','staging-correction.json'}
     if readiness.get('status')!='PASS' or readiness.get('source_fingerprint')!=manifest['source_fingerprint'] or not required.issubset(readiness.get('gates',{})):
         raise ValueError('staging_verification_gates_incomplete')
     for name,digest in readiness['gates'].items():
@@ -244,17 +328,19 @@ def main() -> None:
         paused=api('/api/personal-paper')
     before=paused
     save(directory/'financial-paused-flat.json',{'portfolio':before['portfolio'],'performance':before['performance'],'manifest':before['manifest']})
-    print(json.dumps({'phase':'FLAT_ACCOUNT_BACKUP_AND_RESTORE_REHEARSAL'}),flush=True)
-    backup=json.loads(run([sys.executable,str(ROOT/'deploy/staging_backup.py'),'--restore-test','--candidate-image',images['app'],'--rehearse-profile']))
-    if not backup.get('restore_test') or backup.get('candidate_profile_rehearsal',{}).get('status')!='PASS':
-        raise ValueError('backup_restore_or_candidate_rehearsal_failed')
-    save(directory/'backup-restore.json',backup)
     old_wrapper=(BASE/'ops/compose').read_text();(directory/'previous-compose').write_text(old_wrapper)
     overrides=directory/'images.json'
     save(overrides,{'services':{s:{'image':images['frontend' if s=='frontend' else 'app']} for s in (*CORE,'migrate','research-init')}})
     command=['docker','compose','--project-directory',str(ROOT),'-p',PROJECT,'--profile','research','--env-file',str(BASE/'config/.env.staging'),
         '-f',str(ROOT/'docker-compose.yml'),'-f',str(BASE/'config/compose.staging.yml'),'-f',str(overrides)]
     check_config(command)
+    retained=json.loads(run([*command,'run','--rm','--no-deps','backend','python','-c',LEDGER_INVENTORY]))
+    save(directory/'retained-ledger-preflight.json',validate_ledgers(retained,{},maintenance=True))
+    print(json.dumps({'phase':'FLAT_ACCOUNT_BACKUP_AND_RESTORE_REHEARSAL'}),flush=True)
+    backup=json.loads(run([sys.executable,str(ROOT/'deploy/staging_backup.py'),'--restore-test','--candidate-image',images['app'],'--rehearse-profile']))
+    if not backup.get('restore_test') or backup.get('candidate_profile_rehearsal',{}).get('status')!='PASS':
+        raise ValueError('backup_restore_or_candidate_rehearsal_failed')
+    save(directory/'backup-restore.json',backup)
     try:
         dc('stop','worker','research-worker','backend')
         # The same PostgreSQL image/volume is retained. Recreate only to apply
@@ -263,15 +349,29 @@ def main() -> None:
         run([*command,'run','--rm','--no-deps','backend','python','-c',CONTROL,'revision',hashlib.sha256(json.dumps(before['manifest'],sort_keys=True,separators=(',',':'),allow_nan=False).encode()).hexdigest()])
         wrapper='#!/bin/sh\nexec '+shlex.join(command)+' "$@"\n'
         temporary=BASE/'ops/compose.v48.tmp';temporary.write_text(wrapper);temporary.chmod(0o700);os.replace(temporary,BASE/'ops/compose')
-        run([*command,'up','-d','--wait','--no-build','--no-deps',*CORE])
+        # Every retained ledger is flat and paused. Keep the worker stopped
+        # until all new ledgers are paused and their restore proof passes.
+        run([*command,'up','-d','--wait','--no-build','--no-deps',*[s for s in CORE if s!='worker']])
         current=inventory()
         for service in ('postgres','redis'):
             if current['services'][service]['image']!=previous['services'][service]['image']:
                 raise ValueError('retained_database_or_cache_image_changed')
             if current['services'][service]['volumes']!=previous['services'][service]['volumes']:
                 raise ValueError('financial_volume_identity_changed')
-        # Give the new loop time to write genuine observation/protection
-        # evidence. Caller sees output; no activation based on synthetic data.
+        shadows=json.loads(dc('exec','-T','backend','python','-c',SHADOWS));save(directory/'shadow-provisioning.json',shadows)
+        selected={r['experiment_id']:r['strategy_id'] for r in shadows['independent_ledgers']}
+        if len(selected)!=6 or len(set(selected.values()))!=6:raise ValueError('six_distinct_forward_experiments_required')
+        competition=api('/api/intelligence/competition')
+        save(directory/'forward-ledger-validation.json',validate_ledgers(competition['experiments'],selected,maintenance=True))
+        # Scheduled backups must cover the new separate ledgers as well.
+        backup_wrapper="import runpy\nrunpy.run_path("+repr(str(ROOT/'deploy/staging_backup.py'))+",run_name='__main__')\n"
+        (BASE/'ops/backup.py').write_text(backup_wrapper);(BASE/'ops/backup.py').chmod(0o600)
+        after_backup=json.loads(run([sys.executable,str(ROOT/'deploy/staging_backup.py'),'--restore-test','--candidate-image',images['app']]))
+        if not after_backup.get('restore_test') or after_backup.get('restore',{}).get('status')!='PASS':
+            raise ValueError('all_ledger_backup_restore_required_before_resume')
+        save(directory/'all-ledger-backup-restore.json',after_backup)
+        run([*command,'up','-d','--wait','--no-build','--no-deps','worker'])
+        # Wait for genuine new-loop protection and observation evidence.
         for attempt in range(30):
             try:
                 verified=verify_runtime(args.commit,manifest,images)
@@ -279,18 +379,12 @@ def main() -> None:
             except (ValueError,urllib.error.URLError):
                 if attempt==29:raise
                 time.sleep(5)
-        shadows=json.loads(dc('exec','-T','backend','python','-c',SHADOWS));save(directory/'shadow-provisioning.json',shadows)
-        competition=api('/api/intelligence/competition')
-        if len(competition['experiments'])<6 or any(r['reconciliation'] or not r['runtime_compatibility']['compatible'] for r in competition['experiments']):
-            raise ValueError('forward_experiment_integrity_failed')
+        resumed=json.loads(dc('exec','-T','backend','python','-c',SHADOW_RESUME,json.dumps(selected)))
+        save(directory/'forward-ledger-resume.json',resumed)
+        save(directory/'forward-ledger-running.json',validate_ledgers(api('/api/intelligence/competition')['experiments'],selected,running=True))
         dc('exec','-T','backend','python','-c',CONTROL,'resume')
         verified=verify_runtime(args.commit,manifest,images,running=True)
         save(directory/'verification.json',verified)
-        # Scheduled backups must cover the new separate ledgers as well.
-        backup_wrapper="import runpy\nrunpy.run_path("+repr(str(ROOT/'deploy/staging_backup.py'))+",run_name='__main__')\n"
-        (BASE/'ops/backup.py').write_text(backup_wrapper);(BASE/'ops/backup.py').chmod(0o600)
-        after_backup=json.loads(run([sys.executable,str(ROOT/'deploy/staging_backup.py'),'--restore-test','--candidate-image',images['app']]))
-        save(directory/'all-ledger-backup-restore.json',after_backup)
         print(json.dumps(verified,indent=2))
     except Exception:
         # Do not blindly roll financial data backward. Keep diagnostics and
@@ -305,7 +399,7 @@ def main() -> None:
         # Unknown/open shadow exposure retains the candidate protection loop.
         try:
             paper=api('/api/personal-paper');competition=api('/api/intelligence/competition')
-            flat=not paper['performance']['open_positions'] and not any(int(r['portfolio']['positions']) for r in competition['experiments'])
+            flat=flat_portfolio(paper['portfolio']) and all(flat_portfolio(r['portfolio']) for r in competition['experiments'])
         except Exception:
             flat=False
         if flat:

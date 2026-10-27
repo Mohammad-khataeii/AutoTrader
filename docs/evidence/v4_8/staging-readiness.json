@@ -11,6 +11,7 @@
     "browser-tests.json": "ffdb048e43fde7301b5d9375cfdc5fc257358364cfd9d1d52774c7cb1f6753ee",
     "research-summary.json": "f5e76896fd0d7e69f521119b97d1ce35516a99efe703100a0ad7b83f7273e711",
     "research-code-proof.json": "da4dfc04221e7768b698fc45010acca8aa2266c609fb73f9e124d0ba17e2cd64",
-    "staging-compose.json": "0d65fb678a4dfa0a8a94d10f3c663587bd608bddfe7d4c099b94d75be79d8821"
+    "staging-compose.json": "0d65fb678a4dfa0a8a94d10f3c663587bd608bddfe7d4c099b94d75be79d8821",
+    "staging-correction.json": "0fd12ffd16cbca55cc3bb5f67030039c5785ce1fca8b3d26bccefcdf07ff6e8a"
   }
 }
