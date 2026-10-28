@@ -12,7 +12,7 @@ from autotrader.persistence.models import MarketFeature, OrderModel, SystemState
 from autotrader.personal_paper.exits import assess_exit
 from autotrader.personal_paper.runtime import PersonalPaperRuntime
 from autotrader.personal_paper.selection import ranking, reviewed_signal
-from test_v47_paper import candidates_for, successor_frame
+from test_v47_paper import candidates_for, isolate_original_baselines, successor_frame
 from test_v47_paper import paper as paper_fixture
 
 paper = paper_fixture
@@ -57,7 +57,8 @@ def test_invalid_discretionary_context_cannot_close(fault):
     assert assess_exit(strategy,now-timedelta(hours=1),{},candles,now)['reason'] is None
 
 
-async def test_unrelated_bearish_feature_cannot_close_a3_and_stop_still_wins(paper,tmp_path):
+async def test_unrelated_bearish_feature_cannot_close_a3_and_stop_still_wins(paper,tmp_path,monkeypatch):
+    isolate_original_baselines(monkeypatch)
     service,repo=paper
     market,candidates=await candidates_for(tmp_path/'irrelevant.json',successor_frame('A3_COST_AWARE_CONTINUATION'))
     runtime=PersonalPaperRuntime(service,market,'v471-regression')
@@ -126,6 +127,8 @@ async def test_quality_and_ranking_economics_dominate_activity(paper,tmp_path):
         from autotrader.research.data import canonical, digest
         good.evidence['paper_manifest']=digest(canonical(repo.manifest))
         async with repo.session_factory() as session:
+            assert await repo._entry_policy_error(session,good.strategy_id,good.evidence,D(10),D(8))=='paper_exit_policy_not_authorized_for_manifest'
+            good.evidence['exit_policy']=repo.manifest['strategies'][good.strategy_id]['exit_policy']
             assert await repo._entry_policy_error(session,good.strategy_id,good.evidence,D(10),D(8)) is None
             forged={**good.evidence,'quality_policy':{'version':good.evidence['quality_policy']['version'],'gates':{'review_benchmark_support':True}}}
             assert await repo._entry_policy_error(session,good.strategy_id,forged,D(10),D(8))=='paper_quality_policy_required'

@@ -90,12 +90,14 @@ class ShadowTradingRepository(PersistentTradingRepository):
             return "shadow_frozen_strategy_mismatch"
         if str(fee) != m["fee_bps"] or str(slip) != m["slippage_bps"]:
             return "shadow_frozen_cost_mismatch"
+        if m.get("exit_policy") and evidence.get("exit_policy")!=m["exit_policy"]:
+            return "shadow_frozen_exit_policy_mismatch"
         if not evidence.get("entry_eligible") or evidence.get("veto"):
             return "shadow_entry_ineligible"
         return None
 
     async def position_exit_reason(self, position_id: str, symbol: str, as_of: Any) -> str | None:
-        if self.scope.manifest['strategy_version']=='4.8.0-raoe.1':
+        if self.scope.manifest['strategy_version'] in {'4.8.0-raoe.1','4.9.0-raoe.1'}:
             from autotrader.personal_paper.repository import PersonalPaperRepository
             return await PersonalPaperRepository.position_exit_reason(self, position_id, symbol, as_of)  # type: ignore[arg-type]
         return await super().position_exit_reason(position_id,symbol,as_of)

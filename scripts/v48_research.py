@@ -5,12 +5,15 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 
+from autotrader import __version__
 from autotrader.raoe.research import simulate
 from autotrader.research.artifacts import source_fingerprint
 from autotrader.research.data import HistoricalBar, canonical, digest
 
 
 def main():
+    if not __version__.startswith('4.8.'):
+        raise RuntimeError('V4.8 evidence is immutable under V4.9 source; replay its exact historical release instead. Use the V4.9 research scripts for this release.')
     out=Path('docs/evidence/v4_8')
     registration=json.loads((out/'research-registration.json').read_text())
     datasets=json.loads((out/'research-data.json').read_text())

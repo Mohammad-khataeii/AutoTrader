@@ -6,6 +6,7 @@ from dataclasses import asdict
 from datetime import UTC, datetime
 from pathlib import Path
 
+from autotrader import __version__
 from autotrader.raoe import IDENTITIES, PARAMETERS
 from autotrader.research.data import CoinbaseHistory, canonical, digest
 
@@ -31,6 +32,8 @@ REGISTRATION={'schema':'raoe-fixed-study/1','registered_at':datetime.now(UTC).is
 
 
 async def main():
+    if not __version__.startswith('4.8.'):
+        raise RuntimeError('V4.8 evidence is immutable under V4.9 source; replay its exact historical release instead. Use the V4.9 research scripts for this release.')
     OUT.mkdir(exist_ok=True,parents=True);ROOT.mkdir(exist_ok=True,parents=True)
     path=OUT/'research-registration.json'
     if path.exists():

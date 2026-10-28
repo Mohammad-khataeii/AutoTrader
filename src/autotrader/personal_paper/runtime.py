@@ -62,6 +62,8 @@ class PersonalPaperRuntime:
         if repo.manifest['runtime_fingerprint'] != fingerprint():
             await repo.operation_state('ENTRY_SUSPENDED', 'paper_frozen_runtime_changed_new_experiment_required')
             return
+        from autotrader.market_data.synchronization import align_candidate, benchmark_features
+        cycle = await self.market.evaluation_context(candidates)
         prepared, failures = [], []
         # A held coin can leave the scanner shortlist. Refresh its closed
         # candles in the scan task; five-second protective monitoring never
@@ -80,6 +82,12 @@ class PersonalPaperRuntime:
                 except MarketDataError as exc:
                     failures.append({'symbol': position.symbol, 'reason': 'held_context_unavailable:'+str(exc)})
         for candidate in {c.market.pair.symbol: c for c in candidates}.values():
+            aligned = align_candidate(candidate,cycle)
+            if aligned is None:
+                failures.append({'symbol':candidate.market.pair.symbol,'reason':'cycle_closed_bar_or_quote_unavailable',
+                                 'requested_as_of':cycle.as_of.isoformat()})
+                continue
+            candidate = aligned
             market = candidate.market
             if market.pair.quote_asset != 'EUR' or not market.usable_for_entry:
                 failures.append({'symbol': market.pair.symbol, 'reason': 'invalid_or_unsupported_market'})
@@ -88,7 +96,7 @@ class PersonalPaperRuntime:
                 not market.order_book.source.startswith('revolut-x') or any(not c.source.startswith('revolut-x') for c in market.candles)):
                 raise ValueError('prospective_paper_rejects_synthetic_observations')
             try:
-                f = enrich(candidate.features, market.candles, market.order_book.timestamp)
+                f = enrich(candidate.features, market.candles, cycle.as_of)
             except ValueError as exc:
                 failures.append({'symbol': market.pair.symbol, 'reason': str(exc)})
                 continue
@@ -100,6 +108,7 @@ class PersonalPaperRuntime:
             await repo.store_market_analysis(market.candles, f, market.order_book)
             prepared.append(replace(candidate, features=f))
         context = {c.features.symbol: c.features for c in prepared}
+        context.update(benchmark_features(cycle))
         ranked = []
         blockers: Counter[str] = Counter()
         all_rows = []
@@ -120,10 +129,11 @@ class PersonalPaperRuntime:
                 engine: Any = RAOEEngine(D(repo.manifest['fee_bps']), D(repo.manifest['slippage_bps'])) if is_raoe else SuccessorOpportunityEngine(SuccessorParameters.from_payload(spec['parameters']), D(repo.manifest['fee_bps']), D(repo.manifest['slippage_bps']))
                 signal = engine.evaluate(identity, candidate.features, candidate.market.pair, candidate.market.order_book,
                     context.get('BTC-EUR'), context.get('ETH-EUR'), candidate.market.candles, quote_budget=LIMITS.max_position_size,
-                    **({'benchmarks': {c.features.symbol: c.market.candles for c in prepared}} if is_raoe else {}),
+                    **({'benchmarks': cycle.histories} if is_raoe else {}),
                     sizing_scope='SHARED_7000_ACCOUNT', sizing_context={'cash': D(snapshot['available_cash']),
                         'exposure': D(snapshot['open_exposure'] or 0), 'limits': LIMITS})
                 signal = signal if is_raoe else reviewed_signal(signal, candidate.features)
+                signal.evidence['exit_policy']=spec.get('exit_policy')
                 ranking(signal, D(committed[identity]))
                 signal.evidence['paper_manifest'] = digest(canonical(repo.manifest))
                 signal.evidence['execution_profile'] = repo.manifest['version']
@@ -201,6 +211,7 @@ class PersonalPaperRuntime:
         payload = {'observed_at': utc_now().isoformat(), 'markets': [c.features.symbol for c in prepared],
             'strategies_evaluated': len(ranked), 'rows': all_rows, 'blockers': dict(blockers.most_common()),
             'data_failures': failures, 'execution_outcomes': outcomes,
+            'benchmark_sync':cycle.diagnostics,'evaluation_as_of':cycle.as_of.isoformat(),
             'research_action': 'Compare costs, regimes and chronological holdouts; retain losses; active parameters remain frozen.'}
         async with repo.session_factory() as session, session.begin():
             await repo._lock_account(session)

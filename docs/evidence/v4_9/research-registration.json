@@ -1,0 +1,103 @@
+{
+  "schema": "raoe-fixed-study/4.9.0",
+  "registered_at": "2026-10-28T06:52:39.812599+00:00",
+  "symbols": [
+    "BTC-EUR",
+    "ETH-EUR",
+    "SOL-EUR",
+    "LINK-EUR",
+    "ADA-EUR"
+  ],
+  "source": "Coinbase public EUR historical OHLCV proxy",
+  "start": "2025-03-01T00:00:00+00:00",
+  "end": "2025-03-17T00:00:00+00:00",
+  "segments": {
+    "training": [
+      "2025-03-05",
+      "2025-03-08"
+    ],
+    "validation": [
+      "2025-03-09",
+      "2025-03-11"
+    ],
+    "untouched_test": [
+      "2025-03-13",
+      "2025-03-17"
+    ]
+  },
+  "purge_hours": 24,
+  "test_purge_hours": 48,
+  "parameters": {
+    "minimum_net_reward_risk": "1.2",
+    "minimum_reward_to_cost": "2",
+    "stop_atr_buffer": "0.25",
+    "maximum_extension_atr": "2",
+    "holding_bars": "72",
+    "entry_method": "CONFIRMED_REACTION_IOC",
+    "volume_policy": "MID_PRICE_VOLUME_IS_NOT_TRADED_DEMAND",
+    "structure_model": "4.9.0-significance.1",
+    "minimum_structural_timeframe_minutes": "15",
+    "swing_prominence_atr": "1.25",
+    "continuation_maximum_extension_atr": "5",
+    "continuation_range_bars": "24",
+    "continuation_near_depth_budget_multiple": "2"
+  },
+  "raoe_variants": [
+    "RAOE_EARLY_RECOVERY",
+    "RAOE_TREND_PULLBACK",
+    "RAOE_BREAKOUT_RETEST",
+    "RAOE_BREAKOUT_CONTINUATION"
+  ],
+  "frozen_v48_variants": [
+    "V48_RAOE_EARLY_RECOVERY",
+    "V48_RAOE_TREND_PULLBACK",
+    "V48_RAOE_BREAKOUT_RETEST"
+  ],
+  "hypotheses": [
+    "V49 structural significance vs frozen V48 micro ceilings",
+    "Bounded continuation with two range-break closes, liquid depth and synchronized peers",
+    "Immediate vs next completed-bar confirmation vs controlled patient entry; no forced fill"
+  ],
+  "holding_seconds": {
+    "matched_originals": 10800,
+    "v48_raoe": 21600,
+    "v49_structure": 21600,
+    "v49_continuation": 14400
+  },
+  "entry_variants": [
+    "IMMEDIATE",
+    "ONE_BAR_DELAY_CONFIRMATION",
+    "PATIENT_IOC_3_BARS"
+  ],
+  "parameter_changes_after_test_allowed": false,
+  "baselines": [
+    "A3_COST_AWARE_CONTINUATION",
+    "B3_STATEFUL_BREAKOUT",
+    "E3_ADAPTIVE_RELATIVE_STRENGTH",
+    "MOMENTUM_30M",
+    "BUY_AND_HOLD",
+    "CASH"
+  ],
+  "costs": {
+    "normal": {
+      "fee_bps": "10",
+      "slippage_bps": "8",
+      "spread_bps": "10"
+    },
+    "stress": {
+      "fee_bps": "15",
+      "slippage_bps": "12",
+      "spread_bps": "20"
+    }
+  },
+  "patient_variant": "Same fixed plan, next-bar open ask/slippage must be below limit within 3 bars; no candle-touch fills",
+  "sizing": "Independent EUR500 portfolios, EUR75 nominal proposals, EUR5 stop risk, EUR150 reserve, no primary financial writes",
+  "limitations": [
+    "All audit/January-February2025/April-October2026 intervals are development data",
+    "March2025 is new to this project, not prospective performance",
+    "March2025 has not previously been inspected in this project; registration precedes acquisition",
+    "Fixed surviving liquid asset universe; no historical L2 or queue",
+    "Worst-case stop before target when both barriers cross in a bar",
+    "No retuning or winner promotion after viewing the untouched test"
+  ]
+}

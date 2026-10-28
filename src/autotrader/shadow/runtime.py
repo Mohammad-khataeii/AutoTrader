@@ -135,7 +135,7 @@ class ShadowRuntime:
     async def scan(self, candidates: list[ScanCandidate], *, successors_only: bool = False) -> None:
         from autotrader.opportunity.engine import VERSION as SUCCESSOR_VERSION
         from autotrader.shadow.views import record_reconciliation
-        records = [r for r in await self.lab.records() if not successors_only or r['manifest']['strategy_version'] in {SUCCESSOR_VERSION, '4.8.0-raoe.1'}]
+        records = [r for r in await self.lab.records() if not successors_only or r['manifest']['strategy_version'] in {SUCCESSOR_VERSION, '4.9.0-raoe.1'}]
         if not successors_only:
             await record_reconciliation(self.lab.official)
         for record in records:
@@ -147,7 +147,7 @@ class ShadowRuntime:
         for record in records:
             if record["state"] != "SHADOW_ACTIVE" or record.get("archived_at"):
                 continue
-            selected = candidates if record['manifest']['strategy_version'] in {SUCCESSOR_VERSION, '4.8.0-raoe.1'} else [c for c in candidates if not c.features.metadata.get('successor_discovery_only')]
+            selected = candidates if record['manifest']['strategy_version'] in {SUCCESSOR_VERSION, '4.9.0-raoe.1'} else [c for c in candidates if not c.features.metadata.get('successor_discovery_only')]
             observation: dict[str, Any] = {"discovered_candidates": len(candidates), "evaluated": 0, "skips": []}
             observed_repo: Any = None
             try:
@@ -191,7 +191,7 @@ class ShadowRuntime:
         if not await repo.claim_coordinator(self.owner):
             return
         from autotrader.opportunity.engine import VERSION as SUCCESSOR_VERSION
-        if record['manifest']['strategy_version'] in {SUCCESSOR_VERSION, '4.8.0-raoe.1'}:
+        if record['manifest']['strategy_version'] in {SUCCESSOR_VERSION, '4.9.0-raoe.1'}:
             from autotrader.opportunity.runtime import scan_successor
             await scan_successor(self, repo, record['manifest'], candidates)
             return

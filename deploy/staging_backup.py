@@ -102,7 +102,7 @@ async def main():
   before=await r.snapshot();orders=await r.list_orders();fills=await r.list_fills()
   assert before['control']=='PAUSED' and await r.verify_invariants(__import__('decimal').Decimal(7000))==[]
   async with r.session_factory() as db:origin=(await db.get(ShadowIdentityModel,1)).manifest_json
-  r=await v.create_runtime_revision('Isolated restored Aruba account rehearsal for reviewed V4.8 release')
+  r=await v.create_runtime_revision('Isolated restored Aruba account rehearsal for reviewed paper-only release')
   after=await r.snapshot()
   assert all(before[k]==after[k] for k in ['cash','available_cash','reserved_cash','realized_pnl','orders','positions'])
   assert await r.list_orders()==orders and await r.list_fills()==fills

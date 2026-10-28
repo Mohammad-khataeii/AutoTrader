@@ -53,6 +53,7 @@ const names: Record<string, string> = {
   F2_RESTRICTED_RANGE: "F2 Restricted Range",
   RAOE_EARLY_RECOVERY: "RAOE Early Recovery",
   RAOE_TREND_PULLBACK: "RAOE Trend Pullback",
+  RAOE_BREAKOUT_CONTINUATION: "RAOE Breakout Continuation (shadow)",
   RAOE_BREAKOUT_RETEST: "RAOE Breakout Retest",
   A3_COST_AWARE_CONTINUATION: "A3 Cost-Aware Continuation",
   B3_STATEFUL_BREAKOUT: "B3 Stateful Breakout",

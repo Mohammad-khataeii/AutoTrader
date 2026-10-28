@@ -1,0 +1,89 @@
+{
+  "status": "PASS",
+  "method": "READ_ONLY_PG_DUMP_STREAM",
+  "worker_uninterrupted": true,
+  "remote_files_created": false,
+  "cross_database_snapshot": "Separate per-database snapshots; cutoffs below",
+  "records": [
+    {
+      "database": "autotrader_aruba_staging",
+      "bytes": 10873842,
+      "sha256": "776fdf39736869d6123f93324747bae5676a7d4eafa9964c6992c2df02b241ec",
+      "export_started_at": "2026-10-28T05:52:51.099848+00:00",
+      "export_finished_at": "2026-10-28T05:53:26.062914+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "bytes": 12484679,
+      "sha256": "66d8deb16774f3250cefe105cedd47b596853617b3a966c81fb416d40e169f9b",
+      "export_started_at": "2026-10-28T05:52:51.100287+00:00",
+      "export_finished_at": "2026-10-28T05:53:17.597371+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_2aa76e807d0cbf9c60074159f2647115",
+      "bytes": 1042244,
+      "sha256": "80a67013b1945ffe6736691b7b6d9743d70b3d6901ad796170d37e93354dc232",
+      "export_started_at": "2026-10-28T05:53:17.597579+00:00",
+      "export_finished_at": "2026-10-28T05:53:19.663520+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_e3de2e7d2f6ad0122b8d52ad21929ec2",
+      "bytes": 1040219,
+      "sha256": "7d48369cf26c1bb88ead24afcc5b7d530d5774c21a3494892577becccb7cbaa4",
+      "export_started_at": "2026-10-28T05:53:19.663682+00:00",
+      "export_finished_at": "2026-10-28T05:53:21.795124+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_ba32d9384c30d291ec370174051fadb3",
+      "bytes": 2747732,
+      "sha256": "2a4d0f50f719b72aab9cc4b0365ca0b0c3086eaaf25539e915d802f745a0dbf7",
+      "export_started_at": "2026-10-28T05:53:21.795278+00:00",
+      "export_finished_at": "2026-10-28T05:53:25.516516+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_39fc0f422644ff7dd06323e5e2bef1da",
+      "bytes": 2584008,
+      "sha256": "de2da4e5ae51f86e4d7262b848c3ae4eff7d0502416d9fcdc7937e6418b41e2b",
+      "export_started_at": "2026-10-28T05:53:25.516673+00:00",
+      "export_finished_at": "2026-10-28T05:53:30.143894+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_7b82121d48000f18d24e21a7895519bb",
+      "bytes": 2692901,
+      "sha256": "4e5159a75e474a7e0bd95af96fbce00862847e0c94a4a76bce59cba6b7342ee6",
+      "export_started_at": "2026-10-28T05:53:26.063245+00:00",
+      "export_finished_at": "2026-10-28T05:53:30.452446+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_6c17dd3ad276427f7416e2b8d90d1aee",
+      "bytes": 2608571,
+      "sha256": "2b082a5215be46cbba669306faf225e1c28174a631aec6fa3ececa2db8c6adc8",
+      "export_started_at": "2026-10-28T05:53:30.144143+00:00",
+      "export_finished_at": "2026-10-28T05:53:41.216141+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_1a0f3ee0d867cf70f3e9ffb826a8d810",
+      "bytes": 2629079,
+      "sha256": "dd9a6f709de6feb025b01bec15f4edf7daa8c8fc22882526cb08b3fd2406b1dc",
+      "export_started_at": "2026-10-28T05:53:30.452662+00:00",
+      "export_finished_at": "2026-10-28T05:53:34.042621+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_6f3240e359b5749f60376a96380af5d4",
+      "bytes": 2599026,
+      "sha256": "c2a3980d9f7189a8168602bc37f736694e648f1e81141f700176e8797e2b6c83",
+      "export_started_at": "2026-10-28T05:53:34.042787+00:00",
+      "export_finished_at": "2026-10-28T05:53:40.484912+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    }
+  ]
+}

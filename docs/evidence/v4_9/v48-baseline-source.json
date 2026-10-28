@@ -1,0 +1,11 @@
+{
+  "source_commit": "4ea71c889e5d49a5c28b916171208df9fdf45ab4",
+  "original_files": {
+    "__init__.py": "24f43cf1e50b7f0ec1244ab260ae67c0719707be548a6cddfe62ef0f1e50cc38",
+    "regime.py": "b7a5f6a8cc10a881cc593613c0619f1abb16aee1619337ab5a804c51dbfabacb",
+    "playbooks.py": "6e654a88e4c7ad43c703bf3792cdf0e88600637bed937db9869bfd2d2e18fabb",
+    "plans.py": "49f6cdcda6a3d116bb404f38cf46bf22445f2821eead451867fbf089d79fe229",
+    "engine.py": "4cf1c40ccefa58d97a8c51b2df38009c4a02979398feaeaaae7ee1f36b0a40d7"
+  },
+  "adaptation": "Only import namespace changed to isolate historical definitions for research; shared economics remains explicit"
+}

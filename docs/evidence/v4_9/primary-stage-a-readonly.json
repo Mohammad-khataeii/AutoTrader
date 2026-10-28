@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-28T08:49:26.349175+00:00",
+  "accounts": [
+    {
+      "account_id": "PERSONAL_PLAN_PAPER_7000",
+      "control": "RUNNING",
+      "initial_cash": "7000.000000000000"
+    }
+  ],
+  "funding": 1,
+  "cash": "7003.532190559225",
+  "reserved_cash": "0.000000000000",
+  "orders": 4,
+  "fills": 4,
+  "open_positions": 0,
+  "pending_orders": 0
+}

@@ -29,3 +29,7 @@ docs/evidence/v4_7_1/*
 !docs/evidence/v4_8
 docs/evidence/v4_8/*
 !docs/evidence/v4_8/research-results.json
+
+!docs/evidence/v4_9
+docs/evidence/v4_9/*
+!docs/evidence/v4_9/research-results.json

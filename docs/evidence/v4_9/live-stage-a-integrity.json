@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "observed_at": "2026-10-28T08:55:32.334561+00:00",
+  "profile": "4.8.0-paper.1",
+  "runtime_matches": true,
+  "reconciliation": [],
+  "funding_count": 1,
+  "initial_cash": "7000.000000000000",
+  "cash": "7003.532190559225",
+  "controls": [
+    "RUNNING"
+  ],
+  "heartbeats": {
+    "position_monitor": {
+      "frame_id": null,
+      "heartbeat": "2026-10-28T08:55:28.639824+00:00",
+      "parent_process_id": 0,
+      "process_id": 1
+    },
+    "worker": {
+      "frame_id": null,
+      "heartbeat": "2026-10-28T08:55:24.107900+00:00",
+      "parent_process_id": 0,
+      "process_id": 1
+    }
+  },
+  "live_trading_enabled": false,
+  "read_only_transaction": true,
+  "tailscale_serve_sha256": "9486f159eb2847f1b15030d023437c6fcce73a54c2f8fc20775708151c547c6f"
+}

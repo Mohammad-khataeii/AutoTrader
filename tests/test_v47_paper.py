@@ -80,8 +80,24 @@ async def test_single_funding_scope_official_isolation_and_reopen(paper, pg_repo
         await repo.initialize_portfolio(D(500))
 
 
+def isolate_original_baselines(monkeypatch):
+    """Keep V4.7 entry/exit regressions independent of V4.9 competition.
+
+    New structural candidates can legitimately outrank A3 on this old synthetic
+    market. Their runtime/competition is tested separately in V4.8/V4.9 tests.
+    """
+    from autotrader.raoe.engine import RAOEEngine
+    original=RAOEEngine.evaluate
+    def baseline_scope(*args,**kwargs):
+        signal=original(*args,**kwargs)
+        signal.evidence.update(entry_eligible=False,qualified=False)
+        return signal
+    monkeypatch.setattr(RAOEEngine,'evaluate',baseline_scope)
+
+
 @pytest.mark.parametrize('strategy', ['A3_COST_AWARE_CONTINUATION', 'B3_STATEFUL_BREAKOUT', 'E3_ADAPTIVE_RELATIVE_STRENGTH'])
-async def test_ranked_buy_partial_target_stop_and_restart(paper, pg_repo, tmp_path, strategy):
+async def test_ranked_buy_partial_target_stop_and_restart(paper, pg_repo, tmp_path, strategy,monkeypatch):
+    isolate_original_baselines(monkeypatch)
     service, repo = paper
     market, candidates = await candidates_for(tmp_path/'frame.json', successor_frame(strategy))
     runtime = PersonalPaperRuntime(service, market, 'paper-test')

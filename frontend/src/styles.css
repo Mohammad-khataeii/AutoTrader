@@ -1500,3 +1500,6 @@ dialog h2 {
 .raoe-intelligence .table-wrap td { min-width: 100px; overflow-wrap: normal; }
 .raoe-intelligence .table-wrap td:first-child { min-width: 145px; }
 .raoe-intelligence .badge { white-space: nowrap; }
+
+.plan-inspector { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 1rem 0; }
+.plan-inspector > div { min-width: 0; overflow-wrap: anywhere; }

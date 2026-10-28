@@ -91,6 +91,8 @@ class PersonalPaperRepository(PersistentTradingRepository):
                 or any(evidence.get(k) != selected[k] for k in ('strategy_version', 'parameters'))
                 or evidence.get('paper_manifest') != digest(canonical(m))):
             return 'paper_strategy_not_authorized_for_manifest'
+        if selected.get('exit_policy') and evidence.get('exit_policy')!=selected['exit_policy']:
+            return 'paper_exit_policy_not_authorized_for_manifest'
         if str(fee) != m['fee_bps'] or str(slip) != m['slippage_bps']:
             return 'paper_frozen_cost_mismatch'
         from autotrader.raoe import IDENTITIES
@@ -107,8 +109,10 @@ class PersonalPaperRepository(PersistentTradingRepository):
 
     async def _entry_risk(self, session: Any, pair: TradingPair, quote: Decimal, price: Decimal,
                           stop: Decimal | None, execution_cost_bps: Decimal = D(25), *,
-                          own_order: OrderModel | None = None) -> str | None:
-        error = await super()._entry_risk(session, pair, quote, price, stop, execution_cost_bps, own_order=own_order)
+                          own_order: OrderModel | None = None,
+                          modeled_planned_loss: Decimal | None = None) -> str | None:
+        error = await super()._entry_risk(session, pair, quote, price, stop, execution_cost_bps,
+            own_order=own_order, modeled_planned_loss=modeled_planned_loss)
         if error:
             return error
         # Executed under the SAME account lock as cash reservation, including
@@ -118,8 +122,14 @@ class PersonalPaperRepository(PersistentTradingRepository):
         pending = (await session.scalars(select(OrderModel).where(OrderModel.side == 'BUY', OrderModel.status.in_(['PENDING', 'ACCEPTED'])))).all()
         pending = [o for o in pending if not own_order or o.order_id != own_order.order_id]
         stop_risk = sum((max(D(0), p.cost_basis-p.quantity*(p.protective_stop or D(0))*(1-D('.004'))) for p in positions), D(0))
-        stop_risk += sum((o.quote_amount*max(D(0), 1-D(json.loads(o.execution_json)['stop_loss'])/(o.quote_amount/o.quantity))+o.quote_amount*D('.004') for o in pending), D(0))
-        proposed_risk = quote*((price-(stop or D(0)))/price+execution_cost_bps/10000)
+        for order in pending:
+            payload=json.loads(order.execution_json)
+            reserved_bound=order.quote_amount*max(D(0),1-D(payload['stop_loss'])/(order.quote_amount/order.quantity))+order.quote_amount*D('.004')
+            actual_projection=D(payload.get('buy_admission',{}).get('planned_loss_eur','0'))
+            # Retain the older reservation bound and never understate a
+            # partial/multilevel order's larger executable stop risk.
+            stop_risk+=max(reserved_bound,actual_projection)
+        proposed_risk = modeled_planned_loss if modeled_planned_loss is not None else quote*((price-(stop or D(0)))/price+execution_cost_bps/10000)
         if stop_risk+proposed_risk > AGGREGATE_STOP_RISK:
             return 'aggregate_stop_risk_budget'
         committed = sum((p.cost_basis for p in positions), D(0))+sum((o.quote_amount for o in pending), D(0))

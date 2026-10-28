@@ -3,7 +3,6 @@ import json
 import time
 from datetime import UTC, datetime
 from decimal import Decimal as D
-from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -122,7 +121,7 @@ async def test_keyset_pages_handle_timestamp_ties_new_insertions_and_account_sco
     assert (await page(repo, "journal"))["items"][0]["event_type"] == "INITIAL_FUNDING"
 
 
-async def test_summary_size_time_query_budget_authentication_and_readiness(lab, monkeypatch):
+async def test_summary_size_time_query_budget_authentication_and_readiness(lab, monkeypatch,tmp_path):
     for i in range(4):
         record = await lab.create(f"metric-{i}", f"Metric {i}", "A2_CONFIRMED_PULLBACK")
         repo = await lab.repository(record["experiment_id"])
@@ -207,7 +206,7 @@ async def test_summary_size_time_query_budget_authentication_and_readiness(lab, 
             }
 
     evidence = await asyncio.to_thread(browser)
-    Path("docs/evidence/v4_5/api-benchmark.json").write_text(json.dumps(evidence, indent=2) + "\n")
+    (tmp_path/"api-benchmark.json").write_text(json.dumps(evidence, indent=2) + "\n")
 
 
 async def test_pilot_started_under_test_replay_remains_synthetic_with_shadows_enabled(

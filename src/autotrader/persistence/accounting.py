@@ -29,6 +29,7 @@ from autotrader.domain import (
     timeframe_seconds,
     utc_now,
 )
+from autotrader.execution.admission import BuyAdmission
 from autotrader.execution.postings import closing_posting
 from autotrader.execution.pricing import (
     book_payload,
@@ -274,7 +275,8 @@ class AccountingRepositoryMixin:
             return result
 
     async def _entry_risk(self, session: Any, pair: TradingPair, quote: Decimal, price: Decimal,
-                          stop: Decimal | None,execution_cost_bps:Decimal=Decimal(25),*,own_order:OrderModel|None=None) -> str | None:
+                          stop: Decimal | None,execution_cost_bps:Decimal=Decimal(25),*,own_order:OrderModel|None=None,
+                          modeled_planned_loss: Decimal | None = None) -> str | None:
         problems = await self._verify(session, self.expected_initial_cash)
         if problems:
             await self._health(session, RuntimeHealth.RECONCILIATION_REQUIRED, ",".join(problems))
@@ -321,8 +323,19 @@ class AccountingRepositoryMixin:
         entries = await session.scalar(select(func.count()).select_from(OrderModel).where(OrderModel.side == "BUY", OrderModel.created_at >= day, OrderModel.status.not_in(["REJECTED", "CANCELLED", "EXPIRED"]),OrderModel.order_id!=(own_order.order_id if own_order else ''))) or 0
         from dataclasses import replace
         risk = RiskEngine(replace(self.ledger_risk_limits, planned_loss_cost_bps=max(Decimal(25),execution_cost_bps))).evaluate_entry(portfolio, pair, quote, price, stop,
-            int(entries), Decimal(valuation["daily_equity_change"]), Decimal(valuation["weekly_equity_change"]))
+            int(entries), Decimal(valuation["daily_equity_change"]), Decimal(valuation["weekly_equity_change"]),
+            modeled_planned_loss=modeled_planned_loss)
         return None if risk.accepted else "risk_rejected:" + ",".join(risk.reasons)
+
+    async def _project_buy(self, session: Any, pair: TradingPair, book: OrderBook,
+                           quantity: Decimal, budget: Decimal, stop: Decimal | None,
+                           fee: Decimal, slip: Decimal, limit: Decimal | None) -> BuyAdmission:
+        from autotrader.execution.admission import project_buy
+        state = await session.get(SystemStateModel, observation_key(book))
+        usage = json.loads(state.payload_json) if state else {'BUY': {}, 'SELL': {}}
+        return project_buy(pair, book, quantity, budget, stop, fee, slip,
+            consumed={int(i): Decimal(q) for i, q in usage['BUY'].items()}, limit_price=limit,
+            risk_cost_floor_bps=self.ledger_risk_limits.planned_loss_cost_bps)
 
     @retry_economic
     async def submit_order(self, pair: TradingPair, side: Side, order_type: OrderType,
@@ -353,22 +366,20 @@ class AccountingRepositoryMixin:
                 error = self._validate_execution(pair, order_book, quantity, fee_bps, slippage_bps)
                 if order_type is OrderType.LIMIT and (limit_price is None or limit_price <= 0):
                     error = "invalid_limit_price"
+                buy_projection = None
                 if side is Side.BUY and not error:
-                    worst_ask=max(level.price for level in order_book.asks)*(1+slippage_bps/10000)
-                    if self.account_id == "PERSONAL_PLAN_PAPER_7000":
-                        # Risk the liquidity this IOC can actually consume.
-                        # An unrelated remote ask level is not its entry price.
-                        entry_quote = quote_execution(order_book, Side.BUY, quantity,
-                            quantity_step=pair.quantity_step, fee_bps=fee_bps,
-                            slippage_bps=slippage_bps, quote_budget=quote_amount)
-                        if entry_quote.fillable_quantity > 0:
-                            worst_ask = entry_quote.vwap
-                    spread_cost=(order_book.spread or ZERO)/(order_book.mid or Decimal(1))*10000
-                    error = await self._entry_risk(session, pair, quote_amount, worst_ask, stop_loss,2*fee_bps+2*slippage_bps+spread_cost)
+                    buy_projection = await self._project_buy(session,pair,order_book,quantity,quote_amount,
+                        stop_loss,fee_bps,slippage_bps,limit_price if order_type is OrderType.LIMIT else None)
+                    if buy_projection.entry.fillable_quantity <= 0:
+                        error = 'ioc_no_fill'
+                    else:
+                        error = await self._entry_risk(session,pair,quote_amount,buy_projection.entry.vwap,stop_loss,
+                            modeled_planned_loss=buy_projection.planned_loss)
                 admission_quality = None
                 if side is Side.BUY and not error:
                     admission_quality = ExecutionQualityEngine().evaluate(pair, order_book, quantity,
-                        quote_amount, fee_bps, slippage_bps, targets or [])
+                        quote_amount, fee_bps, slippage_bps, targets or [],
+                        entry_quote=buy_projection.entry if buy_projection else None)
                     if admission_quality.rejection_reasons:
                         error = "execution_quality:" + ",".join(admission_quality.rejection_reasons)
                 position = None
@@ -413,9 +424,13 @@ class AccountingRepositoryMixin:
                     "book": {"timestamp": order_book.timestamp.isoformat(), "source": order_book.source,
                         "bids": [[str(l.price), str(l.quantity)] for l in order_book.bids],
                         "asks": [[str(l.price), str(l.quantity)] for l in order_book.asks]}}
+                payload['instrument']={k:str(getattr(pair,k)) for k in ('price_step','min_order_quote','min_order_base')}
+                if pair.max_order_base is not None:payload['instrument']['max_order_base']=str(pair.max_order_base)
                 primary_strategy="ensemble-v3.4"
                 holding_seconds = None
                 evidence: dict[str, Any] = {}
+                if buy_projection is not None:
+                    payload['buy_admission'] = buy_projection.payload()
                 if admission_quality is not None:
                     payload["admission_quality"] = admission_quality.payload()
                 if decision_id:
@@ -430,10 +445,12 @@ class AccountingRepositoryMixin:
                         if strongest:
                             primary_strategy=strongest.strategy_id
                             evidence = json.loads(strongest.payload_json).get("evidence", {})
-                            if evidence.get("strategy_version") in {"4.0.0", "4.2.0-experimental.1", "4.8.0-raoe.1"}:
+                            if evidence.get("strategy_version") in {"4.0.0", "4.2.0-experimental.1", "4.8.0-raoe.1", "4.9.0-raoe.1"}:
                                 holding_seconds = int(evidence.get("holding_bars", 12)) * timeframe_seconds(str(evidence.get("timeframe", "5m")))
                             if self.account_id == "PERSONAL_PLAN_PAPER_7000":
                                 holding_seconds = int(evidence.get("holding_bars", 36)) * timeframe_seconds(str(evidence.get("timeframe", "5m")))
+                if side is Side.BUY and evidence.get('exit_policy'):
+                    holding_seconds = int(evidence['exit_policy']['holding_seconds'])
                 if side is Side.SELL and position_id:
                     # Automatic exits have no decision. Inherit the immutable
                     # entry plan and entry evidence, never a different signal.
@@ -450,10 +467,11 @@ class AccountingRepositoryMixin:
                 hours={"A_VOLUME_ACCUMULATION":12,"B_VOLATILITY_COMPRESSION":24,"C_BREAKOUT_RETEST":8,"D_MOMENTUM_ACCELERATION":6,"G_RELATIVE_STRENGTH":8,"H_LIQUIDITY_ORDER_BOOK":4}.get(primary_strategy,24)
                 if side is Side.BUY and not error:
                     promotion_failure = await self._entry_policy_error(session, primary_strategy, evidence, fee_bps, slippage_bps)
-                    if not promotion_failure and evidence.get('strategy_version')=='4.8.0-raoe.1':
+                    if not promotion_failure and evidence.get('strategy_version') in {'4.8.0-raoe.1','4.9.0-raoe.1'}:
                         from autotrader.raoe.admission import validate
                         promotion_failure = validate(pair,order_book,quote_amount,stop_loss,targets or [],evidence,
-                            fee_bps,slippage_bps,self.ledger_risk_limits.max_planned_loss_per_trade)
+                            fee_bps,slippage_bps,self.ledger_risk_limits.max_planned_loss_per_trade,
+                            entry_quote=buy_projection.entry if buy_projection else None)
                     if promotion_failure:
                         error = promotion_failure
                         payload["rejection_reason"] = error
@@ -489,7 +507,7 @@ class AccountingRepositoryMixin:
                 row = OrderModel(order_id=order_id, account_id=self.account_id, position_id=owned_position_id,
                     exit_intent_id=intent.exit_intent_id if intent else None, exit_target_id=exit_target_id if intent else None,
                     decision_id=decision_id, client_order_id=idempotency_key, symbol=pair.symbol, side=side.value,
-                    order_type=order_type.value, status="REJECTED" if error else "PENDING", quantity=quantity,
+                    order_type=order_type.value, status="CANCELLED" if error=="ioc_no_fill" else "REJECTED" if error else "PENDING", quantity=quantity,
                     quote_amount=quote_amount, filled_quantity=ZERO, simulated=True, execution_json=json.dumps(payload), created_at=utc_now())
                 session.add(row)
                 await session.flush()
@@ -552,7 +570,12 @@ class AccountingRepositoryMixin:
             book = self._stored_book(row, payload)
             if order_book is not None and order_book!=book:
                 raise ValueError("Dispatch cannot replace the risk-checked durable market observation.")
-            pair = TradingPair(row.symbol, row.symbol.split("-")[0], "EUR", quantity_step=Decimal(payload["quantity_step"]))
+            constraints=payload.get('instrument',{})
+            pair = TradingPair(row.symbol, row.symbol.split("-")[0], "EUR", quantity_step=Decimal(payload["quantity_step"]),
+                price_step=Decimal(constraints.get('price_step','0.00000001')),
+                min_order_quote=Decimal(constraints.get('min_order_quote','5')),
+                min_order_base=Decimal(constraints.get('min_order_base','0')),
+                max_order_base=Decimal(constraints['max_order_base']) if constraints.get('max_order_base') else None)
             fee_rate, slippage = Decimal(payload["fee_bps"]) / 10000, Decimal(payload["slippage_bps"]) / 10000
             error = self._validate_execution(pair, book, row.quantity, fee_rate * 10000, slippage * 10000)
             if error:
@@ -567,16 +590,21 @@ class AccountingRepositoryMixin:
                         await self._cancel(session, row, "entry_halted_before_dispatch")
                     return self._domain_order(row)
                 stop=Decimal(payload['stop_loss']) if payload['stop_loss'] else None
-                worst=max(l.price for l in book.asks)*(1+slippage)
-                if self.account_id == "PERSONAL_PLAN_PAPER_7000":
-                    entry_quote = quote_execution(book, Side.BUY, row.quantity,
-                        quantity_step=pair.quantity_step, fee_bps=fee_rate*10000,
-                        slippage_bps=slippage*10000, quote_budget=row.quote_amount)
-                    if entry_quote.fillable_quantity > 0:
-                        worst = entry_quote.vwap
-                spread_bps=(book.spread or ZERO)/(book.mid or Decimal(1))*10000
-                risk_error=await self._entry_risk(session,pair,row.quote_amount,worst,stop,
-                    2*fee_rate*10000+2*slippage*10000+spread_bps,own_order=row)
+                buy_projection = await self._project_buy(session,pair,book,row.quantity,row.quote_amount,stop,
+                    fee_rate*10000,slippage*10000,Decimal(payload['limit_price']) if payload['limit_price'] else None)
+                risk_error = 'ioc_no_fill' if buy_projection.entry.fillable_quantity<=0 else await self._entry_risk(
+                    session,pair,row.quote_amount,buy_projection.entry.vwap,stop,
+                    own_order=row,modeled_planned_loss=buy_projection.planned_loss)
+                if not risk_error:
+                    dispatch_quality=ExecutionQualityEngine().evaluate(pair,book,row.quantity,row.quote_amount,
+                        fee_rate*10000,slippage*10000,[Decimal(v) for v in payload['targets']],entry_quote=buy_projection.entry)
+                    if dispatch_quality.rejection_reasons:risk_error='execution_quality:'+','.join(dispatch_quality.rejection_reasons)
+                    payload['dispatch_quality']=dispatch_quality.payload()
+                if not risk_error and payload.get('strategy_evidence',{}).get('strategy_version') in {'4.8.0-raoe.1','4.9.0-raoe.1'}:
+                    from autotrader.raoe.admission import validate
+                    risk_error=validate(pair,book,row.quote_amount,stop,[Decimal(v) for v in payload['targets']],
+                        payload['strategy_evidence'],fee_rate*10000,slippage*10000,self.ledger_risk_limits.max_planned_loss_per_trade,
+                        entry_quote=buy_projection.entry)
                 if risk_error or row.status in TERMINAL:
                     if row.status not in TERMINAL:
                         await self._cancel(session,row,risk_error or 'risk_halt')
@@ -598,9 +626,11 @@ class AccountingRepositoryMixin:
             consumed = {int(i): Decimal(q) for i, q in usage[row.side].items()}
             limit = Decimal(payload["limit_price"]) if payload["limit_price"] else None
             step = pair.quantity_step
-            quote = quote_execution(book, Side(row.side), row.quantity, quantity_step=step,
+            quote = buy_projection.entry if row.side == 'BUY' else quote_execution(book, Side(row.side), row.quantity, quantity_step=step,
                 fee_bps=fee_rate * 10000, slippage_bps=slippage * 10000, limit_price=limit,
                 quote_budget=row.quote_amount if row.side == "BUY" else None, consumed=consumed)
+            if row.side == 'BUY':
+                payload['dispatch_buy_admission'] = buy_projection.payload()
             payload["execution_quality"] = quote.payload()
             row.execution_json = json.dumps(payload)
             filled, notional = quote.fillable_quantity, quote.gross_notional
@@ -645,9 +675,11 @@ class AccountingRepositoryMixin:
                 if payload["stop_loss"]:
                     plan_targets=[Decimal(t) for t in payload["targets"]]
                     target_metadata = None
-                    if payload.get('strategy_evidence',{}).get('strategy_version')=='4.8.0-raoe.1':
+                    if payload.get('strategy_evidence',{}).get('strategy_version') in {'4.8.0-raoe.1','4.9.0-raoe.1'}:
                         from autotrader.raoe.exits import net_exit_targets
                         plan_targets,target_metadata=net_exit_targets(plan_targets,book,filled,step,fee_rate*10000,slippage*10000)
+                    if payload.get('strategy_evidence',{}).get('exit_policy'):
+                        target_metadata = {**(target_metadata or {}),'exit_policy':payload['strategy_evidence']['exit_policy']}
                     await self._create_plan(session, position, Decimal(payload["stop_loss"]), plan_targets, step,
                         strategy_id=payload.get('strategy_id','ensemble-v3.4'),holding_hours=payload.get('holding_hours',24),
                         holding_seconds=payload.get("holding_seconds"),target_metadata=target_metadata)

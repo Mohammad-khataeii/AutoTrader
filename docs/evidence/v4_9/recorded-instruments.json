@@ -1,0 +1,551 @@
+{
+  "BCH-EUR": {
+    "symbol": "BCH-EUR",
+    "price_step": "0.001",
+    "quantity_step": "1E-7",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.176948+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "WIF-EUR": {
+    "symbol": "WIF-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.176970+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "USDC-EUR": {
+    "symbol": "USDC-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.176975+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "HBAR-EUR": {
+    "symbol": "HBAR-EUR",
+    "price_step": "0.000001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.176979+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "PENGU-EUR": {
+    "symbol": "PENGU-EUR",
+    "price_step": "0.00001",
+    "quantity_step": "0.001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.176985+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "LTC-EUR": {
+    "symbol": "LTC-EUR",
+    "price_step": "0.001",
+    "quantity_step": "1E-7",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.176993+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "UNI-EUR": {
+    "symbol": "UNI-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.176999+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "FLOKI-EUR": {
+    "symbol": "FLOKI-EUR",
+    "price_step": "1E-8",
+    "quantity_step": "1",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177004+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "DASH-EUR": {
+    "symbol": "DASH-EUR",
+    "price_step": "0.001",
+    "quantity_step": "0.000001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177008+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "CRV-EUR": {
+    "symbol": "CRV-EUR",
+    "price_step": "0.00001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177012+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "WLD-EUR": {
+    "symbol": "WLD-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177017+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "PEPE-EUR": {
+    "symbol": "PEPE-EUR",
+    "price_step": "1E-10",
+    "quantity_step": "10",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177022+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "SUI-EUR": {
+    "symbol": "SUI-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177025+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "TON-EUR": {
+    "symbol": "TON-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177031+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "PENDLE-EUR": {
+    "symbol": "PENDLE-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177035+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "INJ-EUR": {
+    "symbol": "INJ-EUR",
+    "price_step": "0.001",
+    "quantity_step": "0.000001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177043+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "BONK-EUR": {
+    "symbol": "BONK-EUR",
+    "price_step": "1E-10",
+    "quantity_step": "1",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177048+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "TIA-EUR": {
+    "symbol": "TIA-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177052+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "ADA-EUR": {
+    "symbol": "ADA-EUR",
+    "price_step": "0.00001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177056+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "BTC-EUR": {
+    "symbol": "BTC-EUR",
+    "price_step": "0.01",
+    "quantity_step": "1E-8",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177060+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "MAGIC-EUR": {
+    "symbol": "MAGIC-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177068+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "DOGE-EUR": {
+    "symbol": "DOGE-EUR",
+    "price_step": "0.00001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177071+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "ARB-EUR": {
+    "symbol": "ARB-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177076+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "ZRO-EUR": {
+    "symbol": "ZRO-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177081+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "ICP-EUR": {
+    "symbol": "ICP-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177086+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "CHZ-EUR": {
+    "symbol": "CHZ-EUR",
+    "price_step": "0.000001",
+    "quantity_step": "0.001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177090+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "DOT-EUR": {
+    "symbol": "DOT-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177094+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "NEAR-EUR": {
+    "symbol": "NEAR-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177099+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "ENA-EUR": {
+    "symbol": "ENA-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177103+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "AVNT-EUR": {
+    "symbol": "AVNT-EUR",
+    "price_step": "0.00001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177107+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "HYPE-EUR": {
+    "symbol": "HYPE-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.000001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177110+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "XRP-EUR": {
+    "symbol": "XRP-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177114+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "AAVE-EUR": {
+    "symbol": "AAVE-EUR",
+    "price_step": "0.001",
+    "quantity_step": "1E-7",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177118+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "APT-EUR": {
+    "symbol": "APT-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177124+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "OP-EUR": {
+    "symbol": "OP-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177127+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "SPX-EUR": {
+    "symbol": "SPX-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177132+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "SOL-EUR": {
+    "symbol": "SOL-EUR",
+    "price_step": "0.001",
+    "quantity_step": "0.000001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177135+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "ATOM-EUR": {
+    "symbol": "ATOM-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177140+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "STX-EUR": {
+    "symbol": "STX-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177144+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "JASMY-EUR": {
+    "symbol": "JASMY-EUR",
+    "price_step": "1E-7",
+    "quantity_step": "0.001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177147+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "VVV-EUR": {
+    "symbol": "VVV-EUR",
+    "price_step": "0.001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177151+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "XLM-EUR": {
+    "symbol": "XLM-EUR",
+    "price_step": "0.000001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177155+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "SHIB-EUR": {
+    "symbol": "SHIB-EUR",
+    "price_step": "1E-10",
+    "quantity_step": "1",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177163+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "1INCH-EUR": {
+    "symbol": "1INCH-EUR",
+    "price_step": "0.00001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177169+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "FET-EUR": {
+    "symbol": "FET-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177175+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "AVAX-EUR": {
+    "symbol": "AVAX-EUR",
+    "price_step": "0.001",
+    "quantity_step": "0.000001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177180+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "TRUMP-EUR": {
+    "symbol": "TRUMP-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.000001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177184+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "FIDA-EUR": {
+    "symbol": "FIDA-EUR",
+    "price_step": "0.000001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177192+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "ETH-EUR": {
+    "symbol": "ETH-EUR",
+    "price_step": "0.01",
+    "quantity_step": "1E-8",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177199+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "ONDO-EUR": {
+    "symbol": "ONDO-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177205+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "BNB-EUR": {
+    "symbol": "BNB-EUR",
+    "price_step": "0.001",
+    "quantity_step": "1E-7",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177209+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "ETC-EUR": {
+    "symbol": "ETC-EUR",
+    "price_step": "0.001",
+    "quantity_step": "0.000001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177213+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "SEI-EUR": {
+    "symbol": "SEI-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177217+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "FIL-EUR": {
+    "symbol": "FIL-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177220+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "LDO-EUR": {
+    "symbol": "LDO-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177226+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "RENDER-EUR": {
+    "symbol": "RENDER-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.00001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177229+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "POL-EUR": {
+    "symbol": "POL-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177233+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "TRX-EUR": {
+    "symbol": "TRX-EUR",
+    "price_step": "0.00001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177237+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "STRK-EUR": {
+    "symbol": "STRK-EUR",
+    "price_step": "0.0001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177240+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "LINK-EUR": {
+    "symbol": "LINK-EUR",
+    "price_step": "0.001",
+    "quantity_step": "0.000001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177243+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  },
+  "ALGO-EUR": {
+    "symbol": "ALGO-EUR",
+    "price_step": "0.000001",
+    "quantity_step": "0.0001",
+    "min_order_quote": "0.1",
+    "observed_at": "2026-10-28T07:20:25.177248+00:00",
+    "source": "CURRENT_PUBLIC_REVOLUT_X_INSTRUMENT",
+    "historical_validity": "Original precision not persisted with rejected RAOE signal; current metadata is not proof of historical constraints"
+  }
+}

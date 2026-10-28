@@ -66,6 +66,21 @@ class MarketDataService:
         self._protective_books:dict[str,OrderBook]|None=None
         self._discovery_rotation = 0
         self._discovery_state: dict[str, Any] = {}
+        self._candle_observed_at: dict[str,str] = {}
+        self._evaluation_context: Any = None
+        self._evaluation_explicit = False
+
+    async def begin_evaluation_cycle(self, candidates: list[Any]) -> Any:
+        from autotrader.market_data.synchronization import load_cycle
+        self._evaluation_context = await load_cycle(self,candidates)
+        self._evaluation_explicit = True
+        return self._evaluation_context
+
+    async def evaluation_context(self, candidates: list[Any]) -> Any:
+        from autotrader.market_data.synchronization import cutoff, load_cycle
+        if self._evaluation_context is None or (not self._evaluation_explicit and self._evaluation_context.as_of!=cutoff(utc_now())):
+            self._evaluation_context = await load_cycle(self,candidates)
+        return self._evaluation_context
 
     @asynccontextmanager
     async def protective_cycle(self) -> AsyncIterator[None]:
@@ -86,7 +101,8 @@ class MarketDataService:
             open=Decimal(r['open']),high=Decimal(r['high']),low=Decimal(r['low']),close=Decimal(r['close']),volume=Decimal(r['volume']),timeframe=r['timeframe'],source=r['source']) for r in raw]
 
     async def completed_candles(self,pair:TradingPair)->list[Candle]:
-        until=utc_now()
+        from autotrader.market_data.synchronization import cutoff
+        until=cutoff(utc_now())
         seconds=self.candle_interval_minutes*60
         bucket=int(until.timestamp())//seconds
         key=f'{pair.symbol}:{self.candle_interval_minutes}:{self.candle_lookback}'
@@ -100,6 +116,8 @@ class MarketDataService:
                 token,stored=await self.state_store.reserve_market_cache(key,bucket)
                 if stored.get('candles'):
                     old=(stored.get('bucket',-1),self._decode_candles(stored['candles']))
+                    if stored.get('refreshed_at'):
+                        self._candle_observed_at[pair.symbol] = stored['refreshed_at']
                 if token is None:
                     if old and old[0]>=bucket:
                         self._candles[key]=old
@@ -109,15 +127,24 @@ class MarketDataService:
             since=until-timedelta(seconds=seconds*self.candle_lookback)
             if self.cache_enabled and old and old[1]:
                 since=max(since,old[1][-1].timestamp-timedelta(seconds=seconds))
-            fresh=await self.client.get_candles(pair.symbol,self.candle_interval_minutes,int(since.timestamp()*1000),int(until.timestamp()*1000))
+            # Bound cold history requests; at most two 720-bar pages for the
+            # 96-hour RAOE window. Subsequent refreshes overlap two bars only.
+            fresh=[]
+            cursor=since
+            while cursor<until:
+                end=min(until,cursor+timedelta(seconds=seconds*720))
+                fresh.extend(await self.client.get_candles(pair.symbol,self.candle_interval_minutes,int(cursor.timestamp()*1000),int(end.timestamp()*1000)))
+                cursor=end
             merged={c.timestamp:c for c in (old[1] if self.cache_enabled and old else [])}
             merged.update({c.timestamp:c for c in fresh if c.timestamp+timedelta(seconds=seconds)<=until})
             candles=sorted(merged.values(),key=lambda c:c.timestamp)[-self.candle_lookback:]
-            if self.validate_candles(candles,self.candle_interval_minutes) or len(candles)<50:
+            errors=self.validate_candles(candles,self.candle_interval_minutes)
+            if ([e for e in errors if e!='incorrect_candle_interval'] or self.validate_candles(candles[-240:],self.candle_interval_minutes) or len(candles)<50):
                 # Never promote a bad refresh to the completed cache.
                 return candles
             if self.cache_enabled:
                 self._candles[key]=(bucket,candles)
+                self._candle_observed_at[pair.symbol]=utc_now().isoformat()
                 if self.state_store and token:
                     raw=[{'symbol':c.symbol,'timestamp':c.timestamp.isoformat(),**{k:str(getattr(c,k)) for k in ('open','high','low','close','volume')},'timeframe':c.timeframe,'source':c.source} for c in candles]
                     await self.state_store.publish_market_cache(key,token,bucket,raw)
@@ -176,7 +203,7 @@ class MarketDataService:
         order_book = await self.client.get_order_book(pair.symbol, limit=50)
         provider_latency_ms = Decimal(str(round((time.perf_counter() - started) * 1000, 3)))
         book_reasons, metrics = self.validate_order_book(order_book, provider_latency_ms)
-        candle_reasons = self.validate_candles(candles, self.candle_interval_minutes)
+        candle_reasons = self.validate_candles(candles[-240:], self.candle_interval_minutes)
         pair_reasons = self.validate_pair(pair)
         reasons = [*pair_reasons, *book_reasons, *candle_reasons]
         quality = DataQuality.GOOD if not reasons else DataQuality.INVALID

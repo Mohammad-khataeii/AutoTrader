@@ -17,7 +17,7 @@ class AIProvider(StrEnum):
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_prefix="", extra="ignore",env_ignore_empty=True,hide_input_in_errors=True)
 
-    app_name: str = "Revolut X AutoTrader"
+    app_name: str = "Personal Plan"
     environment: str = "local"
     dashboard_username: str = "admin"
     dashboard_password: SecretStr = Field(default=SecretStr("change-me"))

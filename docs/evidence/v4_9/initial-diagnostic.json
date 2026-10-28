@@ -1,0 +1,71 @@
+{
+  "recorded_shadow_rejections": 16,
+  "corrected_loss_checks_pass": 16,
+  "old_loss_range": [
+    "6.482301312548671927082481625",
+    "20.21023735634445332113022360"
+  ],
+  "new_loss_range": [
+    "0.431680444067",
+    "1.487214422994"
+  ],
+  "primary_counts": {
+    "orders": 4,
+    "fills": 4,
+    "positions": 2,
+    "trading_decisions": 9822
+  },
+  "primary_funding_count": 1,
+  "primary_original_funding": "7000.000000000000",
+  "v48_signals": 5910,
+  "pepe_original_cases": [
+    [
+      "0.0000040776",
+      "RAOE_TREND_PULLBACK",
+      "2026-10-27 22:35:00+00:00"
+    ],
+    [
+      "0.0000040776",
+      "RAOE_BREAKOUT_RETEST",
+      "2026-10-27 22:35:00+00:00"
+    ],
+    [
+      "0.0000040776",
+      "RAOE_EARLY_RECOVERY",
+      "2026-10-27 22:35:00+00:00"
+    ],
+    [
+      "0.0000042183",
+      "RAOE_BREAKOUT_RETEST",
+      "2026-10-28 01:20:00+00:00"
+    ],
+    [
+      "0.0000042183",
+      "RAOE_EARLY_RECOVERY",
+      "2026-10-28 01:20:00+00:00"
+    ],
+    [
+      "0.0000042183",
+      "RAOE_TREND_PULLBACK",
+      "2026-10-28 01:20:00+00:00"
+    ]
+  ],
+  "candle_counts": {
+    "AAVE-EUR": 833,
+    "ADA-EUR": 731,
+    "BCH-EUR": 959,
+    "BTC-EUR": 959,
+    "ENA-EUR": 957,
+    "ETH-EUR": 959,
+    "HYPE-EUR": 959,
+    "INJ-EUR": 957,
+    "LINK-EUR": 959,
+    "NEAR-EUR": 945,
+    "PEPE-EUR": 959,
+    "SOL-EUR": 959,
+    "SUI-EUR": 719,
+    "USDC-EUR": 868,
+    "VVV-EUR": 719,
+    "XRP-EUR": 959
+  }
+}

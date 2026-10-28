@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+  "tests": 20,
+  "failures": 0,
+  "skipped": 0,
+  "engine": "Native Linux AMD64 Chromium + actual Nginx frontend image; API fixtures",
+  "widths": [
+    320,
+    375,
+    390,
+    1440
+  ],
+  "frontend_code_sha256": "f298b48416dd22e5a502163d30b9fb05185f7333edfd6f7a7abf41812c9cc794",
+  "report_sha256": "279efdfc752c8bd5b93281e385bc74850cd79d2af32176be862f4395f8106bf8",
+  "limitations": [
+    "UI uses deterministic mocked API responses; actual installed product API is verified separately.",
+    "Real VPS UI/market/protection validation is a mandatory Stage B gate."
+  ]
+}

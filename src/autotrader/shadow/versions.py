@@ -29,6 +29,7 @@ EXECUTION_FILES = (
     "clock.py",
     "config.py",
     "market_data/service.py",
+    "market_data/synchronization.py",
     "scanner.py",
     "domain.py",
     "indicators.py",
@@ -84,7 +85,7 @@ def verify_legacy() -> dict[str, str]:
 
 
 BOUNDARY_FILES: tuple[str, ...] = ('config.py', 'domain.py', 'indicators.py', 'market_data/replay.py', 'market_data/revolut.py', 'market_data/scheduling.py', 'market_data/service.py', 'research/artifacts.py', 'research/context.py', 'research/data.py', 'scanner.py', 'shadow/diagnostics.py', 'shadow/frozen.py', 'shadow/gates.py', 'shadow/lab.py', 'shadow/legacy.py', 'shadow/runtime.py', 'shadow/trace.py', 'shadow/versions.py', 'shadow/views.py', 'worker/runner.py')
-BOUNDARY_FILES += ('opportunity/__init__.py', 'opportunity/regime.py', 'opportunity/economics.py',
+BOUNDARY_FILES += ('market_data/synchronization.py', 'opportunity/__init__.py', 'opportunity/regime.py', 'opportunity/economics.py',
     'opportunity/engine.py', 'opportunity/features.py', 'opportunity/patterns.py',
     'opportunity/runtime.py', 'opportunity/service.py', 'opportunity/discovery.py', 'opportunity/research.py',
     'opportunity/status.py', 'opportunity/sizing.py', 'opportunity/rc1.py', 'opportunity/rc1_economics.py')

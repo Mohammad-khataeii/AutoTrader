@@ -30,8 +30,9 @@ class ExecutionQualityEngine:
         self.max_spread_bps = max_spread_bps
 
     def evaluate(self, pair: TradingPair, book: OrderBook, quantity: Decimal, quote_budget: Decimal,
-                 fee_bps: Decimal, slippage_bps: Decimal, targets: list[Decimal]) -> ExecutionQuality:
-        entry = quote_execution(book, Side.BUY, quantity, quantity_step=pair.quantity_step,
+                 fee_bps: Decimal, slippage_bps: Decimal, targets: list[Decimal], *,
+                 entry_quote: ExecutionQuote | None = None) -> ExecutionQuality:
+        entry = entry_quote or quote_execution(book, Side.BUY, quantity, quantity_step=pair.quantity_step,
             fee_bps=fee_bps, slippage_bps=slippage_bps, quote_budget=quote_budget)
         closing = quote_execution(book, Side.SELL, entry.fillable_quantity, quantity_step=pair.quantity_step,
             fee_bps=fee_bps, slippage_bps=slippage_bps)

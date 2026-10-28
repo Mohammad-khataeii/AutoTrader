@@ -34,11 +34,25 @@ def assess_exit(strategy: str, opened_at: datetime, entry_evidence: dict[str, An
             or (genuine and any(not c.source.startswith('revolut-x') for c in closed))):
         return result
     if strategy not in {'A3_COST_AWARE_CONTINUATION','B3_STATEFUL_BREAKOUT','E3_ADAPTIVE_RELATIVE_STRENGTH',
-            'RAOE_EARLY_RECOVERY','RAOE_TREND_PULLBACK','RAOE_BREAKOUT_RETEST'}:
+            'RAOE_EARLY_RECOVERY','RAOE_TREND_PULLBACK','RAOE_BREAKOUT_RETEST','RAOE_BREAKOUT_CONTINUATION'}:
         result['status'] = 'UNKNOWN_ENTRY_STRATEGY'
         return result
     result['candle_at'] = closed[-1].timestamp.isoformat()
     result['data_hash'] = digest(canonical([[c.timestamp.isoformat(), str(c.open), str(c.high), str(c.low), str(c.close), str(c.volume), c.source] for c in closed]))
+    if strategy=='RAOE_BREAKOUT_CONTINUATION':
+        from autotrader.raoe.regime import aggregate
+        policy=entry_evidence.get('exit_policy',{})
+        if policy.get('version')!='4.9.0-continuation-exit.1':
+            return {**result,'status':'UNKNOWN_ENTRY_EXIT_VERSION'}
+        post=[c for c in aggregate(closed,15,as_of) if c.timestamp>=opened_at]
+        level=number((entry_evidence.get('pattern_state') or {}).get('level'))
+        distance=number((entry_evidence.get('raoe_regime') or {}).get('atr'))
+        failed=bool(level and distance and len(post)>=2
+                    and all(c.close<level-D('.25')*distance for c in post[-2:]))
+        return {**result,'policy':policy['version'],'status':'ASSESSED','completed_post_entry_15m_bars':len(post),
+                'entry_breakout_level':str(level) if level else None,'failed_entry_breakout':failed,
+                'reason':'failed_breakout' if failed else None,
+                'noise_policy':'Ordinary five-minute volatility does not authorize a continuation discretionary exit'}
     f = enrich(calculate_features(closed), closed, as_of)
     prior = calculate_features(closed[:-1])
     post_entry = closed[-2].timestamp >= opened_at

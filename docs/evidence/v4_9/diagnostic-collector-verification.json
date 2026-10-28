@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "hours": 12,
+  "registered_databases": 10,
+  "observed_at": "2026-10-28T08:49:28.667417+00:00",
+  "bundle_sha256": "f512bf81e49577a9a753fed4a716b54549fe3c8bc2aced440d6b7724ecf5c1a8",
+  "collector_sha256": "2f7cdaebe7aec3bf4ea612adddf756c2576ad339b189bba2aa25f5d46722a661",
+  "remote_mutations": false,
+  "all_sections_untruncated": true,
+  "credential_files_accessed": false,
+  "docker_environment_exported": false,
+  "numeric_export": "Exact PostgreSQL numeric tokens retained as strings",
+  "local_private_bundle": ".tools/v49/audit-v49-final/diagnostic.json.gz",
+  "hourly_summary": ".tools/v49/audit-v49-final/hourly-summary.md"
+}

@@ -102,7 +102,7 @@ async def main() -> None:
         await market_client.close()
         replay_client = FileReplayClient(settings.market_data_replay_file)
         market_client = replay_client  # type: ignore[assignment]
-    market_data = MarketDataService(market_client, max_staleness_seconds=settings.market_data_max_staleness_seconds, candle_lookback=720 if settings.shadow_enabled else 240,state_store=repository)
+    market_data = MarketDataService(market_client, max_staleness_seconds=settings.market_data_max_staleness_seconds, candle_lookback=1152 if settings.shadow_enabled or settings.personal_paper_enabled else 240,state_store=repository)
     risk = RiskEngine(
         RiskLimits(
             max_allocated_capital=settings.max_allocated_capital_eur,
@@ -248,6 +248,8 @@ async def main() -> None:
                     )
                 result = await scanner.scan_once(settings.scanner_max_pairs)
                 await repository.store_scan(result)
+                if shadow_runtime or paper_runtime:
+                    await market_data.begin_evaluation_cycle(result.candidates)
                 if shadow_runtime:
                     await shadow_runtime.scan(result.candidates)
                 executions = await execute_ranked_candidates(

@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+  "tests": 409,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "warning": "Starlette TestClient deprecated AnyIO alias; no test failure",
+  "junit_sha256": "66a41b42e7efe78635271c1278f54282c63c5f04c2de9ee505de734c8767b1ab",
+  "ruff": "PASS",
+  "mypy": "PASS (131 checked source modules)",
+  "test_mode": "Native real PostgreSQL; complete suite",
+  "follow_up": "Direct replay clock fixture isolated from wall-clock boundary; corresponding installed Linux tests run against packaged source."
+}

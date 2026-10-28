@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+  "module_hashes": 279,
+  "all_installed_source_matches": true,
+  "architecture": "linux/amd64",
+  "candidate_product_image": "sha256:7591a7b6491bcadacbc997d2325e9bf4d6f87e20f425c100bd89ef73d9aa6f9c",
+  "has_git_revision_label": false,
+  "note": "Final immutable commit label is added by a source-identical image rebuild after commit. This candidate identity is not a deployment authorization."
+}

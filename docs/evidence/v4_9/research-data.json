@@ -1,0 +1,35 @@
+{
+  "registration_sha256": "db86652f3e5aa3c469aef678dd8f5420e9eb6c5d643e1e6996ca055a72adf086",
+  "datasets": [
+    {
+      "symbol": "BTC-EUR",
+      "bars": 4608,
+      "sha256": "10d1fee238fc5faed027dc19c4fe1984dc1320e702837565eb492939a0bb06f2",
+      "path": ".data/research-v49/BTC-EUR-5m.json.gz"
+    },
+    {
+      "symbol": "ETH-EUR",
+      "bars": 4608,
+      "sha256": "915f9d42fbf6aa3ac9d0096046f0e34f2e133f06422eb148175b2db260e9c6ad",
+      "path": ".data/research-v49/ETH-EUR-5m.json.gz"
+    },
+    {
+      "symbol": "SOL-EUR",
+      "bars": 4596,
+      "sha256": "96f77d2048f2dd1bc2cb59593cc12b9e0ace7f4200cbf68403136977551f44b9",
+      "path": ".data/research-v49/SOL-EUR-5m.json.gz"
+    },
+    {
+      "symbol": "LINK-EUR",
+      "bars": 3914,
+      "sha256": "f3760fbad8b10a9c7b54acfd934a1de86a6a4f7b6a6b7972073631761651b159",
+      "path": ".data/research-v49/LINK-EUR-5m.json.gz"
+    },
+    {
+      "symbol": "ADA-EUR",
+      "bars": 4574,
+      "sha256": "938022f641dc49fff583a24ab8d8bd8d75c72c82f53e0a6587f96bed0b21b157",
+      "path": ".data/research-v49/ADA-EUR-5m.json.gz"
+    }
+  ]
+}

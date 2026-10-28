@@ -1,10 +1,11 @@
 """Broad public summary screen; no per-instrument books for rejected markets."""
 from __future__ import annotations
 
+from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Any
 
-from autotrader.domain import TradingPair, utc_now
+from autotrader.domain import Candle, TradingPair, utc_now
 from autotrader.opportunity.regime import number
 
 D = Decimal
@@ -12,8 +13,11 @@ PEGGED = {'USDC','USDT','DAI','EURC','EURCV','EUROC','PYUSD','TUSD','FDUSD','USD
 
 
 def screen(pairs: list[TradingPair], tickers: list[dict[str, Any]],
-           prior: dict[str, Any] | None = None) -> list[dict[str, Any]]:
-    now = utc_now().timestamp()
+           prior: dict[str, Any] | None = None, *,
+           cached: dict[str,list[Candle]] | None = None,
+           observed_at: datetime | None = None) -> list[dict[str, Any]]:
+    observation=observed_at or utc_now()
+    now = observation.timestamp()
     previous = {r['symbol']:r for r in (prior or {}).get('rows',[])}
     quotes = {str(t.get('symbol','')).replace('/','-'):t for t in tickers}
     rows = []
@@ -29,6 +33,18 @@ def screen(pairs: list[TradingPair], tickers: list[dict[str, Any]],
         elif pair.status.lower()!='active' or pair.price_step<=0 or pair.quantity_step<=0: reason='INVALID_INSTRUMENT'
         elif not all(v is not None and v>0 for v in (bid,ask,high,low,volume)) or ask<=bid or high<low: reason='MISSING_OR_INVALID_SUMMARY'  # type: ignore[operator]
         elif spread is not None and (spread>25 or volume is not None and volume<100000): reason='EXPENSIVE_OR_THIN'
+        samples=[v for v in old.get('summary_samples',[]) if now-10800<=float(v['at'])<=now]
+        if mid and (not samples or now-float(samples[-1]['at'])>=240):
+            samples.append({'at':now,'mid':str(mid)})
+        samples=samples[-46:]
+        reference=next((v for v in reversed(samples) if 1800<=now-float(v['at'])<=2100),None)
+        summary_return=mid/D(reference['mid'])-1 if mid and reference else None
+        bars=sorted([b for b in (cached or {}).get(pair.symbol,[]) if b.timestamp+timedelta(minutes=5)<=observation],key=lambda b:b.timestamp)
+        valid=bool(len(bars)>=13 and 0<=(observation-bars[-1].timestamp-timedelta(minutes=5)).total_seconds()<=600
+                   and all(b.timestamp-a.timestamp==timedelta(minutes=5) for a,b in zip(bars[-13:-1],bars[-12:],strict=True)))
+        closed_return=bars[-1].close/bars[-7].close-1 if valid else None
+        range_break=bool(valid and bars[-1].close>max(b.high for b in bars[-13:-1]))
+        fast=max(D(0),closed_return if closed_return is not None else summary_return or D(0))
         old_mid = number(old.get('price'))
         movement = mid/old_mid-1 if mid and old_mid else None
         # Keep an actual earlier summary reference rather than overwriting it
@@ -37,14 +53,21 @@ def screen(pairs: list[TradingPair], tickers: list[dict[str, Any]],
         age = min(1800,max(0,now-last_detail))/1800
         liquidity = min(D(1),(volume or D(0))/1000000)
         score = (min(D(3),(amplitude or D(0))*10000/(36+(spread or D(25))))*liquidity
-            + min(D(1),max(D(0),movement or D(0))*100)*liquidity+D(str(age))) if not reason else D(0)
+            + min(D(1),max(D(0),movement or D(0))*100)*liquidity+D(str(age))
+            + min(D(3),fast*100)*liquidity + (D(1) if range_break else D(0))) if not reason else D(0)
         rows.append({'symbol':pair.symbol,'price':str(mid) if mid else None,
             'movement_since_summary':str(movement) if movement is not None else None,
             'spread_bps':str(spread) if spread is not None else None,
             'quote_volume_24h':str(volume) if volume is not None else None,
             'range_24h':str(amplitude) if amplitude is not None else None,
             'score':str(score),'last_detail_at':last_detail,'status':'REJECTED' if reason else 'UNSCANNED',
-            'reason':reason,'summary_at':utc_now().isoformat(),
+            'reason':reason,'summary_at':observation.isoformat(),'summary_samples':samples,
+            'completed_return_30m':str(closed_return) if closed_return is not None else None,
+            'completed_range_break_60m':range_break if valid else None,
+            'summary_return_30m':str(summary_return) if summary_return is not None else None,
+            'short_window_source':'GENUINE_CACHED_COMPLETED_CANDLES' if valid else 'TIMED_OBSERVED_SUMMARY_MIDS' if reference else 'UNOBSERVED',
+            'short_window_reason':None if valid else 'Completed short-window data unavailable; summary movement is quote-mid observation only',
+            'priority':'FAST_MOVING' if fast>=D('.008') or range_break else 'BROAD_OR_ROTATION',
             'liquidity_evidence':'24h turnover proxy; full executable depth requires detailed validation'})
     return sorted(rows,key=lambda r:(bool(r['reason']),-D(r['score']),r['symbol']))
 
@@ -59,7 +82,10 @@ async def discover(service: Any, pairs: list[TradingPair], limit: int) -> list[T
         async with service.state_store.session_factory() as session:
             record = await session.get(SystemStateModel,'raoe_discovery')
             if record: prior=json.loads(record.payload_json)
-    rows = screen(pairs,await service.client.get_tickers(),prior)
+    cached={}
+    for _,bars in service._candles.values():
+        if bars:cached[bars[-1].symbol]=bars
+    rows = screen(pairs,await service.client.get_tickers(),prior,cached=cached)
     candidates = [r for r in rows if not r['reason'] and r['symbol'] not in {'BTC-EUR','ETH-EUR'}]
     selected = candidates[:max(0,limit-1)]
     # One slot goes to the least recently inspected eligible market. This
@@ -69,9 +95,12 @@ async def discover(service: Any, pairs: list[TradingPair], limit: int) -> list[T
     names = {'BTC-EUR','ETH-EUR',*[r['symbol'] for r in selected]}
     for row in rows:
         if row['symbol'] in names:
-            row.update(status='WATCHING',last_detail_at=utc_now().timestamp())
+            row.update(status='WATCHING',selection_reason='INDEPENDENT_BENCHMARK' if row['symbol'] in {'BTC-EUR','ETH-EUR'} else 'BOUNDED_ROTATION' if row in remaining and row in selected else 'PRIORITY_SCORE',last_detail_at=utc_now().timestamp())
+        elif not row['reason']:
+            row.update(status='DEFERRED',selection_reason='DETAIL_BUDGET_EXHAUSTED_ROTATION_PENDING')
     body = {'observed_at':utc_now().isoformat(),'rows':rows,'supported_eur':len(rows),
-        'selected':sorted(names),'detail_budget':limit,'benchmark_extra_slots':2}
+        'selected':sorted(names),'detail_budget':limit,'benchmark_extra_slots':2,'version':'4.9.0-discovery.1',
+        'short_window_policy':'Completed cached bars or measured timed summary observations only; never inferred from 24h values'}
     service._discovery_state=body
     if service.state_store:
         async with service.state_store.session_factory() as session,session.begin():

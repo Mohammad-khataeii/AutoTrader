@@ -122,13 +122,13 @@ def test_missed_path_is_hypothetical_and_both_barriers_use_stop_first():
     from autotrader.raoe.analytics import classify
     bars,now,_,_,_,_=fixture()
     event={'observed_at':now.isoformat(),'horizon_seconds':600,'accepted':False,
-        'evidence':{'entry_plan':{'stop':'190','targets':['195']}}}
+        'evidence':{'economic_eligible':True,'entry_plan':{'entry':'193','stop':'190','targets':['195']}}}
     future=[replace(bars[-1],timestamp=now+timedelta(minutes=5*i),low=D(189),high=D(199)) for i in range(2)]
     result=classify(event,future)
-    assert result['classification']=='CORRECT_REJECTION' and result['ambiguous_stop_and_target']
+    assert result['classification']=='INCONCLUSIVE' and result['ambiguous_stop_and_target']
     future=[replace(c,low=D(191)) for c in future]
-    assert classify(event,future)['classification']=='POTENTIAL_FAVORABLE_MOVE_NOT_PROVEN_EXECUTABLE'
-    assert classify(event,future[:1])['classification']=='MISSING_MARKET_DATA'
+    assert classify(event,future)['classification']=='POTENTIALLY_FAVORABLE_PRICE_PATH'
+    assert classify(event,future[:1])['classification']=='MISSING_EVIDENCE'
 
 
 async def test_raoe_shadow_has_independent_funding_and_durable_restart(lab):
@@ -141,7 +141,7 @@ async def test_raoe_shadow_has_independent_funding_and_durable_restart(lab):
     market=MarketDataService(None)
     runtime=ShadowRuntime(lab,market,RiskEngine(RiskLimits()),'raoe-shadow')
     await runtime.scan(observations,successors_only=True)
-    assert len(await repo.list_fills())==1
+    assert len(await repo.list_fills())==1,{'orders':await repo.list_orders(),'health':(await lab.detail(record['experiment_id']))['runtime_compatibility'],'diagnostic':getattr(repo,'_diagnostic_scan',{})}
     await runtime.scan(observations,successors_only=True)
     assert len(await repo.list_fills())==1
     assert await repo.verify_invariants(D(500))==[]

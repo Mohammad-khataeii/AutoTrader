@@ -1,0 +1,455 @@
+{
+  "status": "PASS",
+  "evidence_category": "LOCAL_ISOLATED_RESTORED_REAL_LEDGER_ENGINEERING",
+  "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+  "restored_original_accounts": 10,
+  "retained_financial_tables": [
+    "balances",
+    "financial_journal",
+    "orders",
+    "fills",
+    "positions",
+    "capital_reservations",
+    "exit_intents",
+    "exit_targets",
+    "exit_plans",
+    "ai_budgets",
+    "ai_usage",
+    "order_transitions"
+  ],
+  "original_financial_seals": "ALL_MATCH_BEFORE_AFTER",
+  "initial_primary_funding_events": 1,
+  "primary_cash": "7003.532190559225",
+  "primary_fills": 4,
+  "origin_identity_unchanged": true,
+  "new_profile": "4.9.0-paper.1",
+  "previous_profile_retained": true,
+  "archived_original_ledgers": 8,
+  "original_ledgers_deleted": 0,
+  "new_independent_paper_accounts": [
+    {
+      "strategy_id": "A3_COST_AWARE_CONTINUATION",
+      "manifest": {
+        "capital_policy": {
+          "initial": "500",
+          "reserve": "150",
+          "risk_per_trade": "5"
+        },
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_bc2709045295c1a2343376102fe3c16e",
+        "entry_version": "4.6.0-experimental.2",
+        "execution_fingerprint": "44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c",
+        "execution_mode": "INTERNAL_SIMULATED_IOC",
+        "execution_policy_version": "4.9.0-paper-execution.1",
+        "execution_runtime": "native-v46",
+        "exit_policy": {
+          "comparison": "Three-hour matched baseline; old frozen 24-hour shadow history is unchanged",
+          "failure_confirmation": "Existing successor position-specific causal exit rules",
+          "holding_seconds": 10800,
+          "target_fractions": [
+            ".3",
+            ".4",
+            ".3"
+          ],
+          "version": "4.9.0-matched-successor-exit.1"
+        },
+        "experiment_id": "f1bd2a093cb04468a300a428f046afe2",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-28T08:00:46.965586+00:00",
+        "initial_cash_eur": "500",
+        "market_data_source": "PUBLIC_REVOLUT_X",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_aruba_staging",
+        "parameter_hash": "00419e581d7bc5eb5d1e084ac1a9542c93d91afa5e0b9b1c0a8d1f6024b3b600",
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+        "strategy_id": "A3_COST_AWARE_CONTINUATION",
+        "strategy_version": "4.6.0-experimental.2"
+      },
+      "funding": "500",
+      "reconciliation": []
+    },
+    {
+      "strategy_id": "B3_STATEFUL_BREAKOUT",
+      "manifest": {
+        "capital_policy": {
+          "initial": "500",
+          "reserve": "150",
+          "risk_per_trade": "5"
+        },
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_8025950027613386032993853a33c0f7",
+        "entry_version": "4.6.0-experimental.2",
+        "execution_fingerprint": "44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c",
+        "execution_mode": "INTERNAL_SIMULATED_IOC",
+        "execution_policy_version": "4.9.0-paper-execution.1",
+        "execution_runtime": "native-v46",
+        "exit_policy": {
+          "comparison": "Three-hour matched baseline; old frozen 24-hour shadow history is unchanged",
+          "failure_confirmation": "Existing successor position-specific causal exit rules",
+          "holding_seconds": 10800,
+          "target_fractions": [
+            ".3",
+            ".4",
+            ".3"
+          ],
+          "version": "4.9.0-matched-successor-exit.1"
+        },
+        "experiment_id": "2964330940c1469a8c2e4b40ae602b7a",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-28T08:00:48.830361+00:00",
+        "initial_cash_eur": "500",
+        "market_data_source": "PUBLIC_REVOLUT_X",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_aruba_staging",
+        "parameter_hash": "00419e581d7bc5eb5d1e084ac1a9542c93d91afa5e0b9b1c0a8d1f6024b3b600",
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+        "strategy_id": "B3_STATEFUL_BREAKOUT",
+        "strategy_version": "4.6.0-experimental.2"
+      },
+      "funding": "500",
+      "reconciliation": []
+    },
+    {
+      "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+      "manifest": {
+        "capital_policy": {
+          "initial": "500",
+          "reserve": "150",
+          "risk_per_trade": "5"
+        },
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_bd8d4ad635f876778ed897e849d31d81",
+        "entry_version": "4.6.0-experimental.2",
+        "execution_fingerprint": "44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c",
+        "execution_mode": "INTERNAL_SIMULATED_IOC",
+        "execution_policy_version": "4.9.0-paper-execution.1",
+        "execution_runtime": "native-v46",
+        "exit_policy": {
+          "comparison": "Three-hour matched baseline; old frozen 24-hour shadow history is unchanged",
+          "failure_confirmation": "Existing successor position-specific causal exit rules",
+          "holding_seconds": 10800,
+          "target_fractions": [
+            ".3",
+            ".4",
+            ".3"
+          ],
+          "version": "4.9.0-matched-successor-exit.1"
+        },
+        "experiment_id": "7048df678fa04ad3a7a25a0f8cbebf47",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-28T08:00:50.699257+00:00",
+        "initial_cash_eur": "500",
+        "market_data_source": "PUBLIC_REVOLUT_X",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_aruba_staging",
+        "parameter_hash": "00419e581d7bc5eb5d1e084ac1a9542c93d91afa5e0b9b1c0a8d1f6024b3b600",
+        "parameters": {
+          "breakout_hold_bars": "2",
+          "breakout_volume": "1.3",
+          "compression_width": "0.02",
+          "entry_mode": "EARLY_RECLAIM",
+          "entry_reference": "MIDPOINT",
+          "holding_bars": "36",
+          "minimum_net_reward_risk": "1.2",
+          "relative_model": "RESIDUAL_VOLATILITY",
+          "relative_volume": "1.2",
+          "relative_z": "0.75",
+          "retest_bars": "8",
+          "stop_atr": "2",
+          "stop_basis": "STRUCTURE",
+          "target_atr": "2",
+          "target_basis": "15m"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+        "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+        "strategy_version": "4.6.0-experimental.2"
+      },
+      "funding": "500",
+      "reconciliation": []
+    },
+    {
+      "strategy_id": "RAOE_EARLY_RECOVERY",
+      "manifest": {
+        "capital_policy": {
+          "initial": "500",
+          "reserve": "150",
+          "risk_per_trade": "5"
+        },
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_792c600214b0d6943619c4f51d23cb05",
+        "entry_version": "4.9.0-raoe.1",
+        "execution_fingerprint": "44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c",
+        "execution_mode": "INTERNAL_SIMULATED_IOC",
+        "execution_policy_version": "4.9.0-paper-execution.1",
+        "execution_runtime": "native-v46",
+        "exit_policy": {
+          "failure_confirmation": "two completed 5m closes and entry-specific structure",
+          "holding_seconds": 21600,
+          "protective_stops": "fresh observed bid; always ahead of discretionary exits",
+          "target_fractions": [
+            ".3",
+            ".4",
+            ".3"
+          ],
+          "target_semantics": "structural bid scenarios converted once to net unit floors",
+          "version": "4.9.0-structure-exit.1"
+        },
+        "experiment_id": "7502d4923fc04694b1ce66b8563d6fdc",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-28T08:00:52.833362+00:00",
+        "initial_cash_eur": "500",
+        "market_data_source": "PUBLIC_REVOLUT_X",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_aruba_staging",
+        "parameter_hash": "8d1e80a4bb64e1ce2ffeb04d2599369f524e941872883852dfad962a798af7bc",
+        "parameters": {
+          "continuation_maximum_extension_atr": "5",
+          "continuation_near_depth_budget_multiple": "2",
+          "continuation_range_bars": "24",
+          "entry_method": "CONFIRMED_REACTION_IOC",
+          "holding_bars": "72",
+          "maximum_extension_atr": "2",
+          "minimum_net_reward_risk": "1.2",
+          "minimum_reward_to_cost": "2",
+          "minimum_structural_timeframe_minutes": "15",
+          "stop_atr_buffer": "0.25",
+          "structure_model": "4.9.0-significance.1",
+          "swing_prominence_atr": "1.25",
+          "volume_policy": "MID_PRICE_VOLUME_IS_NOT_TRADED_DEMAND"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+        "strategy_id": "RAOE_EARLY_RECOVERY",
+        "strategy_version": "4.9.0-raoe.1"
+      },
+      "funding": "500",
+      "reconciliation": []
+    },
+    {
+      "strategy_id": "RAOE_TREND_PULLBACK",
+      "manifest": {
+        "capital_policy": {
+          "initial": "500",
+          "reserve": "150",
+          "risk_per_trade": "5"
+        },
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_a9c922735a4e0cc5b7bd9b29ace97db6",
+        "entry_version": "4.9.0-raoe.1",
+        "execution_fingerprint": "44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c",
+        "execution_mode": "INTERNAL_SIMULATED_IOC",
+        "execution_policy_version": "4.9.0-paper-execution.1",
+        "execution_runtime": "native-v46",
+        "exit_policy": {
+          "failure_confirmation": "two completed 5m closes and entry-specific structure",
+          "holding_seconds": 21600,
+          "protective_stops": "fresh observed bid; always ahead of discretionary exits",
+          "target_fractions": [
+            ".3",
+            ".4",
+            ".3"
+          ],
+          "target_semantics": "structural bid scenarios converted once to net unit floors",
+          "version": "4.9.0-structure-exit.1"
+        },
+        "experiment_id": "0fa6a73bf4dc4c35a27bf24b227b0b83",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-28T08:00:54.949857+00:00",
+        "initial_cash_eur": "500",
+        "market_data_source": "PUBLIC_REVOLUT_X",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_aruba_staging",
+        "parameter_hash": "8d1e80a4bb64e1ce2ffeb04d2599369f524e941872883852dfad962a798af7bc",
+        "parameters": {
+          "continuation_maximum_extension_atr": "5",
+          "continuation_near_depth_budget_multiple": "2",
+          "continuation_range_bars": "24",
+          "entry_method": "CONFIRMED_REACTION_IOC",
+          "holding_bars": "72",
+          "maximum_extension_atr": "2",
+          "minimum_net_reward_risk": "1.2",
+          "minimum_reward_to_cost": "2",
+          "minimum_structural_timeframe_minutes": "15",
+          "stop_atr_buffer": "0.25",
+          "structure_model": "4.9.0-significance.1",
+          "swing_prominence_atr": "1.25",
+          "volume_policy": "MID_PRICE_VOLUME_IS_NOT_TRADED_DEMAND"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+        "strategy_id": "RAOE_TREND_PULLBACK",
+        "strategy_version": "4.9.0-raoe.1"
+      },
+      "funding": "500",
+      "reconciliation": []
+    },
+    {
+      "strategy_id": "RAOE_BREAKOUT_RETEST",
+      "manifest": {
+        "capital_policy": {
+          "initial": "500",
+          "reserve": "150",
+          "risk_per_trade": "5"
+        },
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_e3592a5cc370679c1280b3847340de8f",
+        "entry_version": "4.9.0-raoe.1",
+        "execution_fingerprint": "44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c",
+        "execution_mode": "INTERNAL_SIMULATED_IOC",
+        "execution_policy_version": "4.9.0-paper-execution.1",
+        "execution_runtime": "native-v46",
+        "exit_policy": {
+          "failure_confirmation": "two completed 5m closes and entry-specific structure",
+          "holding_seconds": 21600,
+          "protective_stops": "fresh observed bid; always ahead of discretionary exits",
+          "target_fractions": [
+            ".3",
+            ".4",
+            ".3"
+          ],
+          "target_semantics": "structural bid scenarios converted once to net unit floors",
+          "version": "4.9.0-structure-exit.1"
+        },
+        "experiment_id": "99c408ac168b44cfbb81e7b2ac8bdaf2",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-28T08:00:57.381175+00:00",
+        "initial_cash_eur": "500",
+        "market_data_source": "PUBLIC_REVOLUT_X",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_aruba_staging",
+        "parameter_hash": "8d1e80a4bb64e1ce2ffeb04d2599369f524e941872883852dfad962a798af7bc",
+        "parameters": {
+          "continuation_maximum_extension_atr": "5",
+          "continuation_near_depth_budget_multiple": "2",
+          "continuation_range_bars": "24",
+          "entry_method": "CONFIRMED_REACTION_IOC",
+          "holding_bars": "72",
+          "maximum_extension_atr": "2",
+          "minimum_net_reward_risk": "1.2",
+          "minimum_reward_to_cost": "2",
+          "minimum_structural_timeframe_minutes": "15",
+          "stop_atr_buffer": "0.25",
+          "structure_model": "4.9.0-significance.1",
+          "swing_prominence_atr": "1.25",
+          "volume_policy": "MID_PRICE_VOLUME_IS_NOT_TRADED_DEMAND"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+        "strategy_id": "RAOE_BREAKOUT_RETEST",
+        "strategy_version": "4.9.0-raoe.1"
+      },
+      "funding": "500",
+      "reconciliation": []
+    },
+    {
+      "strategy_id": "RAOE_BREAKOUT_CONTINUATION",
+      "manifest": {
+        "capital_policy": {
+          "initial": "500",
+          "reserve": "150",
+          "risk_per_trade": "5"
+        },
+        "data_kind": "LIVE_MARKET_SHADOW",
+        "database_name": "autotrader_shadow_b27f1f19f198430f6ec130b151628380",
+        "entry_version": "4.9.0-raoe.1",
+        "execution_fingerprint": "44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c",
+        "execution_mode": "INTERNAL_SIMULATED_IOC",
+        "execution_policy_version": "4.9.0-paper-execution.1",
+        "execution_runtime": "native-v46",
+        "exit_policy": {
+          "failure_confirmation": "two completed 15m closes",
+          "holding_seconds": 14400,
+          "protective_stops": "fresh observed bid; always ahead of discretionary exits",
+          "target_fractions": [
+            ".3",
+            ".4",
+            ".3"
+          ],
+          "target_semantics": "structural bid scenarios converted once to net unit floors",
+          "version": "4.9.0-continuation-exit.1"
+        },
+        "experiment_id": "f625b42d0bd54be181bc802da8648526",
+        "fee_bps": "10",
+        "frozen_at": "2026-10-28T08:00:59.800779+00:00",
+        "initial_cash_eur": "500",
+        "market_data_source": "PUBLIC_REVOLUT_X",
+        "minimum_prospective_days": 30,
+        "official_database": "autotrader_aruba_staging",
+        "parameter_hash": "ace5029564e6924980d0d7f5949451e2993fed6c80fc0f3bf3a6337bf638a349",
+        "parameters": {
+          "continuation_maximum_extension_atr": "5",
+          "continuation_near_depth_budget_multiple": "2",
+          "continuation_range_bars": "24",
+          "entry_method": "CONFIRMED_CONTINUATION_IOC",
+          "holding_bars": "48",
+          "maximum_extension_atr": "2",
+          "minimum_net_reward_risk": "1.2",
+          "minimum_reward_to_cost": "2",
+          "minimum_structural_timeframe_minutes": "15",
+          "stop_atr_buffer": "0.25",
+          "structure_model": "4.9.0-significance.1",
+          "swing_prominence_atr": "1.25",
+          "volume_policy": "MID_PRICE_VOLUME_IS_NOT_TRADED_DEMAND"
+        },
+        "promotion_state": "UNVALIDATED_EXPERIMENT",
+        "slippage_bps": "8",
+        "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+        "strategy_id": "RAOE_BREAKOUT_CONTINUATION",
+        "strategy_version": "4.9.0-raoe.1"
+      },
+      "funding": "500",
+      "reconciliation": []
+    }
+  ],
+  "prospective_performance_claim": false,
+  "new_prospective_accounts_are_clones_only": true,
+  "network_isolation": true,
+  "remote_writes": false,
+  "limitations": [
+    "Snapshot cutoffs differ by database. This local proof does not replace a fresh Stage B backup/restore before activation.",
+    "No real-time market or exchange execution validation is claimed from isolated clone tests."
+  ]
+}

@@ -7,7 +7,7 @@ from decimal import ROUND_CEILING, Decimal
 from typing import Any
 
 from autotrader.domain import OrderBook, Side, TradingPair, quantize_down
-from autotrader.execution.pricing import BPS, quote_execution
+from autotrader.execution.pricing import BPS, ExecutionQuote, quote_execution
 from autotrader.market_data.service import MarketDataService
 
 D = Decimal
@@ -44,7 +44,8 @@ class CostAwareOpportunityEngine:
 
     def evaluate(self, pair: TradingPair, book: OrderBook, *, quote_budget: Decimal,
                  stop: Decimal, targets: tuple[Decimal, ...], atr: Decimal,
-                 plausible_target: Decimal | None, holding_bars: int, exit_fractions: tuple[Decimal, ...] | None = None) -> OpportunityEconomics:
+                 plausible_target: Decimal | None, holding_bars: int, exit_fractions: tuple[Decimal, ...] | None = None,
+                 entry_quote: ExecutionQuote | None = None) -> OpportunityEconomics:
         p = self.assumptions
         validator = MarketDataService(None)  # type: ignore[arg-type]
         reasons = validator.validate_pair(pair)
@@ -59,7 +60,7 @@ class CostAwareOpportunityEngine:
         assert book.best_ask is not None and book.best_bid is not None
         quantity = quantize_down(quote_budget / (book.best_ask * (1 + (p.entry_fee_bps + p.slippage_bps) / BPS)), pair.quantity_step)
         try:
-            entry = quote_execution(book, Side.BUY, quantity, quantity_step=pair.quantity_step,
+            entry = entry_quote or quote_execution(book, Side.BUY, quantity, quantity_step=pair.quantity_step,
                 fee_bps=p.entry_fee_bps, slippage_bps=p.slippage_bps, quote_budget=quote_budget)
             exit_quote = quote_execution(book, Side.SELL, entry.fillable_quantity, quantity_step=pair.quantity_step,
                 fee_bps=p.exit_fee_bps, slippage_bps=p.slippage_bps)

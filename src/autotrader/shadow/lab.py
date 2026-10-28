@@ -36,12 +36,12 @@ log = logging.getLogger(__name__)
 D = Decimal
 PRESETS = {s.strategy_id: s for s in (*REGISTRY, *EXPERIMENTAL_REGISTRY, *SUCCESSOR_REGISTRY) if not s.filter_only}
 MAX_EXPERIMENTS = 8
-from autotrader.raoe import IDENTITIES, PARAMETERS, STRATEGY_VERSION
+from autotrader.raoe import IDENTITIES, STRATEGY_VERSION, parameters_for
 from autotrader.research.strategies import BULL, StrategySpec
 
 PRESETS.update({identity: StrategySpec(identity, 'Unvalidated regime-adaptive paper hypothesis',
     ('completed causal observations',), 'structural reaction', 'structural invalidation',
-    'protective stop, targets and time limit', 72, BULL, version=STRATEGY_VERSION) for identity in IDENTITIES})
+    'protective stop, targets and time limit', int(parameters_for(identity)['holding_bars']), BULL, version=STRATEGY_VERSION) for identity in IDENTITIES})
 
 
 class ShadowLab:
@@ -177,8 +177,8 @@ class ShadowLab:
                         "official_database": url.database,
                         "strategy_id": strategy_id,
                         "strategy_version": spec.version,
-                        "parameters": PARAMETERS if strategy_id in IDENTITIES else params.payload(),
-                        "parameter_hash": digest(canonical(PARAMETERS if strategy_id in IDENTITIES else params.payload())),
+                        "parameters": parameters_for(strategy_id) if strategy_id in IDENTITIES else params.payload(),
+                        "parameter_hash": digest(canonical(parameters_for(strategy_id) if strategy_id in IDENTITIES else params.payload())),
                         "source_fingerprint": source_fingerprint()[0],
                         "execution_fingerprint": execution_fingerprint(),
                         "execution_runtime": CURRENT_RUNTIME,
@@ -190,6 +190,12 @@ class ShadowLab:
                         "promotion_state": "UNVALIDATED_EXPERIMENT",
                         "minimum_prospective_days": 30,
                     }
+                    from autotrader.execution.policies import policy_for
+                    if policy_for(strategy_id):
+                        manifest.update(entry_version=spec.version,exit_policy=policy_for(strategy_id),
+                            execution_policy_version='4.9.0-paper-execution.1',
+                            capital_policy={'initial':'500','risk_per_trade':'5','reserve':'150'},
+                            execution_mode='INTERNAL_SIMULATED_IOC',market_data_source='PUBLIC_REVOLUT_X' if kind=='LIVE_MARKET_SHADOW' else 'SYNTHETIC_ACCEPTANCE')
                     session.add(
                         ShadowExperimentModel(
                             experiment_id=identity,
@@ -279,6 +285,8 @@ class ShadowLab:
                 raise ValueError("archived_experiment_cannot_resume")
             if row.state in {"CREATING", "STOPPED"}:
                 raise ValueError("shadow_state_cannot_transition")
+            if action=='resume' and not compatibility(repo.manifest)['compatible']:
+                raise ValueError('incompatible_frozen_experiment_cannot_resume')
             await repo.set_control(action)
             row.state = {"resume": "SHADOW_ACTIVE", "pause": "PAUSED", "stop": "STOPPED"}[action]
         return await self.detail(identity)
@@ -292,7 +300,7 @@ class ShadowLab:
                 return dict(json.loads(marker.payload_json))
             row = cast(ShadowExperimentModel, await session.get(ShadowExperimentModel, identity))
             if row.state not in {"PAUSED", "STOPPED"}:
-                raise ValueError("pause_or_stop_before_deleting_experiment")
+                raise ValueError("pause_or_stop_before_archiving_experiment")
             async with repo.session_factory() as scoped, scoped.begin():
                 await repo._lock_account(scoped)
                 from autotrader.persistence.models import ExitIntentModel, PositionModel
@@ -333,7 +341,7 @@ class ShadowLab:
                 SystemStateModel(
                     key="shadow_archive:" + identity,
                     state="ARCHIVED",
-                    reason="user_confirmed_delete_from_workspace",
+                    reason="flat_reconciled_retirement_history_preserved",
                     payload_json=_json(result),
                 )
             )

@@ -2,6 +2,7 @@
 from dataclasses import asdict
 from decimal import Decimal
 from pathlib import Path
+from typing import Any
 
 from autotrader.opportunity.engine import SUCCESSOR_REGISTRY, SuccessorParameters
 from autotrader.research.data import canonical, digest
@@ -12,7 +13,7 @@ D = Decimal
 ACCOUNT = "PERSONAL_PLAN_PAPER_7000"
 REGISTRY_KEY = "personal_paper_v47"
 INITIAL = D(7000)
-VERSION = "4.8.0-paper.1"
+VERSION = "4.9.0-paper.1"
 LIMITS = RiskLimits(max_allocated_capital=INITIAL, max_total_open_exposure=D(4200),
     min_uncommitted_reserve=D(2800), max_position_size=D(700), max_simultaneous_positions=6,
     max_planned_loss_per_trade=D(35), daily_loss_threshold=D(140),
@@ -21,14 +22,19 @@ AGGREGATE_STOP_RISK = D(140)
 CORRELATED_CAPITAL = D(2100)
 STRATEGY_CAPITAL = D(2100)
 MAX_DRAWDOWN = D('.10')
-STRATEGIES = {s.strategy_id: {"strategy_version": s.version, "parameters": SuccessorParameters().payload()}
+STRATEGIES: dict[str,dict[str,Any]] = {s.strategy_id: {"strategy_version": s.version, "parameters": SuccessorParameters().payload()}
               for s in SUCCESSOR_REGISTRY}
+from autotrader.execution.policies import policy_for
 from autotrader.personal_paper.selection import POLICY as BASELINE_POLICY
-from autotrader.raoe import IDENTITIES, PARAMETERS, STRATEGY_VERSION
 from autotrader.raoe import POLICY as RAOE_POLICY
+from autotrader.raoe import PRIMARY_IDENTITIES, STRATEGY_VERSION, exit_policy, parameters_for
 
-STRATEGIES.update({s: {"strategy_version": STRATEGY_VERSION, "parameters": PARAMETERS} for s in IDENTITIES})
-EXECUTION_POLICY = {"version": "4.8.0-shared.1", "baseline": BASELINE_POLICY, "raoe": RAOE_POLICY, "live_authorized": False}
+STRATEGIES.update({s: {"strategy_version": STRATEGY_VERSION, "parameters": parameters_for(s),
+                      "exit_policy":exit_policy(s)} for s in PRIMARY_IDENTITIES})
+for identity,spec in STRATEGIES.items():
+    spec['exit_policy']=policy_for(identity)
+EXECUTION_POLICY = {"version": "4.9.0-shared.1", "baseline": BASELINE_POLICY, "raoe": RAOE_POLICY, "live_authorized": False,
+                    "continuation":"Historical and isolated forward shadow research only; absent from primary authority"}
 
 
 def fingerprint() -> str:

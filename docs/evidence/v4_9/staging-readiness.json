@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "version": "4.9.0",
+  "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+  "gates": {
+    "backend-tests.json": "a026f0e5e0b460efdbd906967bd0735ced360f3b6d62b9b43277f98c3b596528",
+    "frontend-tests.json": "c60e7e948d2d52351d35c3352202217ac0e04bed09aff56babbb952cad867705",
+    "browser-tests.json": "5db267c8c21b755006a8b8c5d45c7ba8ab53ab19701aa823ee8d2161b660ff57",
+    "linux-tests.json": "46e3ea380aa148abfb620fd7325953fbbfdaa0aabbf1bbbb083aff1b6aabfb75",
+    "research-summary.json": "d2d9a205fe458fae76a47c608fa9cf590c9063eb577b7e48eff03d7c35c0bb37",
+    "financial-restore.json": "546e5af5c7e1fea97ff58b7a238e140fc558c131d4eebf5c120c76e0889ab0d1",
+    "runtime-compatibility.json": "99ebc8ea7d65232e76f59f374fe3e8e0e567dd73b84ba2044b620a5c002881a1",
+    "restart-recovery.json": "c3111313f450f2c0c9fe65ea10a76c72c2f0c295cb24e2b7ffc7accf76656d9c"
+  },
+  "stage": "A",
+  "deployment_authorized": false,
+  "requires_exact_release_commit_approval": true,
+  "live_trading_authorized": false,
+  "recommendation": "READY_FOR_REVIEWED_PAPER_STAGING_RELEASE_ONLY",
+  "profitability": "UNKNOWN",
+  "continuation_primary_authorized": false
+}

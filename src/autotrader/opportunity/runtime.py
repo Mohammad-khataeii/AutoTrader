@@ -40,20 +40,26 @@ def restore_signal(raw: str) -> StrategySignal:
 
 
 async def scan_successor(runtime: Any, repo: Any, manifest: dict[str, Any], candidates: list[Any]) -> None:
+    from autotrader.market_data.synchronization import align_candidate, benchmark_features
+    cycle=await runtime.market_data.evaluation_context(candidates)
     prepared = []
     for candidate in candidates:
+        candidate=align_candidate(candidate,cycle)
+        if candidate is None:continue
         market = candidate.market
         if manifest['data_kind'] == 'LIVE_MARKET_SHADOW' and (not market.order_book.source.startswith('revolut-x') or any(not c.source.startswith('revolut-x') for c in market.candles)):
             raise ValueError('live_shadow_rejects_non_live_observations')
         if not market.usable_for_entry:
             continue
-        features = enrich(candidate.features, market.candles, market.order_book.timestamp)
+        features = enrich(candidate.features, market.candles, cycle.as_of)
         features.metadata.update(best_bid=market.order_book.best_bid, best_ask=market.order_book.best_ask,
             last_price=market.metrics.mid, liquidity_quote=market.metrics.liquidity_quote, order_book_age_seconds=market.metrics.age_seconds)
         prepared.append(replace(candidate, features=features))
     context = {c.features.symbol: c.features for c in prepared}
+    context.update(benchmark_features(cycle))
+    from autotrader.raoe import STRATEGY_VERSION
     from autotrader.raoe.engine import RAOEEngine
-    is_raoe = manifest['strategy_version']=='4.8.0-raoe.1'
+    is_raoe = manifest['strategy_version']==STRATEGY_VERSION
     engine: Any = RAOEEngine(D(manifest['fee_bps']),D(manifest['slippage_bps'])) if is_raoe else SuccessorOpportunityEngine(SuccessorParameters.from_payload(manifest['parameters']),
         D(manifest['fee_bps']), D(manifest['slippage_bps']))
     completed_decisions = []
@@ -72,9 +78,10 @@ async def scan_successor(runtime: Any, repo: Any, manifest: dict[str, Any], cand
         portfolio.positions = {p.symbol: p for p in await repo.list_positions() if p.closed_at is None and p.quantity > 0}
         signal = engine.evaluate(manifest['strategy_id'], f, market.pair, market.order_book,
             context.get('BTC-EUR'), context.get('ETH-EUR'), market.candles,
-            **({'benchmarks': {c.features.symbol: c.market.candles for c in prepared}} if is_raoe else {}),
+            **({'benchmarks': cycle.histories} if is_raoe else {}),
             sizing_scope='ACCOUNT_CONSTRAINED_PROPOSAL',
             sizing_context={'cash': portfolio.cash, 'exposure': portfolio.open_exposure, 'limits': runtime.risk.limits})
+        if manifest.get('exit_policy'):signal.evidence['exit_policy']=manifest['exit_policy']
         identity = 'dec_' + digest((manifest['experiment_id'] + ':' + signal.signal_id).encode())[:40]
         async with repo.session_factory() as session:
             stored = await session.get(TradingDecisionModel, identity)

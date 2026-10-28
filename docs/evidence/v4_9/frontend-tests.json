@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+  "tests": 19,
+  "files": 6,
+  "failures": 0,
+  "typescript_build": "PASS",
+  "vite_build": "PASS",
+  "frontend_code_sha256": "f298b48416dd22e5a502163d30b9fb05185f7333edfd6f7a7abf41812c9cc794",
+  "package_sha256": "84b86e5635cacc9f32444d8d0e1dc64585aef1325ea2d541262ad9431befe960"
+}

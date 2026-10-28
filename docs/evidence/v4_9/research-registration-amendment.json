@@ -1,0 +1,19 @@
+{
+  "schema": "v49-research-amendment/1",
+  "registered_at": "2026-10-28T07:32:05.828790+00:00",
+  "holdout_observed": false,
+  "training_observed": [
+    "Original incomplete training/normal only"
+  ],
+  "addition": [
+    "V471_A3_COST_AWARE_CONTINUATION",
+    "V471_B3_STATEFUL_BREAKOUT",
+    "V471_E3_ADAPTIVE_RELATIVE_STRENGTH"
+  ],
+  "reason": "Explicitly reproduce unchanged V4.7.1 primary review gates alongside raw original baseline recipes, rather than label raw entries as the complete primary policy. No thresholds or exits retuned.",
+  "preserved_original_variants": true,
+  "raw_entry_version": "4.6.0-experimental.2",
+  "review_policy": "4.7.1-quality.1",
+  "normal_and_stress": true,
+  "all_variants_reported": true
+}

@@ -1,0 +1,84 @@
+{
+  "schema": "v49-verification-history/1",
+  "evidence_category": "ENGINEERING_DIAGNOSTICS_NOT_PERFORMANCE",
+  "records": [
+    {
+      "issue": "Initial durable admission test assumed submit did not auto-dispatch",
+      "correction": "Separate admission/dispatch with a test hold, then reopen actual repository; real worker crash tests retained"
+    },
+    {
+      "issue": "Immutable bar key exceeded 64-character column",
+      "correction": "Canonical numeric bar identity uses a 48-hex suffix; real PG cache restart regression passes"
+    },
+    {
+      "issue": "Retested-support branch unreachable while closes remained above confirmation level",
+      "correction": "Track previously-broken state before evaluating subsequent retest; causal structure tests pass"
+    },
+    {
+      "issue": "V4.9 RAOE was absent from shared DecisionEngine strategy-version routing",
+      "correction": "Explicit V4.9 entry/plan routing; scoped shadow entry/reopen/protection regression passes"
+    },
+    {
+      "issue": "IOC zero-fill intent became rejected rather than cancelled",
+      "correction": "Preserve supported no-fill cancellation semantics without reservation"
+    },
+    {
+      "issue": "Old baseline fixture could be outranked by a new structural RAOE candidate",
+      "correction": "Isolate baseline entry/exit unit regression explicitly; retain full separate RAOE/competition acceptance"
+    },
+    {
+      "issue": "Authorization fixture omitted newly immutable exit policy",
+      "correction": "Verify omission rejects; attach exact manifest policy for positive admission case"
+    },
+    {
+      "issue": "Oldest missed-outcome records could be stranded outside newest-100 window",
+      "correction": "Oldest-first unassessed anti-join; 150-event real PG backlog regression and original-review preservation"
+    },
+    {
+      "issue": "Versioned outcome key prefix plus 48-hex identity exceeded 64 characters",
+      "correction": "Use raoe49_outcome prefix; append-only real PG regression covers actual key storage"
+    },
+    {
+      "issue": "Conflicting candle versions could be silently deduplicated",
+      "correction": "Return missing/conflicting evidence rather than favorable price outcome"
+    },
+    {
+      "issue": "Pending primary aggregate risk could understate actual partial/multilevel stop risk",
+      "correction": "Use greater of old reservation bound and stored execution projection; different-asset aggregate-cap regression"
+    },
+    {
+      "issue": "New aggregate test initially hit the earlier same-asset pending-order guard",
+      "correction": "Use a second asset so the intended portfolio aggregate guard is exercised; Financial gate isolated in synthetic test; production authority stays enforced and is separately tested"
+    },
+    {
+      "issue": "Browser exact-text locator included extra holding text in a table cell",
+      "correction": "Match the version substring; all 20 final native browser checks pass"
+    },
+    {
+      "issue": "Staging mock did not stub the new real read-only Tailscale verification",
+      "correction": "Stub only the external read in deployment-ordering tests; production hash gate remains enforced"
+    },
+    {
+      "issue": "Earlier broad test runs overlapped source/boundary updates",
+      "correction": "Final native full suite on stable application source passed 409 tests; numerical study dependencies are hash-frozen"
+    },
+    {
+      "issue": "Old Linux test tooling lacked Git and Docker CLI",
+      "correction": "New test-only overlay adds Git to the actual product image; four host Docker-isolation orchestration cases remain explicitly covered by the native full suite"
+    },
+    {
+      "issue": "Direct replay lifecycle could cross a wall-clock five-minute boundary on emulation",
+      "correction": "Hold the direct synthetic cycle observation clock; real subprocess workers and production current-bar rejection remain unchanged"
+    },
+    {
+      "issue": "Filtered Docker health template assumed every container has Health metadata",
+      "correction": "Handle absent optional health map; successful ten-database read-only diagnostic collection verified"
+    },
+    {
+      "issue": "One installed-product concurrency run timed out opening a connection through Docker Desktop host forwarding",
+      "correction": "Identical product code and timeouts passed all seven targeted cases over the owned direct PostgreSQL network; final Linux coverage is 405 unique passed cases, with four host-only Docker cases passed natively."
+    }
+  ],
+  "research_engineering_runs": "Incomplete prototype runs are not release evidence. Completed registered batches resume only when every numerical dependency, registration and dataset hash matches. No held-out parameter tuning occurred.",
+  "activation": "Never attempted for V4.9; approval and fresh Stage B financial verification remain required."
+}

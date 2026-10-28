@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "health": [
+    200,
+    {
+      "status": "ok",
+      "mode": "paper",
+      "version": "4.9.0-dev"
+    }
+  ],
+  "profile": "4.9.0-paper.1",
+  "runtime_matches": true,
+  "reconciliation": [],
+  "primary_cash": "7003.532190559225",
+  "primary_fills": 4,
+  "retained_and_new_experiments": 15,
+  "archived": 8,
+  "historical_results": 144,
+  "authenticated": true,
+  "forward_market_validation": false,
+  "evidence_category": "ACTUAL_INSTALLED_LINUX_PRODUCT_API_ON_LOCAL_ISOLATED_RESTORED_LEDGER",
+  "remote_writes": false
+}

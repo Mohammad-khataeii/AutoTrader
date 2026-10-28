@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+  "study_complete": true,
+  "variant_cost_segment_rows": 144,
+  "registered_before_acquisition": true,
+  "registration_sha256": "db86652f3e5aa3c469aef678dd8f5420e9eb6c5d643e1e6996ca055a72adf086",
+  "registration_amendment_sha256": "f080e4d0ed4d4ef35a8a52b7b987fbcc4579f59e44332baaf380e008502c9427",
+  "results_sha256": "f5b4b95b070fd3754f42284016cd57bbf5959c6680d37f70b2383c2f34229f74",
+  "model_closure_sha256": "4c4304d2f6ce9dc171df974cb57aa79ce8461e3fb78f15f0493919401eed7329",
+  "evidence_category": "HISTORICAL_OHLCV_PROXY_ASSUMED_FINITE_DEPTH",
+  "held_out_rows": 48,
+  "new_raoe_held_out_closed_trades": 0,
+  "new_raoe_held_out_net_eur": "0",
+  "new_strategy_expectancy": "UNKNOWN; inactive in held-out interval, negative/inactive in earlier intervals",
+  "automatic_promotion": false,
+  "v49_forward_paper_days": 0,
+  "limitations": [
+    "All audit/January-February2025/April-October2026 intervals are development data",
+    "March2025 is new to this project, not prospective performance",
+    "March2025 has not previously been inspected in this project; registration precedes acquisition",
+    "Fixed surviving liquid asset universe; no historical L2 or queue",
+    "Worst-case stop before target when both barriers cross in a bar",
+    "No retuning or winner promotion after viewing the untouched test",
+    "Full lifecycle uses production pricing, structural plans, stop priority, causal position exits, partials and trailing. Database concurrency is tested separately.",
+    "Finite liquidity uses 1% of prior completed candle volume; future depth and order queue are unavailable.",
+    "Train/validation/test always reset separate EUR500 research capital; primary cash is never used.",
+    "BUY_AND_HOLD buys EUR75 per asset, leaving cash idle; it is not a fully invested index.",
+    "Historical proxy findings do not establish prospective profitability."
+  ]
+}

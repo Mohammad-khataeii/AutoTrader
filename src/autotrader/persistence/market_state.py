@@ -66,10 +66,38 @@ class MarketStateMixin:
             value = json.loads(row.payload_json)
             if value.get("token") != token:
                 raise ValueError("market_cache_lease_lost")
+            # Keep the first observed time of each genuine closed-bar version.
+            # Historical candle time alone cannot establish causal availability.
+            from autotrader.research.data import canonical, digest
+            observed = utc_now().isoformat()
+            from decimal import Decimal
+            normalized=[]
+            for candle in candles:
+                normalized.append({**candle,**{name:format(Decimal(candle[name]).normalize(),'f') for name in ('open','high','low','close','volume')}})
+            versions = {'closed_bar:'+digest(canonical(c))[:48]:c for c in normalized}
+            existing = set((await session.scalars(select(SystemStateModel.key).where(
+                SystemStateModel.key.in_(list(versions))))).all())
+            for identity, candle in versions.items():
+                if identity not in existing:
+                    session.add(SystemStateModel(key=identity,state='OBSERVED',reason='immutable_closed_candle_version',
+                        payload_json=json.dumps({'candle':candle,'first_observed_at':observed,
+                            'warning':'Backfilled candle time is not its first observation time'})))
             value.update(
-                bucket=bucket, candles=candles, lease_until=None, refreshed_at=utc_now().isoformat()
+                bucket=bucket, candles=candles, lease_until=None, refreshed_at=observed
             )
             row.payload_json = json.dumps(value)
+
+    async def record_benchmark_cycle(self, as_of: datetime, diagnostics: dict[str,Any], observed_at: datetime) -> None:
+        data=json.dumps({'version':'benchmark-sync/4.9.0','as_of':as_of.isoformat(),
+                         'observed_at':observed_at.isoformat(),'peers':diagnostics})
+        identity='benchmark_cycle:'+sha256(data.encode()).hexdigest()[:48]
+        async with self.session_factory() as session,session.begin():
+            await self._lock_account(session)
+            if not await session.get(SystemStateModel,identity):
+                session.add(SystemStateModel(key=identity,state='OBSERVED',reason='causal_cycle_alignment',payload_json=data))
+            latest=await session.get(SystemStateModel,'benchmark_sync')
+            if latest:latest.payload_json=data
+            else:session.add(SystemStateModel(key='benchmark_sync',state='OBSERVED',reason='latest_cycle_alignment',payload_json=data))
 
     async def defer_public_requests(self, family: str, seconds: float) -> None:
         key = "public_rate:" + sha256(family.encode()).hexdigest()[:24]

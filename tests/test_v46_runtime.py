@@ -78,7 +78,7 @@ async def test_successor_resumes_exact_decision_after_gateway_exception_without_
             original_id, original_payload = first.decision_id, first.payload_json
             assert stage_states(json.loads((await session.get(SystemStateModel, key(original_id))).payload_json))['ENTRY_PREFLIGHT'] == 'EXCEPTION'
         await runtime.scan(candidates)
-        assert len(await repo.list_fills()) == 1
+        assert len(await repo.list_fills()) == 1,{'orders':await repo.list_orders(),'diagnostics':getattr(repo,'_diagnostic_scan',{})}
         await runtime.scan(candidates)
         assert len(await repo.list_fills()) == 1 and await repo.verify_invariants(D(500)) == []
         async with repo.session_factory() as session:
@@ -90,8 +90,23 @@ async def test_successor_resumes_exact_decision_after_gateway_exception_without_
         await feed.close()
 
 
+@pytest.fixture
+def direct_cycle_clock():
+    """A direct replay cycle retains its original observation cutoff.
+
+    Emulated builds can cross a wall-clock five-minute boundary during fixture
+    provisioning. Production must reject stale bars; this synthetic lifecycle
+    instead holds its decision-time clock constant, without changing any gate.
+    Actual subprocess worker tests keep their real clock and fresh replay books.
+    """
+    from autotrader.clock import at
+    from autotrader.domain import utc_now
+    with at(utc_now()):
+        yield
+
+
 @pytest.mark.parametrize('strategy', ['A3_COST_AWARE_CONTINUATION', 'B3_STATEFUL_BREAKOUT', 'E3_ADAPTIVE_RELATIVE_STRENGTH'])
-async def test_each_successor_actual_entry_dedup_protection_and_reconstructed_runner(lab, tmp_path, strategy):
+async def test_each_successor_actual_entry_dedup_protection_and_reconstructed_runner(lab, tmp_path, strategy,direct_cycle_clock):
     from autotrader.indicators import calculate_features
     from autotrader.market_data.replay import FileReplayClient
     from autotrader.market_data.service import MarketDataService

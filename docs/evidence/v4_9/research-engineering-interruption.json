@@ -1,0 +1,8 @@
+{
+  "status": "RESTART_REQUIRED",
+  "observed_segments": [
+    "training/normal"
+  ],
+  "holdout_observed": false,
+  "reason": "Added dispatch-time cost feasibility rechecks and actual-quote injection after code review; no strategy thresholds changed. Incomplete run is not release evidence."
+}

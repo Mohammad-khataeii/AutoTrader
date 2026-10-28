@@ -35,6 +35,7 @@ class RiskEngine:
         entries_today: int,
         daily_pnl: Decimal = Decimal("0"),
         weekly_pnl: Decimal = Decimal("0"),
+        *, modeled_planned_loss: Decimal | None = None,
     ) -> RiskEvaluation:
         checks: dict[str, bool] = {}
         reasons: list[str] = []
@@ -45,6 +46,10 @@ class RiskEngine:
         planned_loss_ratio = ((entry_price - stop_loss) / entry_price) if long_stop_valid else Decimal("0")
         execution_cost_allowance = quote_amount * self.limits.planned_loss_cost_bps / Decimal("10000")
         planned_loss = (quote_amount * planned_loss_ratio) + execution_cost_allowance
+        if modeled_planned_loss is not None:
+            if not modeled_planned_loss.is_finite() or modeled_planned_loss < 0:
+                raise ValueError('invalid_modeled_planned_loss')
+            planned_loss = modeled_planned_loss
         open_positions = len([position for position in portfolio.positions.values() if position.closed_at is None])
         projected_cash = portfolio.cash - quote_amount
         projected_exposure = portfolio.open_exposure + quote_amount

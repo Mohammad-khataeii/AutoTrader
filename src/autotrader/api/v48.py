@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from collections import Counter
+from datetime import datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 from statistics import median
@@ -14,6 +15,7 @@ from sqlalchemy import select
 from autotrader.domain import utc_now
 from autotrader.persistence.accounting import aware
 from autotrader.persistence.models import FillModel, OrderModel, PositionModel, SystemStateModel
+from autotrader.raoe.analytics import episodes
 
 
 def execution_stages(pipeline: list[dict[str,Any]], orders: list[Any], filled_orders: set[str], closed: set[str]) -> list[dict[str,Any]]:
@@ -37,13 +39,16 @@ def install(app: FastAPI, service: Any, lab: Any, require_user: Any) -> None:
         async with service.official.session_factory() as session:
             row=await session.get(SystemStateModel,'raoe_discovery')
             discovery=json.loads(row.payload_json) if row else {}
+            states=(await session.scalars(select(SystemStateModel).where(SystemStateModel.key.in_(['benchmark_sync','market_metrics','scanner','worker','worker_instance'])))).all()
+            runtime={r.key:{'updated_at':aware(r.updated_at).isoformat(),'state':r.state,'payload':json.loads(r.payload_json)} for r in states}
         async with repo.session_factory() as session:
             row=await session.get(SystemStateModel,'paper_scan')
             scan=json.loads(row.payload_json) if row else {}
             events=(await session.scalars(select(SystemStateModel).where(SystemStateModel.key.like('raoe_event:%'))
                 .order_by(SystemStateModel.created_at.desc()).offset(cursor).limit(limit))).all()
             outcomes=(await session.scalars(select(SystemStateModel).where(SystemStateModel.key.in_(
-                ['raoe_outcome:'+r.key.removeprefix('raoe_event:') for r in events])))).all()
+                ['raoe49_outcome:'+r.key.removeprefix('raoe_event:') for r in events])))).all()
+            episode_models=(await session.scalars(select(SystemStateModel).where(SystemStateModel.key.like('raoe_event:%'),SystemStateModel.created_at>=utc_now()-timedelta(hours=48)).order_by(SystemStateModel.created_at).limit(10000))).all()
             orders=(await session.scalars(select(OrderModel).order_by(OrderModel.created_at.desc()).limit(500))).all()
             fills=(await session.scalars(select(FillModel).order_by(FillModel.created_at.desc()).limit(500))).all()
             closed=set((await session.scalars(select(PositionModel.position_id).where(PositionModel.state=='CLOSED'))).all())
@@ -59,7 +64,9 @@ def install(app: FastAPI, service: Any, lab: Any, require_user: Any) -> None:
             ticker=summaries_by_symbol.get(row['symbol'],{})
             row.update(market_price=ticker.get('price'),movement_since_summary=ticker.get('movement_since_summary'),
                 spread_bps=ticker.get('spread_bps'),quote_volume_24h=ticker.get('quote_volume_24h'),
-                relative_return_30m=(row.get('raoe_regime') or {}).get('relative_return_30m'))
+                relative_return_30m=(row.get('raoe_regime') or {}).get('relative_return_30m'),
+                completed_return_30m=ticker.get('completed_return_30m'),short_window_source=ticker.get('short_window_source'),
+                execution_depth=(row.get('raoe_regime') or {}).get('near_liquidity'))
             matches=[o for o in orders if o.symbol==row['symbol'] and payloads[o.order_id].get('strategy_id')==row['strategy_id']
                 and payloads[o.order_id].get('strategy_evidence',{}).get('as_of')==row.get('as_of')
                 and payloads[o.order_id].get('strategy_evidence',{}).get('execution_profile')==repo.manifest['version']]
@@ -77,10 +84,17 @@ def install(app: FastAPI, service: Any, lab: Any, require_user: Any) -> None:
             b=json.loads(event.payload_json)
             decision_orders=[o for o in orders if o.decision_id==b['decision_id']]
             b['evidence']['pipeline']=execution_stages(b['evidence']['pipeline'],decision_orders,filled_orders,closed)
-            missed.append({**b,'outcome':mapped.get(b['event_id'],{'classification':'PENDING_FIXED_HORIZON','profitability_proven':False})})
+            outcome=mapped.get(b['event_id'],{'classification':'PENDING_FIXED_HORIZON','profitability_proven':False})
+            actual=[f for f in fills if any(o.order_id==f.order_id for o in decision_orders)]
+            outcome['actual_prospective_paper_trade']={'status':'FILLED' if actual else 'NO_FILL_IN_RECENT_LEDGER_WINDOW',
+                'order_count':len(decision_orders),'fill_count':len(actual),'scope':'Latest 500 orders and fills; full history available in experiment detail/export'}
+            missed.append({**b,'outcome':outcome})
         return {'status':'CURRENT' if fresh else 'STALE_OR_UNAVAILABLE','observed_at':scan.get('observed_at'),
             'rows':sorted(rows,key=lambda r:(not r.get('entry_eligible'),not r.get('technical'),r['symbol'])),
             'unscanned_or_excluded':summaries,'discovery':discovery,'missed':missed,
+            'episodes':episodes([json.loads(e.payload_json) for e in episode_models]),
+            'episode_scope':{'hours':48,'signals':len(episode_models),'possibly_truncated':len(episode_models)==10000},
+            'runtime_diagnostics':runtime,'benchmark_sync':scan.get('benchmark_sync'),
             'next_cursor':cursor+limit if len(events)==limit else None,'data_failures':scan.get('data_failures',[]),
             'estimated_edge':'UNKNOWN','read_only':True,'live_authorized':False}
 
@@ -89,7 +103,7 @@ def install(app: FastAPI, service: Any, lab: Any, require_user: Any) -> None:
         primary=await service.detail()
         experiments=[]
         for record in await lab.records():
-            if record['state']=='CREATING' or record.get('archived_at'): continue
+            if record['state']=='CREATING': continue
             detail=await lab.detail(record['experiment_id'])
             scoped=await lab.repository(record['experiment_id'])
             async with scoped.session_factory() as session:
@@ -108,12 +122,17 @@ def install(app: FastAPI, service: Any, lab: Any, require_user: Any) -> None:
                 median_holding_seconds=median(durations) if durations else None,
                 modeled_slippage_and_impact_eur=str(impact),exposure_eur=detail['portfolio'].get('open_exposure'))
             experiments.append({'experiment_id':record['experiment_id'],'strategy_id':record['manifest']['strategy_id'],
-                'version':record['manifest']['strategy_version'],'evidence_category':record['manifest']['data_kind'],
+                'version':record['manifest']['strategy_version'],'archived_at':record.get('archived_at'),
+                'exit_policy':record['manifest'].get('exit_policy',{'status':'LEGACY_UNBOUND_SEE_ORIGINAL_ORDERS'}),
+                'forward_evidence_seconds':max(0,(utc_now()-aware(datetime.fromisoformat(record['created_at']))).total_seconds()),
+                'orders':len(models),'fills':len(detail['fills']),'fills_scope':'Latest 500',
+                'rejection_reasons':dict(Counter(json.loads(o.execution_json).get('rejection_reason','UNKNOWN') for o in models if o.status=='REJECTED')),
+                'evidence_category':record['manifest']['data_kind'],
                 'portfolio':detail['portfolio'],'performance':detail['performance'],
                 'confidence':'INSUFFICIENT_INDEPENDENT_EVIDENCE','runtime_compatibility':detail['runtime_compatibility'],
                 'reconciliation':detail['reconciliation']})
-        path=Path('/app/evidence/v48/research-results.json')
-        if not path.is_file(): path=Path(__file__).parents[3]/'docs/evidence/v4_8/research-results.json'
+        path=Path('/app/evidence/v49/research-results.json')
+        if not path.is_file(): path=Path(__file__).parents[3]/'docs/evidence/v4_9/research-results.json'
         return {'primary_strategies':primary.get('strategies',[]),'experiments':experiments,
             'historical':json.loads(path.read_text()) if path.is_file() else {'status':'NOT_PUBLISHED'},
             'allocation':'One primary cash pool; experimental EUR500 ledgers are separate and never added to primary equity',

@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+  "source_files": 279,
+  "execution_fingerprint": "44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c",
+  "paper_runtime_fingerprint": "612101af10822e80b4ea7b1389eb28c701b8f23af68ce850352716aadb8a8980",
+  "profile": "4.9.0-paper.1",
+  "primary_strategies": [
+    "A3_COST_AWARE_CONTINUATION",
+    "B3_STATEFUL_BREAKOUT",
+    "E3_ADAPTIVE_RELATIVE_STRENGTH",
+    "RAOE_EARLY_RECOVERY",
+    "RAOE_TREND_PULLBACK",
+    "RAOE_BREAKOUT_RETEST"
+  ],
+  "continuation_primary_authorized": false,
+  "frozen_v42": "UNCHANGED_VERIFIED",
+  "frozen_v44": "UNCHANGED_VERIFIED",
+  "reviewed_bridge": "VERIFIED",
+  "old_incompatible_ledgers": "Must remain paused/stopped; archival preserves all records",
+  "live_trading_authorized": false
+}
