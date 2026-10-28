@@ -10,5 +10,12 @@
   "ruff": "PASS",
   "mypy": "PASS (131 checked source modules)",
   "test_mode": "Native real PostgreSQL; complete suite",
-  "follow_up": "Direct replay clock fixture isolated from wall-clock boundary; corresponding installed Linux tests run against packaged source."
+  "follow_up": "Direct replay clock fixture isolated from wall-clock boundary; corresponding installed Linux tests run against packaged source.",
+  "deployment_correction": {
+    "status": "PASS",
+    "current_targeted_cases": 22,
+    "additional_cases_over_previous_suite": 7,
+    "artifact": "restore-memory-correction.json",
+    "scope": "Previous full-suite app source is unchanged; deployment-only correction tested natively and Linux AMD64. A new full 416-case run is not claimed."
+  }
 }

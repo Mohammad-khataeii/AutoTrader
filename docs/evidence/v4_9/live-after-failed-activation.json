@@ -1,0 +1,217 @@
+{
+  "status": "PASS",
+  "observed_at": "2026-10-28T14:08:00.666332+00:00",
+  "running_release": "4b9c68862ef7d697f973614bd529362daf43b74e",
+  "profile": "4.8.0-paper.1",
+  "portfolio": {
+    "initial_cash": "7000",
+    "cash": "7003.532190559225",
+    "available_cash": "7003.532190559225",
+    "reserved_cash": "0E-12",
+    "open_exposure": "0E-12",
+    "equity": "7003.532190559225",
+    "realized_pnl": "3.532190559225",
+    "unrealized_pnl": "0E-12",
+    "total_net_pnl": "3.532190559225",
+    "current_drawdown": "0.0006027482268721611068279603498",
+    "daily_risk_status": "WITHIN_LIMIT",
+    "weekly_risk_status": "WITHIN_LIMIT",
+    "daily_equity_change": "0E-12",
+    "weekly_equity_change": "3.532190559225",
+    "valuation_degraded": "false",
+    "missing_marks": "",
+    "positions": "0",
+    "orders": "4",
+    "pending_orders": "0",
+    "control": "PAUSED",
+    "risk_state": "HEALTHY"
+  },
+  "worker_health": {
+    "monitor_age_seconds": 2.157532,
+    "scan_age_seconds": 10.493541,
+    "fresh": true
+  },
+  "reconciliation": [],
+  "accounts": [
+    {
+      "database": "autotrader_aruba_staging",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "orders": 0,
+      "fills": 0
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "funding_count": 1,
+      "funding": "7000.000000000000",
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "orders": 4,
+      "fills": 4
+    },
+    {
+      "database": "autotrader_shadow_2aa76e807d0cbf9c60074159f2647115",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "orders": 0,
+      "fills": 0
+    },
+    {
+      "database": "autotrader_shadow_e3de2e7d2f6ad0122b8d52ad21929ec2",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "orders": 0,
+      "fills": 0
+    },
+    {
+      "database": "autotrader_shadow_ba32d9384c30d291ec370174051fadb3",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "orders": 19,
+      "fills": 0
+    },
+    {
+      "database": "autotrader_shadow_39fc0f422644ff7dd06323e5e2bef1da",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "orders": 0,
+      "fills": 0
+    },
+    {
+      "database": "autotrader_shadow_7b82121d48000f18d24e21a7895519bb",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "orders": 1,
+      "fills": 0
+    },
+    {
+      "database": "autotrader_shadow_6c17dd3ad276427f7416e2b8d90d1aee",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "orders": 0,
+      "fills": 0
+    },
+    {
+      "database": "autotrader_shadow_1a0f3ee0d867cf70f3e9ffb826a8d810",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "orders": 0,
+      "fills": 0
+    },
+    {
+      "database": "autotrader_shadow_6f3240e359b5749f60376a96380af5d4",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "orders": 0,
+      "fills": 0
+    }
+  ],
+  "runtime": {
+    "project": "autotrader-aruba-test",
+    "services": {
+      "worker": {
+        "image": "sha256:06a142a28b2ed70f8ff0bacd66117e190d21dda900c1476116505e19831117e5",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [
+          "autotrader-aruba-test_reports",
+          "autotrader-aruba-test_research-data"
+        ],
+        "ports": {
+          "8000/tcp": null
+        }
+      },
+      "frontend": {
+        "image": "sha256:0c70420ef93c98d2a5f75f0ca6da49d87375c2538d434e223092735f098508e5",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [],
+        "ports": {
+          "80/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "13000"
+            }
+          ]
+        }
+      },
+      "research-worker": {
+        "image": "sha256:06a142a28b2ed70f8ff0bacd66117e190d21dda900c1476116505e19831117e5",
+        "state": "running",
+        "health": null,
+        "volumes": [
+          "autotrader-aruba-test_reports",
+          "autotrader-aruba-test_research-data"
+        ],
+        "ports": {
+          "8000/tcp": null
+        }
+      },
+      "backend": {
+        "image": "sha256:06a142a28b2ed70f8ff0bacd66117e190d21dda900c1476116505e19831117e5",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [
+          "autotrader-aruba-test_reports",
+          "autotrader-aruba-test_research-data"
+        ],
+        "ports": {
+          "8000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "18000"
+            }
+          ]
+        }
+      },
+      "postgres": {
+        "image": "sha256:6a2e324ebe59af6031c4c1cd96c1d5072c2ebc36563d2196365e43b8297c062d",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [
+          "autotrader-aruba-test_postgres-data"
+        ],
+        "ports": {
+          "5432/tcp": null
+        }
+      },
+      "redis": {
+        "image": "sha256:98c6ca8f397f86e469be752c3e7ed5eb8b17f2479840cb69a2e413037038e9f4",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [
+          "autotrader-aruba-test_redis-data"
+        ],
+        "ports": {
+          "6379/tcp": null
+        }
+      }
+    },
+    "observed_at": "2026-10-28T14:08:00.727867+00:00"
+  },
+  "access": {
+    "status": "PASS",
+    "serve_sha256": "9486f159eb2847f1b15030d023437c6fcce73a54c2f8fc20775708151c547c6f",
+    "configuration_changed": false
+  },
+  "live_trading_enabled": false,
+  "read_only": true
+}

@@ -377,10 +377,17 @@ def main() -> None:
     retained=json.loads(run([*command,'run','--rm','--no-deps','backend','python','-c',LEDGER_INVENTORY]))
     save(directory/'retained-ledger-preflight.json',validate_ledgers(retained,{},maintenance=True))
     print(json.dumps({'phase':'FLAT_ACCOUNT_BACKUP_AND_RESTORE_REHEARSAL'}),flush=True)
-    backup=json.loads(run([sys.executable,str(ROOT/'deploy/staging_backup.py'),'--restore-test','--candidate-image',images['app'],'--rehearse-profile']))
-    if not backup.get('restore_test') or backup.get('candidate_profile_rehearsal',{}).get('status')!='PASS':
-        raise ValueError('backup_restore_or_candidate_rehearsal_failed')
-    save(directory/'backup-restore.json',backup)
+    try:
+        backup=json.loads(run([sys.executable,str(ROOT/'deploy/staging_backup.py'),'--restore-test','--candidate-image',images['app'],'--rehearse-profile']))
+        if not backup.get('restore_test') or backup.get('candidate_profile_rehearsal',{}).get('status')!='PASS':
+            raise ValueError('backup_restore_or_candidate_rehearsal_failed')
+        save(directory/'backup-restore.json',backup)
+    except Exception:
+        save(directory/'activation-failed.json',{'status':'FAILED','phase':'PRE_CUTOVER_BACKUP_RESTORE',
+            'at':datetime.now(UTC).isoformat(),'inventory':inventory(),'new_release_activated':False,
+            'entries_paused':True,'previous_protection_retained':True,'automatic_database_restore':False,
+            'separate_correction_release_required':True})
+        raise
     try:
         dc('stop','worker','research-worker','backend')
         # The same PostgreSQL image/volume is retained. Recreate only to apply

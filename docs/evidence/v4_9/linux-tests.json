@@ -64,5 +64,12 @@
     "Historical study has assumed finite depth, not historical L2.",
     "Synthetic/process tests and restored clones do not establish prospective performance.",
     "VPS market and protective monitoring are Stage B checks after exact approval."
-  ]
+  ],
+  "deployment_correction": {
+    "status": "PASS",
+    "current_targeted_cases": 22,
+    "additional_cases_over_previous_suite": 7,
+    "artifact": "restore-memory-correction.json",
+    "scope": "Previous full-suite app source is unchanged; deployment-only correction tested natively and Linux AMD64. A new full 416-case run is not claimed."
+  }
 }

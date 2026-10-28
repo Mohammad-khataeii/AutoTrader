@@ -11,7 +11,6 @@ from pathlib import Path
 from uuid import uuid4
 
 B=Path('/opt/personal-plan/staging');R=Path(__file__).resolve().parents[1]
-C=json.loads((R/'release-manifest.json').read_text())['commit']
 os.umask(0o077)
 spec=importlib.util.spec_from_file_location('financial',R/'deploy/financial_set.py');f=importlib.util.module_from_spec(spec);spec.loader.exec_module(f)
 TABLES=f.FINANCIAL_TABLES
@@ -54,7 +53,7 @@ with psycopg.connect(dbname=sys.argv[1],user=u.username,password=u.password,host
  for table in json.loads(sys.argv[2]):
   rows=[x[0] for x in c.execute('SELECT to_jsonb(t)::text FROM '+table+' t ORDER BY to_jsonb(t)::text')]
   seal[table]={'rows':len(rows),'sha256':hashlib.sha256(b''.join(r.encode()+b'\\n' for r in rows)).hexdigest()}
- print(json.dumps({'snapshot':snapshot,'financial_seal':seal}),flush=True);sys.stdin.readline();c.rollback()
+ print(json.dumps({'snapshot':snapshot,'financial_seal':seal,'database_size_bytes':c.execute('SELECT pg_database_size(current_database())').fetchone()[0]}),flush=True);sys.stdin.readline();c.rollback()
 '''
 VERIFY='''import asyncio,json,hashlib
 from decimal import Decimal
@@ -116,6 +115,40 @@ async def main():
 asyncio.run(main())
 '''
 
+def restore_clone(directory,records,image,manifest,result,*,rehearse_profile=False):
+ token='autotrader-aruba-restore-'+uuid4().hex[:8];network=token+'-net';container=token+'-pg';volume=token+'-data'
+ (directory/'restore-attempt.json').write_text(json.dumps({'network':network,'container':container,'volume':volume,'memory_limit_bytes':512*1024**2,'storage':'ISOLATED_NAMED_VOLUME','failed_resources_retained_for_diagnostics':True},indent=2)+'\n')
+ run(['docker','volume','create','--label','personal-plan.restore=aruba',volume])
+ required=max(1024**3,2*sum(int(r['database_size_bytes']) for r in records)+sum(int(r['bytes']) for r in records))
+ probe="import shutil;print(shutil.disk_usage('/restore-space').free)"
+ available=int(run(['docker','run','--rm','--network','none','--read-only','--memory','64m','--user','0:0','-v',volume+':/restore-space:ro',image,'python','-c',probe]))
+ if available<required:
+  run(['docker','volume','rm',volume]);raise RuntimeError('isolated_restore_disk_capacity_insufficient')
+ run(['docker','network','create','--internal','--label','personal-plan.restore=aruba',network])
+ run(['docker','run','-d','--name',container,'--network',network,'--network-alias','restore-postgres','--label','personal-plan.restore=aruba','-v',volume+':/var/lib/postgresql/data','--memory','512m','-e','POSTGRES_USER=autotrader','-e','POSTGRES_DB=postgres','-e','POSTGRES_HOST_AUTH_METHOD=trust','postgres:16-alpine'])
+ for _ in range(60):
+  if subprocess.run(['docker','exec',container,'pg_isready','-U','autotrader'],capture_output=True,check=False).returncode==0:break
+  time.sleep(.25)
+ else:raise RuntimeError('restore_clone_unavailable')
+ for r in records:
+  data=(directory/r['file']).read_bytes();assert hashlib.sha256(data).hexdigest()==r['sha256'];run(['docker','exec',container,'createdb','-U','autotrader',r['database']]);run(['docker','exec','-i',container,'pg_restore','--exit-on-error','--no-owner','-U','autotrader','-d',r['database']],data)
+ verifier=directory/'verify.py';verifier.write_text(VERIFY)
+ # root owns the private host backup. Inside the isolated verifier only these
+ # two mounted read-only files are readable; the host env/secrets are absent.
+ restored=json.loads(run(['docker','run','--rm','--user','0:0','--network',network,'--read-only','--tmpfs','/tmp','-e','PYTHONDONTWRITEBYTECODE=1','-v',str(verifier)+':/verify.py:ro','-v',str(manifest)+':/backup-set.json:ro',image,'python','/verify.py']))
+ if restored.get('status')!='PASS' or len(restored.get('accounts',[]))!=len(records):raise ValueError('isolated_restore_verification_failed')
+ result.update(restore_test=True,restore=restored,network_internal=True,source_databases_restored=False,restore_storage='ISOLATED_NAMED_VOLUME',restore_memory_limit_bytes=512*1024**2,disk_capacity={'available_bytes':available,'required_bytes':required})
+ if rehearse_profile:
+  rehearsal=run(['docker','run','--rm','--network',network,'--read-only','--tmpfs','/tmp','--memory','512m',
+   '-e','ENVIRONMENT=staging','-e','DASHBOARD_PASSWORD=ISOLATED_CLONE_ONLY_NO_EXTERNAL_ACCESS',
+   '-e','DATABASE_URL=postgresql+asyncpg://autotrader@restore-postgres:5432/autotrader_aruba_staging',
+   '-e','PERSONAL_PAPER_ENABLED=true','-e','LIVE_TRADING_ENABLED=false','-e','SHADOW_ENABLED=true',image,'python','-c',REHEARSE])
+  result['candidate_profile_rehearsal']=json.loads(rehearsal)
+  if result['candidate_profile_rehearsal'].get('status')!='PASS':raise ValueError('isolated_profile_rehearsal_failed')
+ run(['docker','rm','-f',container]);run(['docker','network','rm',network]);run(['docker','volume','rm',volume])
+ result['isolated_restore_resources_removed']=True
+
+
 def main():
  import fcntl
  lock_handle=(B/'ops/backup.lock').open('a')
@@ -129,37 +162,17 @@ def main():
   try:
    snap=json.loads(p.stdout.readline());data=dc('exec','-T','postgres','pg_dump','-U','autotrader','-Fc','--snapshot',snap['snapshot'],r['database']);dc('exec','-T','postgres','pg_restore','--list',data=data)
    path=directory/(r['database']+'.dump');path.write_bytes(data);path.chmod(0o600)
-   r.update(file=path.name,bytes=len(data),sha256=hashlib.sha256(data).hexdigest(),financial_seal=snap['financial_seal'])
+   r.update(file=path.name,bytes=len(data),sha256=hashlib.sha256(data).hexdigest(),financial_seal=snap['financial_seal'],database_size_bytes=snap['database_size_bytes'])
   finally:p.communicate(input=b'release\n',timeout=15)
  container_id=dc('ps','-q','backend').decode().strip()
  image=args.candidate_image or run(['docker','inspect',container_id,'--format','{{.Image}}']).decode().strip()
  import re
  assert re.fullmatch('sha256:[a-f0-9]{64}',image)
- body={'schema':'aruba-staging-backup/1','application_commit':C,'project':'autotrader-aruba-test','created_at':datetime.now(UTC).isoformat(),'method':'EXPORTED_REPEATABLE_READ_SNAPSHOT','worker_uninterrupted':True,'databases':records,'runtime_image_id':image}
+ body={'schema':'aruba-staging-backup/1','application_commit':json.loads((R/'release-manifest.json').read_text())['commit'],'project':'autotrader-aruba-test','created_at':datetime.now(UTC).isoformat(),'method':'EXPORTED_REPEATABLE_READ_SNAPSHOT','worker_uninterrupted':True,'databases':records,'runtime_image_id':image}
  manifest=directory/'backup-set.json';manifest.write_text(json.dumps(body,indent=2)+'\n');manifest.chmod(0o600)
  result={'status':'PASS','manifest':str(manifest),'accounts':len(records),'dump_bytes':sum(r['bytes'] for r in records),'worker_uninterrupted':True,'restore_test':False}
  if args.restore_test:
-  token='autotrader-aruba-restore-'+uuid4().hex[:8];network=token+'-net';container=token+'-pg'
-  run(['docker','network','create','--internal','--label','personal-plan.restore=aruba',network])
-  run(['docker','run','-d','--name',container,'--network',network,'--network-alias','restore-postgres','--label','personal-plan.restore=aruba','--tmpfs','/var/lib/postgresql/data','--memory','512m','-e','POSTGRES_USER=autotrader','-e','POSTGRES_DB=postgres','-e','POSTGRES_HOST_AUTH_METHOD=trust','postgres:16-alpine'])
-  for _ in range(60):
-   if subprocess.run(['docker','exec',container,'pg_isready','-U','autotrader'],capture_output=True,check=False).returncode==0:break
-   time.sleep(.25)
-  else:raise RuntimeError('restore_clone_unavailable')
-  for r in records:
-   data=(directory/r['file']).read_bytes();assert hashlib.sha256(data).hexdigest()==r['sha256'];run(['docker','exec',container,'createdb','-U','autotrader',r['database']]);run(['docker','exec','-i',container,'pg_restore','--exit-on-error','--no-owner','-U','autotrader','-d',r['database']],data)
-  verifier=directory/'verify.py';verifier.write_text(VERIFY)
-  # root owns the private host backup. Inside the isolated verifier only these
-  # two mounted read-only files are readable; the host env/secrets are absent.
-  restored=json.loads(run(['docker','run','--rm','--user','0:0','--network',network,'--read-only','--tmpfs','/tmp','-e','PYTHONDONTWRITEBYTECODE=1','-v',str(verifier)+':/verify.py:ro','-v',str(manifest)+':/backup-set.json:ro',image,'python','/verify.py']))
-  result.update(restore_test=True,restore=restored,network_internal=True,source_databases_restored=False)
-  if args.rehearse_profile:
-   rehearsal=run(['docker','run','--rm','--network',network,'--read-only','--tmpfs','/tmp','--memory','512m',
-    '-e','ENVIRONMENT=staging','-e','DASHBOARD_PASSWORD=ISOLATED_CLONE_ONLY_NO_EXTERNAL_ACCESS',
-    '-e','DATABASE_URL=postgresql+asyncpg://autotrader@restore-postgres:5432/autotrader_aruba_staging',
-    '-e','PERSONAL_PAPER_ENABLED=true','-e','LIVE_TRADING_ENABLED=false','-e','SHADOW_ENABLED=true',image,'python','-c',REHEARSE])
-   result['candidate_profile_rehearsal']=json.loads(rehearsal)
-  run(['docker','rm','-f',container]);run(['docker','network','rm',network])
+  restore_clone(directory,records,image,manifest,result,rehearse_profile=args.rehearse_profile)
  (B/'evidence/backup-latest.json').write_text(json.dumps(result,indent=2)+'\n')
  print(json.dumps(result,indent=2))
 

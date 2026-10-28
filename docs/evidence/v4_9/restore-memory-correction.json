@@ -1,0 +1,127 @@
+{
+  "accounts": 10,
+  "restore_test": true,
+  "restore": {
+    "status": "PASS",
+    "accounts": [
+      {
+        "account_id": "paper-eur",
+        "funding_count": 1,
+        "initial_cash": "500.000000000000",
+        "reconciliation": [],
+        "financial_seals": "MATCH"
+      },
+      {
+        "account_id": "PERSONAL_PLAN_PAPER_7000",
+        "funding_count": 1,
+        "initial_cash": "7000.000000000000",
+        "reconciliation": [],
+        "financial_seals": "MATCH"
+      },
+      {
+        "account_id": "shadow:4f11e020db344ba98d2d083f696bf492",
+        "funding_count": 1,
+        "initial_cash": "500.000000000000",
+        "reconciliation": [],
+        "financial_seals": "MATCH"
+      },
+      {
+        "account_id": "shadow:428b3c199d4e492888e90c801e911791",
+        "funding_count": 1,
+        "initial_cash": "500.000000000000",
+        "reconciliation": [],
+        "financial_seals": "MATCH"
+      },
+      {
+        "account_id": "shadow:55f331afa200412ea011ea5419cf4f41",
+        "funding_count": 1,
+        "initial_cash": "500.000000000000",
+        "reconciliation": [],
+        "financial_seals": "MATCH"
+      },
+      {
+        "account_id": "shadow:7abd0f34d6cd4574a09f11524368034c",
+        "funding_count": 1,
+        "initial_cash": "500.000000000000",
+        "reconciliation": [],
+        "financial_seals": "MATCH"
+      },
+      {
+        "account_id": "shadow:16c77f7cfa5b48cdae2fd10125da5019",
+        "funding_count": 1,
+        "initial_cash": "500.000000000000",
+        "reconciliation": [],
+        "financial_seals": "MATCH"
+      },
+      {
+        "account_id": "shadow:8583cccd3dff4f5da9a5529946853b33",
+        "funding_count": 1,
+        "initial_cash": "500.000000000000",
+        "reconciliation": [],
+        "financial_seals": "MATCH"
+      },
+      {
+        "account_id": "shadow:73b3c278bb2d45cba5663b9de4208469",
+        "funding_count": 1,
+        "initial_cash": "500.000000000000",
+        "reconciliation": [],
+        "financial_seals": "MATCH"
+      },
+      {
+        "account_id": "shadow:db55870cdca849fd8873993c179a1ca8",
+        "funding_count": 1,
+        "initial_cash": "500.000000000000",
+        "reconciliation": [],
+        "financial_seals": "MATCH"
+      }
+    ],
+    "read_only_restore_verification": true
+  },
+  "network_internal": true,
+  "source_databases_restored": false,
+  "restore_storage": "ISOLATED_NAMED_VOLUME",
+  "restore_memory_limit_bytes": 536870912,
+  "disk_capacity": {
+    "available_bytes": 207408058368,
+    "required_bytes": 2127221100
+  },
+  "candidate_profile_rehearsal": {
+    "status": "PASS",
+    "profile": "4.9.0-paper.1",
+    "cash": "7003.532190559225",
+    "funding_count": 1,
+    "orders": 4,
+    "fills": 4,
+    "origin_preserved": true,
+    "reconciliation": []
+  },
+  "isolated_restore_resources_removed": true,
+  "status": "PASS",
+  "synthetic_nonfinancial_probe": {
+    "rows": 600,
+    "bytes": 629145600,
+    "digest": "ab870e08dedad216f1755fb77ab803e8"
+  },
+  "restored_databases": 10,
+  "source_is_readonly_export_clones": true,
+  "no_live_database_restore": true,
+  "application_architecture": "linux/amd64",
+  "postgres_architecture": "linux/arm64",
+  "limitation": "Linux AMD64 product verifier with local ARM64 PostgreSQL16; fresh exact VPS restore proof remains mandatory after separate correction-release approval",
+  "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+  "implementation_hashes": {
+    "deploy/staging_backup.py": "f9fa3d367019bdfb052a66ae0979069263ac2f90b9947a0ad217c08c97b7b10a",
+    "deploy/staging_v49.py": "5294e728dff8070006b303671a86258df63c4fd97346924db2ec34c5946e71aa"
+  },
+  "targeted_tests": {
+    "native": 22,
+    "linux_amd64": 22,
+    "failures": 0,
+    "skipped": 0,
+    "native_junit_sha256": "efc0d25b7bf31fce69c14a31ac430af012af3dd0f014d7a3a8f796801e6fd4fe",
+    "linux_junit_sha256": "f523abbe2f894a2ecae2ca9fdcf6e1188e02fed576a6bfdd79207a69b2adf014"
+  },
+  "correction_scope": "Deployment helpers and regression tests only; no application, strategy, frontend, financial schema or risk-policy change",
+  "vps_correction_activated": false,
+  "requires_separate_exact_commit_approval": true
+}

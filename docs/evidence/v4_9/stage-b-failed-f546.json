@@ -1,0 +1,151 @@
+{
+  "status": "FAILED",
+  "phase": "PRE_CUTOVER_BACKUP_RESTORE",
+  "at": "2026-10-28T14:02:44.234553+00:00",
+  "approved_commit": "f5463ddb6368b92b677e080b5e3582849ced539a",
+  "cause": "Isolated PostgreSQL restore OOMKilled; data was in tmpfs within 512 MiB memory limit",
+  "new_release_activated": false,
+  "running_profile": "4.8.0-paper.1",
+  "portfolio": {
+    "initial_cash": "7000",
+    "cash": "7003.532190559225",
+    "available_cash": "7003.532190559225",
+    "reserved_cash": "0E-12",
+    "open_exposure": "0E-12",
+    "equity": "7003.532190559225",
+    "realized_pnl": "3.532190559225",
+    "unrealized_pnl": "0E-12",
+    "total_net_pnl": "3.532190559225",
+    "current_drawdown": "0.0006027482268721611068279603498",
+    "daily_risk_status": "WITHIN_LIMIT",
+    "weekly_risk_status": "WITHIN_LIMIT",
+    "daily_equity_change": "0E-12",
+    "weekly_equity_change": "3.532190559225",
+    "valuation_degraded": "false",
+    "missing_marks": "",
+    "positions": "0",
+    "orders": "4",
+    "pending_orders": "0",
+    "control": "PAUSED",
+    "risk_state": "HEALTHY"
+  },
+  "fills": 4,
+  "reconciliation": [],
+  "worker_health": {
+    "monitor_age_seconds": 2.796173,
+    "scan_age_seconds": 58.635265,
+    "fresh": true
+  },
+  "live_trading_enabled": false,
+  "inventory": {
+    "project": "autotrader-aruba-test",
+    "services": {
+      "worker": {
+        "image": "sha256:06a142a28b2ed70f8ff0bacd66117e190d21dda900c1476116505e19831117e5",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [
+          "autotrader-aruba-test_reports",
+          "autotrader-aruba-test_research-data"
+        ],
+        "ports": {
+          "8000/tcp": null
+        }
+      },
+      "frontend": {
+        "image": "sha256:0c70420ef93c98d2a5f75f0ca6da49d87375c2538d434e223092735f098508e5",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [],
+        "ports": {
+          "80/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "13000"
+            }
+          ]
+        }
+      },
+      "research-worker": {
+        "image": "sha256:06a142a28b2ed70f8ff0bacd66117e190d21dda900c1476116505e19831117e5",
+        "state": "running",
+        "health": null,
+        "volumes": [
+          "autotrader-aruba-test_reports",
+          "autotrader-aruba-test_research-data"
+        ],
+        "ports": {
+          "8000/tcp": null
+        }
+      },
+      "backend": {
+        "image": "sha256:06a142a28b2ed70f8ff0bacd66117e190d21dda900c1476116505e19831117e5",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [
+          "autotrader-aruba-test_reports",
+          "autotrader-aruba-test_research-data"
+        ],
+        "ports": {
+          "8000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "18000"
+            }
+          ]
+        }
+      },
+      "postgres": {
+        "image": "sha256:6a2e324ebe59af6031c4c1cd96c1d5072c2ebc36563d2196365e43b8297c062d",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [
+          "autotrader-aruba-test_postgres-data"
+        ],
+        "ports": {
+          "5432/tcp": null
+        }
+      },
+      "redis": {
+        "image": "sha256:98c6ca8f397f86e469be752c3e7ed5eb8b17f2479840cb69a2e413037038e9f4",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [
+          "autotrader-aruba-test_redis-data"
+        ],
+        "ports": {
+          "6379/tcp": null
+        }
+      }
+    },
+    "observed_at": "2026-10-28T14:02:44.302007+00:00"
+  },
+  "private_access": {
+    "status": "PASS",
+    "serve_sha256": "9486f159eb2847f1b15030d023437c6fcce73a54c2f8fc20775708151c547c6f",
+    "configuration_changed": false
+  },
+  "isolated_restore": [
+    {
+      "name": "/autotrader-aruba-restore-b4186635-pg",
+      "id": "453d38eaf8ee8a82192ee9ffa5cb491b18b65b499539d6b4ae8504a28c7b135e",
+      "OOMKilled": true,
+      "exit_code": 1,
+      "memory_limit_bytes": 536870912,
+      "tmpfs": {
+        "/var/lib/postgresql/data": ""
+      },
+      "mounts": []
+    }
+  ],
+  "backups": [
+    {
+      "manifest": "/opt/personal-plan/staging/backups/20261028T135713Z-e22195d9/backup-set.json",
+      "accounts": 10,
+      "dump_bytes": 72765457,
+      "checksums_match": true
+    }
+  ],
+  "financial_restore_to_live": false,
+  "separate_correction_release_required": true
+}

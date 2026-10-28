@@ -75,9 +75,10 @@ def test_maintenance_rejects_even_compatible_exposure_before_stopping_worker(sta
         staging.validate_ledgers(rows, selected, maintenance=True)
 
 
-@pytest.mark.parametrize('restore_passes', [True, False])
+@pytest.mark.parametrize('scenario', ['success', 'all_restore_failure', 'pre_restore_failure', 'pre_invalid_result'])
 def test_activation_reuses_seven_existing_ledgers_and_requires_all_database_restore_before_resume(
-        staging, monkeypatch, tmp_path, restore_passes):
+        staging, monkeypatch, tmp_path, scenario):
+    restore_passes = scenario == 'success'
     commit = 'a' * 40
     base = tmp_path / 'staging'
     root = base / 'releases' / commit
@@ -130,6 +131,8 @@ def test_activation_reuses_seven_existing_ledgers_and_requires_all_database_rest
         if str(root / 'deploy/staging_backup.py') in args:
             if '--rehearse-profile' in args:
                 events.append('pre_cutover_restore')
+                if scenario=='pre_restore_failure':raise RuntimeError('isolated_restore_OOM')
+                if scenario=='pre_invalid_result':return b'{"restore_test":false}'
                 return json.dumps(backup).encode()
             events.append('all_ledger_restore')
             result = copy.deepcopy(backup)
@@ -140,6 +143,7 @@ def test_activation_reuses_seven_existing_ledgers_and_requires_all_database_rest
         return b'{}'
 
     def dc(*args):
+        if args[0]=='stop':events.append('stop_previous_runtime')
         if staging.RETIRE in args:
             events.append('retire_flat_retained')
             return b'{"status":"PASS"}'
@@ -171,6 +175,16 @@ def test_activation_reuses_seven_existing_ledgers_and_requires_all_database_rest
         assert events.index('all_ledger_restore') < events.index('start_worker')
         assert events.index('start_worker') < events.index('resume_selected_seven') < events.index('resume')
         assert [r['portfolio']['control'] for r in rows[:2]] == ['PAUSED', 'PAUSED']
+    elif scenario.startswith('pre_'):
+        expected=RuntimeError if scenario=='pre_restore_failure' else ValueError
+        with pytest.raises(expected):staging.main()
+        failure=json.loads((base/'evidence'/('v49-'+commit[:12])/'activation-failed.json').read_text())
+        assert failure['phase']=='PRE_CUTOVER_BACKUP_RESTORE' and failure['previous_protection_retained']
+        assert failure['new_release_activated'] is False and 'stop_previous_runtime' not in events
+        assert 'resume' not in events and primary['portfolio']['control']=='PAUSED'
+        assert (base/'ops/compose').read_text()=='# previous wrapper\n'
+        with pytest.raises(ValueError,match='failed_release_requires_new_verified'):staging.main()
+        assert events.count('pre_cutover_restore')==1
     else:
         with pytest.raises(ValueError, match='all_ledger_backup_restore_required'):
             staging.main()
