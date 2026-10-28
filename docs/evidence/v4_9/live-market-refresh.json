@@ -1,0 +1,355 @@
+{
+  "status": "PASS",
+  "first_scan_at": "2026-10-28T14:24:59.757725+00:00",
+  "second_scan_at": "2026-10-28T14:27:52.294969+00:00",
+  "successful_requests_before": 16211,
+  "successful_requests_after": 16228,
+  "new_429_responses": 0,
+  "last_successful_refresh": "2026-10-28T14:28:21.775630+00:00",
+  "rate_limit_counter_scope": "Counters are cumulative across retained runtime history; only the above interval delta is attributed to this observation.",
+  "benchmark_sync": {
+    "BTC-EUR": {
+      "acquisition_error": null,
+      "alignment_status": "ALIGNED",
+      "as_of": "2026-10-28T14:25:00+00:00",
+      "available_bars": 1152,
+      "available_candle_at": "2026-10-28T14:20:00+00:00",
+      "ignored_future_or_forming_bars": 0,
+      "last_successful_observation": "2026-10-28T14:25:21.241010+00:00",
+      "missing_bar_count": 0,
+      "requested_candle_at": "2026-10-28T14:20:00+00:00",
+      "required_bars": 21,
+      "source": [
+        "revolut-x"
+      ],
+      "staleness_seconds": 0,
+      "unknown_reason": null
+    },
+    "ETH-EUR": {
+      "acquisition_error": null,
+      "alignment_status": "ALIGNED",
+      "as_of": "2026-10-28T14:25:00+00:00",
+      "available_bars": 1152,
+      "available_candle_at": "2026-10-28T14:20:00+00:00",
+      "ignored_future_or_forming_bars": 0,
+      "last_successful_observation": "2026-10-28T14:25:22.182617+00:00",
+      "missing_bar_count": 0,
+      "requested_candle_at": "2026-10-28T14:20:00+00:00",
+      "required_bars": 21,
+      "source": [
+        "revolut-x"
+      ],
+      "staleness_seconds": 0,
+      "unknown_reason": null
+    }
+  },
+  "four_hour_rows": [
+    {
+      "symbol": "ADA-EUR",
+      "strategy": "RAOE_BREAKOUT_RETEST",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "0.003042857142857142857142857143",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "0.1838243053915781188508461236",
+        "ema9": "0.1847043613285937607111111111",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "ADA-EUR",
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "0.003042857142857142857142857143",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "0.1838243053915781188508461236",
+        "ema9": "0.1847043613285937607111111111",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "ADA-EUR",
+      "strategy": "RAOE_TREND_PULLBACK",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "0.003042857142857142857142857143",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "0.1838243053915781188508461236",
+        "ema9": "0.1847043613285937607111111111",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "BTC-EUR",
+      "strategy": "RAOE_BREAKOUT_RETEST",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "608.00",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "71996.32987406532861078315624",
+        "ema9": "72427.96110177013577955555556",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "BTC-EUR",
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "608.00",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "71996.32987406532861078315624",
+        "ema9": "72427.96110177013577955555556",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "BTC-EUR",
+      "strategy": "RAOE_TREND_PULLBACK",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "608.00",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "71996.32987406532861078315624",
+        "ema9": "72427.96110177013577955555556",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "ETH-EUR",
+      "strategy": "RAOE_BREAKOUT_RETEST",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "23.89785714285714285714285714",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "2091.996997245179063360881543",
+        "ema9": "2104.916336361244626488888889",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "ETH-EUR",
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "23.89785714285714285714285714",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "2091.996997245179063360881543",
+        "ema9": "2104.916336361244626488888889",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "ETH-EUR",
+      "strategy": "RAOE_TREND_PULLBACK",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "23.89785714285714285714285714",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "2091.996997245179063360881543",
+        "ema9": "2104.916336361244626488888889",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "PEPE-EUR",
+      "strategy": "RAOE_BREAKOUT_RETEST",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "1.388E-7",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "0.000004027826406926406926406926408",
+        "ema9": "0.000004184890611641699896888888889",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "PEPE-EUR",
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "1.388E-7",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "0.000004027826406926406926406926408",
+        "ema9": "0.000004184890611641699896888888889",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "PEPE-EUR",
+      "strategy": "RAOE_TREND_PULLBACK",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "1.388E-7",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "0.000004027826406926406926406926408",
+        "ema9": "0.000004184890611641699896888888889",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "XRP-EUR",
+      "strategy": "RAOE_BREAKOUT_RETEST",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "0.01615",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "1.168806336088154269972451791",
+        "ema9": "1.184008728025135331555555556",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "XRP-EUR",
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "0.01615",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "1.168806336088154269972451791",
+        "ema9": "1.184008728025135331555555556",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    },
+    {
+      "symbol": "XRP-EUR",
+      "strategy": "RAOE_TREND_PULLBACK",
+      "regime_version": "raoe-regime/4.9.0",
+      "four_hour": {
+        "atr": "0.01615",
+        "bars": 23,
+        "contiguous_bars": 23,
+        "ema21": "1.168806336088154269972451791",
+        "ema9": "1.184008728025135331555555556",
+        "last_closed_at": "2026-10-28T08:00:00+00:00",
+        "required_bars": 21,
+        "source": [
+          "revolut-x"
+        ],
+        "trend": "BULLISH",
+        "unknown_reason": null
+      }
+    }
+  ],
+  "discovery": {
+    "benchmark_extra_slots": 2,
+    "detail_budget": 3,
+    "observed_at": "2026-10-28T14:28:21.638187+00:00",
+    "selected": [
+      "BTC-EUR",
+      "ETH-EUR",
+      "INJ-EUR",
+      "SOL-EUR",
+      "XRP-EUR"
+    ],
+    "short_window_policy": "Completed cached bars or measured timed summary observations only; never inferred from 24h values",
+    "supported_eur": 61,
+    "version": "4.9.0-discovery.1"
+  },
+  "worker_health": {
+    "monitor_age_seconds": 1.00351,
+    "scan_age_seconds": 29.733614,
+    "fresh": true
+  },
+  "data_failures": [],
+  "unauthenticated_api_status": 401
+}

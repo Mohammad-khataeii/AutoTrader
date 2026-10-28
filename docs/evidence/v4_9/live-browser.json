@@ -1,0 +1,30 @@
+{
+  "deployed_commit": "6ff510949259b3781cdda8aa22392d11939e08a2",
+  "private_url": "https://trade-test.taila77b9e.ts.net",
+  "hydration_assertions": [
+    "Header Running",
+    "Live trader Worker connected",
+    "Actual persisted candidate loaded"
+  ],
+  "status": "PASS",
+  "results": [
+    {
+      "width": 375,
+      "mode": "Android Chromium emulation",
+      "status": "PASS",
+      "javascript_errors": 0,
+      "financial_mutations": 0,
+      "session_survives_refresh": true
+    },
+    {
+      "width": 1440,
+      "mode": "Desktop Chromium",
+      "status": "PASS",
+      "javascript_errors": 0,
+      "financial_mutations": 0,
+      "session_survives_refresh": true
+    }
+  ],
+  "limitation": "Android Chromium emulation; no physical Android device was tested",
+  "harness_sha256": "ee740c9367e0fbc2cfb1644622b2c0528a1f13bb3e5ae2cd1941c4b92be56945"
+}

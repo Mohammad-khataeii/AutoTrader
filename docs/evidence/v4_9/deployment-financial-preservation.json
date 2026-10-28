@@ -1,0 +1,328 @@
+{
+  "status": "PASS",
+  "original_databases": 10,
+  "after_databases": 17,
+  "immutable_financial_tables": "EXACT_MATCH",
+  "excluded_dynamic_tables": [
+    "accounts",
+    "equity_snapshots",
+    "market_marks"
+  ],
+  "original_equity_snapshot_prefixes": [
+    {
+      "database": "autotrader_aruba_staging",
+      "original_snapshot_rows": 25463,
+      "prefix_hash_preserved": true
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "original_snapshot_rows": 39033,
+      "prefix_hash_preserved": true
+    },
+    {
+      "database": "autotrader_shadow_2aa76e807d0cbf9c60074159f2647115",
+      "original_snapshot_rows": 6719,
+      "prefix_hash_preserved": true
+    },
+    {
+      "database": "autotrader_shadow_e3de2e7d2f6ad0122b8d52ad21929ec2",
+      "original_snapshot_rows": 6714,
+      "prefix_hash_preserved": true
+    },
+    {
+      "database": "autotrader_shadow_ba32d9384c30d291ec370174051fadb3",
+      "original_snapshot_rows": 13351,
+      "prefix_hash_preserved": true
+    },
+    {
+      "database": "autotrader_shadow_39fc0f422644ff7dd06323e5e2bef1da",
+      "original_snapshot_rows": 13332,
+      "prefix_hash_preserved": true
+    },
+    {
+      "database": "autotrader_shadow_7b82121d48000f18d24e21a7895519bb",
+      "original_snapshot_rows": 13332,
+      "prefix_hash_preserved": true
+    },
+    {
+      "database": "autotrader_shadow_6c17dd3ad276427f7416e2b8d90d1aee",
+      "original_snapshot_rows": 13330,
+      "prefix_hash_preserved": true
+    },
+    {
+      "database": "autotrader_shadow_1a0f3ee0d867cf70f3e9ffb826a8d810",
+      "original_snapshot_rows": 13329,
+      "prefix_hash_preserved": true
+    },
+    {
+      "database": "autotrader_shadow_6f3240e359b5749f60376a96380af5d4",
+      "original_snapshot_rows": 13329,
+      "prefix_hash_preserved": true
+    }
+  ],
+  "expected_state_and_valuation_changes": [
+    {
+      "database": "autotrader_aruba_staging",
+      "table": "equity_snapshots",
+      "before": {
+        "rows": 25463,
+        "sha256": "f1a4d84b40b9edb4854714ae3e69feeabaef326d52ac80ec9d5339f0df1e06c5"
+      },
+      "after": {
+        "rows": 25490,
+        "sha256": "bff5c2f7b3611ff8232b00db98423c039fe99d9f0fa5dcc524abf38eb5f999c6"
+      },
+      "reason": "New valuation observations; original rows checked separately"
+    },
+    {
+      "database": "autotrader_aruba_staging",
+      "table": "market_marks",
+      "before": {
+        "rows": 16,
+        "sha256": "86fa3c0bfbfac65657c76d079553aea7e83aae2275dc2b4d01b58411989db544"
+      },
+      "after": {
+        "rows": 16,
+        "sha256": "8373d54c69e48326ce660cd6e96e6070ecbd3790b48b553aac787a92ee8fb146"
+      },
+      "reason": "Latest market marks refresh independently of paper entries"
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "table": "equity_snapshots",
+      "before": {
+        "rows": 39033,
+        "sha256": "0d5e41170151a5c5c11bd262cb8fe83a679fbad9179af0af834dc26ddca034a1"
+      },
+      "after": {
+        "rows": 39061,
+        "sha256": "365ec7d3b1d4b779726366f7bfac7a94ef34c700ae9bc241f15667adbbfc2297"
+      },
+      "reason": "New valuation observations; original rows checked separately"
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "table": "market_marks",
+      "before": {
+        "rows": 18,
+        "sha256": "377f6777c53e9a66bfcc199339e7cfe6c1c654ab7744bc8fa8b5437eff765114"
+      },
+      "after": {
+        "rows": 18,
+        "sha256": "8a475740b392c4cdadedf62d07a493974e3eb948e318bf398f978445649dc3aa"
+      },
+      "reason": "Latest market marks refresh independently of paper entries"
+    },
+    {
+      "database": "autotrader_shadow_2aa76e807d0cbf9c60074159f2647115",
+      "table": "accounts",
+      "before": {
+        "rows": 1,
+        "sha256": "fc84a8dbe46a08c05666bd0b4d583cbdee71b508dbde064c3c890fdcba3d9ae0"
+      },
+      "after": {
+        "rows": 1,
+        "sha256": "b002e8b2908e18805250c1d9a140c73fc3ebeb132c91b904741428d0e88eaffc"
+      },
+      "reason": "Approved PAUSED-to-STOPPED archival"
+    },
+    {
+      "database": "autotrader_shadow_2aa76e807d0cbf9c60074159f2647115",
+      "table": "equity_snapshots",
+      "before": {
+        "rows": 6719,
+        "sha256": "974edb098d734e8546a4a96533c85cf31a23af5b696778007fc26f4247ad5684"
+      },
+      "after": {
+        "rows": 6721,
+        "sha256": "5c084a674c6129643411f1c8d71aaa00dbe93122bb0c34c0099569ebd5f051f6"
+      },
+      "reason": "New valuation observations; original rows checked separately"
+    },
+    {
+      "database": "autotrader_shadow_e3de2e7d2f6ad0122b8d52ad21929ec2",
+      "table": "accounts",
+      "before": {
+        "rows": 1,
+        "sha256": "8ad496fd8c1feb1649eb11332bc3167f1943a2f9d19264d5c15c93906864ce1b"
+      },
+      "after": {
+        "rows": 1,
+        "sha256": "b82eb7ebf9a05692b7a89c4297cdcbcfeab2c9d9b15dd92297345772517807f2"
+      },
+      "reason": "Approved PAUSED-to-STOPPED archival"
+    },
+    {
+      "database": "autotrader_shadow_e3de2e7d2f6ad0122b8d52ad21929ec2",
+      "table": "equity_snapshots",
+      "before": {
+        "rows": 6714,
+        "sha256": "83c927000ea56d3ef58db8e70cf512df8112117dde33f46d75b20bb72b2ad4bc"
+      },
+      "after": {
+        "rows": 6716,
+        "sha256": "9d5639797cb0320bc3ded9f17b2129b16d8157cfe3f677d516d1a5aebea6391b"
+      },
+      "reason": "New valuation observations; original rows checked separately"
+    },
+    {
+      "database": "autotrader_shadow_ba32d9384c30d291ec370174051fadb3",
+      "table": "accounts",
+      "before": {
+        "rows": 1,
+        "sha256": "f52b40cf9a8ff1cf880839597c4e94023f409e069b185a8ad3ce53db9a4420f3"
+      },
+      "after": {
+        "rows": 1,
+        "sha256": "641c001b2825116ccbb8339a0dcab63eb0512fa61916a17433c7e3f25e974ef1"
+      },
+      "reason": "Approved PAUSED-to-STOPPED archival"
+    },
+    {
+      "database": "autotrader_shadow_ba32d9384c30d291ec370174051fadb3",
+      "table": "equity_snapshots",
+      "before": {
+        "rows": 13351,
+        "sha256": "b43c1f93a170c67faa01aebf7c222064367770c6f48d970aae39023e6becea3a"
+      },
+      "after": {
+        "rows": 13370,
+        "sha256": "ed298bc9eb4b2886320196c2b6d6b5ed9d71092cbe95275c96760f3f72164910"
+      },
+      "reason": "New valuation observations; original rows checked separately"
+    },
+    {
+      "database": "autotrader_shadow_39fc0f422644ff7dd06323e5e2bef1da",
+      "table": "accounts",
+      "before": {
+        "rows": 1,
+        "sha256": "1ba11fe7b20daa6708a6115bd796db363a0d47cdba19c888b46fd1e331c129a1"
+      },
+      "after": {
+        "rows": 1,
+        "sha256": "1bc2cd56456e16ef4df3f7ca42e4b2eb7a0a8a2a935771ebfba33b8f13bc7d27"
+      },
+      "reason": "Approved PAUSED-to-STOPPED archival"
+    },
+    {
+      "database": "autotrader_shadow_39fc0f422644ff7dd06323e5e2bef1da",
+      "table": "equity_snapshots",
+      "before": {
+        "rows": 13332,
+        "sha256": "31d3d3e1ec6ebc60dfcf87568867d9ee50ee96d99c4e6279536a3edd2d17eeb3"
+      },
+      "after": {
+        "rows": 13349,
+        "sha256": "6a92f62eb93805cc4353e01e0c9a25b0801cb16b23795be555020f14c1e76fa9"
+      },
+      "reason": "New valuation observations; original rows checked separately"
+    },
+    {
+      "database": "autotrader_shadow_7b82121d48000f18d24e21a7895519bb",
+      "table": "accounts",
+      "before": {
+        "rows": 1,
+        "sha256": "ef8294e2e3669d14a78cb70512ed68d1492caab6499bdf5b30a6231ad8b38a49"
+      },
+      "after": {
+        "rows": 1,
+        "sha256": "ab0be24c9fea65735911722e2b02dd2dd289292bd09c6100accb98c9bbf438d1"
+      },
+      "reason": "Approved PAUSED-to-STOPPED archival"
+    },
+    {
+      "database": "autotrader_shadow_7b82121d48000f18d24e21a7895519bb",
+      "table": "equity_snapshots",
+      "before": {
+        "rows": 13332,
+        "sha256": "896311ff622baa2bca15eb397b6da5b54bb63e885525422e7867df25fcc6f576"
+      },
+      "after": {
+        "rows": 13349,
+        "sha256": "dfd194f8a8554ab89d31e9df3b263600e0691ab590d81888da3f93142d464131"
+      },
+      "reason": "New valuation observations; original rows checked separately"
+    },
+    {
+      "database": "autotrader_shadow_6c17dd3ad276427f7416e2b8d90d1aee",
+      "table": "accounts",
+      "before": {
+        "rows": 1,
+        "sha256": "21a242795c15b61b9ae0917123f530255d9515c45b434677f6aed2cf56b98c5c"
+      },
+      "after": {
+        "rows": 1,
+        "sha256": "d481972e24c37d8f1bca36d4a01e900dfb0cf5361587cb0d3a75d7019b259d2a"
+      },
+      "reason": "Approved PAUSED-to-STOPPED archival"
+    },
+    {
+      "database": "autotrader_shadow_6c17dd3ad276427f7416e2b8d90d1aee",
+      "table": "equity_snapshots",
+      "before": {
+        "rows": 13330,
+        "sha256": "234a0303c7987217b07d01f8e2296cab9ab4f261d33820d70bb534827ee257a4"
+      },
+      "after": {
+        "rows": 13346,
+        "sha256": "90d12034cb686850031d4ddb14213c535f262bc5c23270824d0789b545f9df2f"
+      },
+      "reason": "New valuation observations; original rows checked separately"
+    },
+    {
+      "database": "autotrader_shadow_1a0f3ee0d867cf70f3e9ffb826a8d810",
+      "table": "accounts",
+      "before": {
+        "rows": 1,
+        "sha256": "a6097ed397bb39df1b33c267e4cc757fe7b6ab6073d3d1f06f105a623e0fc9e2"
+      },
+      "after": {
+        "rows": 1,
+        "sha256": "88459c045b96af27c25bc7d3f9e6da6869f227c246eef883f0b119f367a76a0c"
+      },
+      "reason": "Approved PAUSED-to-STOPPED archival"
+    },
+    {
+      "database": "autotrader_shadow_1a0f3ee0d867cf70f3e9ffb826a8d810",
+      "table": "equity_snapshots",
+      "before": {
+        "rows": 13329,
+        "sha256": "bbbb70d010b6cfe33063d486692dc10621ae8dfccdde6d99ea29a206fe3353e5"
+      },
+      "after": {
+        "rows": 13344,
+        "sha256": "367940fe32a89acf96fbaf7881d21dd4a922b319a081a741e967a97e4561a6dc"
+      },
+      "reason": "New valuation observations; original rows checked separately"
+    },
+    {
+      "database": "autotrader_shadow_6f3240e359b5749f60376a96380af5d4",
+      "table": "accounts",
+      "before": {
+        "rows": 1,
+        "sha256": "3bdd30883acef35eae55f9706b221ee1906c89637d894f72a98fef5610c6e0a4"
+      },
+      "after": {
+        "rows": 1,
+        "sha256": "1847ab4f8df9c8aff795971aabb0341096c68cc936c548f1ad2b23c5c78a7dfd"
+      },
+      "reason": "Approved PAUSED-to-STOPPED archival"
+    },
+    {
+      "database": "autotrader_shadow_6f3240e359b5749f60376a96380af5d4",
+      "table": "equity_snapshots",
+      "before": {
+        "rows": 13329,
+        "sha256": "2b9ccb5f2ae85ab024fdcdac7b050410ec6a995fabfdde24c7a470d46676c6aa"
+      },
+      "after": {
+        "rows": 13343,
+        "sha256": "75b951e58af2a6c1252fe7a1f0ed5e1916de74742e56e0d240c0e78ff04a8900"
+      },
+      "reason": "New valuation observations; original rows checked separately"
+    }
+  ],
+  "no_financial_restore_to_live": true,
+  "primary_history_replayed": false,
+  "initial_overbroad_check": "A whole-table equality assertion also compared changing market marks, appended valuation snapshots and approved archive control transitions; it was resolved by checking immutable table hashes and original snapshot prefixes."
+}

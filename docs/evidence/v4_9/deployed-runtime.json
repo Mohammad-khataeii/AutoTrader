@@ -1,0 +1,154 @@
+{
+  "status": "PASS",
+  "commit": "6ff510949259b3781cdda8aa22392d11939e08a2",
+  "source_fingerprint": "1817997582091b04b96988b990c242047214846a48d6750f42f5396728f69fe1",
+  "installed_modules": 279,
+  "images": {
+    "app": "sha256:37c628833f4c8e96fa1d96b5c0284db1c15295250897317e5defc8e208d85922",
+    "frontend": "sha256:15f95cac54415547761dd40bdb3a2cd52638bbdfe8c20a0ff97df679136f40a9"
+  },
+  "containers": {
+    "project": "autotrader-aruba-test",
+    "services": {
+      "worker": {
+        "image": "sha256:37c628833f4c8e96fa1d96b5c0284db1c15295250897317e5defc8e208d85922",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [
+          "autotrader-aruba-test_reports",
+          "autotrader-aruba-test_research-data"
+        ],
+        "ports": {
+          "8000/tcp": null
+        }
+      },
+      "frontend": {
+        "image": "sha256:15f95cac54415547761dd40bdb3a2cd52638bbdfe8c20a0ff97df679136f40a9",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [],
+        "ports": {
+          "80/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "13000"
+            }
+          ]
+        }
+      },
+      "backend": {
+        "image": "sha256:37c628833f4c8e96fa1d96b5c0284db1c15295250897317e5defc8e208d85922",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [
+          "autotrader-aruba-test_reports",
+          "autotrader-aruba-test_research-data"
+        ],
+        "ports": {
+          "8000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "18000"
+            }
+          ]
+        }
+      },
+      "research-worker": {
+        "image": "sha256:37c628833f4c8e96fa1d96b5c0284db1c15295250897317e5defc8e208d85922",
+        "state": "running",
+        "health": null,
+        "volumes": [
+          "autotrader-aruba-test_reports",
+          "autotrader-aruba-test_research-data"
+        ],
+        "ports": {
+          "8000/tcp": null
+        }
+      },
+      "postgres": {
+        "image": "sha256:6a2e324ebe59af6031c4c1cd96c1d5072c2ebc36563d2196365e43b8297c062d",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [
+          "autotrader-aruba-test_postgres-data"
+        ],
+        "ports": {
+          "5432/tcp": null
+        }
+      },
+      "redis": {
+        "image": "sha256:98c6ca8f397f86e469be752c3e7ed5eb8b17f2479840cb69a2e413037038e9f4",
+        "state": "running",
+        "health": "healthy",
+        "volumes": [
+          "autotrader-aruba-test_redis-data"
+        ],
+        "ports": {
+          "6379/tcp": null
+        }
+      }
+    },
+    "observed_at": "2026-10-28T14:34:37.294381+00:00"
+  },
+  "portfolio": {
+    "initial_cash": "7000",
+    "cash": "7003.532190559225",
+    "available_cash": "7003.532190559225",
+    "reserved_cash": "0E-12",
+    "open_exposure": "0E-12",
+    "equity": "7003.532190559225",
+    "realized_pnl": "3.532190559225",
+    "unrealized_pnl": "0E-12",
+    "total_net_pnl": "3.532190559225",
+    "current_drawdown": "0.0006027482268721611068279603498",
+    "daily_risk_status": "WITHIN_LIMIT",
+    "weekly_risk_status": "WITHIN_LIMIT",
+    "daily_equity_change": "0E-12",
+    "weekly_equity_change": "3.532190559225",
+    "valuation_degraded": "false",
+    "missing_marks": "",
+    "positions": "0",
+    "orders": "4",
+    "pending_orders": "0",
+    "control": "RUNNING",
+    "risk_state": "HEALTHY"
+  },
+  "performance": {
+    "modeled_slippage_and_impact_eur": "2.235629293264000000000000",
+    "buy_orders": 2,
+    "sell_orders": 2,
+    "buy_fills": 2,
+    "sell_fills": 2,
+    "fills": 4,
+    "open_positions": 0,
+    "closed_positions": 2,
+    "fees_eur": "2.794625075511",
+    "win_rate": 0.5,
+    "average_win": "9.716354556351",
+    "average_loss": "-6.184163997126",
+    "profit_factor": "1.571167026111618972757642412",
+    "expectancy": "1.7660952796125",
+    "max_drawdown": "0.002002658001159426327835103339",
+    "risk_adjusted_return": null,
+    "statistics_limit": "Trade counts are not independent samples; risk-adjusted returns require a longer daily series.",
+    "capital_utilization": "0",
+    "closed_positions_per_day": 1.6643239963625596,
+    "age_days": 1.2016890968171297,
+    "frequency_limit": "Rate since experiment creation; unstable in short windows."
+  },
+  "worker_health": {
+    "monitor_age_seconds": 1.922044,
+    "scan_age_seconds": 2.698228,
+    "fresh": true
+  },
+  "profile_hash": "071dc966890e59d6a21dab19c58fc69b556e80b5687099640a07cf0b3f1c86f2",
+  "intelligence_markets": 5,
+  "supported_eur": 61,
+  "private_access": {
+    "status": "PASS",
+    "serve_sha256": "9486f159eb2847f1b15030d023437c6fcce73a54c2f8fc20775708151c547c6f",
+    "configuration_changed": false
+  },
+  "live_enabled": false,
+  "reconciliation": []
+}

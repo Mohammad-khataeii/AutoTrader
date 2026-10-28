@@ -1,0 +1,843 @@
+{
+  "status": "PASS",
+  "observed_at": "2026-10-28T14:26:34.670690+00:00",
+  "accounts": [
+    {
+      "database": "autotrader_aruba_staging",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "RUNNING"
+      ]
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "funding_count": 1,
+      "funding": "7000.000000000000",
+      "orders": 4,
+      "fills": 4,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "RUNNING"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_2aa76e807d0cbf9c60074159f2647115",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "STOPPED"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_e3de2e7d2f6ad0122b8d52ad21929ec2",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "STOPPED"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_ba32d9384c30d291ec370174051fadb3",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 19,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "STOPPED"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_39fc0f422644ff7dd06323e5e2bef1da",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "STOPPED"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_7b82121d48000f18d24e21a7895519bb",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 1,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "STOPPED"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_6c17dd3ad276427f7416e2b8d90d1aee",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "STOPPED"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_1a0f3ee0d867cf70f3e9ffb826a8d810",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "STOPPED"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_6f3240e359b5749f60376a96380af5d4",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "STOPPED"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_889d1e0a6c3e422a80703a883e691111",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "RUNNING"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_c6e6e0209b8adbaef3c0c4f88028b05d",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "RUNNING"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_f47b303f5ad2ce3bf4684cdb59060581",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "RUNNING"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_ea2b8a90eeff9f466fb101003b6313eb",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "RUNNING"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_6adfb22c45e1836c1caf0a8cbd4b34d1",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "RUNNING"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_9157c9dfebb8d41aea24685c1c659e5a",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "RUNNING"
+      ]
+    },
+    {
+      "database": "autotrader_shadow_a24467ad1ad024d6dc36a294cdbbe71b",
+      "funding_count": 1,
+      "funding": "500.000000000000",
+      "orders": 0,
+      "fills": 0,
+      "non_simulated_orders": 0,
+      "non_simulated_fills": 0,
+      "controls": [
+        "RUNNING"
+      ]
+    }
+  ],
+  "reconciliation": [],
+  "experiments": [
+    {
+      "experiment_id": "4f11e020db344ba98d2d083f696bf492",
+      "strategy_id": "B2_CONFIRMED_COMPRESSION",
+      "version": "4.2.0-experimental.1",
+      "archived_at": "2026-10-28T14:21:08.110009+00:00",
+      "exit_policy": {
+        "status": "LEGACY_UNBOUND_SEE_ORIGINAL_ORDERS"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "STOPPED",
+        "control": "STOPPED"
+      },
+      "runtime_compatibility": {
+        "compatible": false,
+        "runner": null,
+        "reason": "unknown_frozen_runtime"
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "428b3c199d4e492888e90c801e911791",
+      "strategy_id": "C2_LIQUID_RETEST",
+      "version": "4.2.0-experimental.1",
+      "archived_at": "2026-10-28T14:21:08.354428+00:00",
+      "exit_policy": {
+        "status": "LEGACY_UNBOUND_SEE_ORIGINAL_ORDERS"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "STOPPED",
+        "control": "STOPPED"
+      },
+      "runtime_compatibility": {
+        "compatible": false,
+        "runner": null,
+        "reason": "unknown_frozen_runtime"
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "55f331afa200412ea011ea5419cf4f41",
+      "strategy_id": "A3_COST_AWARE_CONTINUATION",
+      "version": "4.6.0-experimental.2",
+      "archived_at": "2026-10-28T14:21:08.584227+00:00",
+      "exit_policy": {
+        "status": "LEGACY_UNBOUND_SEE_ORIGINAL_ORDERS"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "19",
+        "pending_orders": "0",
+        "risk_state": "STOPPED",
+        "control": "STOPPED"
+      },
+      "runtime_compatibility": {
+        "compatible": false,
+        "runner": null,
+        "reason": "unknown_frozen_runtime"
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "7abd0f34d6cd4574a09f11524368034c",
+      "strategy_id": "B3_STATEFUL_BREAKOUT",
+      "version": "4.6.0-experimental.2",
+      "archived_at": "2026-10-28T14:21:08.779652+00:00",
+      "exit_policy": {
+        "status": "LEGACY_UNBOUND_SEE_ORIGINAL_ORDERS"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "STOPPED",
+        "control": "STOPPED"
+      },
+      "runtime_compatibility": {
+        "compatible": false,
+        "runner": null,
+        "reason": "unknown_frozen_runtime"
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "16c77f7cfa5b48cdae2fd10125da5019",
+      "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+      "version": "4.6.0-experimental.2",
+      "archived_at": "2026-10-28T14:21:08.972644+00:00",
+      "exit_policy": {
+        "status": "LEGACY_UNBOUND_SEE_ORIGINAL_ORDERS"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "1",
+        "pending_orders": "0",
+        "risk_state": "STOPPED",
+        "control": "STOPPED"
+      },
+      "runtime_compatibility": {
+        "compatible": false,
+        "runner": null,
+        "reason": "unknown_frozen_runtime"
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "8583cccd3dff4f5da9a5529946853b33",
+      "strategy_id": "RAOE_EARLY_RECOVERY",
+      "version": "4.8.0-raoe.1",
+      "archived_at": "2026-10-28T14:21:09.246086+00:00",
+      "exit_policy": {
+        "status": "LEGACY_UNBOUND_SEE_ORIGINAL_ORDERS"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "STOPPED",
+        "control": "STOPPED"
+      },
+      "runtime_compatibility": {
+        "compatible": false,
+        "runner": null,
+        "reason": "unknown_frozen_runtime"
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "73b3c278bb2d45cba5663b9de4208469",
+      "strategy_id": "RAOE_TREND_PULLBACK",
+      "version": "4.8.0-raoe.1",
+      "archived_at": "2026-10-28T14:21:09.542108+00:00",
+      "exit_policy": {
+        "status": "LEGACY_UNBOUND_SEE_ORIGINAL_ORDERS"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "STOPPED",
+        "control": "STOPPED"
+      },
+      "runtime_compatibility": {
+        "compatible": false,
+        "runner": null,
+        "reason": "unknown_frozen_runtime"
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "db55870cdca849fd8873993c179a1ca8",
+      "strategy_id": "RAOE_BREAKOUT_RETEST",
+      "version": "4.8.0-raoe.1",
+      "archived_at": "2026-10-28T14:21:09.902496+00:00",
+      "exit_policy": {
+        "status": "LEGACY_UNBOUND_SEE_ORIGINAL_ORDERS"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "STOPPED",
+        "control": "STOPPED"
+      },
+      "runtime_compatibility": {
+        "compatible": false,
+        "runner": null,
+        "reason": "unknown_frozen_runtime"
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "0ac4dd90d047479486d919ef80dff4d5",
+      "strategy_id": "A3_COST_AWARE_CONTINUATION",
+      "version": "4.6.0-experimental.2",
+      "archived_at": null,
+      "exit_policy": {
+        "comparison": "Three-hour matched baseline; old frozen 24-hour shadow history is unchanged",
+        "failure_confirmation": "Existing successor position-specific causal exit rules",
+        "holding_seconds": 10800,
+        "target_fractions": [
+          ".3",
+          ".4",
+          ".3"
+        ],
+        "version": "4.9.0-matched-successor-exit.1"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "HEALTHY",
+        "control": "RUNNING"
+      },
+      "runtime_compatibility": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "70c4c92eadb549e2aff10ced208aaca3",
+      "strategy_id": "B3_STATEFUL_BREAKOUT",
+      "version": "4.6.0-experimental.2",
+      "archived_at": null,
+      "exit_policy": {
+        "comparison": "Three-hour matched baseline; old frozen 24-hour shadow history is unchanged",
+        "failure_confirmation": "Existing successor position-specific causal exit rules",
+        "holding_seconds": 10800,
+        "target_fractions": [
+          ".3",
+          ".4",
+          ".3"
+        ],
+        "version": "4.9.0-matched-successor-exit.1"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "HEALTHY",
+        "control": "RUNNING"
+      },
+      "runtime_compatibility": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "2ef5d96d2ef242d29f57e3c07985a028",
+      "strategy_id": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+      "version": "4.6.0-experimental.2",
+      "archived_at": null,
+      "exit_policy": {
+        "comparison": "Three-hour matched baseline; old frozen 24-hour shadow history is unchanged",
+        "failure_confirmation": "Existing successor position-specific causal exit rules",
+        "holding_seconds": 10800,
+        "target_fractions": [
+          ".3",
+          ".4",
+          ".3"
+        ],
+        "version": "4.9.0-matched-successor-exit.1"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "HEALTHY",
+        "control": "RUNNING"
+      },
+      "runtime_compatibility": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "9f5b764129ab4088b1ba3873540148c0",
+      "strategy_id": "RAOE_EARLY_RECOVERY",
+      "version": "4.9.0-raoe.1",
+      "archived_at": null,
+      "exit_policy": {
+        "failure_confirmation": "two completed 5m closes and entry-specific structure",
+        "holding_seconds": 21600,
+        "protective_stops": "fresh observed bid; always ahead of discretionary exits",
+        "target_fractions": [
+          ".3",
+          ".4",
+          ".3"
+        ],
+        "target_semantics": "structural bid scenarios converted once to net unit floors",
+        "version": "4.9.0-structure-exit.1"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "HEALTHY",
+        "control": "RUNNING"
+      },
+      "runtime_compatibility": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "3a4d2ea6be2e4fe795da2a46c2e4a4db",
+      "strategy_id": "RAOE_TREND_PULLBACK",
+      "version": "4.9.0-raoe.1",
+      "archived_at": null,
+      "exit_policy": {
+        "failure_confirmation": "two completed 5m closes and entry-specific structure",
+        "holding_seconds": 21600,
+        "protective_stops": "fresh observed bid; always ahead of discretionary exits",
+        "target_fractions": [
+          ".3",
+          ".4",
+          ".3"
+        ],
+        "target_semantics": "structural bid scenarios converted once to net unit floors",
+        "version": "4.9.0-structure-exit.1"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "HEALTHY",
+        "control": "RUNNING"
+      },
+      "runtime_compatibility": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "781c91b9d3d3468da654e6fe593b2cc1",
+      "strategy_id": "RAOE_BREAKOUT_RETEST",
+      "version": "4.9.0-raoe.1",
+      "archived_at": null,
+      "exit_policy": {
+        "failure_confirmation": "two completed 5m closes and entry-specific structure",
+        "holding_seconds": 21600,
+        "protective_stops": "fresh observed bid; always ahead of discretionary exits",
+        "target_fractions": [
+          ".3",
+          ".4",
+          ".3"
+        ],
+        "target_semantics": "structural bid scenarios converted once to net unit floors",
+        "version": "4.9.0-structure-exit.1"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "HEALTHY",
+        "control": "RUNNING"
+      },
+      "runtime_compatibility": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "reconciliation": []
+    },
+    {
+      "experiment_id": "735a6354b3104fcf8eaaa9045c04103e",
+      "strategy_id": "RAOE_BREAKOUT_CONTINUATION",
+      "version": "4.9.0-raoe.1",
+      "archived_at": null,
+      "exit_policy": {
+        "failure_confirmation": "two completed 15m closes",
+        "holding_seconds": 14400,
+        "protective_stops": "fresh observed bid; always ahead of discretionary exits",
+        "target_fractions": [
+          ".3",
+          ".4",
+          ".3"
+        ],
+        "target_semantics": "structural bid scenarios converted once to net unit floors",
+        "version": "4.9.0-continuation-exit.1"
+      },
+      "portfolio": {
+        "initial_cash": "500",
+        "cash": "500.000000000000",
+        "available_cash": "500.000000000000",
+        "reserved_cash": "0E-12",
+        "open_exposure": "0E-12",
+        "equity": "500.000000000000",
+        "realized_pnl": "0",
+        "unrealized_pnl": "0E-12",
+        "total_net_pnl": "0E-12",
+        "current_drawdown": "0E-12",
+        "daily_risk_status": "WITHIN_LIMIT",
+        "weekly_risk_status": "WITHIN_LIMIT",
+        "daily_equity_change": "0E-12",
+        "weekly_equity_change": "0E-12",
+        "valuation_degraded": "false",
+        "missing_marks": "",
+        "positions": "0",
+        "orders": "0",
+        "pending_orders": "0",
+        "risk_state": "HEALTHY",
+        "control": "RUNNING"
+      },
+      "runtime_compatibility": {
+        "compatible": true,
+        "runner": "native-v46",
+        "reason": null
+      },
+      "reconciliation": []
+    }
+  ]
+}
