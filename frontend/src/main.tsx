@@ -19,6 +19,7 @@ import {
   useResource,
 } from "./api";
 import { systemStatus } from "./model";
+import { useBackendVersion } from "./useBackendVersion";
 import { Badge, ResourceState } from "./ui";
 const TradeGates = lazy(() => import("./TradeGates").then(m => ({ default: m.TradeGates })));
 import { Overview } from "./Overview";
@@ -54,6 +55,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
   const system = useResource("/api/monitoring/summary", { poll: 15000 });
   const primary = useResource("/api/personal-paper", { poll: 15000 });
   const readiness = useResource("/readyz", { ttl: 60000 });
+  const backendVersion = useBackendVersion();
   const [refreshing, setRefreshing] = useState(false);
   const legacyStatus = systemStatus(
     system.data,
@@ -110,7 +112,9 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
               ))}
             </div>
           </details>
-          <p className="build-label">Interface 4.8.0 · Simulated Mode</p>
+          <p className="build-label" title={backendVersion.fullVersion ? `Backend build ${backendVersion.fullVersion}` : "Backend version unavailable"}>
+            Backend {backendVersion.release ? `V${backendVersion.release}` : "version unavailable"} · Simulated Mode
+          </p>
         </div>
       </aside>
       <main id="workspace" className="workspace">

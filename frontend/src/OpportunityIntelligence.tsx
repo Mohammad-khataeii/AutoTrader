@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import { Row, useResource } from "./api";
 import { date, humanize, money, number, percent, price, strategyName } from "./model";
+import { useBackendVersion } from "./useBackendVersion";
 import { Badge, CompactTable, Empty, Panel, ResourceState, Technical } from "./ui";
 
 const label = (value: unknown) => humanize(String(value ?? "Unknown").toLowerCase());
 
 export function OpportunityIntelligence() {
   const result = useResource("/api/intelligence", { poll: 15000 });
+  const backendVersion = useBackendVersion();
   const [selected, setSelected] = useState<Row>();
   const data = result.data;
   const rows = data?.rows ?? [];
   const summary = data?.unscanned_or_excluded ?? [];
   return <div className="page-stack raoe-intelligence">
-    <Panel><p className="eyebrow">V4.9 · Adaptive Opportunity Intelligence</p><h2>Opportunity Radar</h2>
+    <Panel><p className="eyebrow">Backend {backendVersion.release ? `V${backendVersion.release}` : "version unavailable"} · Adaptive Opportunity Intelligence</p><h2>Opportunity Radar</h2>
       <p>Recovery, controlled pullback and confirmed breakout retest in the primary portfolio; bounded continuation is separate shadow research. Each setup must offer a defensible plan after costs. Estimated edge remains unknown.</p>
       <ResourceState resource={result} label="Opportunity intelligence" />
       <p className="small muted">{label(data?.status)} · observed {date(data?.observed_at, true)} · {data?.discovery?.supported_eur ?? "Unknown"} supported EUR markets. Public Revolut X EEA observations; mid-price candles are not executable trades.</p>
