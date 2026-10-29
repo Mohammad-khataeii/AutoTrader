@@ -8,7 +8,7 @@ for (const width of [375, 1440]) {
       await page.setViewportSize({ width, height: 1000 });
       const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
       await page.route('**/api/personal-paper/learning', route => route.fulfill({ json: {
-        status: state === 'STALE' ? 'COLLECTING' : state, backend_version: '4.9.2-rc.1',
+        status: state === 'STALE' ? 'COLLECTING' : state, backend_version: '4.9.2-rc.2',
         approved_execution_profile: '4.9.2-paper.1', approved_model: 'DETERMINISTIC_FROZEN_BASELINE_NO_APPROVED_ML',
         dataset: { counts: { LABELED: 81, PENDING: 13, DATA_QUALITY_FAILED: 13412 }, independent_episodes: 4,
           required_episodes: 240, required_days: 45, coverage_failures: { 'Missing causal snapshot': 21 } },
@@ -27,7 +27,7 @@ for (const width of [375, 1440]) {
       await page.getByRole('button', { name: 'Research', exact: true }).click();
       await expect(page.getByRole('heading', { name: 'Evidence before model promotion' })).toBeVisible();
       const panel = page.getByLabel('Learning and Performance');
-      await expect(panel.getByText('Backend 4.9.2-rc.1 · Execution profile 4.9.2-paper.1')).toBeVisible();
+      await expect(panel.getByText('Backend 4.9.2-rc.2 · Execution profile 4.9.2-paper.1')).toBeVisible();
       await expect(panel.getByText('Shadow research only', { exact: true })).toBeVisible();
       await expect(page.getByRole('table', { name: 'Learning validation' })).toBeVisible();
       if (state === 'STALE') await expect(panel.getByText('Collection is stale.', { exact: false })).toBeVisible();

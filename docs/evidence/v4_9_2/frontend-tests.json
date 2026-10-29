@@ -1,12 +1,12 @@
 {
   "status": "PASS",
-  "source_fingerprint": "77b2e0ce80cce696a654bc2504fdc4f7779169afd59910f144b5b1704073393e",
+  "source_fingerprint": "ce7d828e5f6c05e36618ad4f2b519df4961610f092560d0f0bcc3b4af8f3f796",
   "tests": 21,
   "failures": 0,
   "typescript": "PASS",
   "vite_build": "PASS",
   "frontend_source_sha256": "15f55d5a4fff07ee861a3dd069d6931ca8b5a20aead2516539bc87664a017b59",
-  "package_sha256": "aa6364fde8a4dc678e14559567c263686f278eb4cfdbeb4e5c347ea2e6f3ec83",
+  "package_sha256": "dd7f7df8b7c617cfe28423e8a543e45789c9cff3dee2d99cf400757c2c93435c",
   "source_files": {
     "src/Chart.tsx": "0d1cb0f544a01eaedd89233dde59f50ec3e6a7fa896f00fa148d0da287c6b21c",
     "src/CoinChart.test.ts": "b39a3bbf78b387a0f69c4bbe9245980167a2a9b063a7e60f67ea0ac1a28971af",

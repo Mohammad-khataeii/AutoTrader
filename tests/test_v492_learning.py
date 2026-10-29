@@ -228,6 +228,25 @@ def test_validation_cannot_claim_gains_from_baseline_rejected_candidates():
     assert not research_selected(True,{**prediction,'conditional_expected_net_return':-.01})
 
 
+def test_dense_raw_history_cannot_prevent_long_term_automatic_training(tmp_path):
+    """50,001 correlated signals must not hide later independent evidence."""
+    from autotrader.learning.controller import training_rows
+
+    s=Store(tmp_path);first=sample(0)
+    s.db.executemany("INSERT INTO observations(id,observed_at,payload,status,result) VALUES (?,?,?,'LABELED',?)",
+        ((f'dense{i:06}',first['observed_at'],'{}',json.dumps(first)) for i in range(50001)))
+    for i in range(1,601):
+        row=sample(i)
+        s.db.execute("INSERT INTO observations(id,observed_at,payload,status,result) VALUES (?,?,?,'LABELED',?)",
+            (row['id'],row['observed_at'],'{}',json.dumps(row)))
+    assert len(training_rows(s))==601
+    report=run_training(s,(NOW+timedelta(days=130)).isoformat())
+    assert report['independent_episodes']==601
+    assert report['status']=='QUALIFIED_SHADOW'  # synthetic lifecycle mechanics only
+    assert s.get('challenger') and s.get('approved_primary_model') is None
+    s.close()
+
+
 def test_api_learning_requires_auth_and_reports_running_backend(monkeypatch,tmp_path):
     from fastapi.testclient import TestClient
 
@@ -240,5 +259,5 @@ def test_api_learning_requires_auth_and_reports_running_backend(monkeypatch,tmp_
         assert client.get('/api/personal-paper/learning').status_code==401
         response=client.get('/api/personal-paper/learning',auth=('admin','change-me'))
         assert response.status_code==200
-        assert response.json()['backend_version']==app.version=='4.9.2-rc.1'
+        assert response.json()['backend_version']==app.version=='4.9.2-rc.2'
         assert response.json()['status']=='WAITING_FOR_COLLECTOR'

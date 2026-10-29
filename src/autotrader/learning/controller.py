@@ -66,8 +66,29 @@ def mature(store: Store, event: dict[str, Any], candles: list[dict[str, Any]], n
             store.finish(event['id'], 'DATA_QUALITY_FAILED', {'reason': str(error)})
 
 
+def training_rows(store: Store) -> list[dict[str, Any]]:
+    """Seek independent windows, so dense raw history cannot exhaust the cap.
+
+    The existing status/time index skips overlapping crypto observations without
+    loading them. Tie breaking uses recorded eligibility/id, never outcomes.
+    Financial source timestamps and collector cursors are normalized UTC.
+    """
+    rows: list[dict[str, Any]] = []
+    cursor = '1970-01-01T00:00:00+00:00'
+    while len(rows) < 50000:
+        record = store.db.execute("SELECT result FROM observations WHERE status='LABELED' AND observed_at>=? ORDER BY observed_at,json_extract(result,'$.baseline_eligible') DESC,id LIMIT 1", (cursor,)).fetchone()
+        if not record:
+            break
+        row = json.loads(record[0])
+        if stamp(row['target']['end_at']) <= stamp(row['observed_at']):
+            raise ValueError('nonpositive_learning_episode_window')
+        rows.append(row)
+        cursor = row['target']['end_at']
+    return rows
+
+
 def run_training(store: Store, now: str) -> dict[str, Any]:
-    rows = [json.loads(r[0]) for r in store.db.execute("SELECT result FROM observations WHERE status='LABELED' ORDER BY observed_at,id LIMIT 50000")]
+    rows = training_rows(store)
     episodes = independent(rows)
     previous = store.get('last_training', {})
     since = (stamp(now)-stamp(previous['at'])).total_seconds() if previous.get('at') else None
@@ -101,7 +122,9 @@ def run_training(store: Store, now: str) -> dict[str, Any]:
 
 def status(store: Store, now: str) -> dict[str, Any]:
     counts = dict(store.db.execute('SELECT status,count(*) FROM observations GROUP BY status'))
-    rows = [json.loads(r[0]) for r in store.db.execute("SELECT result FROM observations WHERE status='LABELED' ORDER BY observed_at,id LIMIT 50000")]
+    rows = [json.loads(r[0]) for r in store.db.execute("SELECT result FROM observations WHERE status='LABELED' ORDER BY observed_at DESC,id DESC LIMIT 50000")]
+    rows.reverse()
+    episodes = training_rows(store)
     groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for r in rows:
         groups[r['features']['strategy']+' / '+r['features']['regime']].append(r)
@@ -109,10 +132,11 @@ def status(store: Store, now: str) -> dict[str, Any]:
         'independent_episodes': len(independent(v)), 'modeled_net_expectancy_r': mean(r['target']['net_r'] for r in v)} for k, v in groups.items()]
     reasons: Counter[str] = Counter()
     failures: Counter[str] = Counter()
-    for payload, result, state in store.db.execute('SELECT payload,result,status FROM observations'):
-        e = json.loads(payload)
-        if e.get('rejection'): reasons.update(str(e['rejection']).split(','))
-        if state == 'DATA_QUALITY_FAILED': failures.update([json.loads(result)['reason']])
+    for state in ('LABELED', 'PENDING', 'DATA_QUALITY_FAILED'):
+        for payload, result in store.db.execute('SELECT payload,result FROM observations WHERE status=? ORDER BY observed_at DESC,id DESC LIMIT 10000', (state,)):
+            e = json.loads(payload)
+            if e.get('rejection'): reasons.update(str(e['rejection']).split(','))
+            if state == 'DATA_QUALITY_FAILED': failures.update([json.loads(result)['reason']])
     model_id = store.get('challenger');forward = []
     candidates = []
     for identity, observed, payload in store.db.execute('SELECT id,observed_at,prediction FROM observations WHERE prediction IS NOT NULL ORDER BY observed_at DESC LIMIT 30'):
@@ -135,15 +159,17 @@ def status(store: Store, now: str) -> dict[str, Any]:
         store.set('challenger', None);model_id = None
     warnings = []
     if counts.get('DATA_QUALITY_FAILED', 0): warnings.append('Some observations fail causal or data quality checks; see coverage failures')
-    if len(independent(rows)) < CONFIG['min_episodes']: warnings.append('Insufficient independent evidence for ML promotion')
+    if len(episodes) < CONFIG['min_episodes']: warnings.append('Insufficient independent evidence for ML promotion')
+    if any(n > 10000 for n in counts.values()): warnings.append('Rejection and coverage summaries use the latest 10,000 observations per state; training retains independent episodes across full history')
     return {'observed_at': now, 'status': store.get('latest_report', {}).get('status', 'COLLECTING'),
         'approved_model': 'DETERMINISTIC_FROZEN_BASELINE_NO_APPROVED_ML', 'active_challenger': model_id,
-        'dataset': {'counts': counts, 'independent_episodes': len(independent(rows)),
-            'from': rows[0]['observed_at'] if rows else None, 'until': rows[-1]['observed_at'] if rows else None,
+        'dataset': {'counts': counts, 'independent_episodes': len(episodes),
+            'from': episodes[0]['observed_at'] if episodes else None, 'until': episodes[-1]['observed_at'] if episodes else None,
             'feature_schema': FEATURE_SCHEMA, 'target_schema': TARGET_SCHEMA,
             'required_episodes': CONFIG['min_episodes'], 'required_days': CONFIG['min_days'],
             'coverage_failures': dict(failures.most_common(12))},
         'latest_training': store.get('latest_report'), 'strategy_regime_performance': performance,
+        'summary_scope': 'Latest 50,000 labels for conditional path/exit summaries; latest 10,000 observations per state for rejection/coverage counts. Training seeks up to 50,000 independent episodes across retained history.',
         'rejection_reasons': dict(reasons.most_common(15)), 'feature_drift': drift,
         'forward_evaluation': {'selected_independent_episodes': len(forward),
             'modeled_net_expectancy_r': mean(r['target']['net_r'] for r in forward) if forward else None,

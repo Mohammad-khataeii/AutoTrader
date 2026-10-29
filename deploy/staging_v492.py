@@ -63,7 +63,7 @@ def verify_runtime(commit,manifest,images,*,running=False):
                and r['primary_admission'].get('gates',{}).get('primary_context_ready') is True for r in intel['rows']):
         raise ValueError('genuine_aligned_primary_context_required_before_activation')
     learning=api('/api/personal-paper/learning')
-    if (learning.get('backend_version')!='4.9.2-rc.1' or learning.get('collector_stale') is not False
+    if (learning.get('backend_version')!='4.9.2-rc.2' or learning.get('collector_stale') is not False
             or learning.get('live_authorized') is not False or learning.get('primary_promotion_automatic') is not False
             or learning.get('collection_failure')):raise ValueError('learning_collector_or_isolation_verification_failed')
     containers=inventory()

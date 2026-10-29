@@ -1,7 +1,7 @@
 {
   "status": "PASS",
-  "source_fingerprint": "77b2e0ce80cce696a654bc2504fdc4f7779169afd59910f144b5b1704073393e",
-  "tests": 478,
+  "source_fingerprint": "ce7d828e5f6c05e36618ad4f2b519df4961610f092560d0f0bcc3b4af8f3f796",
+  "tests": 479,
   "failures": 0,
   "errors": 0,
   "skipped": 0,
@@ -21,18 +21,20 @@
     "passed": 6,
     "junit_sha256": "e2a32ec8bfe359d6abd850c8402213206d71b524e48a0fac0be93ebdd9852aeb"
   },
-  "verified_union_sha256": "8b86f1bf11bb2b1b12deb3f7f17e3458921858c561b84e43ea6857413a1a37d1",
+  "verified_union_sha256": "63529ea4f21acf394c2f6b5353101ffa767855b2ca5ce23c765fc3f10d3d6c55",
   "final_source_recheck": {
-    "passed": 25,
-    "junit_sha256": "c9495084e15ecdd39cdc5192338cad564e5475ada83acf0cf5d2babdfc69ee3c",
+    "passed": 26,
+    "junit_sha256": "8ede3d218eed6a2813faab4a4167f7f85800f395a5527003be83c4f8551f7882",
     "changed_modules": [
+      "__init__.py",
+      "api/main.py",
       "learning/controller.py",
       "learning/evaluation.py",
       "learning/model.py",
       "learning/targets.py"
     ],
     "initial_full_source_fingerprint": "4434045a7465d9fd9d9edf62ac981460a839f7873e5e7023139763fbce6f8a3d",
-    "reason": "Validation and forward shadow share the same approved eligibility/confidence/expected-return selection rule; doubled cost stress adds the original entry fee/slippage once. Other application files unchanged."
+    "reason": "Validation and forward shadow share the same approved eligibility/confidence/expected-return selection rule; doubled cost stress adds the original entry fee/slippage once. Independent-episode seeks also prevent 50,000 dense raw signals from blocking long-term training; version metadata advances to rc.2. Other application files unchanged."
   },
   "warning": "Existing Starlette deprecated AnyIO alias; no unresolved test failure"
 }

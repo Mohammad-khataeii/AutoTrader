@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "source_fingerprint": "77b2e0ce80cce696a654bc2504fdc4f7779169afd59910f144b5b1704073393e",
+  "source_fingerprint": "ce7d828e5f6c05e36618ad4f2b519df4961610f092560d0f0bcc3b4af8f3f796",
   "tests": 32,
   "failures": 0,
   "skipped": 0,
@@ -19,7 +19,7 @@
   ],
   "engine": "Native Linux AMD64 Chromium against actual Nginx frontend image",
   "frontend_source_sha256": "15f55d5a4fff07ee861a3dd069d6931ca8b5a20aead2516539bc87664a017b59",
-  "report_sha256": "9711ae4b10a46bdf51071cac3caa734bede7ec231c7d5ad05ba14c7e53df7ab8",
+  "report_sha256": "211191b6fa337925adafe36cac7614d02d6afc9477ed01891401ac418c00ef09",
   "limitations": [
     "Deterministic API fixtures verify interface behavior; installed API and prospective market behavior are separate checks."
   ]

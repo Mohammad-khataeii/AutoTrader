@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "source_fingerprint": "77b2e0ce80cce696a654bc2504fdc4f7779169afd59910f144b5b1704073393e",
+  "source_fingerprint": "ce7d828e5f6c05e36618ad4f2b519df4961610f092560d0f0bcc3b4af8f3f796",
   "tests": [
     "test_http_only_session_survives_client_and_server_restart_and_logout",
     "test_openai_budget_survives_provider_restart",

@@ -1,9 +1,9 @@
 {
   "status": "PASS",
-  "source_fingerprint": "77b2e0ce80cce696a654bc2504fdc4f7779169afd59910f144b5b1704073393e",
-  "tests": 25,
+  "source_fingerprint": "ce7d828e5f6c05e36618ad4f2b519df4961610f092560d0f0bcc3b4af8f3f796",
+  "tests": 26,
   "failures": 0,
-  "junit_sha256": "c9495084e15ecdd39cdc5192338cad564e5475ada83acf0cf5d2babdfc69ee3c",
+  "junit_sha256": "8ede3d218eed6a2813faab4a4167f7f85800f395a5527003be83c4f8551f7882",
   "scenarios": [
     "test_features_ignore_outcomes_and_require_completed_snapshot",
     "test_bad_features_are_durable_exclusions[nan]",
@@ -20,6 +20,7 @@
     "test_status_reader_missing_corrupt_and_stale",
     "test_qualified_model_automatically_enters_shadow_and_drift_quarantines",
     "test_validation_cannot_claim_gains_from_baseline_rejected_candidates",
+    "test_dense_raw_history_cannot_prevent_long_term_automatic_training",
     "test_api_learning_requires_auth_and_reports_running_backend",
     "test_genuine_pepe_loss_replays_both_saved_books_and_fees",
     "test_collector_read_only_restart_and_ledger_preservation",

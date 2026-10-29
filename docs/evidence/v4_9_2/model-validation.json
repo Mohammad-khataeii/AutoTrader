@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "source_fingerprint": "77b2e0ce80cce696a654bc2504fdc4f7779169afd59910f144b5b1704073393e",
+  "source_fingerprint": "ce7d828e5f6c05e36618ad4f2b519df4961610f092560d0f0bcc3b4af8f3f796",
   "engineering_validation": "PASS",
   "genuine_market_model_status": "INSUFFICIENT_EVIDENCE",
   "usable_modeled_labels": 81,
@@ -10,7 +10,7 @@
   "minimum_days": 45,
   "genuine_model_promoted": false,
   "primary_model_changes": false,
-  "report_sha256": "3816877ca987a19fb025ca040e3ac261e9e3b0e8e203bfe4771a444ca1313575",
+  "report_sha256": "5fcc841767284ddd2627e49aca21aa9b3e740efa1117a32792a4b088fd91022d",
   "dataset_sha256": "5120f983e19737b8f91e2d85d1245339ba0bc30c17aef41187321a4e0d4553fd",
   "genuine_source_limit": "13,506 immutable signals from the explicitly partial broad export; financial forensics use a separate completed export.",
   "actual_closed_trade_collection": "PASS on installed image and restored genuine ledger; actual-outcome model independently remains insufficient.",
