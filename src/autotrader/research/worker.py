@@ -21,6 +21,8 @@ async def main() -> None:
     await repo.initialize_portfolio(settings.initial_cash_eur)
     owner = new_id("researchworker")
     root = Path(settings.research_root)
+    from autotrader.learning.worker import run as run_learning
+    learning = asyncio.create_task(run_learning(settings))
     try:
         while True:
             job = await repo.claim_research(owner)
@@ -44,6 +46,8 @@ async def main() -> None:
                 result = {"error":type(exc).__name__ + ":" + str(exc)}
             await repo.update_research_job(job["job_id"], owner, result)
     finally:
+        learning.cancel()
+        await asyncio.gather(learning, return_exceptions=True)
         await engine.dispose()
 
 

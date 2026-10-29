@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "77b2e0ce80cce696a654bc2504fdc4f7779169afd59910f144b5b1704073393e",
+  "engineering_validation": "PASS",
+  "genuine_market_model_status": "INSUFFICIENT_EVIDENCE",
+  "usable_modeled_labels": 81,
+  "pending": 13,
+  "independent_episodes": 4,
+  "minimum_episodes": 240,
+  "minimum_days": 45,
+  "genuine_model_promoted": false,
+  "primary_model_changes": false,
+  "report_sha256": "3816877ca987a19fb025ca040e3ac261e9e3b0e8e203bfe4771a444ca1313575",
+  "dataset_sha256": "5120f983e19737b8f91e2d85d1245339ba0bc30c17aef41187321a4e0d4553fd",
+  "genuine_source_limit": "13,506 immutable signals from the explicitly partial broad export; financial forensics use a separate completed export.",
+  "actual_closed_trade_collection": "PASS on installed image and restored genuine ledger; actual-outcome model independently remains insufficient.",
+  "synthetic_training_and_qualified_shadow_test": "PASS mechanics only; no prospective performance claim",
+  "primary_net_advantage": "UNKNOWN",
+  "profitability": "UNKNOWN",
+  "completed_30_day_record": false
+}

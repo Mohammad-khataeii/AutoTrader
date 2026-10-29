@@ -1,6 +1,5 @@
 """Audit exports must stream rows and never aggregate trading history in PostgreSQL."""
 import gzip
-import importlib.util
 import io
 import json
 from pathlib import Path

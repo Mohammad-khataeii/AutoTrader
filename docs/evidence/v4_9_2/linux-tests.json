@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "77b2e0ce80cce696a654bc2504fdc4f7779169afd59910f144b5b1704073393e",
+  "tests": 473,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "platform": "linux/amd64",
+  "mode": "Actual installed candidate application package; test tools reside in a separate non-deployable overlay",
+  "initial_run": {
+    "passed": 467,
+    "failed": 4,
+    "junit_sha256": "ffe1a2053f582823e1e70d8a386e94e6445f6e426b4fea4fe180d0fceafc6515"
+  },
+  "resolved_failures": "The test-only image lacked git, needed by four immutable-release fixture tests; add git to test overlay, recheck all five release cases and six deployment cases. No application source fix.",
+  "focused_recheck": {
+    "passed": 11,
+    "junit_sha256": "867e8dec16ad149596d1ab989d7b833c33d456f7da3cf18b55433c3f9799a3ed"
+  },
+  "verified_union_sha256": "9eb90f18254736f01ddc30484c67a526af7893f7b3cdcbb4d042c01944b751da",
+  "installed_python_modules": 291,
+  "final_source_recheck": {
+    "passed": 25,
+    "junit_sha256": "142a5ed5ec46cea8112c2a8dd920e9d62a79d4f012b2300dec2b3d39733af33b",
+    "installed_all_module_hash_check_before_pytest": true,
+    "changed_modules": [
+      "learning/controller.py",
+      "learning/evaluation.py",
+      "learning/model.py",
+      "learning/targets.py"
+    ],
+    "initial_full_source_fingerprint": "4434045a7465d9fd9d9edf62ac981460a839f7873e5e7023139763fbce6f8a3d"
+  },
+  "native_only_cases": [
+    "test_exact_production_identities_all_four_native_lifecycles[A2_CONFIRMED_PULLBACK]",
+    "test_exact_production_identities_all_four_native_lifecycles[B2_CONFIRMED_COMPRESSION]",
+    "test_exact_production_identities_all_four_native_lifecycles[C2_LIQUID_RETEST]",
+    "test_exact_production_identities_all_four_native_lifecycles[E2_ABSOLUTE_RELATIVE_STRENGTH]",
+    "test_large_audit_stream_under_postgres_memory_cap"
+  ],
+  "native_only_reason": "Host Docker CLI/socket orchestration; all five pass natively, including actual 512 MiB PostgreSQL streaming regression.",
+  "installed_product_api": "PASS; runtime-compatibility.json",
+  "source_volume_application_override": false
+}

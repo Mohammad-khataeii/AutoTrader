@@ -94,8 +94,8 @@ def explain_position(p: Any, plan: Any, orders: list[Any], fills: list[Any],
     sell_quantity = sum((f.quantity for f in fills if f.side=='SELL'),D(0))
     exit_price = sum((f.price*f.quantity for f in fills if f.side=='SELL'),D(0))/sell_quantity if sell_quantity else None
     return {'position_id':p.position_id,'symbol':p.symbol,'state':p.state,'strategy_id':strategy,
-        'execution_profile':evidence.get('execution_profile'),'entry_reason':evidence.get('conditions',{}),
-        'entry_concerns_known_then':concerns,'entry_regime':evidence.get('regime_assessment'),
+        'execution_profile':evidence.get('execution_profile'),'backend_release':evidence.get('backend_release'),'entry_reason':evidence.get('conditions',{}),
+        'entry_concerns_known_then':concerns,'entry_regime':evidence.get('regime_assessment') or evidence.get('raoe_regime'),
         'exit_regime':exit_context[-1] if exit_context else None,
         'exit_regime_status':'RECORDED_POSITION_SPECIFIC' if exit_context else 'NOT_RECORDED_AT_EXIT',
         'opened_at':aware(p.opened_at).isoformat(),'closed_at':aware(p.closed_at).isoformat() if p.closed_at else None,

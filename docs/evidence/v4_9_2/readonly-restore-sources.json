@@ -1,0 +1,189 @@
+{
+  "records": [
+    {
+      "database": "autotrader_aruba_staging",
+      "file": "autotrader_aruba_staging.dump",
+      "bytes": 57398026,
+      "sha256": "9157a7ca5357acaa4094f7dfb9547a6ff0ee7eb46b1eca51ef14310f1f41a9a1",
+      "export_started_at": "2026-10-29T21:02:30.025677+00:00",
+      "export_finished_at": "2026-10-29T21:09:54.324136+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "file": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8.dump",
+      "bytes": 85630196,
+      "sha256": "2554ebd8d64c2d925e9dd1b982eab80283a1729fda92f4f9467d9673cc1fd691",
+      "export_started_at": "2026-10-29T21:09:54.324752+00:00",
+      "export_finished_at": "2026-10-29T21:16:27.480982+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_ba32d9384c30d291ec370174051fadb3",
+      "file": "autotrader_shadow_ba32d9384c30d291ec370174051fadb3.dump",
+      "bytes": 5418813,
+      "sha256": "675182120ef20e24a66894320c3a8140ba274c3492c6067e2c9c4c246909fcd9",
+      "export_started_at": "2026-10-29T21:16:27.481580+00:00",
+      "export_finished_at": "2026-10-29T21:16:46.088286+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_39fc0f422644ff7dd06323e5e2bef1da",
+      "file": "autotrader_shadow_39fc0f422644ff7dd06323e5e2bef1da.dump",
+      "bytes": 5125681,
+      "sha256": "62307d9a7e747fcc5d285ec2d74c7c13e107374c3419d4b6ad79f5f14f9b16db",
+      "export_started_at": "2026-10-29T21:16:46.089306+00:00",
+      "export_finished_at": "2026-10-29T21:17:04.124715+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_7b82121d48000f18d24e21a7895519bb",
+      "file": "autotrader_shadow_7b82121d48000f18d24e21a7895519bb.dump",
+      "bytes": 5388139,
+      "sha256": "4d46c68a7adeebf44ec524950ac11502d177932fd3bdc20941ea3dccbe00f449",
+      "export_started_at": "2026-10-29T21:17:04.125757+00:00",
+      "export_finished_at": "2026-10-29T21:17:24.881820+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_2aa76e807d0cbf9c60074159f2647115",
+      "file": "autotrader_shadow_2aa76e807d0cbf9c60074159f2647115.dump",
+      "bytes": 1045609,
+      "sha256": "5c13e79948038d8f7b9b9d33aecd25d59a368f3b1a63bbee567d1d7b3f053fb3",
+      "export_started_at": "2026-10-29T21:17:24.882419+00:00",
+      "export_finished_at": "2026-10-29T21:17:29.001410+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_e3de2e7d2f6ad0122b8d52ad21929ec2",
+      "file": "autotrader_shadow_e3de2e7d2f6ad0122b8d52ad21929ec2.dump",
+      "bytes": 1043608,
+      "sha256": "c390499f526273180ed4fa1d0bc5a0f2fb532b2a035e06c638de624ca1351b7a",
+      "export_started_at": "2026-10-29T21:17:29.002418+00:00",
+      "export_finished_at": "2026-10-29T21:17:33.460347+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_6c17dd3ad276427f7416e2b8d90d1aee",
+      "file": "autotrader_shadow_6c17dd3ad276427f7416e2b8d90d1aee.dump",
+      "bytes": 5203768,
+      "sha256": "7471ab1f881981b63e1785f9d050d660a628ab286ac57c523049b0ddd40ddb0f",
+      "export_started_at": "2026-10-29T21:17:33.461303+00:00",
+      "export_finished_at": "2026-10-29T21:17:48.828485+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_1a0f3ee0d867cf70f3e9ffb826a8d810",
+      "file": "autotrader_shadow_1a0f3ee0d867cf70f3e9ffb826a8d810.dump",
+      "bytes": 5242026,
+      "sha256": "9375c9ed2dc7e4dddccebef3fd49af0a281c58b69b3e5216da5aba09eaca326b",
+      "export_started_at": "2026-10-29T21:17:48.829545+00:00",
+      "export_finished_at": "2026-10-29T21:18:10.597286+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_6f3240e359b5749f60376a96380af5d4",
+      "file": "autotrader_shadow_6f3240e359b5749f60376a96380af5d4.dump",
+      "bytes": 5164124,
+      "sha256": "d5c2a6e298b80a86e2ef1e307083e25c92c1fd79b26918347171919671a6f39b",
+      "export_started_at": "2026-10-29T21:18:10.598023+00:00",
+      "export_finished_at": "2026-10-29T21:18:32.711434+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_889d1e0a6c3e422a80703a883e691111",
+      "file": "autotrader_shadow_889d1e0a6c3e422a80703a883e691111.dump",
+      "bytes": 8458108,
+      "sha256": "3f5a65d7a9023a9fc1ac3cfe30e13a89d4032ef512cd617129c645fa7d81e5a5",
+      "export_started_at": "2026-10-29T21:18:32.712470+00:00",
+      "export_finished_at": "2026-10-29T21:19:09.359477+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_ea2b8a90eeff9f466fb101003b6313eb",
+      "file": "autotrader_shadow_ea2b8a90eeff9f466fb101003b6313eb.dump",
+      "bytes": 13724305,
+      "sha256": "fdb62223ddf69c1afa3ffaac8297f311debbf5df9088d2eb59cae5b22a27cd9a",
+      "export_started_at": "2026-10-29T21:27:43.429057+00:00",
+      "export_finished_at": "2026-10-29T21:29:00.178523+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES",
+      "locally_validated_complete": true
+    },
+    {
+      "database": "autotrader_shadow_6adfb22c45e1836c1caf0a8cbd4b34d1",
+      "file": "autotrader_shadow_6adfb22c45e1836c1caf0a8cbd4b34d1.dump",
+      "bytes": 13383492,
+      "sha256": "1a7d8ec6a4d7f000086f7fbc92d5a6a5ab80a14109a1a1ef2d8af1f87ba0b54f",
+      "export_started_at": "2026-10-29T21:20:02.373016+00:00",
+      "export_finished_at": "2026-10-29T21:21:09.549808+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_9157c9dfebb8d41aea24685c1c659e5a",
+      "file": "autotrader_shadow_9157c9dfebb8d41aea24685c1c659e5a.dump",
+      "bytes": 13216805,
+      "sha256": "dc5e44d7211af69f97de7390f3af8a724064d1c5fa0721edf6998157c6d5032a",
+      "export_started_at": "2026-10-29T21:21:09.550906+00:00",
+      "export_finished_at": "2026-10-29T21:23:14.435414+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_a24467ad1ad024d6dc36a294cdbbe71b",
+      "file": "autotrader_shadow_a24467ad1ad024d6dc36a294cdbbe71b.dump",
+      "bytes": 13278959,
+      "sha256": "8f26a568c8e717e98b7a73f5d3a01af44385bc91f8f03ed3a3bda7a16c582402",
+      "export_started_at": "2026-10-29T21:23:14.435764+00:00",
+      "export_finished_at": "2026-10-29T21:24:20.563137+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_c6e6e0209b8adbaef3c0c4f88028b05d",
+      "file": "autotrader_shadow_c6e6e0209b8adbaef3c0c4f88028b05d.dump",
+      "bytes": 8256828,
+      "sha256": "129ee57ab1b163c5875132a553c106e313603b18d9fd8c7760ff32573ab30525",
+      "export_started_at": "2026-10-29T21:24:20.564303+00:00",
+      "export_finished_at": "2026-10-29T21:25:14.999546+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+    },
+    {
+      "database": "autotrader_shadow_f47b303f5ad2ce3bf4684cdb59060581",
+      "file": "autotrader_shadow_f47b303f5ad2ce3bf4684cdb59060581.dump",
+      "bytes": 8685981,
+      "sha256": "a10b9d3ca6bffdfa0212e45ce0a1f6ad1ce608024508117191deeaeea2cb9c16",
+      "export_started_at": "2026-10-29T21:30:15.250341+00:00",
+      "export_finished_at": "2026-10-29T21:31:09.542771+00:00",
+      "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES",
+      "locally_validated_complete": true
+    }
+  ],
+  "primary_database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+  "remote_mutations": false,
+  "failed_exports_replaced": [
+    {
+      "record": {
+        "database": "autotrader_shadow_ea2b8a90eeff9f466fb101003b6313eb",
+        "file": "autotrader_shadow_ea2b8a90eeff9f466fb101003b6313eb.dump",
+        "bytes": 13446122,
+        "sha256": "3a8fddf3efdc37f3f4700633afff831f5fd9e5654e9a44fdc1328ab788fe7831",
+        "export_started_at": "2026-10-29T21:19:09.360183+00:00",
+        "export_finished_at": "2026-10-29T21:20:02.372359+00:00",
+        "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+      },
+      "local_retained_file": "autotrader_shadow_ea2b8a90eeff9f466fb101003b6313eb.failed-3a8fddf3efdc",
+      "reason": "pg_restore EOF; never used as passed evidence"
+    },
+    {
+      "record": {
+        "database": "autotrader_shadow_f47b303f5ad2ce3bf4684cdb59060581",
+        "file": "autotrader_shadow_f47b303f5ad2ce3bf4684cdb59060581.dump",
+        "bytes": 8466533,
+        "sha256": "3ae211b7e735d95f8a27c8df4efced6675eb4c31a1e365336196204fb91cdd21",
+        "export_started_at": "2026-10-29T21:25:15.000329+00:00",
+        "export_finished_at": "2026-10-29T21:26:14.135896+00:00",
+        "method": "READ_ONLY_PG_DUMP_STREAM_NO_REMOTE_FILES"
+      },
+      "local_retained_file": "autotrader_shadow_f47b303f5ad2ce3bf4684cdb59060581.failed-3ae211b7e735",
+      "reason": "pg_restore EOF; never used as passed evidence"
+    }
+  ]
+}

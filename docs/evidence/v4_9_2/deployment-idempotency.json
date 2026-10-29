@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "77b2e0ce80cce696a654bc2504fdc4f7779169afd59910f144b5b1704073393e",
+  "tests": 6,
+  "failures": 0,
+  "native_junit_sha256": "e2a32ec8bfe359d6abd850c8402213206d71b524e48a0fac0be93ebdd9852aeb",
+  "linux_helper_recheck_sha256": "867e8dec16ad149596d1ab989d7b833c33d456f7da3cf18b55433c3f9799a3ed",
+  "cases": [
+    "Same 15 original identities and seven controls",
+    "Backup failure before stopping old services",
+    "Failed pre-cutover restore status",
+    "Failed post-cutover restore blocks resume",
+    "Changed shadow manifest blocks resume",
+    "Duplicate healthy installed release with open position has zero pause/restart",
+    "Paused installed cutover resumes only with valid durable restore proofs",
+    "Changed completed release cannot reactivate"
+  ],
+  "scope": "Deterministic subprocess/API failure injection; actual VPS activation not run",
+  "postgres_redis_recreation": false,
+  "production_mutations": false
+}

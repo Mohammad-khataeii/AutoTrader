@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "77b2e0ce80cce696a654bc2504fdc4f7779169afd59910f144b5b1704073393e",
+  "version": "4.9.2-rc.1",
+  "stage": "A",
+  "gates": {
+    "backend-tests.json": "0a80744b33072b9c7af9df47508957503bfe7a14cc4480a0700ae6c1205a3495",
+    "frontend-tests.json": "c94a74c6c488496e1d98717d80fc072a960f0e10d329ad3ae452219893f50076",
+    "browser-tests.json": "7701a17bde97cb41b53e074ac8938dafb2b0da3d1fb349fe08c2858c80d57886",
+    "linux-tests.json": "88b098c7eb15270a85a6f950d42af4d55a88c2a64bb6c20d6bec0f91cb8dad99",
+    "audit-analysis.json": "598d8bb8861eb5941de1f73a30c77fd43d7b5b8a037b448be112ad8ceb79d038",
+    "financial-restore.json": "5fd443c3d475b33ca5303ab237f03ae6ba59e3ad939c0c51069206672af352bf",
+    "runtime-compatibility.json": "5f3c375a527ea220f81ce396ffbfa3699ab0235ce489f3e741567eb7a6eb9745",
+    "restart-recovery.json": "ce7d246a015fefd8056b320b24d46031eb6ec6448bfad254c5f9e151bbc48c81",
+    "learning-tests.json": "5aa22c401f30dbc7ce46c21b3d71df2f31db8203f22d3429499888c1912cd367",
+    "model-validation.json": "ba51ae5bf3ead94bf982af9e83141bb97a50be7dc953a327297337d524633d2e",
+    "deployment-idempotency.json": "809fb804b4b93a6bb25b33391f2b7d348ddcef1420da1c11567a72e386c50e4c"
+  },
+  "primary_profile": "4.9.2-paper.1",
+  "primary_runtime_fingerprint": "3ec3097b56147b3b693dff136b6d2a110a8d706770f42ba44e5b25ae11d26bb4",
+  "unchanged_shadow_execution_fingerprint": "44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c",
+  "recommendation": "READY_FOR_EXACT_RELEASE_REVIEW_PAPER_STAGING_ONLY",
+  "deployment_authorized": false,
+  "requires_exact_release_commit_approval": true,
+  "live_trading_authorized": false,
+  "profitability": "UNKNOWN",
+  "financial_data_restored_locally_only": true,
+  "vps_source_changes_during_stage_a": false
+}

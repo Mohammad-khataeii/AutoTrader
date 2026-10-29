@@ -17,7 +17,7 @@ def test_large_audit_stream_under_postgres_memory_cap():
     try:
         run(['docker','run','-d','--name',token,'--label','autotrader.v491.resource-test=true','--network','none','--memory','512m','-v',volume+':/var/lib/postgresql/data','-e','POSTGRES_USER=autotrader','-e','POSTGRES_DB=postgres','-e','POSTGRES_HOST_AUTH_METHOD=trust','postgres:16-alpine']);started=True
         for _ in range(90):
-            if subprocess.run(['docker','exec',token,'pg_isready','-U','autotrader'],capture_output=True).returncode==0:break
+            if subprocess.run(['docker','exec',token,'pg_isready','-U','autotrader'],capture_output=True,check=False).returncode==0:break
             time.sleep(.25)
         else:raise AssertionError('Isolated resource-test database unavailable')
         run(['docker','exec',token,'createdb','-U','autotrader',database])

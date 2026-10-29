@@ -123,6 +123,12 @@ class PersonalPaperRuntime:
 
         from autotrader.personal_paper.admission import apply, completed_context
         for candidate in prepared:
+            from autotrader.raoe.regime import assess as learning_regime
+            learning_snapshot = learning_regime(candidate.market.candles, cycle.as_of, cycle.histories)
+            learning_book = candidate.market.order_book
+            learning_snapshot['near_liquidity'] = {
+                'bid_quote': str(sum((v.price*v.quantity for v in learning_book.bids if learning_book.best_bid and v.price >= learning_book.best_bid*D('.9975')), D(0))),
+                'ask_quote': str(sum((v.price*v.quantity for v in learning_book.asks if learning_book.best_ask and v.price <= learning_book.best_ask*D('1.0025')), D(0)))}
             admission_context = completed_context(candidate.market.candles, cycle.histories, cycle.as_of,
                 genuine=repo.manifest['data_kind']!='SYNTHETIC_ACCEPTANCE')
             for identity, spec in repo.manifest['strategies'].items():
@@ -141,6 +147,16 @@ class PersonalPaperRuntime:
                 ranking(signal, D(committed[identity]))
                 signal.evidence['paper_manifest'] = digest(canonical(repo.manifest))
                 signal.evidence['execution_profile'] = repo.manifest['version']
+                from autotrader.provenance import release_identity
+                signal.evidence['backend_release'] = release_identity()
+                closed = [c for c in candidate.market.candles if c.timestamp.timestamp()+300 <= cycle.as_of.timestamp()]
+                volumes = [c.volume for c in closed[-21:-1]]
+                average_volume = sum(volumes, D(0))/len(volumes) if volumes else D(0)
+                signal.evidence['learning_context'] = {'version': '4.9.2-observed-volume.1',
+                    'volume_ratio': str(closed[-1].volume/average_volume) if closed and average_volume > 0 else None,
+                    'cutoff': cycle.as_of.isoformat(), 'regime': learning_snapshot,
+                    'data_hash': digest(canonical([[c.timestamp.isoformat(), str(c.open), str(c.high), str(c.low), str(c.close), str(c.volume)] for c in closed])),
+                    'volume_kind': 'PUBLIC_MID_OHLCV_NOT_EXECUTED_DEMAND'}
                 signal = replace(signal, signal_id='sig_'+digest((signal.signal_id+signal.evidence['paper_manifest']).encode())[:40])
                 # Same signal hypothesis and frozen parameters; this financial
                 # experiment has its own source, account and evidence identity.

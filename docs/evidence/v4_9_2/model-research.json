@@ -1,0 +1,186 @@
+{
+  "observed_at": "2026-10-29T20:52:18.166117+00:00",
+  "status": "INSUFFICIENT_EVIDENCE",
+  "approved_model": "DETERMINISTIC_FROZEN_BASELINE_NO_APPROVED_ML",
+  "active_challenger": null,
+  "dataset": {
+    "counts": {
+      "DATA_QUALITY_FAILED": 13412,
+      "LABELED": 81,
+      "PENDING": 13
+    },
+    "independent_episodes": 4,
+    "from": "2026-10-28T21:01:21.067611+00:00",
+    "until": "2026-10-29T16:46:13.981206+00:00",
+    "feature_schema": "causal-entry/4.9.2.1",
+    "target_schema": "conservative-plan-path/4.9.2.1",
+    "required_episodes": 240,
+    "required_days": 45,
+    "coverage_failures": {
+      "ValueError:unbound_feature_snapshot": 6703,
+      "KeyError:'vwap'": 6570,
+      "ValueError:stale_or_future_entry_snapshot": 98,
+      "ValueError:invalid_geometry": 41
+    }
+  },
+  "latest_training": {
+    "actual_outcomes_model": {
+      "automatic_primary_promotion": false,
+      "baseline_profile": null,
+      "baseline_scope": "Original recorded eligibility at exact approved profile; no retrospective relabeling",
+      "config": {
+        "automatic_scope": "ISOLATED_RESEARCH_ONLY",
+        "clip_z": 6.0,
+        "epochs": 240,
+        "horizon_minutes": 240,
+        "l2": 0.03,
+        "learning_rate": 0.08,
+        "min_days": 45,
+        "min_episodes": 240,
+        "min_new_episodes": 48,
+        "min_partition": 24,
+        "min_selected": 12,
+        "primary_authority": false,
+        "probability_threshold": 0.6,
+        "version": "logistic-l2/1"
+      },
+      "dataset_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "evidence_category": "ACTUAL_PRIMARY_PAPER_LEDGER",
+      "independent_episodes": 0,
+      "primary_promotion": false,
+      "required_days": 45,
+      "required_episodes": 240,
+      "rows": 0,
+      "source_closed_positions": 0,
+      "status": "INSUFFICIENT_EVIDENCE",
+      "task": "Actual recorded managed-position outcome; distinct from fixed-horizon path model"
+    },
+    "baseline_manifest": null,
+    "baseline_profile": null,
+    "baseline_scope": "Original recorded eligibility at exact approved profile; no retrospective relabeling",
+    "config": {
+      "automatic_scope": "ISOLATED_RESEARCH_ONLY",
+      "clip_z": 6.0,
+      "epochs": 240,
+      "horizon_minutes": 240,
+      "l2": 0.03,
+      "learning_rate": 0.08,
+      "min_days": 45,
+      "min_episodes": 240,
+      "min_new_episodes": 48,
+      "min_partition": 24,
+      "min_selected": 12,
+      "primary_authority": false,
+      "probability_threshold": 0.6,
+      "version": "logistic-l2/1"
+    },
+    "data_limit_reached": false,
+    "dataset_hash": "2e35a8ddc725f7fcf8839ed07da309f655f5e07133c61540c7436e7d352ed8c9",
+    "evidence_category": "HISTORICAL_MODELED_EXECUTION",
+    "feature_schema": "causal-entry/4.9.2.1",
+    "independent_episodes": 4,
+    "primary_model": "DETERMINISTIC_FROZEN_BASELINE_NO_APPROVED_ML",
+    "primary_promotion": false,
+    "required_days": 45,
+    "required_episodes": 240,
+    "rows": 81,
+    "status": "INSUFFICIENT_EVIDENCE",
+    "target_schema": "conservative-plan-path/4.9.2.1",
+    "trained_at": "2026-10-29T20:52:18.166117+00:00"
+  },
+  "strategy_regime_performance": [
+    {
+      "strategy_regime": "RAOE_TREND_PULLBACK / MIXED",
+      "signals": 18,
+      "independent_episodes": 2,
+      "modeled_net_expectancy_r": -0.7808021258352034
+    },
+    {
+      "strategy_regime": "RAOE_EARLY_RECOVERY / MIXED",
+      "signals": 25,
+      "independent_episodes": 3,
+      "modeled_net_expectancy_r": -0.30109357251863783
+    },
+    {
+      "strategy_regime": "RAOE_EARLY_RECOVERY / SUPPORTIVE",
+      "signals": 20,
+      "independent_episodes": 4,
+      "modeled_net_expectancy_r": -0.6001818247961368
+    },
+    {
+      "strategy_regime": "RAOE_TREND_PULLBACK / SUPPORTIVE",
+      "signals": 15,
+      "independent_episodes": 3,
+      "modeled_net_expectancy_r": -0.9709676780698946
+    },
+    {
+      "strategy_regime": "RAOE_BREAKOUT_RETEST / MIXED",
+      "signals": 2,
+      "independent_episodes": 2,
+      "modeled_net_expectancy_r": -1.000000000000003
+    },
+    {
+      "strategy_regime": "RAOE_BREAKOUT_RETEST / SUPPORTIVE",
+      "signals": 1,
+      "independent_episodes": 1,
+      "modeled_net_expectancy_r": -1.029785393958603
+    }
+  ],
+  "rejection_reasons": {
+    "review_target_cost_headroom": 6718,
+    "review_bullish_continuation": 4275,
+    "review_benchmark_support": 3945,
+    "review_stop_above_noise": 3695,
+    "nonbearish_trend": 3129,
+    "primary_local_reclaim": 2916,
+    "review_completed_hourly_trend": 2892,
+    "recovering": 2810,
+    "breakout_hold_retest_not_confirmed": 2231,
+    "confirmed_delayed_retest": 2223,
+    "pullback_reaction_not_confirmed": 2145,
+    "recovery_unconfirmed_or_exhausted": 2130,
+    "normalized_outperformance": 2064,
+    "pullback_invalidation": 2005,
+    "relative_demand": 1767
+  },
+  "feature_drift": null,
+  "forward_evaluation": {
+    "selected_independent_episodes": 0,
+    "modeled_net_expectancy_r": null,
+    "prediction_category": "SHADOW_FORWARD_PREDICTIONS",
+    "outcome_category": "RECORDED_PATH_MODELED_EXECUTION",
+    "executable_paper_ledger": false
+  },
+  "quarantined_challenger": null,
+  "ranked_shadow_candidates": [],
+  "realized_positions_collected": 0,
+  "warnings": [
+    "Some observations fail causal or data quality checks; see coverage failures",
+    "Insufficient independent evidence for ML promotion"
+  ],
+  "primary_promotion_automatic": false,
+  "live_authorized": false,
+  "fallback": "Frozen deterministic paper strategy and all broker risk controls",
+  "exit_feedback": {
+    "modeled_stop_episodes": 0,
+    "short_horizon_positive_long_horizon_negative": 0,
+    "ambiguous_barrier_episodes": 0,
+    "mid_recovered_entry_after_stop": 0,
+    "mid_continued_below_stop": 0,
+    "stop_noise_groups": {
+      "below_1_5_atr": 0,
+      "at_least_1_5_atr": 0
+    },
+    "policy": "Research diagnostics only; existing exit plans and stops never change",
+    "limitations": "Matched regime path labels do not establish an executable alternative exit"
+  },
+  "read_only_financial_ledgers": true,
+  "source_export": {
+    "signals_read": 13506,
+    "partial_stream": true,
+    "gzip_truncated": false,
+    "warning": "Original 24h collector timed out in a later section. These parsed immutable signals are development research; the separate complete 17-database export establishes financial forensics.",
+    "source_sha256": "c221fe86b361b94fe1fd7e49edc9c38071a669001ea0f60d3414169175dc154d",
+    "candles_sha256": "58007eb13dba45f94ecece57c29dd45aa84cba391095cf913fe6779366a9d207"
+  }
+}

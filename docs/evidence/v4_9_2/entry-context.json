@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "first_seen_before_entry": true,
+  "candles": {
+    "BTC-EUR": 1152,
+    "ETH-EUR": 1152,
+    "PEPE-EUR": 1152
+  },
+  "primary_context_exactly_matches_original": true,
+  "gates": {
+    "primary_context_ready": true,
+    "primary_current_candle": true,
+    "primary_macro_context": true,
+    "primary_local_reclaim": true,
+    "primary_recovery_reclaim": true
+  },
+  "entry_at": "2026-10-29T16:55:33.186711+00:00",
+  "input_hash_matches_original": true,
+  "limits": "The order Git commit was not recorded; profile identity remains authoritative. No future L2 after actual exit."
+}

@@ -100,12 +100,11 @@ def test_original_shadow_execution_identity_is_unchanged():
 
 
 async def test_locked_primary_admission_requires_proof_and_dispatch_rechecks_boundary(paper,monkeypatch):
-    from sqlalchemy import select
     from autotrader.clock import at
-    from autotrader.domain import DecisionAction, TradingDecision, Side, OrderType
+    from autotrader.domain import DecisionAction, OrderType, Side, TradingDecision
     from autotrader.persistence.models import OrderModel
     from autotrader.raoe.engine import RAOEEngine
-    from autotrader.research.data import canonical,digest
+    from autotrader.research.data import canonical, digest
     from test_v48_raoe import fixture
     _service,repo=paper
     own,stamp,peers,pair,book,features=fixture()

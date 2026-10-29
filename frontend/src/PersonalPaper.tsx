@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useApi, useResource, type Row } from "./api";
 import { date, money, percent, price, strategyName } from "./model";
+import { LearningPerformance } from "./LearningPerformance";
 import { TradeReports } from "./TradeReports";
 import { releaseVersion } from "./runtimeVersion";
 import { Badge, CompactTable, Empty, EquityChart, Panel, Pnl, ResourceState } from "./ui";
@@ -70,6 +71,7 @@ export function PersonalPaper({ view = "overview" }: { view?: "overview" | "acti
       { label: "Evidence", render: (r: Row) => r.confidence.replaceAll("_", " ").toLowerCase() },
     ]}/><p className="small muted">Frozen parameters. Conditional net economics and portfolio fit rank eligible candidates; expected profitability is unknown. No automatic promotion based on a handful of trades. Maximum €700 per position, €35 planned stop risk, €140 aggregate stop risk and €2,100 crypto cluster exposure. Losses and missed opportunities remain recorded.</p></Panel>}
     {view === "research" && <>
+      <LearningPerformance primary={d} />
       <Panel><h2>Continuous prospective review</h2><p>{d?.research_review?.conclusion ?? "Waiting for the first hourly evidence review"}</p><p className="small muted">Evidence cutoff {date(d?.research_review?.evidence_cutoff, true)}. Active parameters are frozen. Research proposals require a separate evaluation identity.</p>
         <CompactTable label="Prospective research proposals" rows={d?.research_review?.proposals ?? []} columns={[
           { label: "Version", render: (r: Row) => r.version },{ label: "Hypothesis", render: (r: Row) => r.hypothesis },{ label: "Next evaluation", render: (r: Row) => r.required_evaluation },

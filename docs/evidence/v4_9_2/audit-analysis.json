@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "77b2e0ce80cce696a654bc2504fdc4f7779169afd59910f144b5b1704073393e",
+  "closed_primary_positions": 9,
+  "all_position_pnl_reconciles": true,
+  "primary_net_pnl_eur": "-56.724117969028",
+  "entry_profiles_preserved": true,
+  "shadow_ledgers": 15,
+  "first_seen_entry_bars": 3456,
+  "entry_context_and_original_data_hash_exact_match": true,
+  "latest_pepe_broker_replay": "PASS exact two books and fees via actual quote_execution",
+  "evidence_files": {
+    "forensics.json": "5cea783709c3a01ba5090e89fd4b822ced5b63468858bb3c439286f9a7f702f6",
+    "entry-context.json": "2b3f68f6975e9f471afb009b5cfc8512074ddb79e383e88d785a7d77688219b2",
+    "entry-candles.jsonl.gz": "be7db5a654e9cab95d7286b001fd106132afc8192173f7ba343496d65902461a"
+  },
+  "complete_focused_export_sha256": "7f9eeabbd5c8ac74f225b642d96874fba20e2d026448f17ede87a5253b6c81f3",
+  "limitations": [
+    "Per-database snapshots have different cutoffs; source exports are private local files",
+    "No order embeds original backend Git SHA; execution profile is the durable attribution",
+    "Retrospective completed candles do not establish first-seen availability; original decision evidence is authoritative",
+    "Historical cases are development evidence; no avoided-loss, profitability or 30-day claim",
+    "Later mid-price closes do not establish executable holds or missed trades"
+  ],
+  "legacy_partial_export_not_an_audit_gate": true,
+  "read_only_vps_diagnostics": true
+}

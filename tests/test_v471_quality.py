@@ -124,8 +124,8 @@ async def test_quality_and_ranking_economics_dominate_activity(paper,tmp_path):
         assert ranking(good) < ranking(less)
         assert ranking(good,D(2000)) > ranking(less)
         assert ranking(good)==ranking(good) and good.evidence['ranking_components']['probability'] is None
-        from autotrader.research.data import canonical, digest
         from autotrader.personal_paper.admission import apply, completed_context
+        from autotrader.research.data import canonical, digest
         reference=f.timestamp+timedelta(minutes=5)
         peers={s:next(x.market.candles for x in candidates if x.features.symbol==s) for s in ('BTC-EUR','ETH-EUR')}
         good=apply(good,completed_context(c.market.candles,peers,reference,genuine=False),reference)
