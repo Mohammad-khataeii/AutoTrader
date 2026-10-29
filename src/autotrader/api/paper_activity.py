@@ -51,7 +51,7 @@ async def activity_feed(service: Any) -> dict[str, Any]:
             'technical': evidence.get('technical_eligible'), 'economic': evidence.get('economic_eligible'),
             'accepted': decision.accepted, 'reasons': evidence.get('reasons', []),
             'decision_reason': decision.rejected_reason, 'economics': evidence.get('economics'),
-            'quality_policy': evidence.get('quality_policy'), 'ranking_components': evidence.get('ranking_components'),
+            'quality_policy': evidence.get('quality_policy'), 'primary_admission': evidence.get('primary_admission'), 'ranking_components': evidence.get('ranking_components'),
             'entry_plan': evidence.get('entry_plan'), 'sizing': evidence.get('sizing'),
             'quote_amount': body.get('proposed_quote_amount'),
             'entry_price': body.get('entry_price'), 'stop_loss': body.get('stop_loss'),

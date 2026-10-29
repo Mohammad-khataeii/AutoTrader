@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "308e8e1ea0e1dd904c38ed6e4abb16214bc156e7d68a732db6ac27d42bb2b48b",
+  "tests": 1,
+  "failures": 0,
+  "postgres_memory_limit_mib": 512,
+  "streamed_payload_mib": 600,
+  "postgres_oom": false,
+  "network": "none",
+  "host_ports": [],
+  "evidence_category": "SYNTHETIC_NONFINANCIAL_RESOURCE_REGRESSION",
+  "junit_sha256": "4d9e0002a6e45e3dc74c5b5bcc786d6c99ded0822dd915ea68a17d4dcfadc7fb"
+}

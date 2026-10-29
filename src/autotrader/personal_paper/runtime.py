@@ -121,7 +121,10 @@ class PersonalPaperRuntime:
             if position.closed_at is None:
                 committed[identities.get(position.position_id, 'UNATTRIBUTED')] += position.cost_basis
 
+        from autotrader.personal_paper.admission import apply, completed_context
         for candidate in prepared:
+            admission_context = completed_context(candidate.market.candles, cycle.histories, cycle.as_of,
+                genuine=repo.manifest['data_kind']!='SYNTHETIC_ACCEPTANCE')
             for identity, spec in repo.manifest['strategies'].items():
                 from autotrader.raoe import IDENTITIES
                 from autotrader.raoe.engine import RAOEEngine
@@ -133,6 +136,7 @@ class PersonalPaperRuntime:
                     sizing_scope='SHARED_7000_ACCOUNT', sizing_context={'cash': D(snapshot['available_cash']),
                         'exposure': D(snapshot['open_exposure'] or 0), 'limits': LIMITS})
                 signal = signal if is_raoe else reviewed_signal(signal, candidate.features)
+                signal = apply(signal, admission_context, cycle.as_of)
                 signal.evidence['exit_policy']=spec.get('exit_policy')
                 ranking(signal, D(committed[identity]))
                 signal.evidence['paper_manifest'] = digest(canonical(repo.manifest))
@@ -147,7 +151,8 @@ class PersonalPaperRuntime:
                     'as_of': signal.timestamp.isoformat(), 'execution': 'NOT_ELIGIBLE',
                     'raoe_regime': signal.evidence.get('raoe_regime'), 'entry_plan': signal.evidence['entry_plan'],
                     'pipeline': signal.evidence['pipeline'], 'entry_eligible': signal.evidence['entry_eligible'],
-                    'quality_policy': signal.evidence['quality_policy'], 'ranking_components': signal.evidence['ranking_components']}
+                    'quality_policy': signal.evidence['quality_policy'], 'primary_admission': signal.evidence['primary_admission'],
+                    'ranking_components': signal.evidence['ranking_components']}
                 all_rows.append(row)
                 ranked.append((candidate, signal, row))
         # Conditional economics and portfolio fit, never observed trade activity.

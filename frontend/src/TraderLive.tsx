@@ -5,6 +5,14 @@ import { date, money, price, strategyName } from "./model";
 import { Panel, ResourceState } from "./ui";
 
 const explanations: Record<string, string> = {
+  primary_context_ready: "Aligned completed market and benchmark history is not ready.",
+  primary_current_candle: "Another candle has completed since this evaluation. A fresh evaluation is required.",
+  primary_macro_context: "Bitcoin and Ether both have bearish completed hourly trends, or their context is unavailable.",
+  primary_local_reclaim: "The latest completed close has not reclaimed a rising short-term mean.",
+  primary_recovery_reclaim: "The recovery has not reclaimed the completed fifteen-minute trend mean with a rising close.",
+  paper_current_completed_candle_required: "The signal became outdated before broker admission; a new completed-candle evaluation is required.",
+  paper_primary_admission_required: "This entry lacks the current primary account's context authorization.",
+  paper_primary_context_required: "The primary account's completed market-context checks did not pass.",
   review_benchmark_support: "Synchronized Bitcoin and Ether context does not support this entry.",
   review_bullish_continuation: "A bullish continuation trend is required for this strategy.",
   review_completed_hourly_trend: "The completed one-hour trend does not confirm this setup.",
@@ -126,6 +134,7 @@ export function TraderLive({ paper, onSelectCoin }: { paper: Row; onSelectCoin?:
             <Stage name="Setup" state={candidate.technical ?? null} detail={candidate.technical === true ? "Technical checks passed" : candidate.technical === false ? "Conditions not met" : "Unverified"}/>
             <Stage name="Costs" state={candidate.technical === true ? candidate.economic ?? null : null} detail={candidate.technical !== true ? "Not reached" : candidate.economic === true ? "Economically feasible" : "Not qualified"}/>
             <Stage name="Entry quality" state={candidate.quality_policy?.gates ? Object.values(candidate.quality_policy.gates).every(v=>v===true) : null} detail={candidate.quality_policy ? "Benchmark, resistance, volatility and cost headroom" : "Earlier profile · no quality policy recorded"}/>
+            {candidate.primary_admission && <Stage name="Primary context" state={Object.values(candidate.primary_admission.gates ?? {}).every(v=>v===true)} detail="Current completed candle, benchmark trend and local recovery confirmation"/>}
             <Stage name="Account decision" state={candidate.accepted === true} detail={candidate.accepted ? "Sent for locked admission" : "Wait · no buy decision"}/>
             <Stage name="Paper broker" state={candidate.broker_status ? ["FILLED", "PARTIALLY_FILLED"].includes(candidate.broker_status) ? true : false : null} detail={candidate.broker_status?.replaceAll("_", " ").toLowerCase() ?? (candidate.accepted ? "Awaiting broker record" : "No order submitted")}/>
           </div>

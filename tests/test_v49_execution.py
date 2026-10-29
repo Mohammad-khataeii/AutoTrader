@@ -154,6 +154,8 @@ async def test_same_quantity_price_path_is_identical_for_primary_and_shadow(pape
     bars,stamp,peers,pair,observed,f=fixture()
     with at(stamp):
         original=RAOEEngine().evaluate('RAOE_EARLY_RECOVERY',f,pair,observed,candles=bars,benchmarks=peers)
+        from autotrader.personal_paper.admission import apply, completed_context
+        original=apply(original,completed_context(bars,peers,stamp,genuine=False),stamp)
         outputs=[]
         for repo in [primary,shadow]:
             signal=replace(original,evidence={**original.evidence,'paper_manifest':digest(canonical(primary.manifest))})

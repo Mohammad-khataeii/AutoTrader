@@ -105,7 +105,9 @@ class PersonalPaperRepository(PersistentTradingRepository):
             return 'paper_quality_policy_required'
         if not evidence.get('entry_eligible') or evidence.get('veto'):
             return 'paper_entry_ineligible'
-        return None
+        from autotrader.domain import utc_now
+        from autotrader.personal_paper.admission import policy_error
+        return policy_error(strategy, evidence, utc_now())
 
     async def _entry_risk(self, session: Any, pair: TradingPair, quote: Decimal, price: Decimal,
                           stop: Decimal | None, execution_cost_bps: Decimal = D(25), *,

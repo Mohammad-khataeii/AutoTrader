@@ -46,30 +46,8 @@ def hourly(bundle: dict[str,Any]) -> str:
 
 
 def main() -> None:
-    parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--hours',type=int,choices=[12,24,48],default=24)
-    parser.add_argument('--output',type=Path,required=True)
-    parser.add_argument('--input',type=Path,help='Summarize an existing local gzip bundle without SSH')
-    args=parser.parse_args();os.umask(0o077)
-    args.output.mkdir(parents=True,exist_ok=False)
-    if args.input:raw=gzip.decompress(args.input.read_bytes())
-    else:
-        source=Path(__file__).with_name('v49_diagnostic_remote.py').read_bytes()
-        response=subprocess.run(['ssh','-T','aruba-vps','python3','-','--hours',str(args.hours)],input=source,capture_output=True,check=False)
-        if response.returncode:
-            from v49_diagnostic_remote import sanitize
-            (args.output/'collector-error.txt').write_text(sanitize(response.stderr.decode()))
-            raise RuntimeError('Read-only Aruba collection failed; sanitized diagnostic saved locally')
-        raw=response.stdout
-    bundle=json.loads(raw)
-    if bundle.get('remote_mutations') is not False or bundle.get('project')!='autotrader-aruba-test':raise ValueError('unexpected_diagnostic_scope')
-    compressed=gzip.compress(raw,mtime=0)
-    (args.output/'diagnostic.json.gz').write_bytes(compressed)
-    (args.output/'hourly-summary.md').write_text(hourly(bundle))
-    (args.output/'manifest.json').write_text(json.dumps({'schema':bundle['schema'],'observed_at':bundle['observed_at'],
-        'hours':bundle['hours'],'sha256':hashlib.sha256(compressed).hexdigest(),'registered_databases':len(bundle['databases']),
-        'remote_mutations':False,'contains_credentials':False,'truncation':{d['database']:d.get('possibly_truncated',[]) for d in bundle['databases']}},indent=2)+'\n')
-    print(json.dumps({'status':'PASS','local_bundle':str(args.output.resolve()),'databases':len(bundle['databases']),'read_only':True}))
+    from v491_diagnostics import main as streamed_main
+    streamed_main()
 
 
 if __name__=='__main__':main()

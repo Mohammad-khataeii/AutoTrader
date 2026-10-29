@@ -72,12 +72,23 @@ def explain_position(p: Any, plan: Any, orders: list[Any], fills: list[Any],
     higher = evidence.get('regime_assessment',{}).get('timeframes',{})
     overhead = [D(c['resistance']) for c in higher.values() if isinstance(c,dict) and c.get('ready') and c.get('resistance') and D(c['resistance'])>p.average_entry_price]
     concerns = []
+    recorded_regime = evidence.get('raoe_regime') or evidence.get('regime_assessment') or {}
+    recorded_frames = recorded_regime.get('timeframes', {})
+    if strategy == 'RAOE_EARLY_RECOVERY' and recorded_frames.get('15', {}).get('trend') == 'BEARISH':
+        concerns.append('The early-recovery entry preceded a bullish fifteen-minute reversal; a short bounce was not proof of a new trend.')
+    if recorded_frames.get('60', {}).get('trend') == 'BEARISH':
+        concerns.append('The asset had a bearish completed hourly trend at entry.')
+    if recorded_regime.get('benchmark') == 'MIXED':
+        concerns.append('MIXED described short-term Bitcoin/Ether agreement, not confirmed favorable hourly market structure.')
     if evidence.get('regime_assessment',{}).get('benchmark')=='ADVERSE':
         concerns.append('BTC/ETH context was adverse at entry.')
     original_targets = entry.get('targets',[]) or [str(t.target_price) for t in sorted(targets,key=lambda t:t.target_number)]
     if overhead and original_targets and D(original_targets[0])>min(overhead):
         concerns.append('TP1 was above nearby recorded higher-timeframe resistance.')
+    detailed_exit_reason = exit_context[-1].get('reason') if exit_context else None
     explanation = ('Price moved against the position and the protective stop executed. ' if 'STOP' in reasons else 'Exit followed '+', '.join(reasons)+'. ' if reasons else 'Exit reason unavailable. ')
+    if detailed_exit_reason == 'regime_exit' and 'MARKET_RISK' in reasons:
+        explanation += 'The recorded cause was a position-specific completed-candle reversal; MARKET_RISK is the generic historical intent label. '
     if gross_price is not None:
         explanation += ('The price move lost money before fees. ' if gross_price<0 else 'The price move made money before fees. ')
     sell_quantity = sum((f.quantity for f in fills if f.side=='SELL'),D(0))
@@ -101,7 +112,7 @@ def explain_position(p: Any, plan: Any, orders: list[Any], fills: list[Any],
         'fees_eur':str(fees),'modeled_slippage_and_impact_eur':str(modeled),
         'cost_note':'Modeled slippage/impact is already embedded in fill prices and gross price P&L. Do not subtract it again.',
         'net_pnl_eur':str(p.realized_pnl),'journal_net_cash_eur':str(net_cash),
-        'exit_reasons':reasons,'explanation':explanation,'issues':list(dict.fromkeys(issues)),
+        'exit_reasons':reasons,'detailed_exit_reason':detailed_exit_reason,'explanation':explanation,'issues':list(dict.fromkeys(issues)),
         'fills':legs,'entry_economics':measurements,'raw_records_preserved':True}
 
 

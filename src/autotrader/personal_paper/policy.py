@@ -13,7 +13,7 @@ D = Decimal
 ACCOUNT = "PERSONAL_PLAN_PAPER_7000"
 REGISTRY_KEY = "personal_paper_v47"
 INITIAL = D(7000)
-VERSION = "4.9.0-paper.1"
+VERSION = "4.9.1-paper.1"
 LIMITS = RiskLimits(max_allocated_capital=INITIAL, max_total_open_exposure=D(4200),
     min_uncommitted_reserve=D(2800), max_position_size=D(700), max_simultaneous_positions=6,
     max_planned_loss_per_trade=D(35), daily_loss_threshold=D(140),
@@ -25,6 +25,7 @@ MAX_DRAWDOWN = D('.10')
 STRATEGIES: dict[str,dict[str,Any]] = {s.strategy_id: {"strategy_version": s.version, "parameters": SuccessorParameters().payload()}
               for s in SUCCESSOR_REGISTRY}
 from autotrader.execution.policies import policy_for
+from autotrader.personal_paper.admission import POLICY as PRIMARY_ADMISSION
 from autotrader.personal_paper.selection import POLICY as BASELINE_POLICY
 from autotrader.raoe import POLICY as RAOE_POLICY
 from autotrader.raoe import PRIMARY_IDENTITIES, STRATEGY_VERSION, exit_policy, parameters_for
@@ -33,7 +34,7 @@ STRATEGIES.update({s: {"strategy_version": STRATEGY_VERSION, "parameters": param
                       "exit_policy":exit_policy(s)} for s in PRIMARY_IDENTITIES})
 for identity,spec in STRATEGIES.items():
     spec['exit_policy']=policy_for(identity)
-EXECUTION_POLICY = {"version": "4.9.0-shared.1", "baseline": BASELINE_POLICY, "raoe": RAOE_POLICY, "live_authorized": False,
+EXECUTION_POLICY = {"version": "4.9.1-shared.1", "primary_admission": PRIMARY_ADMISSION, "baseline": BASELINE_POLICY, "raoe": RAOE_POLICY, "live_authorized": False,
                     "continuation":"Historical and isolated forward shadow research only; absent from primary authority"}
 
 

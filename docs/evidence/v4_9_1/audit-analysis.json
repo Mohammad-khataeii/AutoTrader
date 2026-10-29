@@ -1,0 +1,1186 @@
+{
+  "status": "PASS",
+  "window": {
+    "since": "2026-10-28T18:47:54.205442+00:00",
+    "until": "2026-10-29T06:47:54.205442+00:00",
+    "timezone_note": "UTC source cutoffs; Europe/Rome is UTC+1 for this window"
+  },
+  "primary": {
+    "cash_start": "6994.086940919949",
+    "cash_end": "6961.614219600281",
+    "net_closed_pnl": "-32.472721319668",
+    "gross_price_pnl": "-26.917691269324",
+    "fees": "5.555030050344",
+    "closed_trades": 4,
+    "equity_return_pct": "-0.4642882136577613835228871309",
+    "funding_count": 1,
+    "all_orders_simulated": true
+  },
+  "trades": [
+    {
+      "position_id": "pos_732e2a8f93e24b5fa119180e074d7dd2",
+      "symbol": "PEPE-EUR",
+      "strategy": "RAOE_TREND_PULLBACK",
+      "entry_at": "2026-10-28T22:16:26.211062+00:00",
+      "exit_at": "2026-10-28T23:36:23.050331+00:00",
+      "signal_candle_at": "2026-10-28T22:10:00+00:00",
+      "entry_price": "0.000004526918",
+      "exit_price": "0.000004466360",
+      "initial_stop": "0.000004481100",
+      "targets": [
+        "0.0000046112",
+        "0.0000046205",
+        "0.0000046285"
+      ],
+      "gross_price_pnl_eur": "-9.330966186540",
+      "fees_eur": "1.385712423199",
+      "net_pnl_eur": "-10.716678609739",
+      "exit_intents": [
+        "STOP"
+      ],
+      "recorded_exit_condition": null,
+      "holding_seconds": 4796.839269,
+      "entry_benchmark": "MIXED",
+      "entry_timeframes": {
+        "15": {
+          "atr": "7.385714285714285714285714286E-8",
+          "bars": 384,
+          "contiguous_bars": 60,
+          "ema21": "0.000004463331231321868199745087098",
+          "ema9": "0.000004508007329823461817638259880",
+          "last_closed_at": "2026-10-28T22:00:00+00:00",
+          "required_bars": 21,
+          "source": [
+            "revolut-x"
+          ],
+          "trend": "BULLISH",
+          "unknown_reason": null
+        },
+        "240": {
+          "atr": "1.454071428571428571428571429E-7",
+          "bars": 23,
+          "contiguous_bars": 23,
+          "ema21": "0.000004057319913419913419913419914",
+          "ema9": "0.000004263280256927977016888888889",
+          "last_closed_at": "2026-10-28T16:00:00+00:00",
+          "required_bars": 21,
+          "source": [
+            "revolut-x"
+          ],
+          "trend": "BULLISH",
+          "unknown_reason": null
+        },
+        "5": {
+          "atr": "2.656428571428571428571428571E-8",
+          "bars": 1152,
+          "contiguous_bars": 60,
+          "ema21": "0.000004517622099931801890506838569",
+          "ema9": "0.000004524254975848581475790578599",
+          "last_closed_at": "2026-10-28T22:10:00+00:00",
+          "required_bars": 21,
+          "source": [
+            "revolut-x"
+          ],
+          "trend": "RANGING",
+          "unknown_reason": null
+        },
+        "60": {
+          "atr": "1.068785714285714285714285714E-7",
+          "bars": 95,
+          "contiguous_bars": 60,
+          "ema21": "0.000004358651080543622783132282038",
+          "ema9": "0.000004436193943009790152170774446",
+          "last_closed_at": "2026-10-28T21:00:00+00:00",
+          "required_bars": 21,
+          "source": [
+            "revolut-x"
+          ],
+          "trend": "BULLISH",
+          "unknown_reason": null
+        }
+      },
+      "entry_quality_policy": {
+        "gates": {
+          "benchmark_known": true,
+          "causal_data": true,
+          "net_economics": true,
+          "noise_floor": true,
+          "setup_confirmed": true,
+          "structural_plan": true
+        },
+        "target_net_to_roundtrip_cost": "3.363058861550925973470346907",
+        "version": "4.9.0-quality.1"
+      },
+      "original_entry_concerns_ui": [],
+      "maximum_observed_mid_high_pct_after_entry": "0.472330181372845719759006000",
+      "minimum_observed_mid_low_pct_after_entry": "-0.9723613283916342200145882900",
+      "path_limit": "Completed bars wholly after entry and before exit; first/last partial bars omitted. Mid-price extrema are not executable bid fills or counterfactual profits."
+    },
+    {
+      "position_id": "pos_f3f8fe6dc49d4fd48b187ca524f17cbb",
+      "symbol": "NEAR-EUR",
+      "strategy": "A3_COST_AWARE_CONTINUATION",
+      "entry_at": "2026-10-28T22:30:00.183014+00:00",
+      "exit_at": "2026-10-29T00:58:33.56518+00:00",
+      "signal_candle_at": "2026-10-28T22:20:00+00:00",
+      "entry_price": "4.237200922588",
+      "exit_price": "4.176715890165",
+      "initial_stop": "4.208100000000",
+      "targets": [
+        "4.3112",
+        "4.3500",
+        "4.3887"
+      ],
+      "gross_price_pnl_eur": "-9.950606196072",
+      "fees_eur": "1.384203155992",
+      "net_pnl_eur": "-11.334809352064",
+      "exit_intents": [
+        "STOP"
+      ],
+      "recorded_exit_condition": null,
+      "holding_seconds": 8913.382166,
+      "entry_benchmark": "MIXED",
+      "entry_timeframes": {
+        "15m": {
+          "atr": "0.03873571428571428571428571429",
+          "available_at": "2026-10-28T22:15:00+00:00",
+          "bear": false,
+          "bull": true,
+          "ready": true,
+          "resistance": "4.3151"
+        },
+        "60m": {
+          "atr": "0.06594285714285714285714285714",
+          "available_at": "2026-10-28T22:00:00+00:00",
+          "bear": false,
+          "bull": true,
+          "ready": true,
+          "resistance": "4.3151"
+        }
+      },
+      "entry_quality_policy": {
+        "as_of": "2026-10-28T22:20:00+00:00",
+        "gates": {
+          "review_benchmark_support": true,
+          "review_bullish_continuation": true,
+          "review_completed_hourly_trend": true,
+          "review_stop_above_noise": true,
+          "review_target_cost_headroom": true,
+          "review_target_within_overhead": true
+        },
+        "nearest_overhead": "4.3151",
+        "predictive_edge": "UNKNOWN",
+        "stop_distance_atr": "1.523052535304672897196261682",
+        "target_net_to_roundtrip_cost": "2.181762931104218358742377586",
+        "version": "4.7.1-quality.1"
+      },
+      "original_entry_concerns_ui": [],
+      "maximum_observed_mid_high_pct_after_entry": "0.221822792539637844907155700",
+      "minimum_observed_mid_low_pct_after_entry": "-0.5947540144640525119509867600",
+      "path_limit": "Completed bars wholly after entry and before exit; first/last partial bars omitted. Mid-price extrema are not executable bid fills or counterfactual profits."
+    },
+    {
+      "position_id": "pos_c0b713bba9264052a4d59a4bb8b5c2c7",
+      "symbol": "ZRO-EUR",
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "entry_at": "2026-10-29T02:56:49.026468+00:00",
+      "exit_at": "2026-10-29T03:16:08.545545+00:00",
+      "signal_candle_at": "2026-10-29T02:50:00+00:00",
+      "entry_price": "1.468685455680",
+      "exit_price": "1.451937520000",
+      "initial_stop": "1.447600000000",
+      "targets": [
+        "1.5209",
+        "1.5241",
+        "1.5269"
+      ],
+      "gross_price_pnl_eur": "-7.974371138561",
+      "fees_eur": "1.390627000776",
+      "net_pnl_eur": "-9.364998139337",
+      "exit_intents": [
+        "MARKET_RISK"
+      ],
+      "recorded_exit_condition": "regime_exit",
+      "holding_seconds": 1159.519077,
+      "entry_benchmark": "MIXED",
+      "entry_timeframes": {
+        "15": {
+          "atr": "0.01909285714285714285714285714",
+          "bars": 383,
+          "contiguous_bars": 60,
+          "ema21": "1.498363304527528107585460366",
+          "ema9": "1.476529278537116389286457779",
+          "last_closed_at": "2026-10-29T02:30:00+00:00",
+          "required_bars": 21,
+          "source": [
+            "revolut-x"
+          ],
+          "trend": "BEARISH",
+          "unknown_reason": null
+        },
+        "240": {
+          "atr": "0.07317142857142857142857142857",
+          "bars": 23,
+          "contiguous_bars": 23,
+          "ema21": "1.521452420306965761511216056",
+          "ema9": "1.533115555854745600",
+          "last_closed_at": "2026-10-28T20:00:00+00:00",
+          "required_bars": 21,
+          "source": [
+            "revolut-x"
+          ],
+          "trend": "RANGING",
+          "unknown_reason": null
+        },
+        "5": {
+          "atr": "0.009292857142857142857142857143",
+          "bars": 1152,
+          "contiguous_bars": 60,
+          "ema21": "1.471417820901916211236214882",
+          "ema9": "1.459280513517817514028419087",
+          "last_closed_at": "2026-10-29T02:50:00+00:00",
+          "required_bars": 21,
+          "source": [
+            "revolut-x"
+          ],
+          "trend": "RANGING",
+          "unknown_reason": null
+        },
+        "60": {
+          "atr": "0.04722142857142857142857142857",
+          "bars": 95,
+          "contiguous_bars": 60,
+          "ema21": "1.525195274792777436926596338",
+          "ema9": "1.516901760222391482448522034",
+          "last_closed_at": "2026-10-29T01:00:00+00:00",
+          "required_bars": 21,
+          "source": [
+            "revolut-x"
+          ],
+          "trend": "BEARISH",
+          "unknown_reason": null
+        }
+      },
+      "entry_quality_policy": {
+        "gates": {
+          "benchmark_known": true,
+          "causal_data": true,
+          "net_economics": true,
+          "noise_floor": true,
+          "setup_confirmed": true,
+          "structural_plan": true
+        },
+        "target_net_to_roundtrip_cost": "2.986584680387419832792943636",
+        "version": "4.9.0-quality.1"
+      },
+      "original_entry_concerns_ui": [],
+      "maximum_observed_mid_high_pct_after_entry": "0.436754125615690253146362500",
+      "minimum_observed_mid_low_pct_after_entry": "-1.142889760028865379605990270",
+      "path_limit": "Completed bars wholly after entry and before exit; first/last partial bars omitted. Mid-price extrema are not executable bid fills or counterfactual profits."
+    },
+    {
+      "position_id": "pos_459faa87f0284e5a9a13a1824b156ad3",
+      "symbol": "ADA-EUR",
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "entry_at": "2026-10-29T04:41:22.653312+00:00",
+      "exit_at": "2026-10-29T06:00:48.208027+00:00",
+      "signal_candle_at": "2026-10-29T04:35:00+00:00",
+      "entry_price": "0.178432632000",
+      "exit_price": "0.178519215615",
+      "initial_stop": "0.176620000000",
+      "targets": [
+        "0.18208",
+        "0.18226",
+        "0.18241"
+      ],
+      "gross_price_pnl_eur": "0.338252251849",
+      "fees_eur": "1.394487470377",
+      "net_pnl_eur": "-1.056235218528",
+      "exit_intents": [
+        "MARKET_RISK"
+      ],
+      "recorded_exit_condition": "regime_exit",
+      "holding_seconds": 4765.554715,
+      "entry_benchmark": "MIXED",
+      "entry_timeframes": {
+        "15": {
+          "atr": "0.001281428571428571428571428571",
+          "bars": 383,
+          "contiguous_bars": 60,
+          "ema21": "0.1793489511035194510439385733",
+          "ema9": "0.1775454492165714291232914950",
+          "last_closed_at": "2026-10-29T04:15:00+00:00",
+          "required_bars": 21,
+          "source": [
+            "revolut-x"
+          ],
+          "trend": "RANGING",
+          "unknown_reason": null
+        },
+        "240": {
+          "atr": "0.003636428571428571428571428571",
+          "bars": 23,
+          "contiguous_bars": 23,
+          "ema21": "0.1829872176308539944903581267",
+          "ema9": "0.1829864986654831047111111111",
+          "last_closed_at": "2026-10-29T00:00:00+00:00",
+          "required_bars": 21,
+          "source": [
+            "revolut-x"
+          ],
+          "trend": "BEARISH",
+          "unknown_reason": null
+        },
+        "5": {
+          "atr": "0.0004935714285714285714285714286",
+          "bars": 1152,
+          "contiguous_bars": 60,
+          "ema21": "0.1773843691554162098280398867",
+          "ema9": "0.1774353137474308557877402166",
+          "last_closed_at": "2026-10-29T04:35:00+00:00",
+          "required_bars": 21,
+          "source": [
+            "revolut-x"
+          ],
+          "trend": "BULLISH",
+          "unknown_reason": null
+        },
+        "60": {
+          "atr": "0.002464285714285714285714285714",
+          "bars": 95,
+          "contiguous_bars": 60,
+          "ema21": "0.1824646929804338983056638082",
+          "ema9": "0.1808821607492370407004386370",
+          "last_closed_at": "2026-10-29T03:00:00+00:00",
+          "required_bars": 21,
+          "source": [
+            "revolut-x"
+          ],
+          "trend": "BEARISH",
+          "unknown_reason": null
+        }
+      },
+      "entry_quality_policy": {
+        "gates": {
+          "benchmark_known": true,
+          "causal_data": true,
+          "net_economics": true,
+          "noise_floor": true,
+          "setup_confirmed": true,
+          "structural_plan": true
+        },
+        "target_net_to_roundtrip_cost": "3.138592226384381621894507476",
+        "version": "4.9.0-quality.1"
+      },
+      "original_entry_concerns_ui": [],
+      "maximum_observed_mid_high_pct_after_entry": "1.102583074602632101509324800",
+      "minimum_observed_mid_low_pct_after_entry": "-0.2312536644082008497190132800",
+      "path_limit": "Completed bars wholly after entry and before exit; first/last partial bars omitted. Mid-price extrema are not executable bid fills or counterfactual profits."
+    }
+  ],
+  "spot_market_returns": [
+    {
+      "symbol": "ADA-EUR",
+      "baseline_completed_at": "2026-10-28T18:45:00+00:00",
+      "last_completed_at": "2026-10-29T06:45:00+00:00",
+      "start_close": "0.183000000000",
+      "end_close": "0.177940000000",
+      "return_pct": "-2.765027322404371584699453550",
+      "bars": 145,
+      "missing_intervals": 0
+    },
+    {
+      "symbol": "BTC-EUR",
+      "baseline_completed_at": "2026-10-28T18:45:00+00:00",
+      "last_completed_at": "2026-10-29T06:45:00+00:00",
+      "start_close": "72680.390000000000",
+      "end_close": "71720.180000000000",
+      "return_pct": "-1.321140406648891124552303590",
+      "bars": 145,
+      "missing_intervals": 0
+    },
+    {
+      "symbol": "ENA-EUR",
+      "baseline_completed_at": "2026-10-28T18:45:00+00:00",
+      "last_completed_at": "2026-10-29T06:45:00+00:00",
+      "start_close": "0.183100000000",
+      "end_close": "0.176400000000",
+      "return_pct": "-3.659202621518296013107591480",
+      "bars": 145,
+      "missing_intervals": 0
+    },
+    {
+      "symbol": "ETH-EUR",
+      "baseline_completed_at": "2026-10-28T18:45:00+00:00",
+      "last_completed_at": "2026-10-29T06:45:00+00:00",
+      "start_close": "2109.450000000000",
+      "end_close": "2074.610000000000",
+      "return_pct": "-1.651615349972741709924387870",
+      "bars": 145,
+      "missing_intervals": 0
+    },
+    {
+      "symbol": "NEAR-EUR",
+      "baseline_completed_at": "2026-10-28T18:45:00+00:00",
+      "last_completed_at": "2026-10-29T06:40:00+00:00",
+      "start_close": "4.226300000000",
+      "end_close": "4.012800000000",
+      "return_pct": "-5.051700068617940042117218370",
+      "bars": 144,
+      "missing_intervals": 0
+    },
+    {
+      "symbol": "PEPE-EUR",
+      "baseline_completed_at": "2026-10-28T18:45:00+00:00",
+      "last_completed_at": "2026-10-29T06:45:00+00:00",
+      "start_close": "0.000004382500",
+      "end_close": "0.000004509200",
+      "return_pct": "2.891043924700513405590416400",
+      "bars": 145,
+      "missing_intervals": 0
+    },
+    {
+      "symbol": "ZRO-EUR",
+      "baseline_completed_at": "2026-10-28T18:45:00+00:00",
+      "last_completed_at": "2026-10-29T06:45:00+00:00",
+      "start_close": "1.537500000000",
+      "end_close": "1.454000000000",
+      "return_pct": "-5.430894308943089430894308940",
+      "bars": 145,
+      "missing_intervals": 0
+    }
+  ],
+  "independent_futures_returns": [
+    {
+      "symbol": "BTCUSDT",
+      "venue": "Binance Futures / TraderSpy",
+      "quote": "USDT",
+      "baseline_completed_at": "2026-10-28T18:45:00+00:00",
+      "last_completed_at": "2026-10-29T06:45:00+00:00",
+      "return_pct": "-1.440907628849208745515649470",
+      "price_scale_note": null,
+      "url": "https://traderspy.app/signals/token/BTC"
+    },
+    {
+      "symbol": "ETHUSDT",
+      "venue": "Binance Futures / TraderSpy",
+      "quote": "USDT",
+      "baseline_completed_at": "2026-10-28T18:45:00+00:00",
+      "last_completed_at": "2026-10-29T06:45:00+00:00",
+      "return_pct": "-1.859999406022087492946512290",
+      "price_scale_note": null,
+      "url": "https://traderspy.app/signals/token/ETH"
+    },
+    {
+      "symbol": "1000PEPEUSDT",
+      "venue": "Binance Futures / TraderSpy",
+      "quote": "USDT",
+      "baseline_completed_at": "2026-10-28T18:45:00+00:00",
+      "last_completed_at": "2026-10-29T06:45:00+00:00",
+      "return_pct": "3.012331540522301069551524600",
+      "price_scale_note": "1000PEPE prices represent 1000 units; percentage return is scale invariant",
+      "url": "https://traderspy.app/signals/token/PEPE"
+    }
+  ],
+  "account_comparison": [
+    {
+      "database": "autotrader_aruba_staging",
+      "strategy": null,
+      "archived_or_state": null,
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "paper-eur",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "paper-eur",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "paper-eur",
+              "control": "RUNNING",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "strategy": null,
+      "archived_or_state": null,
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "PERSONAL_PLAN_PAPER_7000",
+              "events": 1,
+              "cash": "7000.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "PERSONAL_PLAN_PAPER_7000",
+              "cash": "6961.614219600281",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "-38.385780399719"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "PERSONAL_PLAN_PAPER_7000",
+              "control": "RUNNING",
+              "initial_cash": "7000.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 4,
+      "net_closed_pnl": "-32.472721319668",
+      "fees_in_window": "5.555030050344",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_ba32d9384c30d291ec370174051fadb3",
+      "strategy": "A3_COST_AWARE_CONTINUATION",
+      "archived_or_state": "STOPPED",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:55f331afa200412ea011ea5419cf4f41",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:55f331afa200412ea011ea5419cf4f41",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:55f331afa200412ea011ea5419cf4f41",
+              "control": "STOPPED",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_39fc0f422644ff7dd06323e5e2bef1da",
+      "strategy": "B3_STATEFUL_BREAKOUT",
+      "archived_or_state": "STOPPED",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:7abd0f34d6cd4574a09f11524368034c",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:7abd0f34d6cd4574a09f11524368034c",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:7abd0f34d6cd4574a09f11524368034c",
+              "control": "STOPPED",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_7b82121d48000f18d24e21a7895519bb",
+      "strategy": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+      "archived_or_state": "STOPPED",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:16c77f7cfa5b48cdae2fd10125da5019",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:16c77f7cfa5b48cdae2fd10125da5019",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:16c77f7cfa5b48cdae2fd10125da5019",
+              "control": "STOPPED",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_2aa76e807d0cbf9c60074159f2647115",
+      "strategy": "B2_CONFIRMED_COMPRESSION",
+      "archived_or_state": "STOPPED",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:4f11e020db344ba98d2d083f696bf492",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:4f11e020db344ba98d2d083f696bf492",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:4f11e020db344ba98d2d083f696bf492",
+              "control": "STOPPED",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_e3de2e7d2f6ad0122b8d52ad21929ec2",
+      "strategy": "C2_LIQUID_RETEST",
+      "archived_or_state": "STOPPED",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:428b3c199d4e492888e90c801e911791",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:428b3c199d4e492888e90c801e911791",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:428b3c199d4e492888e90c801e911791",
+              "control": "STOPPED",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_6c17dd3ad276427f7416e2b8d90d1aee",
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "archived_or_state": "STOPPED",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:8583cccd3dff4f5da9a5529946853b33",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:8583cccd3dff4f5da9a5529946853b33",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:8583cccd3dff4f5da9a5529946853b33",
+              "control": "STOPPED",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_1a0f3ee0d867cf70f3e9ffb826a8d810",
+      "strategy": "RAOE_TREND_PULLBACK",
+      "archived_or_state": "STOPPED",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:73b3c278bb2d45cba5663b9de4208469",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:73b3c278bb2d45cba5663b9de4208469",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:73b3c278bb2d45cba5663b9de4208469",
+              "control": "STOPPED",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_6f3240e359b5749f60376a96380af5d4",
+      "strategy": "RAOE_BREAKOUT_RETEST",
+      "archived_or_state": "STOPPED",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:db55870cdca849fd8873993c179a1ca8",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:db55870cdca849fd8873993c179a1ca8",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:db55870cdca849fd8873993c179a1ca8",
+              "control": "STOPPED",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_889d1e0a6c3e422a80703a883e691111",
+      "strategy": "A3_COST_AWARE_CONTINUATION",
+      "archived_or_state": "SHADOW_ACTIVE",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:0ac4dd90d047479486d919ef80dff4d5",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:0ac4dd90d047479486d919ef80dff4d5",
+              "cash": "421.332624044511",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "-3.911068336737"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:0ac4dd90d047479486d919ef80dff4d5",
+              "control": "RUNNING",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 6,
+      "net_closed_pnl": "-3.911068336737",
+      "fees_in_window": "0.967932487659",
+      "open_positions": [
+        {
+          "position_id": "pos_841c8bd1860343ff8abf60fe3587dd7d",
+          "symbol": "PEPE-EUR",
+          "quantity": "16454670.000000000000",
+          "average_entry_price": "0.000004538628",
+          "realized_pnl": "0.000000000000",
+          "protective_stop": "0.000004468200",
+          "target_1": "0.000004661000",
+          "target_2": "0.000004723800",
+          "target_3": "0.000004786700",
+          "state": "OPEN",
+          "opened_at": "2026-10-29T06:35:23.48811+00:00",
+          "closed_at": null,
+          "created_at": "2026-10-29T06:35:23.419172+00:00",
+          "original_quantity": "16454670.000000000000",
+          "target_1_quantity": "4936400.000000000000",
+          "target_2_quantity": "6581860.000000000000",
+          "target_3_quantity": "4936410.000000000000",
+          "target_1_filled_quantity": "0.000000000000",
+          "target_2_filled_quantity": "0.000000000000",
+          "target_3_filled_quantity": "0.000000000000",
+          "account_id": "shadow:0ac4dd90d047479486d919ef80dff4d5",
+          "cost_basis": "74.756307618752",
+          "highest_price": "0.000004541000",
+          "initial_stop": "0.000004468200",
+          "trailing_distance": null,
+          "expires_at": "2026-10-29T09:35:23.603335+00:00",
+          "last_monitored_at": "2026-10-29T06:49:52.357953+00:00"
+        }
+      ]
+    },
+    {
+      "database": "autotrader_shadow_f47b303f5ad2ce3bf4684cdb59060581",
+      "strategy": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+      "archived_or_state": "SHADOW_ACTIVE",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:2ef5d96d2ef242d29f57e3c07985a028",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:2ef5d96d2ef242d29f57e3c07985a028",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:2ef5d96d2ef242d29f57e3c07985a028",
+              "control": "RUNNING",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_9157c9dfebb8d41aea24685c1c659e5a",
+      "strategy": "RAOE_BREAKOUT_RETEST",
+      "archived_or_state": "SHADOW_ACTIVE",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:781c91b9d3d3468da654e6fe593b2cc1",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:781c91b9d3d3468da654e6fe593b2cc1",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:781c91b9d3d3468da654e6fe593b2cc1",
+              "control": "RUNNING",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_ea2b8a90eeff9f466fb101003b6313eb",
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "archived_or_state": "SHADOW_ACTIVE",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:9f5b764129ab4088b1ba3873540148c0",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:9f5b764129ab4088b1ba3873540148c0",
+              "cash": "497.415816130627",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "-2.584183869373"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:9f5b764129ab4088b1ba3873540148c0",
+              "control": "RUNNING",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 2,
+      "net_closed_pnl": "-1.696869328825",
+      "fees_in_window": "0.297824222626",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_a24467ad1ad024d6dc36a294cdbbe71b",
+      "strategy": "RAOE_BREAKOUT_CONTINUATION",
+      "archived_or_state": "SHADOW_ACTIVE",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:735a6354b3104fcf8eaaa9045c04103e",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:735a6354b3104fcf8eaaa9045c04103e",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:735a6354b3104fcf8eaaa9045c04103e",
+              "control": "RUNNING",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_6adfb22c45e1836c1caf0a8cbd4b34d1",
+      "strategy": "RAOE_TREND_PULLBACK",
+      "archived_or_state": "SHADOW_ACTIVE",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:3a4d2ea6be2e4fe795da2a46c2e4a4db",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:3a4d2ea6be2e4fe795da2a46c2e4a4db",
+              "cash": "498.969788328143",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "-1.030211671857"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:3a4d2ea6be2e4fe795da2a46c2e4a4db",
+              "control": "RUNNING",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 1,
+      "net_closed_pnl": "-1.030211671857",
+      "fees_in_window": "0.148388778357",
+      "open_positions": []
+    },
+    {
+      "database": "autotrader_shadow_c6e6e0209b8adbaef3c0c4f88028b05d",
+      "strategy": "B3_STATEFUL_BREAKOUT",
+      "archived_or_state": "SHADOW_ACTIVE",
+      "financial": [
+        {
+          "funding": [
+            {
+              "account_id": "shadow:70c4c92eadb549e2aff10ced208aaca3",
+              "events": 1,
+              "cash": "500.000000000000"
+            }
+          ],
+          "accounts": [
+            {
+              "account_id": "shadow:70c4c92eadb549e2aff10ced208aaca3",
+              "cash": "500.000000000000",
+              "reserved_cash": "0.000000000000",
+              "realized_pnl": "0.000000000000"
+            }
+          ],
+          "controls": [
+            {
+              "account_id": "shadow:70c4c92eadb549e2aff10ced208aaca3",
+              "control": "RUNNING",
+              "initial_cash": "500.000000000000"
+            }
+          ]
+        }
+      ],
+      "closed_in_window": 0,
+      "net_closed_pnl": "0",
+      "fees_in_window": "0",
+      "open_positions": []
+    }
+  ],
+  "signal_counts": [
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "strategy": "B3_STATEFUL_BREAKOUT",
+      "signals": 1317,
+      "technical_eligible": 2,
+      "economic_eligible": 0,
+      "entry_eligible": 0
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "strategy": "E3_ADAPTIVE_RELATIVE_STRENGTH",
+      "signals": 1317,
+      "technical_eligible": 1,
+      "economic_eligible": 0,
+      "entry_eligible": 0
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "strategy": "A3_COST_AWARE_CONTINUATION",
+      "signals": 1317,
+      "technical_eligible": 53,
+      "economic_eligible": 13,
+      "entry_eligible": 3
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "strategy": "RAOE_BREAKOUT_RETEST",
+      "signals": 1317,
+      "technical_eligible": 5,
+      "economic_eligible": 0,
+      "entry_eligible": 0
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "signals": 1317,
+      "technical_eligible": 84,
+      "economic_eligible": 2,
+      "entry_eligible": 2
+    },
+    {
+      "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+      "strategy": "RAOE_TREND_PULLBACK",
+      "signals": 1317,
+      "technical_eligible": 89,
+      "economic_eligible": 1,
+      "entry_eligible": 1
+    }
+  ],
+  "limits": [
+    "The audit window and all observed losing entries are development data, not an untouched validation period.",
+    "EUR spot and USDT futures differ in venue, instrument, costs and FX; percent-path agreement is only an independent context check.",
+    "Current technical readings cannot be substituted for entry-time market information.",
+    "Recorded model payoff ratios describe conditional scenarios, not calibrated probability or expected profit."
+  ],
+  "source_fingerprint": "308e8e1ea0e1dd904c38ed6e4abb16214bc156e7d68a732db6ac27d42bb2b48b",
+  "evidence_category": "OBSERVED_PAPER_HISTORY_AND_MARKET_AUDIT_NOT_PROSPECTIVE_VALIDATION",
+  "source_artifacts": {
+    "audit-stream.jsonl.gz": "557656f2599a8717a11118f8104e6ee6316ae5a7fb880cfaa548bc1047040ffc",
+    "market-candles.jsonl.gz": "0a991544c12e9472d67c33403e211eb886786bee28c8f66a1fba261efe8318b1",
+    "cross-candles-0.json": "f9878ffa9e697570e4da5aa440d6dbd55f3debff47a5a1e9dc1ae46847b45d05",
+    "cross-candles-1.json": "70df18f177e369d0b451cc69f3bbb048c611f22c5107aa0b08ea881b8a2f65ef",
+    "cross-candles-2.json": "5b4d15c608393013c98c65905908f787601d02298de2f0024b408a614b37f619",
+    "readonly-dumps/exports.json": "e9c9967a0c0ae8d18ddade7ff64e32d6a32af3c179f38d6ec113bb9dc7647dc4"
+  },
+  "counterfactual_limit": "Two originally position-blocked PEPE A3 proposals pass the new guard; blocked known losses cannot be added to equity as upgraded-strategy P&L.",
+  "limitations_on_logs_and_collection": {
+    "logs": "Sanitized last 5000 lines per service; worker/backend samples explicitly truncated",
+    "oversized_state_payloads": "Explicitly omitted above 262144 bytes; do not infer full payload coverage",
+    "first_observation_cache": "Official closed-bar first-seen cache not part of initial stream; retrospective higher-bar reconstruction is not first-seen proof",
+    "initial_collector_incident": "Whole-history JSON aggregation caused PostgreSQL child OOM at 06:42 UTC; bounded export used after reconciliation/protection recovered",
+    "relevant_user_crontab": "Read-only crontab -l returned no installed crontab; earlier 05:35 event origin not attributed to a scheduler"
+  }
+}
