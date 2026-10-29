@@ -10,5 +10,14 @@
   "mypy": "PASS (133 modules)",
   "junit_sha256": "37695b94b5a9c41395bcde71567c3d5a0502d3e7132a01b0fb54d0625a34635f",
   "resource_case": "Real host Docker PostgreSQL 512 MiB / 600 MiB streaming regression included",
-  "warning": "Existing Starlette deprecated AnyIO alias; no failure"
+  "warning": "Existing Starlette deprecated AnyIO alias; no failure",
+  "deployment_only_correction": {
+    "status": "PASS",
+    "targeted_native_cases": 44,
+    "targeted_linux_cases": 44,
+    "additional_cases": 2,
+    "application_source_unchanged": true,
+    "full_current_453_case_run_claimed": false,
+    "evidence": "restore-startup.json"
+  }
 }

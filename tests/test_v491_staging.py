@@ -46,7 +46,7 @@ def test_same_control_identity_history_and_missing_control_refusal(staging,monke
 def test_restore_order_resume_and_manifest_preservation(staging,monkeypatch,tmp_path,failure):
     commit='a'*40;base=tmp_path/'staging';root=base/'releases'/commit;gates=root/'docs/evidence/v4_9_1';gates.mkdir(parents=True)
     (base/'ops').mkdir();(base/'ops/compose').write_text('original compose\n');(base/'evidence').mkdir()
-    names=['backend-tests.json','frontend-tests.json','browser-tests.json','linux-tests.json','audit-analysis.json','financial-restore.json','runtime-compatibility.json','restart-recovery.json','api-history-resource.json']
+    names=['backend-tests.json','frontend-tests.json','browser-tests.json','linux-tests.json','audit-analysis.json','financial-restore.json','runtime-compatibility.json','restart-recovery.json','api-history-resource.json','restore-startup.json']
     data=b'{"status":"PASS"}'
     for name in names:(gates/name).write_bytes(data)
     (gates/'staging-readiness.json').write_text(json.dumps({'status':'PASS','source_fingerprint':'source','gates':{n:hashlib.sha256(data).hexdigest() for n in names}}))

@@ -17,5 +17,14 @@
     "test_exact_production_identities_all_four_native_lifecycles[E2_ABSOLUTE_RELATIVE_STRENGTH]",
     "test_large_audit_stream_under_postgres_memory_cap"
   ],
-  "reason": "Host Docker orchestration/resource cases require host CLI/socket; all five pass in complete native run"
+  "reason": "Host Docker orchestration/resource cases require host CLI/socket; all five pass in complete native run",
+  "deployment_only_correction": {
+    "status": "PASS",
+    "targeted_native_cases": 44,
+    "targeted_linux_cases": 44,
+    "additional_cases": 2,
+    "application_source_unchanged": true,
+    "full_current_453_case_run_claimed": false,
+    "evidence": "restore-startup.json"
+  }
 }

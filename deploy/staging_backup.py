@@ -115,6 +115,15 @@ async def main():
 asyncio.run(main())
 '''
 
+def wait_restore_postgres(container):
+ # The image's temporary init server accepts Unix sockets, then shuts down.
+ # Only the final postmaster listens on TCP; a socket probe can race shutdown.
+ for _ in range(60):
+  if subprocess.run(['docker','exec',container,'pg_isready','-h','127.0.0.1','-U','autotrader','-d','postgres'],capture_output=True,check=False).returncode==0:return
+  time.sleep(.25)
+ raise RuntimeError('restore_clone_unavailable')
+
+
 def restore_clone(directory,records,image,manifest,result,*,rehearse_profile=False):
  token='autotrader-aruba-restore-'+uuid4().hex[:8];network=token+'-net';container=token+'-pg';volume=token+'-data'
  (directory/'restore-attempt.json').write_text(json.dumps({'network':network,'container':container,'volume':volume,'memory_limit_bytes':512*1024**2,'storage':'ISOLATED_NAMED_VOLUME','failed_resources_retained_for_diagnostics':True},indent=2)+'\n')
@@ -126,10 +135,7 @@ def restore_clone(directory,records,image,manifest,result,*,rehearse_profile=Fal
   run(['docker','volume','rm',volume]);raise RuntimeError('isolated_restore_disk_capacity_insufficient')
  run(['docker','network','create','--internal','--label','personal-plan.restore=aruba',network])
  run(['docker','run','-d','--name',container,'--network',network,'--network-alias','restore-postgres','--label','personal-plan.restore=aruba','-v',volume+':/var/lib/postgresql/data','--memory','512m','-e','POSTGRES_USER=autotrader','-e','POSTGRES_DB=postgres','-e','POSTGRES_HOST_AUTH_METHOD=trust','postgres:16-alpine'])
- for _ in range(60):
-  if subprocess.run(['docker','exec',container,'pg_isready','-U','autotrader'],capture_output=True,check=False).returncode==0:break
-  time.sleep(.25)
- else:raise RuntimeError('restore_clone_unavailable')
+ wait_restore_postgres(container)
  for r in records:
   data=(directory/r['file']).read_bytes();assert hashlib.sha256(data).hexdigest()==r['sha256'];run(['docker','exec',container,'createdb','-U','autotrader',r['database']]);run(['docker','exec','-i',container,'pg_restore','--exit-on-error','--no-owner','-U','autotrader','-d',r['database']],data)
  verifier=directory/'verify.py';verifier.write_text(VERIFY)

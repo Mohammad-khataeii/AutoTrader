@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "362e1c0f26720baa856e6c783418ac8e97e54a7eec7addf083a62ebd7133cdcf",
+  "scope": "DEPLOYMENT_ONLY_APPLICATION_BYTES_UNCHANGED",
+  "native_cases": 44,
+  "linux_cases": 44,
+  "new_cases": 2,
+  "native_junit_sha256": "3081f4ea5fff25ddcb3dd77edc132dec70223dc6f5b4671395873ba3a69d55d0",
+  "linux_junit_sha256": "17d7f0b45ae9fd3800cc0547f3ac267aed44d58bc562a9f5dfe192ec348ef326",
+  "actual_startup": {
+    "status": "PASS",
+    "bootstrap_socket_ready_while_tcp_unavailable": true,
+    "new_helper_waited_for_final_tcp": true,
+    "final_postmaster_pid": 1,
+    "createdb_after_final_readiness": "PASS",
+    "wait_seconds": 4.452874499984318,
+    "memory_limit_bytes": 536870912,
+    "cpu_limit": 1,
+    "network": "none",
+    "host_ports": [],
+    "financial_data_used": false,
+    "live_services_modified": false,
+    "helper_sha256": "b826ba6f05fd1d48182ecc7e9b12f0d4b288b016498c4c264d1ab90197bd4144",
+    "probe_sha256": "75e7408cf47b08a9e77aa343e473041ef797aab236c064b73e22d692717c3038",
+    "owned_resources_removed": true
+  },
+  "live_database_writes": false
+}
