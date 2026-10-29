@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "source_fingerprint": "308e8e1ea0e1dd904c38ed6e4abb16214bc156e7d68a732db6ac27d42bb2b48b",
+  "source_fingerprint": "362e1c0f26720baa856e6c783418ac8e97e54a7eec7addf083a62ebd7133cdcf",
   "tests": 19,
   "failures": 0,
   "typescript": "PASS",
@@ -41,5 +41,6 @@
     "src/presentation.ts": "a798f7f2c084baa787bae35a3f6f9ccf47b80782bc33c605b945369fe5bf0730",
     "src/styles.css": "30c5f79a50463a450ba1c3930ccae3be65e478c80f7206d093f8d7b3c60722bc",
     "src/ui.tsx": "9fb1e7279ffc9eabb5e2e27a162cfe97cba60b5496fc905846a8fbae2e679d71"
-  }
+  },
+  "correction_frontend_source_changed": false
 }

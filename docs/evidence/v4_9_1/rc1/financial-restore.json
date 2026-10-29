@@ -1,0 +1,895 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "308e8e1ea0e1dd904c38ed6e4abb16214bc156e7d68a732db6ac27d42bb2b48b",
+  "evidence_category": "LOCAL_ISOLATED_RESTORED_REAL_LEDGER_ENGINEERING",
+  "restored_accounts": 17,
+  "retained_financial_tables": [
+    "balances",
+    "financial_journal",
+    "orders",
+    "fills",
+    "positions",
+    "capital_reservations",
+    "exit_intents",
+    "exit_targets",
+    "exit_plans",
+    "ai_budgets",
+    "ai_usage",
+    "order_transitions"
+  ],
+  "original_financial_seals": "ALL_MATCH_BEFORE_AFTER",
+  "initial_primary_funding_events": 1,
+  "primary_cash": "6961.614219600281",
+  "primary_fills": 16,
+  "origin_identity_unchanged": true,
+  "new_profile": "4.9.1-paper.1",
+  "primary_runtime_fingerprint": "bddd32eae4c72058c583cd55684622b86a12527067b7c6b8941613207c49535c",
+  "retained_original_controls": 7,
+  "retained_archived_controls": 8,
+  "new_accounts": 0,
+  "deleted_accounts": 0,
+  "all_shadow_manifests_unchanged": true,
+  "original_controls_runtime_compatible": true,
+  "execution_fingerprint": "44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c",
+  "network_isolation": true,
+  "host_ports": [],
+  "source_database_exports": "Read-only 29 October VPS pg_dump streams; database cutoffs differ",
+  "financial_seals": {
+    "paper-eur": {
+      "balances": {
+        "rows": 1,
+        "sha256": "14517c41abc5bcce2a67ae6dae812c7c081a68bfcf35e1b4b0dca3ae2a59d6ef"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "a1c072902b6cbc50495ca5190363cf160b2da8364a394883b5c8af18ecd9431e"
+      },
+      "orders": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "PERSONAL_PLAN_PAPER_7000": {
+      "balances": {
+        "rows": 1,
+        "sha256": "d6c94952faaa05cb87a4940c5219a53890b62c0be910529a68bf581b443a19ca"
+      },
+      "financial_journal": {
+        "rows": 49,
+        "sha256": "437fc731b4c800f63a352e6cf1855b29dab10f2404ea5d604bd22efe18134ad6"
+      },
+      "orders": {
+        "rows": 18,
+        "sha256": "68aed4cbb7eb12165b2928226c89d05600202b4fc2b39ed5cf3d02110590e2c0"
+      },
+      "fills": {
+        "rows": 16,
+        "sha256": "2cb81bb1a1299ac6d06bff09fa975b68be253f7aa2007547e2e2d8bd8802bea6"
+      },
+      "positions": {
+        "rows": 8,
+        "sha256": "618548e5297536c0cf0c1d26d61a2bd5bd33dbc049c1f6a0c99f1ba69368730b"
+      },
+      "capital_reservations": {
+        "rows": 8,
+        "sha256": "6b561888a1845be21be48a59f84096130ce873c25e1c9f4d918275282417e983"
+      },
+      "exit_intents": {
+        "rows": 8,
+        "sha256": "b3a2d134b9bd6dbc1b46e3359f1b9b3806c586a8c0b2a1fb94bccf314d94f778"
+      },
+      "exit_targets": {
+        "rows": 24,
+        "sha256": "473b5a939080ebba66d7abc86caf344a694ab643cb6fa815bc69052b1ac83454"
+      },
+      "exit_plans": {
+        "rows": 8,
+        "sha256": "41cea5ab88e1960a2b6fbd930b335ef8781b817a9e6a810789a19333bea4a23f"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 50,
+        "sha256": "34715395dbf39f69da36ac86b0ce6a05ba7e3e8f291c1dfd257c5f70d4706d86"
+      }
+    },
+    "shadow:4f11e020db344ba98d2d083f696bf492": {
+      "balances": {
+        "rows": 1,
+        "sha256": "1543bb64c935f32736ca4662c5a3b4e6b35ceb92c184eff02a13094eb3bd9524"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "b9c2e17500267e3b229a729db41f01eb1c6c61015f36e2a9d6df917f47fae8d8"
+      },
+      "orders": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "shadow:428b3c199d4e492888e90c801e911791": {
+      "balances": {
+        "rows": 1,
+        "sha256": "e8ac4edb36ed18c5bcf0f025ebc89c1f33bc193811f1d874a8f32caf65f0f4af"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "f7949a52374909f780efb2ef3627d4f2439744759c8bcb47a225537bf80e5aa9"
+      },
+      "orders": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "shadow:55f331afa200412ea011ea5419cf4f41": {
+      "balances": {
+        "rows": 1,
+        "sha256": "abda76280ab1bb413429c97a3571616b9cd57b950d53898027f5aa7dfe49142d"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "dc013a74cf62b6b97ae21eb4ff44864f8507066518dcb30440ade812ea8a4994"
+      },
+      "orders": {
+        "rows": 19,
+        "sha256": "243a181743f32dce3387a5e8cbb651c887a0ff850e1b44a778dd2746320265a1"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 19,
+        "sha256": "7fe1a67137fd8007d6a4ea27569a1550642dd5b93f23267bc397d501c1ca5aac"
+      }
+    },
+    "shadow:7abd0f34d6cd4574a09f11524368034c": {
+      "balances": {
+        "rows": 1,
+        "sha256": "907917a9d6c7aadb2b4f8bb9135d3a1fc34d18905754d18c1cae8c5129ee2dc6"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "419cd6b7033cdbf5d76e342d6b5a0321619022057ad42505751e323f62eca451"
+      },
+      "orders": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "shadow:16c77f7cfa5b48cdae2fd10125da5019": {
+      "balances": {
+        "rows": 1,
+        "sha256": "75777ab1c142275cd386cecae9f22f8b82378328b476482fb33718fe5d0d52a7"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "bd415258c7817788c5c4cf5fb523dc1950b46efbb1e9ec984af296fae820d3ec"
+      },
+      "orders": {
+        "rows": 1,
+        "sha256": "426b84ff8743e4e88840c3286349cfd38f4c40a4e9e43135289ce2ea87747609"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 1,
+        "sha256": "9353bf4ea84c12c849540f083022cb34ad4daa88f23714bc285ca7c960d9a10d"
+      }
+    },
+    "shadow:8583cccd3dff4f5da9a5529946853b33": {
+      "balances": {
+        "rows": 1,
+        "sha256": "c0b02a39bebec51465d9a018a7a16cfdb1fba682e84e5cbf7147e3b9ba7cb482"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "cb9c1631d1899518dea2d1db2579763a7e0f801d1b3dbc31cd91d9f460a24a42"
+      },
+      "orders": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "shadow:73b3c278bb2d45cba5663b9de4208469": {
+      "balances": {
+        "rows": 1,
+        "sha256": "0b78a705e8d6f324839164ea82df7ea4c1d4b2023e90e4e60dc4b9abc784cdbb"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "2eae9aec84c3cf41722af32936c1934a37ffb58ceb4c43464bf2416bbb54f607"
+      },
+      "orders": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "shadow:db55870cdca849fd8873993c179a1ca8": {
+      "balances": {
+        "rows": 1,
+        "sha256": "47a9826e8c4c670a314828dacf124023a965cf428be55ca7387145d32b323766"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "28ab0667166c78cce0a81500c51b0759081cad49f7cde4df1fbf86e80c030150"
+      },
+      "orders": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "shadow:0ac4dd90d047479486d919ef80dff4d5": {
+      "balances": {
+        "rows": 1,
+        "sha256": "1ef8fd193556ddfdd6c393e8f601c4c44c708af4517be1508f2fccf6f0ce20a6"
+      },
+      "financial_journal": {
+        "rows": 41,
+        "sha256": "577223bff074cfd817fccc25938e2355cadc03563e56c59632448ddfc1653d0c"
+      },
+      "orders": {
+        "rows": 14,
+        "sha256": "9a297f977aacfee136086106dad10c9c5f0f5300d6e25541d202f0194cf70012"
+      },
+      "fills": {
+        "rows": 13,
+        "sha256": "b208a6fe4490999975e72b0cffc1fbba337275c01db28bb431589987d3a8af2f"
+      },
+      "positions": {
+        "rows": 7,
+        "sha256": "821effac36579c1c3fefce5235eb9a17141bec40430b968615135c617c603eed"
+      },
+      "capital_reservations": {
+        "rows": 7,
+        "sha256": "4af423917d2549749a4d3143c8bbe3aa064b0f695d2eb34f89893a7d89db3029"
+      },
+      "exit_intents": {
+        "rows": 6,
+        "sha256": "7780341e9054a7d0fc8034efd5b6746b3bd9c09698ec1acdec552937d671789b"
+      },
+      "exit_targets": {
+        "rows": 21,
+        "sha256": "8be29702c70e05f4569f6967c24c21b94f9e67f84e0d09050091bd7c3734eb68"
+      },
+      "exit_plans": {
+        "rows": 7,
+        "sha256": "c07a028f3a9ab89ba21379203f29a19daa2a96fcc746035dbae079ca758a1b9d"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 40,
+        "sha256": "35a4e54a23e2c903b8afb8f547b645ef28753de29853767b19129803d5540757"
+      }
+    },
+    "shadow:70c4c92eadb549e2aff10ced208aaca3": {
+      "balances": {
+        "rows": 1,
+        "sha256": "d5ca0df9a84c4b2cf336065fee68ea67c9b3155542c699b4e96eb6074720809e"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "3a66218ca5b546988f420588fd63da386ceb794a8cde72338f9c5e5a130d99cc"
+      },
+      "orders": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "shadow:2ef5d96d2ef242d29f57e3c07985a028": {
+      "balances": {
+        "rows": 1,
+        "sha256": "b70987f389c1c912eef3a791af69c43f82daa71735e6d2ee4b7a8932daff4ae9"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "0f5cafcc854575af2fd98e75b422c90c18aef18579859f053a159b995a189528"
+      },
+      "orders": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "shadow:9f5b764129ab4088b1ba3873540148c0": {
+      "balances": {
+        "rows": 1,
+        "sha256": "b78db1612968b539917489f09880170b9c6c79a3e35d8a13a3be8c6c700eee7b"
+      },
+      "financial_journal": {
+        "rows": 25,
+        "sha256": "cad6839eba8bc46bb13f614c971c5e1943322e8710051efb2db399264f97f8ff"
+      },
+      "orders": {
+        "rows": 8,
+        "sha256": "2f77766ca12aeca95adffecbfa9c49da382698755db8218b7e7acd602ac13163"
+      },
+      "fills": {
+        "rows": 8,
+        "sha256": "e3844e0588da4841e0c6ea06f8c723dc3f812e35c9f565b476b769ddf965396a"
+      },
+      "positions": {
+        "rows": 4,
+        "sha256": "6235ae72c5dc13680174f6e3df5aeddeb772869054a15b32f96f4a8558c34f1b"
+      },
+      "capital_reservations": {
+        "rows": 4,
+        "sha256": "dcff32a27f277f8c7514571d488167d754fb468e0e490a6fc81f97f131658c30"
+      },
+      "exit_intents": {
+        "rows": 4,
+        "sha256": "f18183145173a7e8663a00e33baa13f4b7e56534ae016011377714a589b0f320"
+      },
+      "exit_targets": {
+        "rows": 12,
+        "sha256": "4c57c895269a32ed69c3dec55b9e0382b75b17369c89a6cd4c05c02c21573f3b"
+      },
+      "exit_plans": {
+        "rows": 4,
+        "sha256": "fba05310bbacef4d892bfce19dd96b55cd158ca0c0bbed925833456e5737d283"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 24,
+        "sha256": "d21a085d4d5db29a4e5240ff1c464529f95ab12c4452c9e51da94fdf5066d03d"
+      }
+    },
+    "shadow:3a4d2ea6be2e4fe795da2a46c2e4a4db": {
+      "balances": {
+        "rows": 1,
+        "sha256": "f1efdb93175335b830119df40d0288591d557d645fbdc0bd27cd46e3a4bd949a"
+      },
+      "financial_journal": {
+        "rows": 7,
+        "sha256": "bf862565c4b047da6f9e08e074dafcdc30cf2925e55d0ef388e08e9e200fac1c"
+      },
+      "orders": {
+        "rows": 2,
+        "sha256": "e7fdc29d2e9d36891518eb254f1e8e0a31c03c9cb2cca72c2553d4bd14aaf863"
+      },
+      "fills": {
+        "rows": 2,
+        "sha256": "c6905e80ad7171cce23d5c792a87e332e11249728f07855d2244a27b56501bb4"
+      },
+      "positions": {
+        "rows": 1,
+        "sha256": "c73c082d332ab29c59e0054adef66a3a5c826f3fc7a2df47ead3b2875554e370"
+      },
+      "capital_reservations": {
+        "rows": 1,
+        "sha256": "23d66879e1a0cdabb84ea9afc10f6fa697002d38e3a1e3e06b9cbcc856aed8c2"
+      },
+      "exit_intents": {
+        "rows": 1,
+        "sha256": "e7073442442e70068935b4f67efede1e9a9be3785778ec88bc35105f93b90a4e"
+      },
+      "exit_targets": {
+        "rows": 3,
+        "sha256": "7be41850c2f7acf0bcd3efd1aac80ceb9e7c0b1c8ab34ff7de055a6d46db1738"
+      },
+      "exit_plans": {
+        "rows": 1,
+        "sha256": "2642dcd10ac5d4d2465b2903dc59faa415d9a0cb0d5ca352243c7abd2f3ab480"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 6,
+        "sha256": "c637dcc18da74c72164dac7953355c0c94d6a2a204112c6882f1302d7c70b92f"
+      }
+    },
+    "shadow:781c91b9d3d3468da654e6fe593b2cc1": {
+      "balances": {
+        "rows": 1,
+        "sha256": "d8397aa9d4f00a130fa8d22f8ef12ef95a601cd43123bedf861a2564cbd3af42"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "a05b4d89dfd87fa08506b8b482028abcace33a5242741fbf72a4e95a838fdd36"
+      },
+      "orders": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "shadow:735a6354b3104fcf8eaaa9045c04103e": {
+      "balances": {
+        "rows": 1,
+        "sha256": "c2a4f73c9a9e4c9e7ccf767c8d2ffc407b329dfe86640ae366601e573ac29325"
+      },
+      "financial_journal": {
+        "rows": 1,
+        "sha256": "0e64629d02927dba3975fc70751580a73f42b0ac53fcc40bf16bc29fac1faac7"
+      },
+      "orders": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fills": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "positions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "capital_reservations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_intents": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_targets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_plans": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_budgets": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ai_usage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "order_transitions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  "prospective_performance_claim": false,
+  "remote_writes": false,
+  "limitations": [
+    "Local snapshot proof does not replace a fresh Stage B backup and isolated restore before activation.",
+    "An open shadow position is preserved in the clone; actual deployment must wait for all original ledgers to become flat under their existing protection."
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "source_fingerprint": "308e8e1ea0e1dd904c38ed6e4abb16214bc156e7d68a732db6ac27d42bb2b48b",
+  "source_fingerprint": "362e1c0f26720baa856e6c783418ac8e97e54a7eec7addf083a62ebd7133cdcf",
   "tests": 24,
   "failures": 0,
   "skipped": 0,
@@ -10,12 +10,11 @@
     390,
     1440
   ],
-  "new_primary_context_cases": 2,
-  "live_desk_cases": 2,
-  "engine": "Native Linux AMD64 Chromium against actual Nginx frontend image",
+  "engine": "Fresh native Linux AMD64 Chromium / actual unchanged Nginx frontend image",
   "frontend_source_sha256": "1395631e11bb2586aa70bca600e7ab009beca7bcb8ea226b75adba1ab4c932ea",
-  "report_sha256": "3daf8decee6f02f64aaeb3b9e7a51db0cd5383f5e3b7802e8cd9fa07bfdab3b0",
+  "report_sha256": "62ac8cfddb6a91b4d3eef213a3698aae2117e7f8dcf8d72eab1a53aef31e4a69",
   "limitations": [
-    "Deterministic API fixtures verify interface behavior; installed product API and actual VPS market behavior are separate checks."
+    "API fixtures verify UI behavior. Corrected installed API and resource cases are separate.",
+    "Actual VPS/private HTTPS browser acceptance remains mandatory after correction approval."
   ]
 }

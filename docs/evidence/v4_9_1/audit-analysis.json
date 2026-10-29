@@ -1165,7 +1165,7 @@
     "Current technical readings cannot be substituted for entry-time market information.",
     "Recorded model payoff ratios describe conditional scenarios, not calibrated probability or expected profit."
   ],
-  "source_fingerprint": "308e8e1ea0e1dd904c38ed6e4abb16214bc156e7d68a732db6ac27d42bb2b48b",
+  "source_fingerprint": "362e1c0f26720baa856e6c783418ac8e97e54a7eec7addf083a62ebd7133cdcf",
   "evidence_category": "OBSERVED_PAPER_HISTORY_AND_MARKET_AUDIT_NOT_PROSPECTIVE_VALIDATION",
   "source_artifacts": {
     "audit-stream.jsonl.gz": "557656f2599a8717a11118f8104e6ee6316ae5a7fb880cfaa548bc1047040ffc",
@@ -1182,5 +1182,13 @@
     "first_observation_cache": "Official closed-bar first-seen cache not part of initial stream; retrospective higher-bar reconstruction is not first-seen proof",
     "initial_collector_incident": "Whole-history JSON aggregation caused PostgreSQL child OOM at 06:42 UTC; bounded export used after reconciliation/protection recovered",
     "relevant_user_crontab": "Read-only crontab -l returned no installed crontab; earlier 05:35 event origin not attributed to a scheduler"
+  },
+  "analysis_original_source_fingerprint": "308e8e1ea0e1dd904c38ed6e4abb16214bc156e7d68a732db6ac27d42bb2b48b",
+  "correction_provenance": {
+    "original_artifact_sha256": "d7535f0f373e52d4a44446f19cbf8cc5d4a00d992a6357922b8b01fabfd8a2e1",
+    "original_release_commit": "ed530bb87ad16f65c07eb7b19177b999a7bafe25",
+    "audit_data_or_guard_rules_changed": false,
+    "primary_trading_fingerprint": "bddd32eae4c72058c583cd55684622b86a12527067b7c6b8941613207c49535c",
+    "correction_scope": "API history projection only"
   }
 }

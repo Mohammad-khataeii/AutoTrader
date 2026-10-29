@@ -1,0 +1,431 @@
+{
+  "scope": "KNOWN_DEVELOPMENT_CASES_NOT_UNUSED_VALIDATION",
+  "rules_retuned_after_replay": false,
+  "causality_limit": "Retrospective completed-bar reconstruction. Saved original entry evidence remains authoritative; first observation of each reconstructed peer higher-timeframe bar is not established by this candle export.",
+  "rows": [
+    {
+      "symbol": "PEPE-EUR",
+      "original_status": "FILLED",
+      "original_filled_quantity": "173452880.000000000000",
+      "original_rejection_reason": null,
+      "strategy": "A3_COST_AWARE_CONTINUATION",
+      "execution_profile": "4.7.1-paper.1",
+      "order_at": "2026-10-27T18:40:55.27102+00:00",
+      "candle_at": "2026-10-27T18:35:00+00:00",
+      "new_policy_passes": true,
+      "gates": {
+        "primary_context_ready": true,
+        "primary_current_candle": true,
+        "primary_macro_context": true,
+        "primary_local_reclaim": true,
+        "primary_recovery_reclaim": true
+      },
+      "inputs": {
+        "ready": true,
+        "peers": {
+          "BTC-EUR": {
+            "ready": true,
+            "trend": "BULLISH",
+            "available_at": "2026-10-27T17:00:00+00:00",
+            "contiguous_bars": 60
+          },
+          "ETH-EUR": {
+            "ready": true,
+            "trend": "BULLISH",
+            "available_at": "2026-10-27T17:00:00+00:00",
+            "contiguous_bars": 60
+          }
+        },
+        "close": "0.0000040216999999999999669824009285168386895747971720993518829345703125",
+        "ema9": "0.000004016459182031962565757486105",
+        "previous_ema9": "0.000004015148988989651372492254988",
+        "close15": "0.000004027399999999999759942546917468320089028566144406795501708984375",
+        "previous_close15": "0.0000040072000000000003599206870041893324696502531878650188446044921875",
+        "ema21_15": "0.000003973322588106266865078977015",
+        "higher_ready": true
+      }
+    },
+    {
+      "symbol": "ENA-EUR",
+      "original_status": "FILLED",
+      "original_filled_quantity": "3683.328400000000",
+      "original_rejection_reason": null,
+      "strategy": "A3_COST_AWARE_CONTINUATION",
+      "execution_profile": "4.7.1-paper.1",
+      "order_at": "2026-10-27T20:01:05.795212+00:00",
+      "candle_at": "2026-10-27T19:55:00+00:00",
+      "new_policy_passes": true,
+      "gates": {
+        "primary_context_ready": true,
+        "primary_current_candle": true,
+        "primary_macro_context": true,
+        "primary_local_reclaim": true,
+        "primary_recovery_reclaim": true
+      },
+      "inputs": {
+        "ready": true,
+        "peers": {
+          "BTC-EUR": {
+            "ready": true,
+            "trend": "BULLISH",
+            "available_at": "2026-10-27T19:00:00+00:00",
+            "contiguous_bars": 60
+          },
+          "ETH-EUR": {
+            "ready": true,
+            "trend": "BULLISH",
+            "available_at": "2026-10-27T19:00:00+00:00",
+            "contiguous_bars": 60
+          }
+        },
+        "close": "0.189599999999999990762944435118697583675384521484375",
+        "ema9": "0.1890758847908907467278254120",
+        "previous_ema9": "0.1889448554177143586366629575",
+        "close15": "0.189599999999999990762944435118697583675384521484375",
+        "previous_close15": "0.1892999999999999960476060323344427160918712615966796875",
+        "ema21_15": "0.1882444088330099228562737905",
+        "higher_ready": true
+      }
+    },
+    {
+      "symbol": "PEPE-EUR",
+      "original_status": "FILLED",
+      "original_filled_quantity": "159554080.000000000000",
+      "original_rejection_reason": null,
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "execution_profile": "4.9.0-paper.1",
+      "order_at": "2026-10-28T15:06:18.983634+00:00",
+      "candle_at": "2026-10-28T15:00:00+00:00",
+      "new_policy_passes": false,
+      "gates": {
+        "primary_context_ready": true,
+        "primary_current_candle": true,
+        "primary_macro_context": true,
+        "primary_local_reclaim": true,
+        "primary_recovery_reclaim": false
+      },
+      "inputs": {
+        "ready": true,
+        "peers": {
+          "BTC-EUR": {
+            "ready": true,
+            "trend": "RANGING",
+            "available_at": "2026-10-28T14:00:00+00:00",
+            "contiguous_bars": 60
+          },
+          "ETH-EUR": {
+            "ready": true,
+            "trend": "RANGING",
+            "available_at": "2026-10-28T14:00:00+00:00",
+            "contiguous_bars": 60
+          }
+        },
+        "close": "0.0000043699000000000002923682129729598955236724577844142913818359375",
+        "ema9": "0.000004346245476859811535642331562",
+        "previous_ema9": "0.000004340331846740813269723759690",
+        "close15": "0.0000043470000000000000542235527312140419553543324582278728485107421875",
+        "previous_close15": "0.00000434189999999999988282428642349941583233885467052459716796875",
+        "ema21_15": "0.000004380936305263642686288931995",
+        "higher_ready": true
+      }
+    },
+    {
+      "symbol": "ENA-EUR",
+      "original_status": "FILLED",
+      "original_filled_quantity": "3977.826400000000",
+      "original_rejection_reason": null,
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "execution_profile": "4.9.0-paper.1",
+      "order_at": "2026-10-28T15:08:42.020951+00:00",
+      "candle_at": "2026-10-28T15:00:00+00:00",
+      "new_policy_passes": false,
+      "gates": {
+        "primary_context_ready": true,
+        "primary_current_candle": true,
+        "primary_macro_context": true,
+        "primary_local_reclaim": true,
+        "primary_recovery_reclaim": false
+      },
+      "inputs": {
+        "ready": true,
+        "peers": {
+          "BTC-EUR": {
+            "ready": true,
+            "trend": "RANGING",
+            "available_at": "2026-10-28T14:00:00+00:00",
+            "contiguous_bars": 60
+          },
+          "ETH-EUR": {
+            "ready": true,
+            "trend": "RANGING",
+            "available_at": "2026-10-28T14:00:00+00:00",
+            "contiguous_bars": 60
+          }
+        },
+        "close": "0.1751000000000000056399329650957952253520488739013671875",
+        "ema9": "0.1745820078354354592824337577",
+        "previous_ema9": "0.1744525106823595537101172940",
+        "close15": "0.173800000000000010036416142611415125429630279541015625",
+        "previous_close15": "0.1741999999999999937383421411141171120107173919677734375",
+        "ema21_15": "0.1792978827849285686940577599",
+        "higher_ready": true
+      }
+    },
+    {
+      "symbol": "PEPE-EUR",
+      "original_status": "FILLED",
+      "original_filled_quantity": "154083130.000000000000",
+      "original_rejection_reason": null,
+      "strategy": "RAOE_TREND_PULLBACK",
+      "execution_profile": "4.9.0-paper.1",
+      "order_at": "2026-10-28T22:16:26.218287+00:00",
+      "candle_at": "2026-10-28T22:10:00+00:00",
+      "new_policy_passes": false,
+      "gates": {
+        "primary_context_ready": true,
+        "primary_current_candle": true,
+        "primary_macro_context": true,
+        "primary_local_reclaim": false,
+        "primary_recovery_reclaim": true
+      },
+      "inputs": {
+        "ready": true,
+        "peers": {
+          "BTC-EUR": {
+            "ready": true,
+            "trend": "BULLISH",
+            "available_at": "2026-10-28T21:00:00+00:00",
+            "contiguous_bars": 60
+          },
+          "ETH-EUR": {
+            "ready": true,
+            "trend": "BULLISH",
+            "available_at": "2026-10-28T21:00:00+00:00",
+            "contiguous_bars": 60
+          }
+        },
+        "close": "0.00000452290000000000035214851867859664480420178733766078948974609375",
+        "ema9": "0.000004524254975848581574746436451",
+        "previous_ema9": "0.000004524593710232309031569203812",
+        "close15": "0.00000452290000000000035214851867859664480420178733766078948974609375",
+        "previous_close15": "0.0000045395000000000003287392059958538226283053518272936344146728515625",
+        "ema21_15": "0.000004463331231321868252196641673",
+        "higher_ready": true
+      }
+    },
+    {
+      "symbol": "PEPE-EUR",
+      "original_status": "REJECTED",
+      "original_filled_quantity": "0.000000000000",
+      "original_rejection_reason": null,
+      "strategy": "A3_COST_AWARE_CONTINUATION",
+      "execution_profile": "4.9.0-paper.1",
+      "order_at": "2026-10-28T22:21:27.010978+00:00",
+      "candle_at": "2026-10-28T22:15:00+00:00",
+      "new_policy_passes": true,
+      "gates": {
+        "primary_context_ready": true,
+        "primary_current_candle": true,
+        "primary_macro_context": true,
+        "primary_local_reclaim": true,
+        "primary_recovery_reclaim": true
+      },
+      "inputs": {
+        "ready": true,
+        "peers": {
+          "BTC-EUR": {
+            "ready": true,
+            "trend": "BULLISH",
+            "available_at": "2026-10-28T21:00:00+00:00",
+            "contiguous_bars": 60
+          },
+          "ETH-EUR": {
+            "ready": true,
+            "trend": "BULLISH",
+            "available_at": "2026-10-28T21:00:00+00:00",
+            "contiguous_bars": 60
+          }
+        },
+        "close": "0.00000452440000000000025308366513598912206362001597881317138671875",
+        "ema9": "0.000004524284009629791841569521311",
+        "previous_ema9": "0.000004524254975848581574746436451",
+        "close15": "0.00000452290000000000035214851867859664480420178733766078948974609375",
+        "previous_close15": "0.0000045395000000000003287392059958538226283053518272936344146728515625",
+        "ema21_15": "0.000004463331231321868252196641673",
+        "higher_ready": true
+      }
+    },
+    {
+      "symbol": "NEAR-EUR",
+      "original_status": "FILLED",
+      "original_filled_quantity": "164.513530000000",
+      "original_rejection_reason": null,
+      "strategy": "A3_COST_AWARE_CONTINUATION",
+      "execution_profile": "4.9.0-paper.1",
+      "order_at": "2026-10-28T22:30:00.187153+00:00",
+      "candle_at": "2026-10-28T22:20:00+00:00",
+      "new_policy_passes": false,
+      "gates": {
+        "primary_context_ready": true,
+        "primary_current_candle": false,
+        "primary_macro_context": true,
+        "primary_local_reclaim": true,
+        "primary_recovery_reclaim": true
+      },
+      "inputs": {
+        "ready": true,
+        "peers": {
+          "BTC-EUR": {
+            "ready": true,
+            "trend": "BULLISH",
+            "available_at": "2026-10-28T21:00:00+00:00",
+            "contiguous_bars": 60
+          },
+          "ETH-EUR": {
+            "ready": true,
+            "trend": "BULLISH",
+            "available_at": "2026-10-28T21:00:00+00:00",
+            "contiguous_bars": 60
+          }
+        },
+        "close": "4.2339000000000002188471626141108572483062744140625",
+        "ema9": "4.226109521728174989947684969",
+        "previous_ema9": "4.224161880910086369101255532",
+        "close15": "4.211999999999999744204615126363933086395263671875",
+        "previous_close15": "4.25",
+        "ema21_15": "4.198028319482755262618746482",
+        "higher_ready": true
+      }
+    },
+    {
+      "symbol": "PEPE-EUR",
+      "original_status": "REJECTED",
+      "original_filled_quantity": "0.000000000000",
+      "original_rejection_reason": null,
+      "strategy": "A3_COST_AWARE_CONTINUATION",
+      "execution_profile": "4.9.0-paper.1",
+      "order_at": "2026-10-28T23:10:38.084569+00:00",
+      "candle_at": "2026-10-28T23:05:00+00:00",
+      "new_policy_passes": true,
+      "gates": {
+        "primary_context_ready": true,
+        "primary_current_candle": true,
+        "primary_macro_context": true,
+        "primary_local_reclaim": true,
+        "primary_recovery_reclaim": true
+      },
+      "inputs": {
+        "ready": true,
+        "peers": {
+          "BTC-EUR": {
+            "ready": true,
+            "trend": "BULLISH",
+            "available_at": "2026-10-28T22:00:00+00:00",
+            "contiguous_bars": 60
+          },
+          "ETH-EUR": {
+            "ready": true,
+            "trend": "BULLISH",
+            "available_at": "2026-10-28T22:00:00+00:00",
+            "contiguous_bars": 60
+          }
+        },
+        "close": "0.00000454429999999999984232508520864968204477918334305286407470703125",
+        "ema9": "0.000004524842536031892012864711545",
+        "previous_ema9": "0.000004519978145776654279498022020",
+        "close15": "0.0000045233000000000003822000875508546613446014816872775554656982421875",
+        "previous_close15": "0.00000451970000000000011173596770053251248100423254072666168212890625",
+        "ema21_15": "0.000004476876362738368679583318640",
+        "higher_ready": true
+      }
+    },
+    {
+      "symbol": "ZRO-EUR",
+      "original_status": "PARTIALLY_FILLED",
+      "original_filled_quantity": "476.140540000000",
+      "original_rejection_reason": null,
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "execution_profile": "4.9.0-paper.1",
+      "order_at": "2026-10-29T02:56:49.033193+00:00",
+      "candle_at": "2026-10-29T02:50:00+00:00",
+      "new_policy_passes": false,
+      "gates": {
+        "primary_context_ready": true,
+        "primary_current_candle": true,
+        "primary_macro_context": false,
+        "primary_local_reclaim": true,
+        "primary_recovery_reclaim": false
+      },
+      "inputs": {
+        "ready": true,
+        "peers": {
+          "BTC-EUR": {
+            "ready": true,
+            "trend": "BEARISH",
+            "available_at": "2026-10-29T01:00:00+00:00",
+            "contiguous_bars": 60
+          },
+          "ETH-EUR": {
+            "ready": true,
+            "trend": "BEARISH",
+            "available_at": "2026-10-29T01:00:00+00:00",
+            "contiguous_bars": 60
+          }
+        },
+        "close": "1.45999999999999996447286321199499070644378662109375",
+        "ema9": "1.459280513517817497979263947",
+        "previous_ema9": "1.459100672091489735935125773",
+        "close15": "1.4499999999999999555910790149937383830547332763671875",
+        "previous_close15": "1.4589000000000000856203996590920723974704742431640625",
+        "ema21_15": "1.498363304527528120332819017",
+        "higher_ready": true
+      }
+    },
+    {
+      "symbol": "ADA-EUR",
+      "original_status": "FILLED",
+      "original_filled_quantity": "3906.654300000000",
+      "original_rejection_reason": null,
+      "strategy": "RAOE_EARLY_RECOVERY",
+      "execution_profile": "4.9.0-paper.1",
+      "order_at": "2026-10-29T04:41:22.687225+00:00",
+      "candle_at": "2026-10-29T04:35:00+00:00",
+      "new_policy_passes": false,
+      "gates": {
+        "primary_context_ready": true,
+        "primary_current_candle": true,
+        "primary_macro_context": false,
+        "primary_local_reclaim": true,
+        "primary_recovery_reclaim": false
+      },
+      "inputs": {
+        "ready": true,
+        "peers": {
+          "BTC-EUR": {
+            "ready": true,
+            "trend": "BEARISH",
+            "available_at": "2026-10-29T03:00:00+00:00",
+            "contiguous_bars": 60
+          },
+          "ETH-EUR": {
+            "ready": true,
+            "trend": "BEARISH",
+            "available_at": "2026-10-29T03:00:00+00:00",
+            "contiguous_bars": 60
+          }
+        },
+        "close": "0.1781999999999999972910558199146180413663387298583984375",
+        "ema9": "0.1774353137474308566455666192",
+        "previous_ema9": "0.1772441422350351561137639010",
+        "close15": "0.177559999999999995612398606681381352245807647705078125",
+        "previous_close15": "0.1767499999999999904520819882236537523567676544189453125",
+        "ema21_15": "0.1793489511035194489838679197",
+        "higher_ready": true
+      }
+    }
+  ],
+  "source_fingerprint": "308e8e1ea0e1dd904c38ed6e4abb16214bc156e7d68a732db6ac27d42bb2b48b",
+  "status": "PASS",
+  "performance_claim": false,
+  "counterfactual_limit": "Two originally position-blocked PEPE A3 proposals pass the new guard; blocked known losses cannot be added to equity as upgraded-strategy P&L."
+}

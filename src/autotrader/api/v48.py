@@ -12,6 +12,7 @@ from typing import Any
 from fastapi import Depends, FastAPI, Query
 from sqlalchemy import select
 
+from autotrader.api.episode_history import project_episode_events
 from autotrader.domain import utc_now
 from autotrader.persistence.accounting import aware
 from autotrader.persistence.models import FillModel, OrderModel, PositionModel, SystemStateModel
@@ -48,7 +49,7 @@ def install(app: FastAPI, service: Any, lab: Any, require_user: Any) -> None:
                 .order_by(SystemStateModel.created_at.desc()).offset(cursor).limit(limit))).all()
             outcomes=(await session.scalars(select(SystemStateModel).where(SystemStateModel.key.in_(
                 ['raoe49_outcome:'+r.key.removeprefix('raoe_event:') for r in events])))).all()
-            episode_models=(await session.scalars(select(SystemStateModel).where(SystemStateModel.key.like('raoe_event:%'),SystemStateModel.created_at>=utc_now()-timedelta(hours=48)).order_by(SystemStateModel.created_at).limit(10000))).all()
+            episode_events=await project_episode_events(session,utc_now()-timedelta(hours=48))
             orders=(await session.scalars(select(OrderModel).order_by(OrderModel.created_at.desc()).limit(500))).all()
             fills=(await session.scalars(select(FillModel).order_by(FillModel.created_at.desc()).limit(500))).all()
             closed=set((await session.scalars(select(PositionModel.position_id).where(PositionModel.state=='CLOSED'))).all())
@@ -92,8 +93,8 @@ def install(app: FastAPI, service: Any, lab: Any, require_user: Any) -> None:
         return {'status':'CURRENT' if fresh else 'STALE_OR_UNAVAILABLE','observed_at':scan.get('observed_at'),
             'rows':sorted(rows,key=lambda r:(not r.get('entry_eligible'),not r.get('technical'),r['symbol'])),
             'unscanned_or_excluded':summaries,'discovery':discovery,'missed':missed,
-            'episodes':episodes([json.loads(e.payload_json) for e in episode_models]),
-            'episode_scope':{'hours':48,'signals':len(episode_models),'possibly_truncated':len(episode_models)==10000},
+            'episodes':episodes(episode_events),
+            'episode_scope':{'hours':48,'signals':len(episode_events),'possibly_truncated':len(episode_events)==10000},
             'runtime_diagnostics':runtime,'benchmark_sync':scan.get('benchmark_sync'),
             'next_cursor':cursor+limit if len(events)==limit else None,'data_failures':scan.get('data_failures',[]),
             'estimated_edge':'UNKNOWN','read_only':True,'live_authorized':False}

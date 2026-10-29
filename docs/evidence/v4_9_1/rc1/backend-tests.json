@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "308e8e1ea0e1dd904c38ed6e4abb16214bc156e7d68a732db6ac27d42bb2b48b",
+  "tests": 446,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "ruff": "PASS",
+  "mypy": "PASS (132 modules)",
+  "mode": "Native real PostgreSQL full suite plus focused correction recheck",
+  "initial_full_run": {
+    "passed": 445,
+    "failed": 1,
+    "seconds": 710.45,
+    "junit_sha256": "46b3afa5cc599f3eaa37cdde647a7a3cca375e83fb3df036e690a7763fcf9d75"
+  },
+  "resolved_failure": "Disabled legacy collector now preserves invalid-window ValueError before rejecting any valid unsafe aggregate export; no application source changed.",
+  "focused_recheck": {
+    "passed": 6,
+    "junit_sha256": "50248c911bc223864042a718504cf6693311f003686ccc01ce52ad1feb482995"
+  },
+  "deployment_helper_recheck": {
+    "passed": 5,
+    "junit_sha256": "2814537fbeab523aff835b53e356a64196e197f5402fe90ca3a13a1031a44104",
+    "change": "Activation also requires at least one genuine aligned primary context observation, not only a fresh process and version label."
+  },
+  "verified_union_sha256": "5d214d18fed6519daad68693095f7053671d89c48b6c468f4cc1153e14fe95af",
+  "application_source_unchanged_through_all_checks": true,
+  "warning": "Existing Starlette deprecated AnyIO alias; no unresolved test failure"
+}

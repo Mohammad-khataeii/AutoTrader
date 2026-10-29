@@ -210,7 +210,7 @@ def create_app() -> FastAPI:
         await market_data.close()
         await engine.dispose()
 
-    app = FastAPI(title=settings.app_name, version="4.9.1-dev", lifespan=lifespan)
+    app = FastAPI(title=settings.app_name, version="4.9.1-dev.2", lifespan=lifespan)
     app.state.auth_throttle = AuthenticationThrottle()
     app.state.shadow_lab = shadow_lab
     app.state.repository = repository
@@ -231,7 +231,7 @@ def create_app() -> FastAPI:
 
     @app.get("/healthz")
     async def healthz() -> dict[str, str]:
-        return {"status": "ok", "mode": "paper", "version":"4.9.1-dev"}
+        return {"status": "ok", "mode": "paper", "version":"4.9.1-dev.2"}
 
     @app.get("/readyz")
     async def readyz() -> dict[str, str | bool]:

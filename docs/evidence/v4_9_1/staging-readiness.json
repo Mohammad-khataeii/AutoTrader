@@ -1,27 +1,29 @@
 {
   "status": "PASS",
-  "source_fingerprint": "308e8e1ea0e1dd904c38ed6e4abb16214bc156e7d68a732db6ac27d42bb2b48b",
+  "source_fingerprint": "362e1c0f26720baa856e6c783418ac8e97e54a7eec7addf083a62ebd7133cdcf",
   "version": "4.9.1",
+  "release_candidate": "v4.9.1-rc.2",
   "stage": "A",
   "gates": {
-    "backend-tests.json": "a80f6ca724b555760e31c828e5828faa072de43619ffbf30a864ef6965db43a6",
-    "frontend-tests.json": "6818918f9268f17bc3e284fdbd53d50be773334cdcb199d9ce39f5cda6594960",
-    "browser-tests.json": "e209a10e239d4d7215058406c34a88c156f95efbe6886e6622a588d13184e2da",
-    "linux-tests.json": "191babdb8ce6a3c729ce269860408dd1aa44d78f8aef3e1b68fa3cd2c29a2ebf",
-    "audit-analysis.json": "d7535f0f373e52d4a44446f19cbf8cc5d4a00d992a6357922b8b01fabfd8a2e1",
-    "financial-restore.json": "380017b23594419591180d23f545f029fa1da239654e4588d72822de0a16f986",
-    "runtime-compatibility.json": "c38a999ee018ee107c3a70b54805cb77c6166377ff30fb5aa6bfd8db3fd32f12",
-    "restart-recovery.json": "75cf21bd814b2456ed9846e1cfa39771c68f78d415a9c4958d6f81b38f97d662",
-    "diagnostics-resource.json": "d6972d532d2484364389cb28a9d7f855e12128276f7d2e218e6b8570b92df060"
+    "backend-tests.json": "7a4c42c2227121ffb6c0cdf8e91b9fad236663c963dae32f8adaa26b5d069b44",
+    "frontend-tests.json": "0ace8f7110e0a78e9cad5ec2b3e63e6288b967a50a4b1a5813acfef1eea11f42",
+    "browser-tests.json": "5ba44fdcead6ebd28fff39f0522b94918ac6aa9cdccf176c748a080d9492d056",
+    "linux-tests.json": "185984ba1c00e0ea0fa44f5cc3e216aaacaf112a5cd86d59eb374ea41e5d6973",
+    "audit-analysis.json": "fef7a78bc5af3649b4743b6c1d5008989f61d4bd669940866962ad2740b7909a",
+    "financial-restore.json": "0abf280dc419a55b410ee0cd3c18b21f8adb103d1f0ed7f24140fdc9424b3225",
+    "runtime-compatibility.json": "cb567399f50bd2767b094687f952a238f218cc74cbdd92317206b1810b850db9",
+    "restart-recovery.json": "15f396f250979999b98bcb909e2045f56ab38cd9db44be3df9b89f227bf05f42",
+    "diagnostics-resource.json": "ebbe6f286dde8d459f85bced15a4a2240cb33d2ab1bd6b19defd9a1b8c08cea9",
+    "api-history-resource.json": "4aab7efe6972196b789d6080686a5c86339a1ca191d5d94d07d8e3b6f08d2af0"
   },
+  "previous_failed_commit": "ed530bb87ad16f65c07eb7b19177b999a7bafe25",
+  "previous_activation": "FAILED_FINAL_HISTORY_ENDPOINT_TIMEOUT_SAFE_IMAGE_RECOVERY",
   "primary_profile": "4.9.1-paper.1",
   "primary_runtime_fingerprint": "bddd32eae4c72058c583cd55684622b86a12527067b7c6b8941613207c49535c",
   "unchanged_shadow_execution_fingerprint": "44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c",
-  "recommendation": "READY_FOR_EXACT_RELEASE_REVIEW_PAPER_STAGING_ONLY",
   "deployment_authorized": false,
-  "requires_exact_release_commit_approval": true,
+  "requires_separate_correction_commit_approval": true,
   "live_trading_authorized": false,
   "profitability": "UNKNOWN",
-  "financial_data_restored_locally_only": true,
-  "vps_source_changes_during_stage_a": false
+  "recommendation": "READY_FOR_SEPARATELY_APPROVED_PAPER_STAGING_CORRECTION_ONLY"
 }

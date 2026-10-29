@@ -86,7 +86,7 @@ def main():
     verify_source_release(ROOT,ROOT/'release-manifest.json',args.commit);manifest=json.loads((ROOT/'release-manifest.json').read_text())
     if not manifest['version'].startswith('4.9.1'):raise ValueError('v491_release_required')
     readiness=json.loads((ROOT/'docs/evidence/v4_9_1/staging-readiness.json').read_text())
-    required={'backend-tests.json','frontend-tests.json','browser-tests.json','linux-tests.json','audit-analysis.json','financial-restore.json','runtime-compatibility.json','restart-recovery.json'}
+    required={'backend-tests.json','frontend-tests.json','browser-tests.json','linux-tests.json','audit-analysis.json','financial-restore.json','runtime-compatibility.json','restart-recovery.json','api-history-resource.json'}
     if readiness.get('status')!='PASS' or readiness.get('source_fingerprint')!=manifest['source_fingerprint'] or not required.issubset(readiness.get('gates',{})):
         raise ValueError('release_gates_incomplete')
     for name,digest in readiness['gates'].items():

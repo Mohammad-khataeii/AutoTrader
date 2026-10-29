@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "308e8e1ea0e1dd904c38ed6e4abb16214bc156e7d68a732db6ac27d42bb2b48b",
+  "tests": 441,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "platform": "linux/amd64",
+  "mode": "Actual installed candidate application package; test tooling is a separate non-deployable overlay",
+  "junit_sha256": "089e07f63c83f651f377d14a78d28e04fb14b21c49e315b305b2e687d89385af",
+  "installed_python_modules": 280,
+  "deployment_helper_recheck": {
+    "passed": 5,
+    "junit_sha256": "865205db7d20a1e57bcf3e452a0545ebd86fb9065927ebe774ebc0b73a0266ac"
+  },
+  "native_only_cases": [
+    "test_exact_production_identities_all_four_native_lifecycles[A2_CONFIRMED_PULLBACK]",
+    "test_exact_production_identities_all_four_native_lifecycles[B2_CONFIRMED_COMPRESSION]",
+    "test_exact_production_identities_all_four_native_lifecycles[C2_LIQUID_RETEST]",
+    "test_exact_production_identities_all_four_native_lifecycles[E2_ABSOLUTE_RELATIVE_STRENGTH]",
+    "test_large_audit_stream_under_postgres_memory_cap"
+  ],
+  "native_only_reason": "Host Docker process orchestration requires the host CLI/socket; all five pass natively, including the real 512 MiB PostgreSQL streaming regression.",
+  "installed_product_api": "PASS; runtime-compatibility.json",
+  "source_volume_application_override": false
+}

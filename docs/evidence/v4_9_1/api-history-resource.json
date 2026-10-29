@@ -1,0 +1,96 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "362e1c0f26720baa856e6c783418ac8e97e54a7eec7addf083a62ebd7133cdcf",
+  "probe_sha256": "62e3d9553dbf186b8e0931537b9d66a2b4491fd7756c47d66caa48ff31a64aaa",
+  "evidence_category": "LOCAL_ISOLATED_RESTORED_REAL_DATA_RESOURCE_ENGINEERING",
+  "restore_databases": 2,
+  "source_backup": {
+    "source": "Existing successful Stage B backup; copied read-only after safe recovery",
+    "backup_manifest": "/opt/personal-plan/staging/backups/20261029T095426Z-3e3a8877/backup-set.json",
+    "records": [
+      {
+        "database": "autotrader_aruba_staging",
+        "file": "autotrader_aruba_staging.dump",
+        "bytes": 43853980,
+        "sha256": "7c282c3cefd62732c576a4559a4e279ff47cd00b9f89220139cabf6494cd8195"
+      },
+      {
+        "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+        "file": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8.dump",
+        "bytes": 66071782,
+        "sha256": "3e03c088ad1b6413bf1c14332d928ffcd659b20337245a6eff97471f1099ad87"
+      }
+    ]
+  },
+  "baseline_concurrent_failure": {
+    "label": "legacy-public-concurrent",
+    "image": "autotrader-v491-app:ed530bb87ad1-verified",
+    "returncode": 137,
+    "state": "exited",
+    "oom_killed": true,
+    "memory_limit": 536870912,
+    "cpu_limit": 1000000000
+  },
+  "corrected_container": {
+    "label": "fixed-concurrent",
+    "image": "autotrader-v491rc2-app:verified-source",
+    "returncode": 0,
+    "state": "exited",
+    "oom_killed": false,
+    "memory_limit": 536870912,
+    "cpu_limit": 1000000000
+  },
+  "measurements": {
+    "scope": "LOCAL_ISOLATED_RESTORED_CLONE_NO_EXTERNAL_NETWORK",
+    "source_fingerprint": "362e1c0f26720baa856e6c783418ac8e97e54a7eec7addf083a62ebd7133cdcf",
+    "concurrent_history_requests": 2,
+    "current_path": "/api/intelligence",
+    "initial_cash": "6961.614219600281",
+    "initial_fills": 16,
+    "status": "PASS",
+    "observations": [
+      {
+        "seconds": 1.788701960000001,
+        "bytes": 2142806,
+        "episodes": 94,
+        "episode_scope": {
+          "hours": 48,
+          "signals": 7677,
+          "possibly_truncated": false
+        },
+        "missed": 30,
+        "rows": 15
+      },
+      {
+        "seconds": 1.7493875840000008,
+        "bytes": 2142806,
+        "episodes": 94,
+        "episode_scope": {
+          "hours": 48,
+          "signals": 7677,
+          "possibly_truncated": false
+        },
+        "missed": 30,
+        "rows": 15
+      }
+    ],
+    "max_health_request_seconds": 0.011435082999998514,
+    "max_event_loop_delay_seconds": 0.040297499999997655,
+    "max_rss_bytes": 160395264,
+    "financial_state_unchanged": true,
+    "real_time_market_claim": false
+  },
+  "application_memory_limit_bytes": 536870912,
+  "application_cpu_limit": 1,
+  "postgres_memory_limit_bytes": 536870912,
+  "postgres_platform": "linux/arm64",
+  "application_platform": "linux/amd64 under Docker Desktop emulation",
+  "external_network": false,
+  "host_ports": [],
+  "financial_state_unchanged": true,
+  "limits": [
+    "Restored snapshot, not live feed or prospective trading performance.",
+    "Local latency does not replace fresh VPS verification after separate correction-release approval.",
+    "Prior original full-payload single request took 12.16 seconds; concurrent original requests were OOMKilled."
+  ]
+}

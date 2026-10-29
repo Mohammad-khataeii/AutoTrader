@@ -1,6 +1,12 @@
-# Personal Plan — V4.8 RAOE
+# Personal Plan — V4.9.1 paper staging
 
-## V4.8 Aruba paper staging
+## Current V4.9.1 correction
+
+The [twelve-hour audit](docs/V4_9_1_AUDIT_REPORT.md) explains the observed losses and the new primary admission guard. The approved rc.1 rollout passed both seventeen-account restore checks but failed its final opportunities-history request. The previous images recovered with entries PAUSED; cash remains €6,961.614219600281 and all sixteen fills and original account histories are retained. No financial database was restored over live transactions.
+
+The API-only `v4.9.1-rc.2` correction fetches compact episode metadata, retaining the original full paged evidence and trading policies. It passed the native and installed Linux suites and the restored-history memory test. See the [correction report](docs/V4_9_1_RC2_ENGINEERING_REPORT.md) and [exact-release handoff](docs/V4_9_1_RELEASE_HANDOFF.md). Separate approval of the completed corrected commit is required before redeployment under `AGENTS.md`. Real-money trading remains disabled and profitability is unproven.
+
+## Historical V4.8 Aruba paper staging
 
 V4.8 adds three separate regime-adaptive playbooks, dynamic non-pegged EUR discovery, structural entry plans, fresh cost admission, independent forward ledgers and Opportunity Intelligence. [Engineering report and all fixed research results](docs/V4_8_ENGINEERING_REPORT.md). No strategy has demonstrated reliable positive net expectancy; the new playbooks were too inactive on the untouched test interval.
 

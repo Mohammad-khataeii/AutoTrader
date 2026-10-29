@@ -1,0 +1,684 @@
+{
+  "status": "FAILED_WITH_SAFE_IMAGE_RECOVERY",
+  "approved_commit": "ed530bb87ad16f65c07eb7b19177b999a7bafe25",
+  "user_authorization": "deploy now",
+  "process": {
+    "returncode": 1,
+    "completed_at": "2026-10-29T10:01:18.185087+00:00"
+  },
+  "failure": "TimeoutError after 45 seconds reading /api/intelligence; no entries resumed",
+  "phase": "FINAL_RUNTIME_VERIFICATION",
+  "pre_cutover_restore": {
+    "status": "PASS",
+    "manifest": "/opt/personal-plan/staging/backups/20261029T094929Z-de1800cd/backup-set.json",
+    "accounts": 17,
+    "dump_bytes": 201081385,
+    "worker_uninterrupted": true,
+    "restore_test": true,
+    "restore": {
+      "status": "PASS",
+      "accounts": [
+        {
+          "account_id": "paper-eur",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "PERSONAL_PLAN_PAPER_7000",
+          "funding_count": 1,
+          "initial_cash": "7000",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:4f11e020db344ba98d2d083f696bf492",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:428b3c199d4e492888e90c801e911791",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:55f331afa200412ea011ea5419cf4f41",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:7abd0f34d6cd4574a09f11524368034c",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:16c77f7cfa5b48cdae2fd10125da5019",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:8583cccd3dff4f5da9a5529946853b33",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:73b3c278bb2d45cba5663b9de4208469",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:db55870cdca849fd8873993c179a1ca8",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:0ac4dd90d047479486d919ef80dff4d5",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:70c4c92eadb549e2aff10ced208aaca3",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:2ef5d96d2ef242d29f57e3c07985a028",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:9f5b764129ab4088b1ba3873540148c0",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:3a4d2ea6be2e4fe795da2a46c2e4a4db",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:781c91b9d3d3468da654e6fe593b2cc1",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:735a6354b3104fcf8eaaa9045c04103e",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        }
+      ],
+      "read_only_restore_verification": true
+    },
+    "network_internal": true,
+    "source_databases_restored": false,
+    "restore_storage": "ISOLATED_NAMED_VOLUME",
+    "restore_memory_limit_bytes": 536870912,
+    "disk_capacity": {
+      "available_bytes": 27933966336,
+      "required_bytes": 2920725815
+    },
+    "candidate_profile_rehearsal": {
+      "status": "PASS",
+      "profile": "4.9.1-paper.1",
+      "cash": "6961.614219600281",
+      "funding_count": 1,
+      "orders": 18,
+      "fills": 16,
+      "origin_preserved": true,
+      "reconciliation": []
+    },
+    "isolated_restore_resources_removed": true
+  },
+  "post_cutover_restore": {
+    "status": "PASS",
+    "manifest": "/opt/personal-plan/staging/backups/20261029T095426Z-3e3a8877/backup-set.json",
+    "accounts": 17,
+    "dump_bytes": 201312775,
+    "worker_uninterrupted": true,
+    "restore_test": true,
+    "restore": {
+      "status": "PASS",
+      "accounts": [
+        {
+          "account_id": "paper-eur",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "PERSONAL_PLAN_PAPER_7000",
+          "funding_count": 1,
+          "initial_cash": "7000",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:4f11e020db344ba98d2d083f696bf492",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:428b3c199d4e492888e90c801e911791",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:55f331afa200412ea011ea5419cf4f41",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:7abd0f34d6cd4574a09f11524368034c",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:16c77f7cfa5b48cdae2fd10125da5019",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:8583cccd3dff4f5da9a5529946853b33",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:73b3c278bb2d45cba5663b9de4208469",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:db55870cdca849fd8873993c179a1ca8",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:0ac4dd90d047479486d919ef80dff4d5",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:70c4c92eadb549e2aff10ced208aaca3",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:2ef5d96d2ef242d29f57e3c07985a028",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:9f5b764129ab4088b1ba3873540148c0",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:3a4d2ea6be2e4fe795da2a46c2e4a4db",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:781c91b9d3d3468da654e6fe593b2cc1",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        },
+        {
+          "account_id": "shadow:735a6354b3104fcf8eaaa9045c04103e",
+          "funding_count": 1,
+          "initial_cash": "500",
+          "reconciliation": [],
+          "financial_seals": "MATCH"
+        }
+      ],
+      "read_only_restore_verification": true
+    },
+    "network_internal": true,
+    "source_databases_restored": false,
+    "restore_storage": "ISOLATED_NAMED_VOLUME",
+    "restore_memory_limit_bytes": 536870912,
+    "disk_capacity": {
+      "available_bytes": 27737899008,
+      "required_bytes": 2922644757
+    },
+    "isolated_restore_resources_removed": true
+  },
+  "control_preservation": {
+    "status": "PASS",
+    "registered_shadow_ledgers": 15,
+    "manifest_hashes": {
+      "4f11e020db344ba98d2d083f696bf492": "439cf1773a514acd3bd53e9b5e9a17f10bf08760b81adf249fa90e56c656b130",
+      "428b3c199d4e492888e90c801e911791": "1f8f0b4c65b555c9ece980d81cc4625f6c17c60a1515a693db1277ee9f8d8f24",
+      "55f331afa200412ea011ea5419cf4f41": "b88c9340c11c9c937832901b6a020aa44761ad8fdc9c8b3a9b8007d87e99a718",
+      "7abd0f34d6cd4574a09f11524368034c": "aa9b4e816d8ad332ff2ecac4889c845767e4376b03be3a307e0df0a005a40ed4",
+      "16c77f7cfa5b48cdae2fd10125da5019": "befb4d231704dde3f523c585665e3784af12e3c701ca3000db5ae1948e14f04b",
+      "8583cccd3dff4f5da9a5529946853b33": "0123959f23a7be4e10b006d5fabeca45251e52d03eccb2ec86998a552220159c",
+      "73b3c278bb2d45cba5663b9de4208469": "45c111d78f87510c43a66bbbe356f51ce31aaa9cafe60e432ddbce52b178b02c",
+      "db55870cdca849fd8873993c179a1ca8": "e44bf68bf4e77488116ccb35b627e83f62d7a34cb7a45783cd571ccad3246d4b",
+      "0ac4dd90d047479486d919ef80dff4d5": "fa43e2872665499d159ae26022d1faf9cd366c72bec185337e21e4d554c1a580",
+      "70c4c92eadb549e2aff10ced208aaca3": "6f9e14409f9368fd640b8b8149727519ca3ea4a018af253f25015284a6bf0631",
+      "2ef5d96d2ef242d29f57e3c07985a028": "ac547af32880e836f590fd3a0e177c5b2b2756639928da9f1a559752e4fd6d84",
+      "9f5b764129ab4088b1ba3873540148c0": "8d2b53b6c807d06e7e2bd001839449c30979a8fabfbdf394fea719b40ad4bbe7",
+      "3a4d2ea6be2e4fe795da2a46c2e4a4db": "910f75d99863ea100f8925f69246e5d155f0afeae7ba5e60dea8d4963166f173",
+      "781c91b9d3d3468da654e6fe593b2cc1": "0add502f9d555b4420f81d5ae4ae386dfc38c96b207d52493168116478560615",
+      "735a6354b3104fcf8eaaa9045c04103e": "ecea94fcf96bfd36f6ae6f28de069ff0377f9861403ad9857ac88610b26de625"
+    },
+    "new_ledgers_created": 0,
+    "ledgers_archived": 0,
+    "funding_created": false
+  },
+  "recovery": {
+    "financial_restore": false,
+    "mode": "MONITORING_ONLY",
+    "inventory": {
+      "project": "autotrader-aruba-test",
+      "services": {
+        "worker": {
+          "image": "sha256:37c628833f4c8e96fa1d96b5c0284db1c15295250897317e5defc8e208d85922",
+          "state": "running",
+          "health": "healthy",
+          "volumes": [
+            "autotrader-aruba-test_reports",
+            "autotrader-aruba-test_research-data"
+          ],
+          "ports": {
+            "8000/tcp": null
+          }
+        },
+        "frontend": {
+          "image": "sha256:15f95cac54415547761dd40bdb3a2cd52638bbdfe8c20a0ff97df679136f40a9",
+          "state": "running",
+          "health": "healthy",
+          "volumes": [],
+          "ports": {
+            "80/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": "13000"
+              }
+            ]
+          }
+        },
+        "research-worker": {
+          "image": "sha256:37c628833f4c8e96fa1d96b5c0284db1c15295250897317e5defc8e208d85922",
+          "state": "running",
+          "health": null,
+          "volumes": [
+            "autotrader-aruba-test_reports",
+            "autotrader-aruba-test_research-data"
+          ],
+          "ports": {
+            "8000/tcp": null
+          }
+        },
+        "backend": {
+          "image": "sha256:37c628833f4c8e96fa1d96b5c0284db1c15295250897317e5defc8e208d85922",
+          "state": "running",
+          "health": "healthy",
+          "volumes": [
+            "autotrader-aruba-test_reports",
+            "autotrader-aruba-test_research-data"
+          ],
+          "ports": {
+            "8000/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": "18000"
+              }
+            ]
+          }
+        },
+        "postgres": {
+          "image": "sha256:6a2e324ebe59af6031c4c1cd96c1d5072c2ebc36563d2196365e43b8297c062d",
+          "state": "running",
+          "health": "healthy",
+          "volumes": [
+            "autotrader-aruba-test_postgres-data"
+          ],
+          "ports": {
+            "5432/tcp": null
+          }
+        },
+        "redis": {
+          "image": "sha256:98c6ca8f397f86e469be752c3e7ed5eb8b17f2479840cb69a2e413037038e9f4",
+          "state": "running",
+          "health": "healthy",
+          "volumes": [
+            "autotrader-aruba-test_redis-data"
+          ],
+          "ports": {
+            "6379/tcp": null
+          }
+        }
+      },
+      "observed_at": "2026-10-29T10:01:17.975208+00:00"
+    }
+  },
+  "financial_history_preservation": {
+    "status": "PASS",
+    "all_17_databases_retained": true,
+    "original_financial_core_hashes_match": true,
+    "original_equity_history_prefixes": [
+      {
+        "database": "autotrader_aruba_staging",
+        "original_equity_rows": 42330,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+        "original_equity_rows": 66392,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_2aa76e807d0cbf9c60074159f2647115",
+        "original_equity_rows": 6732,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_e3de2e7d2f6ad0122b8d52ad21929ec2",
+        "original_equity_rows": 6727,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_ba32d9384c30d291ec370174051fadb3",
+        "original_equity_rows": 13381,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_39fc0f422644ff7dd06323e5e2bef1da",
+        "original_equity_rows": 13360,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_7b82121d48000f18d24e21a7895519bb",
+        "original_equity_rows": 13360,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_6c17dd3ad276427f7416e2b8d90d1aee",
+        "original_equity_rows": 13357,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_1a0f3ee0d867cf70f3e9ffb826a8d810",
+        "original_equity_rows": 13355,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_6f3240e359b5749f60376a96380af5d4",
+        "original_equity_rows": 13354,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_889d1e0a6c3e422a80703a883e691111",
+        "original_equity_rows": 15531,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_c6e6e0209b8adbaef3c0c4f88028b05d",
+        "original_equity_rows": 15509,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_f47b303f5ad2ce3bf4684cdb59060581",
+        "original_equity_rows": 15510,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_ea2b8a90eeff9f466fb101003b6313eb",
+        "original_equity_rows": 15523,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_6adfb22c45e1836c1caf0a8cbd4b34d1",
+        "original_equity_rows": 15515,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_9157c9dfebb8d41aea24685c1c659e5a",
+        "original_equity_rows": 15513,
+        "prefix_preserved": true
+      },
+      {
+        "database": "autotrader_shadow_a24467ad1ad024d6dc36a294cdbbe71b",
+        "original_equity_rows": 15514,
+        "prefix_preserved": true
+      }
+    ],
+    "expected_appended_valuation_changes": [
+      {
+        "database": "autotrader_aruba_staging",
+        "table": "equity_snapshots",
+        "old_rows": 42330,
+        "new_rows": 42389
+      },
+      {
+        "database": "autotrader_aruba_staging",
+        "table": "market_marks",
+        "old_rows": 20,
+        "new_rows": 20
+      },
+      {
+        "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+        "table": "equity_snapshots",
+        "old_rows": 66392,
+        "new_rows": 66476
+      },
+      {
+        "database": "autotrader_paper_95e861a19786cb4f66f2a66b38a5f7f8",
+        "table": "market_marks",
+        "old_rows": 21,
+        "new_rows": 21
+      },
+      {
+        "database": "autotrader_shadow_2aa76e807d0cbf9c60074159f2647115",
+        "table": "equity_snapshots",
+        "old_rows": 6732,
+        "new_rows": 6733
+      },
+      {
+        "database": "autotrader_shadow_e3de2e7d2f6ad0122b8d52ad21929ec2",
+        "table": "equity_snapshots",
+        "old_rows": 6727,
+        "new_rows": 6728
+      },
+      {
+        "database": "autotrader_shadow_ba32d9384c30d291ec370174051fadb3",
+        "table": "equity_snapshots",
+        "old_rows": 13381,
+        "new_rows": 13382
+      },
+      {
+        "database": "autotrader_shadow_39fc0f422644ff7dd06323e5e2bef1da",
+        "table": "equity_snapshots",
+        "old_rows": 13360,
+        "new_rows": 13361
+      },
+      {
+        "database": "autotrader_shadow_7b82121d48000f18d24e21a7895519bb",
+        "table": "equity_snapshots",
+        "old_rows": 13360,
+        "new_rows": 13361
+      },
+      {
+        "database": "autotrader_shadow_6c17dd3ad276427f7416e2b8d90d1aee",
+        "table": "equity_snapshots",
+        "old_rows": 13357,
+        "new_rows": 13358
+      },
+      {
+        "database": "autotrader_shadow_1a0f3ee0d867cf70f3e9ffb826a8d810",
+        "table": "equity_snapshots",
+        "old_rows": 13355,
+        "new_rows": 13356
+      },
+      {
+        "database": "autotrader_shadow_6f3240e359b5749f60376a96380af5d4",
+        "table": "equity_snapshots",
+        "old_rows": 13354,
+        "new_rows": 13355
+      },
+      {
+        "database": "autotrader_shadow_889d1e0a6c3e422a80703a883e691111",
+        "table": "equity_snapshots",
+        "old_rows": 15531,
+        "new_rows": 15564
+      },
+      {
+        "database": "autotrader_shadow_c6e6e0209b8adbaef3c0c4f88028b05d",
+        "table": "equity_snapshots",
+        "old_rows": 15509,
+        "new_rows": 15542
+      },
+      {
+        "database": "autotrader_shadow_f47b303f5ad2ce3bf4684cdb59060581",
+        "table": "equity_snapshots",
+        "old_rows": 15510,
+        "new_rows": 15542
+      },
+      {
+        "database": "autotrader_shadow_ea2b8a90eeff9f466fb101003b6313eb",
+        "table": "equity_snapshots",
+        "old_rows": 15523,
+        "new_rows": 15554
+      },
+      {
+        "database": "autotrader_shadow_6adfb22c45e1836c1caf0a8cbd4b34d1",
+        "table": "equity_snapshots",
+        "old_rows": 15515,
+        "new_rows": 15545
+      },
+      {
+        "database": "autotrader_shadow_9157c9dfebb8d41aea24685c1c659e5a",
+        "table": "equity_snapshots",
+        "old_rows": 15513,
+        "new_rows": 15541
+      },
+      {
+        "database": "autotrader_shadow_a24467ad1ad024d6dc36a294cdbbe71b",
+        "table": "equity_snapshots",
+        "old_rows": 15514,
+        "new_rows": 15541
+      }
+    ],
+    "financial_database_restore_to_live": false
+  },
+  "portfolio": {
+    "initial_cash": "7000",
+    "cash": "6961.614219600281",
+    "available_cash": "6961.614219600281",
+    "reserved_cash": "0E-12",
+    "open_exposure": "0E-12",
+    "equity": "6961.614219600281",
+    "realized_pnl": "-38.385780399719",
+    "unrealized_pnl": "0E-12",
+    "total_net_pnl": "-38.385780399719",
+    "current_drawdown": "0.006584402031897269074826598919",
+    "daily_risk_status": "WITHIN_LIMIT",
+    "weekly_risk_status": "WITHIN_LIMIT",
+    "daily_equity_change": "-20.359631548127",
+    "weekly_equity_change": "-38.385780399719",
+    "valuation_degraded": "false",
+    "missing_marks": "",
+    "positions": "0",
+    "orders": "18",
+    "pending_orders": "0",
+    "control": "PAUSED",
+    "risk_state": "HEALTHY"
+  },
+  "performance": {
+    "modeled_slippage_and_impact_eur": "14.004082401187355890000000",
+    "buy_orders": 10,
+    "sell_orders": 8,
+    "buy_fills": 8,
+    "sell_fills": 8,
+    "fills": 16,
+    "open_positions": 0,
+    "closed_positions": 8,
+    "fees_eur": "11.131419811531",
+    "win_rate": 0.125,
+    "average_win": "9.716354556351",
+    "average_loss": "-6.871733565152857142857142857",
+    "profit_factor": "0.2019942475572988037888991092",
+    "expectancy": "-4.798222549964875",
+    "max_drawdown": "0.006735308718301559949669089763",
+    "risk_adjusted_return": null,
+    "statistics_limit": "Trade counts are not independent samples; risk-adjusted returns require a longer daily series.",
+    "capital_utilization": "0",
+    "closed_positions_per_day": 3.9667079103782577,
+    "age_days": 2.0167857530092594,
+    "frequency_limit": "Rate since experiment creation; unstable in short windows."
+  },
+  "profile": "4.9.1-paper.1",
+  "runtime_matches_after_old_image_recovery": false,
+  "all_17_funding_events_once": true,
+  "all_orders_simulated": true,
+  "primary_control": "PAUSED",
+  "private_access": {
+    "status": "PASS",
+    "serve_sha256": "9486f159eb2847f1b15030d023437c6fcce73a54c2f8fc20775708151c547c6f",
+    "configuration_changed": false
+  },
+  "financial_database_restore_to_live": false,
+  "old_production_contacted": false,
+  "requires_separately_approved_correction_release": true
+}
