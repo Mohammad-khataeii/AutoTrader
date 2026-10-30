@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import copy
 import random
 import time
 from collections.abc import Awaitable, Callable
@@ -11,7 +12,7 @@ from typing import Any, cast
 import httpx
 
 from autotrader.domain import Candle, OrderBook, OrderBookLevel, TradingPair, utc_now
-from autotrader.market_data.scheduling import PriorityGate
+from autotrader.market_data.scheduling import PriorityGate, request_priority
 
 
 class MarketDataError(RuntimeError):
@@ -104,8 +105,12 @@ class RevolutXPublicClient:
         self._ticker_cache: tuple[datetime, list[dict[str, Any]]] | None = None
         self._ticker_lock = asyncio.Lock()
         self._pairs_lock = asyncio.Lock()
+        self._inflight: dict[tuple[Any, ...], asyncio.Task[dict[str, Any]]] = {}
 
     async def close(self) -> None:
+        tasks=list(self._inflight.values())
+        for task in tasks:task.cancel()
+        if tasks:await asyncio.gather(*tasks,return_exceptions=True)
         await self._client.aclose()
 
     def _family(self,path:str)->str:
@@ -128,7 +133,9 @@ class RevolutXPublicClient:
                 await self._limiter_for(path).acquire()
                 delay=await self.rate_reserver(family) if self.rate_reserver else 0
                 if delay<=0:
-                    return await self._client.get(path,params=params)
+                    started=time.perf_counter()
+                    try:return await self._client.get(path,params=params)
+                    finally:await self._event('http_latency_ms',(time.perf_counter()-started)*1000)
             # Release the gate during shared cooldown so protection on another
             # endpoint family can run. Recheck ownership before every request.
             if delay>30:
@@ -136,6 +143,21 @@ class RevolutXPublicClient:
             await asyncio.sleep(min(delay,1))
 
     async def _request(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
+        # Coalesce concurrent identical reads only. Protection has its own key
+        # and never queues behind discovery. Completed books are never cached.
+        key=(path,tuple(sorted((k,str(v)) for k,v in (params or {}).items())),request_priority.get())
+        task=self._inflight.get(key)
+        if task is None:
+            task=asyncio.create_task(self._request_once(path,params))
+            self._inflight[key]=task
+            def finished(completed: asyncio.Task[dict[str, Any]]) -> None:
+                if self._inflight.get(key) is completed:self._inflight.pop(key,None)
+                if not completed.cancelled():completed.exception()
+            task.add_done_callback(finished)
+        else:await self._event('coalesced_read')
+        return copy.deepcopy(await asyncio.shield(task))
+
+    async def _request_once(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         if not path.startswith(('/1.0/public/','/2.0/public/')):
             raise MarketDataError('Only public read-only exchange paths are allowed.')
         params = {"region": self.region, **(params or {})}
@@ -229,8 +251,13 @@ class RevolutXPublicClient:
 
     async def get_tickers(self, symbols: list[str] | None = None) -> list[dict[str, Any]]:
         async with self._ticker_lock:
-            if symbols is None and self._ticker_cache and (utc_now() - self._ticker_cache[0]).total_seconds() < 60:
-                return [dict(row) for row in self._ticker_cache[1]]
+            if self._ticker_cache and -5 <= (utc_now()-self._ticker_cache[0]).total_seconds()<60:
+                rows=self._ticker_cache[1]
+                wanted={s.replace('/','-') for s in symbols} if symbols else None
+                subset=[row for row in rows if row.get('symbol','').replace('/','-') in wanted] if wanted else rows
+                if wanted is None or {row.get('symbol','').replace('/','-') for row in subset}==wanted:
+                    await self._event('ticker_cache_hit')
+                    return [dict(row) for row in subset]
             params: dict[str, Any] = {"symbols": ",".join(symbols)} if symbols else {}
             payload = await self._request("/1.0/public/tickers", params)
             stamp = _timestamp_ms(payload.get('metadata', {}).get('timestamp'), context='ticker metadata.timestamp')

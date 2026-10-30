@@ -41,7 +41,7 @@ async def test_a3_actual_worker_partial_exits_sigkill_recovery_and_official_isol
     assert len(await repo.list_fills()) == 5 and await repo.verify_invariants(D(500)) == []
 
 
-async def test_successor_resumes_exact_decision_after_gateway_exception_without_duplicate_fill(lab, tmp_path, monkeypatch):
+async def test_successor_resumes_exact_decision_after_gateway_exception_without_duplicate_fill(lab, tmp_path, monkeypatch, direct_cycle_clock):
     from autotrader.execution_gateway import PaperExecutionGateway
     from autotrader.indicators import calculate_features
     from autotrader.market_data.replay import FileReplayClient

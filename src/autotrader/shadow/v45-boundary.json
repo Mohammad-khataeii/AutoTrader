@@ -4,7 +4,7 @@
     "domain.py": "e714cc381e06114e6da4a75cf7c0662faf0f172bae6f5d172d2a0abc80064d73",
     "indicators.py": "a828746f564a72c392964aeb28e273b8c4c73340aca35b7e10c65d24b4fe7b37",
     "market_data/replay.py": "c667af1f0a2aa85b7f03ac8600c358c8c8070ebd30b0e3e933c8c851f6972228",
-    "market_data/revolut.py": "f3d97a541dd4e28565baddaff222a0d9a4e67f8536c0a1f58ac08c64fb3616d0",
+    "market_data/revolut.py": "6cfb425bf52ca704eaabc3a44ca65d072db52545dff9ada7a4a19f4e2fa6f2ea",
     "market_data/scheduling.py": "3d8be924a69d19afc2b699321b800492ce1685e1ba70ffd40b26d09679d3e234",
     "market_data/service.py": "7afe1d94c919002312b28dfd988952fe87879143921374ca2ed20cd10a7571a9",
     "market_data/synchronization.py": "53db0bc6687e5faf8a94c0c814ae759193ad8b285d14d6fab119398120932031",
@@ -44,7 +44,7 @@
     "shadow/legacy.py": "a03edb0c0afb27e3a00ec66dc3f78a7701983700c63a499f6832b58aecc4f185",
     "shadow/runtime.py": "3e10553b87feb899dcd11f98273fc015b3e0a4362eaed8559c8fa5c400bd3180",
     "shadow/trace.py": "238e327fa6b22cd4556dc7eb73f1064d978a38be8e0098a327580ed56d3be976",
-    "shadow/versions.py": "8843d34af509d9b45b52dd2872bb45de7a4d5da8324f197652afe05d70faced4",
+    "shadow/versions.py": "7b420020b641f77638150a525271b529172a82917ef982a329ab602fe72d12b4",
     "shadow/views.py": "ea2ce9a33a2b6f5f62e55ce1d14d0606bc17d01da16ea22cf275eb81228b60d5",
     "worker/runner.py": "3395e79bd874e83cf840c77d3af2847140d3aa9b3f79315a73dd7c4ca4536532"
   },

@@ -1,0 +1,21 @@
+{
+  "coverage": [
+    "normal unpriced retention",
+    "source/coverage exclusions versus corruption",
+    "all timeframe completion timestamps",
+    "contiguous future labels",
+    "independent episode accounting",
+    "sealed holdouts",
+    "model identity and corruption refusal",
+    "artifact restart",
+    "forward drift quarantine",
+    "fresh/backfill SQL cutoff and restart",
+    "read-only financial sessions",
+    "explicit legacy/current status scopes"
+  ],
+  "failures": 0,
+  "source_fingerprint": "f8ae37f2d95db79f74c0bf772720874b44cef2cbecf9a22de2c3397f1d6cf84b",
+  "status": "PASS",
+  "synthetic_tests_are_engineering_only": true,
+  "tests": 36
+}

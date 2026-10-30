@@ -196,6 +196,24 @@ def exit_feedback(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 def publish(store: Store, now: str) -> dict[str, Any]:
     report = status(store, now)
+    from autotrader.learning.lifecycle import summary
+    from autotrader.learning.market_model import status as market_status
+    report['legacy_dataset'] = report['dataset']
+    report['legacy_rejection_reasons'] = report['rejection_reasons']
+    report['legacy_warnings'] = report['warnings']
+    report['funnel'] = summary(store)
+    report['warnings'] = ['Insufficient independent evidence for ML promotion'] if report['status'] in {'INSUFFICIENT_EVIDENCE','INSUFFICIENT_PURGED_PARTITIONS'} else []
+    if report['funnel']['dispositions'].get('DATA_QUALITY_FAILED'):
+        report['warnings'].append('Stage-aware observations contain genuine data-quality failures; see funnel coverage')
+    report['rejection_reasons'] = dict(store.db.execute("SELECT j.value,count(*) FROM (SELECT metadata FROM funnel ORDER BY observed_at DESC,id LIMIT 10000) f,json_each(f.metadata,'$.reasons') j GROUP BY j.value ORDER BY count(*) DESC LIMIT 15"))
+    report['market_task'] = market_status(store, now)
+    report['provider_measurements'] = store.get('provider_measurements', {})
+    report['collector_cursors'] = {k:store.get(k) for k in ('v493_fresh_cursor','v493_backfill_cursor')}
+    report['actual_stage_counts'] = dict(store.db.execute("SELECT json_extract(payload,'$.stage'),count(*) FROM actual_events GROUP BY json_extract(payload,'$.stage')"))
+    report['dataset'] = {**report['dataset'], 'counts':dict(store.db.execute('SELECT o.status,count(*) FROM observations o JOIN funnel f ON f.id=o.id WHERE f.priced_plan=1 GROUP BY o.status')),
+                         'coverage_failures':dict(store.db.execute("SELECT json_extract(o.result,'$.reason'),count(*) FROM observations o JOIN funnel f ON f.id=o.id WHERE f.priced_plan=1 AND o.status='DATA_QUALITY_FAILED' GROUP BY 1")),
+                         'scope':'Complete priced plans enrolled by the stage-aware collector; retained legacy totals and failures reported separately'}
+    report['summary_scope'] = 'Stage/disposition totals across all enrolled signals; ordinary rejection reasons in latest 10,000 signals; legacy path summaries in latest 50,000 labels. Independent episodes span retained history.'
     store.db.commit()
     atomic_write(store.root/'status.json', canonical(report))
     return report

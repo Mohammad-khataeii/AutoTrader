@@ -160,7 +160,8 @@ def test_restart_replays_ingestion_and_maturity_without_duplicates(tmp_path):
     assert run_training(s,(NOW+timedelta(hours=5)).isoformat())['status']=='INSUFFICIENT_EVIDENCE'
     state = publish(s, (NOW+timedelta(hours=5)).isoformat())
     assert state['primary_promotion_automatic'] is False and state['live_authorized'] is False
-    assert state['dataset']['counts']=={'LABELED':1}
+    assert state['legacy_dataset']['counts']=={'LABELED':1}
+    assert state['dataset']['counts']=={}  # new funnel coverage remains separate
     s.close()
 
 
@@ -259,5 +260,5 @@ def test_api_learning_requires_auth_and_reports_running_backend(monkeypatch,tmp_
         assert client.get('/api/personal-paper/learning').status_code==401
         response=client.get('/api/personal-paper/learning',auth=('admin','change-me'))
         assert response.status_code==200
-        assert response.json()['backend_version']==app.version=='4.9.2-rc.2'
+        assert response.json()['backend_version']==app.version=='4.9.3-rc.1'
         assert response.json()['status']=='WAITING_FOR_COLLECTOR'

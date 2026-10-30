@@ -1,0 +1,32 @@
+{
+  "authorization": "Single conditional user-authorized task; durable exact commit/artifact claim required before activation",
+  "created_at": "2026-10-30T10:41:47.383844+00:00",
+  "gates": {
+    "application-source.json": "20fdf60cfbb86c7c818bccfad2d30647cbc7af471c06598213506aefd6739c0d",
+    "audit-analysis.json": "ca39f48f2e640b923f752cb74e41213169c27574589f7242c5f30c77255c819b",
+    "backend-tests.json": "9b2ef6f1410dd1a25691956e13d99f05d535690baa1f4bb1f35f81ea34dba58e",
+    "browser-tests.json": "3c5363d42f728abd2226edd43d8fce2f0df143276079ca271cb2afae576c7b9a",
+    "deployment-idempotency.json": "9c3ad8ef7df90309d70a8858ae0e74334178d9428f6b494047cea3e10a34cd6d",
+    "financial-restore.json": "80355c101edeb818f05fcb61a27e887abd82e748bae184727e6f77d8883e97ce",
+    "frontend-tests.json": "83580c2cbcb5b9babbc0ed21651cc7213270817073128a2d4e35821a641acab8",
+    "learning-tests.json": "6247f7830b6f9cb83ac9f0dd4c692199f99b05af24a931b096d00d0be32e05b1",
+    "linux-tests.json": "dc0b743768a33b3dccd5d2a4dcf4e08f26ced540ba32ef05f125d0f59a20d1c7",
+    "model-validation.json": "5d3fcb0051b6bae017be6716cfbef2b82587ecbf5141c597b3b2b9b0fe894588",
+    "restart-recovery.json": "f236856091d716fa403f355c07dffc857e002e6b89469659298b584a17d6235d",
+    "runtime-compatibility.json": "2374aa17207f39e82134e990fe9c363f657521f529cb90b9ee20c5582f86cb94"
+  },
+  "prospective_performance_claim": false,
+  "remaining_stage_b_gates": [
+    "full immutable commit/archive/image identities",
+    "fresh financial inventory and safe flat cutover",
+    "17-ledger pre-backup/restore/profile rehearsal",
+    "17-ledger post-backup/restore",
+    "170 core financial seals",
+    "live health/collector/access/image verification"
+  ],
+  "source_fingerprint": "f8ae37f2d95db79f74c0bf772720874b44cef2cbecf9a22de2c3397f1d6cf84b",
+  "stage": "A",
+  "status": "PASS",
+  "task_id": "autotrader-v493-2026-10-30",
+  "version": "4.9.3-rc.1"
+}

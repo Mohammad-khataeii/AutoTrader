@@ -1,0 +1,21 @@
+{
+  "errors": 0,
+  "failures": 0,
+  "full_run": {
+    "failed": 2,
+    "junit_sha256": "a949b491e18c29137d0a6315fe41a88c761d11514a291178dbdccc1c6fcea45a",
+    "passed": 517,
+    "tests": 519
+  },
+  "mode": "Complete native PostgreSQL suite plus scoped final rechecks of stale replay mark and the concurrently updated resume-proof test fixture; production freshness gates unchanged",
+  "mypy": "PASS, 146 non-frozen source modules",
+  "rechecks": {
+    "junit_sha256": "98bb28b1d36d1b0afcefcaa1b0a7b493ffb3a0c7e6a001fba5d7ab1e8835c4ae",
+    "tests": 35
+  },
+  "ruff": "PASS",
+  "skipped": 0,
+  "source_fingerprint": "f8ae37f2d95db79f74c0bf772720874b44cef2cbecf9a22de2c3397f1d6cf84b",
+  "status": "PASS",
+  "tests": 519
+}

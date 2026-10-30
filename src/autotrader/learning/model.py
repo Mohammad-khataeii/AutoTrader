@@ -9,8 +9,7 @@ import math
 from statistics import mean, pstdev
 from typing import Any
 
-from autotrader.learning import FEATURE_SCHEMA
-from autotrader.learning.features import NAMES, finite
+from autotrader.learning.features import finite
 
 CONFIG: dict[str, Any] = {'version': 'logistic-l2/1', 'epochs': 240, 'learning_rate': .08,
           'l2': .03, 'clip_z': 6., 'probability_threshold': .60,
@@ -26,16 +25,20 @@ def sigmoid(z: float) -> float:
 def fit(rows: list[dict[str, Any]], calibration: list[dict[str, Any]]) -> dict[str, Any]:
     if len({r['target']['positive'] for r in rows}) < 2 or len({r['target']['positive'] for r in calibration}) < 2:
         raise ValueError('both_classes_required')
-    xs = [r['features']['values'] for r in rows]
+    schema, names = rows[0]['features']['schema'], rows[0]['features']['names']
+    if not names or any(r['features']['schema'] != schema or r['features']['names'] != names
+                        or len(r['features']['values']) != len(names) for r in [*rows, *calibration]):
+        raise ValueError('mixed_feature_schemas')
+    xs = [[finite(v) for v in r['features']['values']] for r in rows]
     center = [mean(v) for v in zip(*xs)]
     scale = [max(pstdev(v), 1e-6) for v in zip(*xs)]
-    weights = [0.]*len(NAMES);intercept = 0.
+    weights = [0.]*len(names);intercept = 0.
     matrix = [[max(-6., min(6., (v-m)/s)) for v, m, s in zip(x, center, scale)] for x in xs]
     for _ in range(CONFIG['epochs']):
         errors = [sigmoid(intercept+sum(w*v for w, v in zip(weights, x)))-r['target']['positive'] for x, r in zip(matrix, rows)]
         intercept -= CONFIG['learning_rate']*mean(errors)
         weights = [w-CONFIG['learning_rate']*(mean(e*x[j] for e, x in zip(errors, matrix))+CONFIG['l2']*w) for j, w in enumerate(weights)]
-    model = {'schema': FEATURE_SCHEMA, 'names': list(NAMES), 'center': center, 'scale': scale,
+    model = {'schema': schema, 'names': list(names), 'center': center, 'scale': scale,
              'positive_mean_return': mean(r['target']['net_return'] for r in rows if r['target']['positive']),
              'negative_mean_return': mean(r['target']['net_return'] for r in rows if not r['target']['positive']),
              'weights': weights, 'intercept': intercept, 'calibration_slope': 1.,
@@ -52,7 +55,7 @@ def fit(rows: list[dict[str, Any]], calibration: list[dict[str, Any]]) -> dict[s
 
 
 def logit(model: dict[str, Any], features: dict[str, Any]) -> float:
-    if features['schema'] != model['schema'] or features['names'] != model['names'] or len(features['values']) != len(NAMES):
+    if features['schema'] != model['schema'] or features['names'] != model['names'] or len(features['values']) != len(model['names']):
         raise ValueError('feature_schema_mismatch')
     xs = [max(-6., min(6., (finite(v)-m)/s)) for v, m, s in zip(features['values'], model['center'], model['scale'])]
     return finite(model['intercept']+sum(w*v for w, v in zip(model['weights'], xs)))

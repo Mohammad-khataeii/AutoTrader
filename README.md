@@ -1,6 +1,10 @@
-# Personal Plan — V4.9.1 paper staging
+# Personal Plan — V4.9.3 paper release
 
-## Current V4.9.1 correction
+V4.9.3 separates normal unpriced rejections from genuine data corruption, adds isolated market-state and midpoint-path learning, and improves public-data scheduling. The primary admission, risk and stop policies remain unchanged because independent evidence is insufficient. See the [engineering report](docs/V4_9_3_ENGINEERING_REPORT.md) and [release/recovery handoff](docs/V4_9_3_RELEASE_HANDOFF.md).
+
+The October 30 task authorizes one automatic, fully verified Aruba paper release under the narrow committed authorization policy. Exact commit/image identities and activation results are recorded in immutable release bindings and private deployment evidence. Real trading and automatic primary ML promotion remain disabled. The following sections describe historical releases and their original cutoffs.
+
+## Historical V4.9.1 correction
 
 The [twelve-hour audit](docs/V4_9_1_AUDIT_REPORT.md) explains the observed losses and the new primary admission guard. The approved rc.1 rollout passed both seventeen-account restore checks but failed its final opportunities-history request. The previous images recovered with entries PAUSED; cash remains €6,961.614219600281 and all sixteen fills and original account histories are retained. No financial database was restored over live transactions.
 

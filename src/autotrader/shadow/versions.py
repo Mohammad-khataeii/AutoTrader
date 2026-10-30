@@ -63,7 +63,7 @@ EXECUTION_FILES = (
 )
 
 
-def execution_fingerprint() -> str:
+def _execution_paths() -> set[str]:
     paths = {p for p in EXECUTION_FILES if (ROOT / p).is_file()}
     paths.update(
         str(p.relative_to(ROOT))
@@ -71,7 +71,12 @@ def execution_fingerprint() -> str:
         for p in (ROOT / folder).rglob("*.py")
     )
     paths.add("shadow/v45-boundary.json")
-    return digest(canonical({p: digest((ROOT / p).read_bytes()) for p in sorted(paths)}))
+    paths.add('shadow/v493-observation-bridge.json')
+    return paths
+
+
+def execution_fingerprint() -> str:
+    return digest(canonical({p: digest((ROOT / p).read_bytes()) for p in sorted(_execution_paths())}))
 
 
 def verify_legacy() -> dict[str, str]:
@@ -115,13 +120,49 @@ def verify_v44() -> dict[str, str]:
     return actual
 
 
+V492_EXECUTION = '44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c'
+OBSERVATION_CHANGES = frozenset({'market_data/revolut.py','persistence/repository.py',
+                                'shadow/versions.py','shadow/v45-boundary.json'})
+
+
+def verify_observation_bridge() -> None:
+    """Explicit acquisition revision; all original strategy/financial bytes pinned.
+
+    Stored shadow manifests retain their original identity. The bridge permits
+    only reviewed public acquisition and compatibility metadata, never a change
+    in risk, strategy, pricing, stops, fills or accounting code.
+    """
+    bridge=json.loads((ROOT/'shadow/v493-observation-bridge.json').read_text())
+    parent=bridge['parent_files'];reviewed=bridge['reviewed_files']
+    if bridge['parent_fingerprint']!=V492_EXECUTION or digest(canonical(parent))!=V492_EXECUTION:
+        raise ValueError('observation_bridge_parent_integrity_failed')
+    if set(reviewed)!=OBSERVATION_CHANGES or _execution_paths()!=set(parent)|{'shadow/v493-observation-bridge.json'}:
+        raise ValueError('observation_bridge_scope_failed')
+    expected={**parent,**reviewed}
+    if any(digest((ROOT/name).read_bytes())!=value for name,value in expected.items()):
+        raise ValueError('observation_bridge_source_integrity_failed')
+    # Repository changes are restricted to the reservation function. Financial
+    # methods in this shared file must remain byte-identical to the parent.
+    source=(ROOT/'persistence/repository.py').read_text()
+    start=source.index('    async def reserve_public_request(')
+    end=source.index('\n    async def ',start+10)
+    if digest((source[:start]+'<PUBLIC_RESERVATION>'+source[end:]).encode())!=bridge['repository_outside_reservation_sha256']:
+        raise ValueError('observation_bridge_financial_boundary_failed')
+    verify_boundary()
+
+
 def generation(manifest: dict[str, Any]) -> str | None:
     """Identity selects code; a user-facing version label never grants admission."""
     fingerprint = manifest.get("execution_fingerprint")
     if fingerprint == V44_EXECUTION:
         return "v44"
     if fingerprint:
-        return "v46" if fingerprint == execution_fingerprint() else None
+        if fingerprint == execution_fingerprint():return 'v46'
+        if fingerprint == V492_EXECUTION:
+            try:verify_observation_bridge()
+            except (ValueError,OSError,KeyError,TypeError):return None
+            return 'v46'
+        return None
     return "v42" if manifest.get("source_fingerprint") == LEGACY_SOURCE else None
 
 
@@ -135,7 +176,10 @@ def compatibility(manifest: dict[str, Any]) -> dict[str, Any]:
             elif selected == "v42":
                 verify_legacy()
             verify_boundary()
-            return {"compatible": True, "runner": runner, "reason": None}
+            result = {"compatible": True, "runner": runner, "reason": None}
+            if manifest.get('execution_fingerprint') == V492_EXECUTION:
+                result['observation_revision'] = 'public-acquisition/4.9.3.1'
+            return result
         except (ValueError, OSError, KeyError) as exc:
             return {"compatible": False, "runner": runner, "reason": str(exc)}
     return {"compatible": False, "runner": None, "reason": "unknown_frozen_runtime"}

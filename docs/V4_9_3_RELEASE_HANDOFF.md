@@ -1,0 +1,21 @@
+# V4.9.3 immutable release and recovery handoff
+
+The current October 30 task authorizes one unattended release, conditional on all gates. Its committed scope is `deploy/authorizations/v493-once.json`; its deployment helper is `deploy/staging_v493.py`. No additional routine approval is required for this task. Future different releases require their own authorization.
+
+All source changes originate locally on `feature/autotrader-v46-intelligent-opportunity-engine`. Keep `main`, financial history and unrelated applications untouched. The source archive and image archives are produced from the full committed release, checked locally and after transfer. Canonical loaded Linux/AMD64 configuration IDs are derived from the saved image archive; a Docker Desktop OCI index ID is not substituted for that identity. Bindings include the exact commit, archive SHA256 values and tested-source identity.
+
+Scope is only SSH alias `aruba-vps`, `/opt/personal-plan/staging`, Compose `autotrader-aruba-test`, backend `127.0.0.1:18000`, frontend `127.0.0.1:13000`, paper-only. Production credentials and `.env.staging` stay on the VPS. Do not copy keys, patch source remotely, migrate destructively, recreate persistent data services, prune globally, remove source/financial backups or touch DWRS/REX Builder/SMARTI.
+
+The helper requires `--task-authorization` for activation. It validates committed readiness evidence, full immutable source identity, loaded image platform/revision/module hashes, scope and actual source/image archive checksums before claiming this task. The exclusive fsynced claim lives at `ops/authorization-autotrader-v493-2026-10-30.json`. Never delete or replace that claim to authorize another candidate. Byte-identical verification/resume remains possible only through the helper's guarded paths.
+
+A healthy duplicate activation verifies without pausing or restarting, including when later positions exist. An interrupted paused cutover requires durable pre/post seventeen-ledger restore proof, preserved control manifests and financial-preservation proof before resume. Failed releases stop rather than silently substituting new bytes or reusing this task for a correction.
+
+Before cutover, pause new primary and original active-shadow entries. Leave the old worker/protection running until all primary and fifteen retained shadow domains are naturally flat, without forced liquidation. If the bounded wait expires, retain old protection and diagnostics. A still-open position is not permission to replace its protection.
+
+Require both backup/restore sets to pass: seventeen ledgers before replacement, including candidate-profile rehearsal, and seventeen after replacement before resuming. Core balances, journal, orders, fills, positions, reservations, exit intents/targets/plans and transitions must have identical seals across the paused flat cutover. Preserve the original primary funding, fifteen shadow manifests and archived controls. The local restored-ledger test is supporting evidence; it never authorizes restoring a stale snapshot over live transactions.
+
+Verify deployed health/readiness; exact module and image identities; dynamic frontend version and actual static assets; primary runtime/profile match; reconciliations; fresh scan and protective heartbeat; new learning collector/funnel and absence of collection errors; disabled real trading; Tailscale access; persistent Compose image references; and unchanged PostgreSQL/Redis identities/mounts. Observe dated provider windows without labeling old cumulative counters as a release result.
+
+If activation fails, keep entries paused and preserve every diagnostic and backup. Image-only recovery is limited to a proven flat state and may provide monitoring only when an old runtime cannot execute the new primary profile. Never blindly restore financial databases. A source correction must be implemented/tested/committed/pushed locally and receive authorization for the new identity if this task's one release has already been claimed.
+
+Primary policy remains the frozen deterministic fallback. No ML challenger is qualified, no automatic primary weights are installed, no wider stop is enabled and no profitability claim follows from these gates. See the engineering report and machine-readable evidence for the exact historical sample and limitations.

@@ -131,6 +131,19 @@ class PersonalPaperRuntime:
                 'ask_quote': str(sum((v.price*v.quantity for v in learning_book.asks if learning_book.best_ask and v.price <= learning_book.best_ask*D('1.0025')), D(0)))}
             admission_context = completed_context(candidate.market.candles, cycle.histories, cycle.as_of,
                 genuine=repo.manifest['data_kind']!='SYNTHETIC_ACCEPTANCE')
+            from autotrader.learning.regimes import assess as market_state
+            from autotrader.learning.regimes import shadow_hypotheses
+            observed_state = market_state(candidate.market.candles, cycle.histories, cycle.as_of,
+                learning_book, genuine=repo.manifest['data_kind']!='SYNTHETIC_ACCEPTANCE')
+            closed = [c for c in candidate.market.candles if c.timestamp.timestamp()+300 <= cycle.as_of.timestamp()]
+            volumes = [c.volume for c in closed[-21:-1]]
+            average_volume = sum(volumes, D(0))/len(volumes) if volumes else D(0)
+            learning_context = {'version':'4.9.3-market-observation.1',
+                'volume_ratio':str(closed[-1].volume/average_volume) if closed and average_volume>0 else None,
+                'close':str(closed[-1].close) if closed else None,
+                'cutoff':cycle.as_of.isoformat(),'regime':learning_snapshot,'market_state':observed_state,
+                'data_hash':digest(canonical([[c.timestamp.isoformat(),str(c.open),str(c.high),str(c.low),str(c.close),str(c.volume)] for c in closed])),
+                'volume_kind':'PUBLIC_MID_OHLCV_NOT_EXECUTED_DEMAND'}
             for identity, spec in repo.manifest['strategies'].items():
                 from autotrader.raoe import IDENTITIES
                 from autotrader.raoe.engine import RAOEEngine
@@ -149,14 +162,8 @@ class PersonalPaperRuntime:
                 signal.evidence['execution_profile'] = repo.manifest['version']
                 from autotrader.provenance import release_identity
                 signal.evidence['backend_release'] = release_identity()
-                closed = [c for c in candidate.market.candles if c.timestamp.timestamp()+300 <= cycle.as_of.timestamp()]
-                volumes = [c.volume for c in closed[-21:-1]]
-                average_volume = sum(volumes, D(0))/len(volumes) if volumes else D(0)
-                signal.evidence['learning_context'] = {'version': '4.9.2-observed-volume.1',
-                    'volume_ratio': str(closed[-1].volume/average_volume) if closed and average_volume > 0 else None,
-                    'cutoff': cycle.as_of.isoformat(), 'regime': learning_snapshot,
-                    'data_hash': digest(canonical([[c.timestamp.isoformat(), str(c.open), str(c.high), str(c.low), str(c.close), str(c.volume)] for c in closed])),
-                    'volume_kind': 'PUBLIC_MID_OHLCV_NOT_EXECUTED_DEMAND'}
+                signal.evidence['learning_context'] = {**learning_context,
+                    'hypotheses':shadow_hypotheses({**signal.evidence,'strategy_id':identity},observed_state)}
                 signal = replace(signal, signal_id='sig_'+digest((signal.signal_id+signal.evidence['paper_manifest']).encode())[:40])
                 # Same signal hypothesis and frozen parameters; this financial
                 # experiment has its own source, account and evidence identity.

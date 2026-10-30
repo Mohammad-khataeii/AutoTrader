@@ -131,6 +131,7 @@ class PersistentTradingRepository(MarketStateMixin, PilotMixin, OperationsMixin,
         from datetime import timedelta
 
         from autotrader.persistence.accounting import aware
+        interval=1.05 if family.startswith(('/1.0/public/','/2.0/public/')) else 1
         key='public_rate:'+sha256(family.encode()).hexdigest()[:24]
         async with self.session_factory() as session,session.begin():
             await self._lock_account(session)
@@ -147,10 +148,10 @@ class PersistentTradingRepository(MarketStateMixin, PilotMixin, OperationsMixin,
                         payload['protective_until']=(now+timedelta(seconds=min(delay+1,5))).isoformat()
                         row.payload_json=_json(payload)
                     return delay
-                row.payload_json=_json({'next_at':(now+timedelta(seconds=1)).isoformat()})
+                row.payload_json=_json({'next_at':(now+timedelta(seconds=interval)).isoformat()})
             else:
                 session.add(SystemStateModel(key=key,state='RATE_LIMIT',reason='one_public_request_per_second',
-                    payload_json=_json({'next_at':(now+timedelta(seconds=1)).isoformat()})))
+                    payload_json=_json({'next_at':(now+timedelta(seconds=interval)).isoformat()})))
             return 0.0
 
     async def store_scan(self, result: Any) -> None:

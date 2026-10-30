@@ -1,0 +1,19 @@
+{
+  "schema": "autotrader-single-task-authorization/1",
+  "task_id": "autotrader-v493-2026-10-30",
+  "request_sha256": "576553e6385141538e3a85a9fa0e0e4e91ff60013050d1d88d3be97f893144ae",
+  "starting_commit": "1c1b758f80deac18725167c234469cc0895a0120",
+  "branch": "feature/autotrader-v46-intelligent-opportunity-engine",
+  "release_prefix": "4.9.3",
+  "maximum_distinct_releases": 1,
+  "host_alias": "aruba-vps",
+  "directory": "/opt/personal-plan/staging",
+  "compose_project": "autotrader-aruba-test",
+  "backend_binding": "127.0.0.1:18000",
+  "frontend_binding": "127.0.0.1:13000",
+  "paper_only": true,
+  "live_trading_authorized": false,
+  "automatic_primary_model_promotion": false,
+  "requires_all_engineering_financial_restore_and_runtime_gates": true,
+  "claim": "Exclusive immutable task binding before activation; exact-identity verification/resume only after claim."
+}

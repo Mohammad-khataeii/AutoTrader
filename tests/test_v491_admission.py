@@ -96,7 +96,11 @@ def test_guard_cannot_promote_a_rejected_base_signal_or_mutate_its_evidence(monk
 
 
 def test_original_shadow_execution_identity_is_unchanged():
-    assert execution_fingerprint()=='44264f01586fedbd62e949f142c8240bb2dd9bae86c454fb17d388e2f5d9559c'
+    from autotrader.shadow.versions import V492_EXECUTION,compatibility,verify_observation_bridge
+    verify_observation_bridge()
+    result=compatibility({'execution_fingerprint':V492_EXECUTION})
+    assert result['compatible'] and result['observation_revision']=='public-acquisition/4.9.3.1'
+    assert execution_fingerprint()!=V492_EXECUTION  # explicit acquisition revision; original strategy bytes pinned
 
 
 async def test_locked_primary_admission_requires_proof_and_dispatch_rechecks_boundary(paper,monkeypatch):

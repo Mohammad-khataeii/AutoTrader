@@ -55,9 +55,9 @@ async def test_collector_read_only_restart_and_ledger_preservation(paper,pg_repo
     for key in ('cash','reserved_cash','positions','orders','realized_pnl'):assert before[key]==after[key]
     assert await repo.verify_invariants(D(7000))==[]
     store=Store(tmp_path)
-    assert store.db.execute('SELECT count(*) FROM observations').fetchone()[0]==1
-    assert store.db.execute('SELECT status FROM observations').fetchone()[0]=='DATA_QUALITY_FAILED'  # synthetic account rejected
-    assert store.get('cursor')[1]=='causal_signal'
+    assert store.db.execute('SELECT count(*) FROM observations').fetchone()[0]==0
+    assert store.db.execute('SELECT disposition FROM funnel').fetchone()[0]=='SOURCE_EXCLUDED'  # retained synthetic coverage exclusion
+    assert store.get('v493_backfill_cursor')[1]=='causal_signal'
     store.close()
     def check():
         with connect(make_url(pg_repo.test_database_url)) as conn:

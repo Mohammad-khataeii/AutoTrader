@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "source_fingerprint": "f8ae37f2d95db79f74c0bf772720874b44cef2cbecf9a22de2c3397f1d6cf84b",
+  "source_files": 294,
+  "installed_package_path": "/usr/local/lib/python3.12/site-packages/autotrader",
+  "installed_source_hashes_match": true,
+  "profile": "4.9.3-paper.1",
+  "paper_runtime_fingerprint": "04f8d863ec770e68410d6e9b177c923ad5013cf044df9324b6d842092c4f387e",
+  "execution_fingerprint": "81015cb4f67c94cb83f79a955fe91e6ff4a06134b0e47f355d36d3491b18bab9",
+  "primary_strategies": [
+    "A3_COST_AWARE_CONTINUATION",
+    "B3_STATEFUL_BREAKOUT",
+    "E3_ADAPTIVE_RELATIVE_STRENGTH",
+    "RAOE_EARLY_RECOVERY",
+    "RAOE_TREND_PULLBACK",
+    "RAOE_BREAKOUT_RETEST"
+  ],
+  "frozen_v42": "UNCHANGED_VERIFIED",
+  "frozen_v44": "UNCHANGED_VERIFIED",
+  "reviewed_bridge": "VERIFIED",
+  "original_v49_control_compatibility": "PASS in seventeen-account clone rehearsal",
+  "installed_api": {
+    "startup": "PASS",
+    "health": "PASS",
+    "readiness": "PASS",
+    "unauthenticated": "401 for primary and learning",
+    "authenticated_primary": "PASS",
+    "activity": "PASS",
+    "learning": "PASS",
+    "collector_restart": "PASS",
+    "realized_positions_collected": 9,
+    "actual_outcomes_training": "INSUFFICIENT_EVIDENCE",
+    "all_17_financial_ledger_seals_unchanged_after_api_and_collection": true,
+    "reconciliation": [],
+    "real_time_network": false,
+    "worker_heartbeat": "Historical clone; no fresh trading-worker heartbeat claimed"
+  },
+  "live_trading_authorized": false
+}

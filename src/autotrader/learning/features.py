@@ -59,8 +59,9 @@ def build(e: dict[str, Any], strategy: str, observed_at: str) -> dict[str, Any]:
     peers = r['benchmarks']
     if set(peers) != {'BTC-EUR', 'ETH-EUR'}:
         raise ValueError('missing_benchmark_features')
-    for frame in [*r['timeframes'].values(), *peers.values()]:
-        if frame.get('unknown_reason') or stamp(frame['last_closed_at']) > candle:
+    for minutes, frame in [*((int(k), f) for k, f in r['timeframes'].items()), *((5, f) for f in peers.values())]:
+        if minutes not in (5,15,60,240):raise ValueError('unsupported_timeframe')
+        if frame.get('unknown_reason') or stamp(frame['last_closed_at'])+timedelta(minutes=minutes) > cutoff:
             raise ValueError('unavailable_context')
     returns = [finite(peers[s]['return_30m']) for s in ('BTC-EUR', 'ETH-EUR')]
     mean = sum(returns)/2

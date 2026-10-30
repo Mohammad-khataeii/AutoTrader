@@ -24,6 +24,16 @@ class Store:
           id TEXT PRIMARY KEY, observed_at TEXT NOT NULL, payload TEXT NOT NULL,
           status TEXT NOT NULL DEFAULT 'PENDING', result TEXT, prediction TEXT);
         CREATE INDEX IF NOT EXISTS pending ON observations(status,observed_at);
+        CREATE TABLE IF NOT EXISTS funnel (
+          id TEXT PRIMARY KEY, observed_at TEXT NOT NULL, stage TEXT NOT NULL,
+          disposition TEXT NOT NULL, reason TEXT, profile TEXT, evidence_hash TEXT NOT NULL,
+          priced_plan INTEGER NOT NULL, metadata TEXT NOT NULL);
+        CREATE INDEX IF NOT EXISTS funnel_time ON funnel(observed_at,id);
+        CREATE TABLE IF NOT EXISTS market_observations (
+          id TEXT PRIMARY KEY, observed_at TEXT NOT NULL, payload TEXT NOT NULL,
+          status TEXT NOT NULL DEFAULT 'PENDING', result TEXT, prediction TEXT, next_attempt_at TEXT);
+        CREATE INDEX IF NOT EXISTS market_pending ON market_observations(status,observed_at,id);
+        CREATE TABLE IF NOT EXISTS actual_events (id TEXT PRIMARY KEY, payload TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS state (key TEXT PRIMARY KEY, payload TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, payload TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS realized (id TEXT PRIMARY KEY, payload TEXT NOT NULL);

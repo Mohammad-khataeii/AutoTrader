@@ -31,7 +31,7 @@ def independent(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def evaluate(rows: list[dict[str, Any]], previous_holdout_end: str | None = None, *,
              sealed_windows: list[list[str]] | None = None,
              baseline_profile: str | None = None) -> dict[str, Any]:
-    available = [r for r in rows if not any(stamp(lo) <= stamp(r['observed_at']) <= stamp(hi) for lo, hi in sealed_windows or [])]
+    available = [r for r in rows if not any(stamp(r['observed_at']) <= stamp(hi) and stamp(r['target']['end_at']) >= stamp(lo) for lo, hi in sealed_windows or [])]
     episodes = independent(available)
     base = {'config': CONFIG, 'rows': len(rows), 'independent_episodes': len(episodes),
             'primary_promotion': False, 'baseline_profile': baseline_profile,

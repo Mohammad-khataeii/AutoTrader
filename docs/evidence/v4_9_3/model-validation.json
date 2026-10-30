@@ -1,0 +1,14 @@
+{
+  "audit_sha256": "ca39f48f2e640b923f752cb74e41213169c27574589f7242c5f30c77255c819b",
+  "historical_policy_comparison": "INCONCLUSIVE",
+  "market_independent_episodes": 4,
+  "market_task_is_non_executable": true,
+  "primary_policy_changed": false,
+  "qualified_challengers": 0,
+  "real_data_result": "INSUFFICIENT_EVIDENCE",
+  "required_days": 45,
+  "required_episodes": 240,
+  "source_fingerprint": "f8ae37f2d95db79f74c0bf772720874b44cef2cbecf9a22de2c3397f1d6cf84b",
+  "status": "PASS",
+  "synthetic_qualification_test": "Estimator/validation engineering acceptance only; no prospective performance claim"
+}

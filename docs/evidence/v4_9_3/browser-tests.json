@@ -1,0 +1,21 @@
+{
+  "actual_nginx_linux_image": true,
+  "backend": "Deterministic API engineering fixtures; not prospective performance",
+  "cases": [
+    "legacy research views",
+    "stage-aware observations",
+    "relief/recovery/unknown context",
+    "unpriced versus corrupt data",
+    "qualification/quarantine/staleness",
+    "overflow/page errors"
+  ],
+  "failures": 0,
+  "report_sha256": "14e12b16ae9657f5cb326aaa01fef54f430de4fdbe6dc0c2ec54ea92e194c980",
+  "source_fingerprint": "f8ae37f2d95db79f74c0bf772720874b44cef2cbecf9a22de2c3397f1d6cf84b",
+  "status": "PASS",
+  "tests": 38,
+  "widths": [
+    375,
+    1440
+  ]
+}
