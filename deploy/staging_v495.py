@@ -143,7 +143,7 @@ def main():
         raise ValueError('release_gates_incomplete')
     for name,digest in readiness['gates'].items():
         if Path(name).name!=name:raise ValueError('unsafe_gate_path')
-        data=(ROOT/'docs/evidence/v4_9_4'/name).read_bytes()
+        data=(ROOT/'docs/evidence/v4_9_5'/name).read_bytes()
         if (hashlib.sha256(data).hexdigest()!=digest or json.loads(data).get('status')!='PASS'
                 or json.loads(data).get('source_fingerprint')!=manifest['source_fingerprint']):raise ValueError('release_gate_hash_failed')
     os.umask(0o077)
@@ -173,7 +173,7 @@ def main():
         source_manifest_sha256=hashlib.sha256((ROOT/'release-manifest.json').read_bytes()).hexdigest(),
         engineering_verification_hashes=dict(readiness['gates']),
         financial_verification_hashes={'stage_a_seventeen_ledger_restore':readiness['gates']['financial-restore.json']},
-        readiness_sha256=hashlib.sha256((ROOT/'docs/evidence/v4_9_4/staging-readiness.json').read_bytes()).hexdigest())
+        readiness_sha256=hashlib.sha256((ROOT/'docs/evidence/v4_9_5/staging-readiness.json').read_bytes()).hexdigest())
     save(directory/'authorization-binding.json',task_binding)
     save(directory/'authorization-claim-result.json',claim(BASE/'ops'/('authorization-'+policy['task_id']+'.json'),task_binding))
     if (directory/'activation-failed.json').exists():raise ValueError('failed_release_requires_separately_approved_correction')
