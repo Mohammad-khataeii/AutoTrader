@@ -138,7 +138,7 @@ class PersonalPaperRuntime:
             closed = [c for c in candidate.market.candles if c.timestamp.timestamp()+300 <= cycle.as_of.timestamp()]
             volumes = [c.volume for c in closed[-21:-1]]
             average_volume = sum(volumes, D(0))/len(volumes) if volumes else D(0)
-            learning_context = {'version':'4.9.4-market-observation.1',
+            learning_context = {'version':'4.9.5-market-observation.1',
                 'volume_ratio':str(closed[-1].volume/average_volume) if closed and average_volume>0 else None,
                 'close':str(closed[-1].close) if closed else None,
                 'cutoff':cycle.as_of.isoformat(),'regime':learning_snapshot,'market_state':observed_state,
@@ -215,11 +215,24 @@ class PersonalPaperRuntime:
             assert ask is not None
             risk = RiskEngine(LIMITS).evaluate_entry(portfolio, market.pair, quote, ask, stop, entries_today,
                 D(current['daily_equity_change'] or 0), D(current['weekly_equity_change'] or 0))
-            is_hourly_bearish = signal.evidence.get('raoe_regime', {}).get('timeframes', {}).get('60', {}).get('trend') == 'BEARISH'
+            raoe_regime = signal.evidence.get('raoe_regime', {})
+            timeframes = raoe_regime.get('timeframes', {})
+            benchmarks = raoe_regime.get('benchmarks', {})
+            btc_bench = benchmarks.get('BTC-EUR', {})
+            is_hourly_bearish = timeframes.get('60', {}).get('trend') == 'BEARISH'
+            is_15m_bearish = timeframes.get('15', {}).get('trend') == 'BEARISH'
+            is_unfavorable_setup = ((signal.strategy_id == 'RAOE_EARLY_RECOVERY' and (is_hourly_bearish or is_15m_bearish))
+                                    or (signal.strategy_id == 'RAOE_TREND_PULLBACK' and is_hourly_bearish))
+            btc_trend = btc_bench.get('trend')
+            btc_return_30m = btc_bench.get('return_30m')
+            btc_dumping = btc_trend == 'BEARISH' or (btc_return_30m is not None and Decimal(str(btc_return_30m)) < Decimal('-0.005'))
+            macro_bearish = raoe_regime.get('benchmark') == 'RISK_OFF' or btc_dumping
             accepted = (signal.evidence['entry_eligible'] and risk.accepted
                         and signal.symbol not in selected_symbols
                         and not recent_symbol_loss
-                        and not is_hourly_bearish)
+                        and not is_hourly_bearish
+                        and not is_unfavorable_setup
+                        and not macro_bearish)
             reason = ','.join(signal.evidence['reasons'] or risk.reasons) if not accepted else None
             if signal.symbol in selected_symbols:
                 reason = 'redundant_strategy_same_asset'
@@ -227,6 +240,10 @@ class PersonalPaperRuntime:
                 reason = 'symbol_loss_cooldown'
             elif is_hourly_bearish:
                 reason = 'asset_hourly_trend_bearish'
+            elif is_unfavorable_setup:
+                reason = 'unfavorable_timeframe_setup'
+            elif macro_bearish:
+                reason = 'macro_market_downtrend'
             decision = TradingDecision(identity, signal.symbol, utc_now(), DecisionAction.BUY if accepted else DecisionAction.WAIT,
                 [signal.signal_id], None, quote, quantize_down(quote/(ask*D('1.005')), market.pair.quantity_step),
                 ask, stop, (D(plan['targets'][0]), D(plan['targets'][1]), D(plan['targets'][2])) if len(plan['targets'])==3 else (), accepted, reason,

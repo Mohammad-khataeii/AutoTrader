@@ -1,0 +1,9 @@
+{
+  "all_17_financial_seals_unchanged": true,
+  "installed_api_and_collector_restart": "PASS",
+  "original_funding_and_manifests_preserved": true,
+  "production_not_restarted_in_stage_a": true,
+  "source": "runtime-compatibility.json and financial-restore.json; real restored ledgers on internal local network",
+  "source_fingerprint": "85a3158717bbd4d52788de3640442e32ff1d8df17bcd92512d5ed9d6d2e701ff",
+  "status": "PASS"
+}

@@ -14,8 +14,8 @@ from typing import Any
 from autotrader.learning.features import finite, stamp
 from autotrader.research.data import canonical, digest
 
-MARKET_SCHEMA = 'completed-market/4.9.4.1'
-MARKET_TARGET = 'midpoint-path/4.9.4.1'
+MARKET_SCHEMA = 'completed-market/4.9.5.1'
+MARKET_TARGET = 'midpoint-path/4.9.5.1'
 MARKET_NAMES = ('return_30m','relative_return_30m','atr_fraction','volume_ratio',
                 'volume_missing','benchmark_return_30m','ema9_distance_atr',
                 'asset_15m_bullish','asset_hour_bearish','higher_unknown',
@@ -185,7 +185,7 @@ def summary(store: Any) -> dict[str, Any]:
     latest=[]
     for identity,observed,state,payload in store.db.execute('SELECT id,observed_at,stage,metadata FROM funnel ORDER BY observed_at DESC,id LIMIT 15'):
         latest.append({'id':identity,'observed_at':observed,'stage':state,**json.loads(payload)})
-    return {'version':'staged-funnel/4.9.4.1','unique_signals':sum(stages.values()),'stages':stages,
+    return {'version':'staged-funnel/4.9.5.1','unique_signals':sum(stages.values()),'stages':stages,
             'dispositions':dispositions,'coverage_reasons':reasons,'latest':latest,
             'market_counts':dict(store.db.execute('SELECT status,count(*) FROM market_observations GROUP BY status')),
             'priced_plans':store.db.execute('SELECT count(*) FROM funnel WHERE priced_plan=1').fetchone()[0],

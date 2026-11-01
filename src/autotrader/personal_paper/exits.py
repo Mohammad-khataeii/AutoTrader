@@ -55,7 +55,7 @@ def assess_exit(strategy: str, opened_at: datetime, entry_evidence: dict[str, An
                 'noise_policy':'Ordinary five-minute volatility does not authorize a continuation discretionary exit'}
     f = enrich(calculate_features(closed), closed, as_of)
     prior = calculate_features(closed[:-1])
-    post_entry = closed[-2].timestamp >= opened_at
+    post_entry = len([c for c in closed if c.timestamp >= opened_at]) >= 6 and closed[-2].timestamp >= opened_at
     def bearish(feature: Any) -> bool:
         close = number(feature.metadata.get('last_close'))
         return bool(feature.data_quality is DataQuality.GOOD and feature.ema_21 and feature.ema_50

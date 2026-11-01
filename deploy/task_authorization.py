@@ -20,6 +20,10 @@ TASK_V494='autotrader-v494-2026-11-01'
 REQUEST_V494='cf63f563c870f03a91da03e12086ee2a896b58914423510c9a0361577db746ab'
 START_V494='070d3f8107b67ed1db6b93b40022f481b66c985e'
 
+TASK_V495='autotrader-v495-2026-11-01'
+REQUEST_V495='c5cff24252b11f61d6684ca7cb1389c7b76ae69f7b58f69da76a6dd10746231f'
+START_V495='39c88aa94602f90a2a472a15c8df59f12dfce9cf'
+
 TASK=TASK_V493
 REQUEST=REQUEST_V493
 START=START_V493
@@ -33,7 +37,9 @@ def canonical(value: Any) -> bytes:
 
 def bind(policy: dict[str,Any],manifest: dict[str,Any],images: dict[str,Any],base: Path,*,verify_archives: bool=True) -> dict[str,Any]:
     task_id=policy.get('task_id')
-    if task_id==TASK_V494:
+    if task_id==TASK_V495:
+        task,req,start,prefix=TASK_V495,REQUEST_V495,policy.get('starting_commit',START_V495),'4.9.5'
+    elif task_id==TASK_V494:
         task,req,start,prefix=TASK_V494,REQUEST_V494,START_V494,'4.9.4'
     elif task_id==TASK_V493:
         task,req,start,prefix=TASK_V493,REQUEST_V493,START_V493,'4.9.3'

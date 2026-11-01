@@ -1,0 +1,29 @@
+{
+  "authorization": "Single conditional user-authorized task; durable exact commit/artifact claim required before activation",
+  "created_at": "2026-11-01T20:55:48.492569+00:00",
+  "gates": {
+    "application-source.json": "f3f47c7ff39688966bd8bde4ecafe68ac2c4331ac8137dab995068fb59bbc798",
+    "audit-analysis.json": "60e0e2519861201a2408516966955381d64ced682e294e444e7c4751d8c76fda",
+    "backend-tests.json": "7e093499cee9deaf791aec489ae17b619f605d575181af1011da701a5ba68179",
+    "browser-tests.json": "0c8a9a7e33a6179325616104b1768b4c9cf92280f27eaa70e1b05259047e1d44",
+    "deployment-idempotency.json": "26e5782d9de2f941da8b7530603ab8ee51148f5dcc0da0ca4a34b3e03339c858",
+    "financial-restore.json": "74674ffffed96d4a697dd8fbf873eabe79326675785aab4a3dc1d25d15c6b209",
+    "frontend-tests.json": "bec3302528f1b8bea62b1769a035e7342a40bf62639d4917b7c20d086ee5d1de",
+    "learning-tests.json": "8b5fbbd5a4a972621898cf45a37560bf20ca6d2e19a0662c134e215c99e47905",
+    "linux-tests.json": "372f2f1a66fa24496082e53fd96fecc649b32dc7401ad3ad4dca0b2c1c073372",
+    "model-validation.json": "cc861825de81255df5739950d377a9a456cfc62e10082cb54a1ee92c93cc6514",
+    "restart-recovery.json": "5891ba542056b353d981e667d909555635320bbd2e12138317fe771f4764d887",
+    "runtime-compatibility.json": "8a731800bb72abf0d8e114a7f2e20f05b31720d4036298d2bfd6a711c825ab01"
+  },
+  "prospective_performance_claim": false,
+  "remaining_stage_b_gates": [
+    "full immutable commit/archive/image identities",
+    "fresh financial inventory and safe flat cutover",
+    "17-ledger pre-backup/restore/profile rehearsal",
+    "17-ledger post-backup/restore",
+    "170 core financial seals",
+    "live health/collector/access/image verification"
+  ],
+  "source_fingerprint": "85a3158717bbd4d52788de3640442e32ff1d8df17bcd92512d5ed9d6d2e701ff",
+  "status": "PASS"
+}

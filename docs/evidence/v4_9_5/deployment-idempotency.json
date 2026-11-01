@@ -1,0 +1,20 @@
+{
+  "authorization_module_sha256": "d805b6a662fc908aa258e4dafa5b8fb50645b7431c92e5838a7eddc163c6f90d",
+  "coverage": [
+    "single exclusive immutable task claim",
+    "changed artifact/commit/scope refusal",
+    "backup before stop",
+    "17-ledger restore gates before resume",
+    "170 financial seals",
+    "failed financial proof blocks same-release resume",
+    "original seven controls and eight archived controls",
+    "healthy duplicate read-only verification",
+    "no financial database rollback"
+  ],
+  "failures": 0,
+  "helper_sha256": "c96d8a508ba290ff13157cf51512dcb37fb270264fdcde563ea236811116174a",
+  "junit_sha256": "781e0262ba6f17e34e8a5d7d422932ca8d724868e231e20a3e735b012e0e9ee0",
+  "source_fingerprint": "85a3158717bbd4d52788de3640442e32ff1d8df17bcd92512d5ed9d6d2e701ff",
+  "status": "PASS",
+  "tests": 46
+}
