@@ -24,3 +24,4 @@ docs/evidence/*.log
 
 # macOS Finder metadata
 .DS_Store
+deploy/releases/
