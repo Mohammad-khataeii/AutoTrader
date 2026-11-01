@@ -12,9 +12,17 @@ import re
 from pathlib import Path
 from typing import Any
 
-TASK='autotrader-v493-2026-10-30'
-REQUEST='576553e6385141538e3a85a9fa0e0e4e91ff60013050d1d88d3be97f893144ae'
-START='1c1b758f80deac18725167c234469cc0895a0120'
+TASK_V493='autotrader-v493-2026-10-30'
+REQUEST_V493='576553e6385141538e3a85a9fa0e0e4e91ff60013050d1d88d3be97f893144ae'
+START_V493='1c1b758f80deac18725167c234469cc0895a0120'
+
+TASK_V494='autotrader-v494-2026-11-01'
+REQUEST_V494='cf63f563c870f03a91da03e12086ee2a896b58914423510c9a0361577db746ab'
+START_V494='070d3f8107b67ed1db6b93b40022f481b66c985e'
+
+TASK=TASK_V493
+REQUEST=REQUEST_V493
+START=START_V493
 BRANCH='feature/autotrader-v46-intelligent-opportunity-engine'
 SCOPE=Path('/opt/personal-plan/staging')
 
@@ -24,8 +32,15 @@ def canonical(value: Any) -> bytes:
 
 
 def bind(policy: dict[str,Any],manifest: dict[str,Any],images: dict[str,Any],base: Path,*,verify_archives: bool=True) -> dict[str,Any]:
-    required={'task_id':TASK,'request_sha256':REQUEST,'starting_commit':START,'branch':BRANCH,
-              'release_prefix':'4.9.3','maximum_distinct_releases':1,'host_alias':'aruba-vps',
+    task_id=policy.get('task_id')
+    if task_id==TASK_V494:
+        task,req,start,prefix=TASK_V494,REQUEST_V494,START_V494,'4.9.4'
+    elif task_id==TASK_V493:
+        task,req,start,prefix=TASK_V493,REQUEST_V493,START_V493,'4.9.3'
+    else:
+        raise ValueError('task_authorization_policy_unrecognized')
+    required={'task_id':task,'request_sha256':req,'starting_commit':start,'branch':BRANCH,
+              'release_prefix':prefix,'maximum_distinct_releases':1,'host_alias':'aruba-vps',
               'directory':str(SCOPE),'compose_project':'autotrader-aruba-test',
               'backend_binding':'127.0.0.1:18000','frontend_binding':'127.0.0.1:13000',
               'paper_only':True,'live_trading_authorized':False,'automatic_primary_model_promotion':False,
@@ -33,9 +48,9 @@ def bind(policy: dict[str,Any],manifest: dict[str,Any],images: dict[str,Any],bas
     if any(policy.get(k)!=v for k,v in required.items()) or base!=SCOPE:
         raise ValueError('task_authorization_scope_failed')
     commit=manifest.get('commit','')
-    if not re.fullmatch('[a-f0-9]{40}',commit) or commit==START or images.get('commit')!=commit:
+    if not re.fullmatch('[a-f0-9]{40}',commit) or commit==start or images.get('commit')!=commit:
         raise ValueError('task_authorization_commit_failed')
-    if not manifest.get('version','').startswith('4.9.3') or images.get('source_fingerprint')!=manifest.get('source_fingerprint'):
+    if not manifest.get('version','').startswith(prefix) or images.get('source_fingerprint')!=manifest.get('source_fingerprint'):
         raise ValueError('task_authorization_source_failed')
     hashes={key:images.get(key) for key in ('source_archive_sha256','image_archive_sha256')}
     hashes['source_fingerprint']=manifest.get('source_fingerprint')
@@ -51,7 +66,7 @@ def bind(policy: dict[str,Any],manifest: dict[str,Any],images: dict[str,Any],bas
                 raise ValueError('task_authorization_archive_scope_failed')
             with path.open('rb') as stream:actual=hashlib.file_digest(stream,'sha256').hexdigest()
             if actual!=hashes[key]:raise ValueError('task_authorization_archive_hash_failed')
-    return {'schema':'autotrader-task-claim/1','task_id':TASK,'request_sha256':REQUEST,
+    return {'schema':'autotrader-task-claim/1','task_id':task,'request_sha256':req,
             'commit':commit,'version':manifest['version'],'artifacts':hashes,
             'images':{key:images[key] for key in ('app','frontend')},
             'scope':required,'authorization':'EXPLICIT_SINGLE_TASK_USER_AUTHORIZATION',

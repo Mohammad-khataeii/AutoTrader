@@ -6,6 +6,8 @@ COPY . .
 RUN npm run build
 
 FROM nginx:1.30.6-alpine
+ARG RELEASE_COMMIT=unbound
+LABEL org.opencontainers.image.revision=${RELEASE_COMMIT}
 RUN apk del nginx-module-xslt nginx-module-image-filter nginx-module-geoip nginx-module-njs nginx-module-acme \
     && apk upgrade --no-cache
 COPY --from=build /app/dist /usr/share/nginx/html

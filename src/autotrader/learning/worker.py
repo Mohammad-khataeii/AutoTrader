@@ -132,7 +132,7 @@ def _locked_tick(settings: Any, root: Path) -> None:
                 try:
                     result['features'] = build(e, payload['strategy_id'], row['entry_observed_at'].isoformat())
                     result['planned_risk_eur'] = e['economics']['measurements']['expected_net_stop_loss_eur']
-                except (KeyError, ValueError, TypeError, ZeroDivisionError) as error:
+                except (KeyError, ValueError, TypeError, ZeroDivisionError, AttributeError) as error:
                     result['feature_failure'] = type(error).__name__
                 store.db.execute('INSERT OR IGNORE INTO realized VALUES (?,?)', (row['position_id'], canonical(result).decode()))
         run_training(store, now);train_market(store, now);publish(store, now)

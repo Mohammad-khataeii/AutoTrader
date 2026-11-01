@@ -138,7 +138,7 @@ class PersonalPaperRuntime:
             closed = [c for c in candidate.market.candles if c.timestamp.timestamp()+300 <= cycle.as_of.timestamp()]
             volumes = [c.volume for c in closed[-21:-1]]
             average_volume = sum(volumes, D(0))/len(volumes) if volumes else D(0)
-            learning_context = {'version':'4.9.3-market-observation.1',
+            learning_context = {'version':'4.9.4-market-observation.1',
                 'volume_ratio':str(closed[-1].volume/average_volume) if closed and average_volume>0 else None,
                 'close':str(closed[-1].close) if closed else None,
                 'cutoff':cycle.as_of.isoformat(),'regime':learning_snapshot,'market_state':observed_state,
@@ -196,18 +196,37 @@ class PersonalPaperRuntime:
             await repo.record_mark(market.order_book)
             current = await repo.snapshot()
             portfolio = Portfolio(D(current['available_cash']))
-            portfolio.positions = {p.symbol: p for p in await repo.list_positions() if p.closed_at is None and p.quantity>0}
+            all_positions = await repo.list_positions()
+            portfolio.positions = {p.symbol: p for p in all_positions if p.closed_at is None and p.quantity>0}
+            today_utc = utc_now().date()
+            entries_today = len([p for p in all_positions if p.opened_at and p.opened_at.date() == today_utc])
+            loss_cooldown_seconds = 7200
+            recent_symbol_loss = False
+            for p in reversed(all_positions):
+                if p.symbol == signal.symbol and p.closed_at is not None:
+                    age_seconds = (utc_now() - p.closed_at).total_seconds()
+                    if age_seconds < loss_cooldown_seconds and (p.realized_pnl or Decimal(0)) < Decimal(0):
+                        recent_symbol_loss = True
+                        break
             plan = signal.evidence['entry_plan']
             quote = D(signal.evidence.get('sizing', {}).get('quote_budget_eur', '0'))
             stop = D(plan['stop'])
             ask = market.order_book.best_ask
             assert ask is not None
-            risk = RiskEngine(LIMITS).evaluate_entry(portfolio, market.pair, quote, ask, stop, 0,
+            risk = RiskEngine(LIMITS).evaluate_entry(portfolio, market.pair, quote, ask, stop, entries_today,
                 D(current['daily_equity_change'] or 0), D(current['weekly_equity_change'] or 0))
-            accepted = signal.evidence['entry_eligible'] and risk.accepted and signal.symbol not in selected_symbols
+            is_hourly_bearish = signal.evidence.get('raoe_regime', {}).get('timeframes', {}).get('60', {}).get('trend') == 'BEARISH'
+            accepted = (signal.evidence['entry_eligible'] and risk.accepted
+                        and signal.symbol not in selected_symbols
+                        and not recent_symbol_loss
+                        and not is_hourly_bearish)
             reason = ','.join(signal.evidence['reasons'] or risk.reasons) if not accepted else None
             if signal.symbol in selected_symbols:
                 reason = 'redundant_strategy_same_asset'
+            elif recent_symbol_loss:
+                reason = 'symbol_loss_cooldown'
+            elif is_hourly_bearish:
+                reason = 'asset_hourly_trend_bearish'
             decision = TradingDecision(identity, signal.symbol, utc_now(), DecisionAction.BUY if accepted else DecisionAction.WAIT,
                 [signal.signal_id], None, quote, quantize_down(quote/(ask*D('1.005')), market.pair.quantity_step),
                 ask, stop, (D(plan['targets'][0]), D(plan['targets'][1]), D(plan['targets'][2])) if len(plan['targets'])==3 else (), accepted, reason,

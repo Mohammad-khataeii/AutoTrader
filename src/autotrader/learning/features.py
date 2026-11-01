@@ -83,7 +83,7 @@ def build(e: dict[str, Any], strategy: str, observed_at: str) -> dict[str, Any]:
               finite(volume) if volume is not None else 0., mean, (close-ema)/atr,
               (price-stop)/atr, target/price-1, finite(m['net_reward_risk']),
               finite(m['estimated_total_round_trip_cost_eur'])/cost,
-              finite(e.get('pattern_state', {}).get('extension_atr', 0)),
+              finite((e.get('pattern_state') or {}).get('extension_atr', 0)),
               math.log1p(min(finite(liquidity.get('bid_quote', 0)), finite(liquidity.get('ask_quote', 0)))),
               math.sin(observed.hour*math.pi/12), math.cos(observed.hour*math.pi/12),
               finite(c15)/finite(p15)-1 if c15 and p15 else 0.,

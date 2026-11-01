@@ -33,6 +33,8 @@ def execution_stages(pipeline: list[dict[str,Any]], orders: list[Any], filled_or
 
 
 def install(app: FastAPI, service: Any, lab: Any, require_user: Any) -> None:
+    competition_cache: list[Any] = [0.0, None]
+
     @app.get('/api/intelligence',dependencies=[Depends(require_user)])
     async def intelligence(limit: int = Query(30,ge=1,le=100), cursor: int = Query(0,ge=0,le=100000)) -> dict[str, Any]:
         repo=await service.repository()
@@ -101,6 +103,12 @@ def install(app: FastAPI, service: Any, lab: Any, require_user: Any) -> None:
 
     @app.get('/api/intelligence/competition',dependencies=[Depends(require_user)])
     async def competition() -> dict[str,Any]:
+        import time
+        now_mono = time.monotonic()
+        if competition_cache[1] is not None and now_mono - competition_cache[0] < 20.0:
+            cached = competition_cache[1]
+            assert isinstance(cached, dict)
+            return cached
         primary=await service.detail()
         experiments=[]
         for record in await lab.records():
@@ -134,7 +142,10 @@ def install(app: FastAPI, service: Any, lab: Any, require_user: Any) -> None:
                 'reconciliation':detail['reconciliation']})
         path=Path('/app/evidence/v49/research-results.json')
         if not path.is_file(): path=Path(__file__).parents[3]/'docs/evidence/v4_9/research-results.json'
-        return {'primary_strategies':primary.get('strategies',[]),'experiments':experiments,
+        result = {'primary_strategies':primary.get('strategies',[]),'experiments':experiments,
             'historical':json.loads(path.read_text()) if path.is_file() else {'status':'NOT_PUBLISHED'},
             'allocation':'One primary cash pool; experimental EUR500 ledgers are separate and never added to primary equity',
             'estimated_edge':'UNKNOWN','automatic_promotion':False,'read_only':True}
+        competition_cache[0] = now_mono
+        competition_cache[1] = result
+        return result

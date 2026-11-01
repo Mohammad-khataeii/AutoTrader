@@ -1,0 +1,22 @@
+{
+  "errors": 0,
+  "failures": 0,
+  "full_run": {
+    "failed": 0,
+    "junit_sha256": "571f060b20dad814dfc59d8c8bee4c6ad9208c24623a884a066f3161cca9d8ff",
+    "passed": 542,
+    "tests": 542
+  },
+  "host_only_cases": {
+    "count": 5,
+    "reason": "Four Docker orchestration lifecycles and the Docker memory-cap audit run natively; Docker socket intentionally absent in installed-package test container"
+  },
+  "mode": "Installed Linux/AMD64 package, real PostgreSQL/Redis. Full suite plus isolated recheck of emulated crash-worker startup timeout and targeted final collector/deployment checks",
+  "rechecks": {
+    "junit_sha256": "b23f44b57b9dff9aa69a4c81b0dc2e804c6e989dd691b0f77322e4c5852d4b1e",
+    "tests": 43
+  },
+  "source_fingerprint": "76121235ff5442c35ef3d3198e706e5bf1fd185b470b676247f8ddbd49f9a537",
+  "status": "PASS",
+  "tests": 542
+}

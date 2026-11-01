@@ -11,7 +11,7 @@ from autotrader.market_data.synchronization import alignment
 from autotrader.raoe.regime import aggregate, atr, dimension
 
 D = Decimal
-VERSION = 'market-state/4.9.3.1'
+VERSION = 'market-state/4.9.4.1'
 RECIPE = {'version': VERSION, 'scope': 'ISOLATED_RESEARCH_ONLY',
           'breakout_range_atr': '1.5', 'exhaustion_extension_atr': '3',
           'confirmation_volume_ratio': '1.2', 'persistence_bars': 6,
@@ -123,7 +123,7 @@ def shadow_hypotheses(evidence: dict[str, Any], state: dict[str, Any]) -> dict[s
     other = all(gates.get(k) is True for k in ('primary_context_ready','primary_current_candle','primary_local_reclaim','primary_recovery_reclaim'))
     baseline = evidence.get('entry_eligible') is True
     transition = bool(structural and other and state.get('ready') and state.get('state')=='EMERGING_RECOVERY' and state.get('transition_confirmation'))
-    return {'version':'regime-hypotheses/4.9.3.1','approved_baseline':baseline,
+    return {'version':'regime-hypotheses/4.9.4.1','approved_baseline':baseline,
             'confirmed_transition':baseline or transition,
             'confirmed_breakout_retest':bool(structural and other and state.get('state') in {'BULLISH_CONTINUATION','HIGH_VOL_BREAKOUT'} and evidence.get('strategy_id','').endswith(('BREAKOUT_RETEST','BREAKOUT_CONTINUATION'))),
             'patient_execution':'UNOBSERVED_FUTURE_QUOTE_NOT_ASSUMED',
