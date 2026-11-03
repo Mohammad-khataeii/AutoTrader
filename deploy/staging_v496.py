@@ -99,6 +99,23 @@ def financial_state(*, require_flat: bool) -> dict:
     return portfolios
 
 
+def require_perpetuals_flat() -> None:
+    # A previous recovery may have kept the lab tables even if the old UI
+    # cannot show them. Verify retained exposure directly before any cutover.
+    if inventory()["services"].get(LAB, {}).get("state") == "running":
+        raise ValueError("An existing perpetuals worker is running; verify and defer replacement")
+    command = ("exec", "-T", "postgres", "psql", "-X", "-v", "ON_ERROR_STOP=1",
+               "-U", "autotrader", "-d", "autotrader_aruba_staging", "-Atc")
+    relation = dc(*command, "SELECT to_regclass('public.paper_perp_state')").decode().strip()
+    if not relation:
+        return
+    raw = dc(*command, "SELECT COALESCE(payload, 'null') FROM public.paper_perp_state WHERE id=1")
+    state = json.loads(raw)
+    if state is not None and (state.get("entries_enabled") is not False or state.get("pending")
+                              or any(a["position"] for a in state["accounts"])):
+        raise ValueError("Retained perpetuals are armed or open; keep protection and defer")
+
+
 def backup(images: dict) -> dict:
     proof = json.loads(run([sys.executable, str(ROOT / "deploy/staging_backup.py"),
                             "--restore-test", "--candidate-image", images["app"]]))
@@ -170,6 +187,7 @@ def main() -> None:
 
     lock = (BASE / "ops/v49-release.lock").open("a")
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    require_perpetuals_flat()
     directory = BASE / "evidence" / ("v496-" + args.commit[:12])
     directory.mkdir(mode=0o700)
     previous = inventory()["services"]
@@ -203,6 +221,7 @@ def main() -> None:
         before = backup(images)
         save(directory / "backup-restore.json", before)
         financial_state(require_flat=True)
+        require_perpetuals_flat()
         dc("stop", "worker", "research-worker", "backend")
         wrapper = directory / "candidate-compose"
         wrapper.write_text("#!/bin/sh\nexec " + shlex.join(command) + ' "$@"\n')
