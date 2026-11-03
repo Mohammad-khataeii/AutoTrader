@@ -9,6 +9,7 @@ import os
 import re
 import shlex
 import sys
+import tarfile
 import time
 from pathlib import Path
 
@@ -57,16 +58,28 @@ def bound_images(manifest: dict, incoming: Path) -> dict:
             or binding["source_sha256"] != sha(incoming / "source.tar.gz")
             or binding["images_sha256"] != sha(incoming / "images.tar.gz")):
         raise ValueError("Immutable source/image binding mismatch")
-    images = {key: binding[key] for key in ("app", "frontend")}
-    for image in images.values():
-        if not re.fullmatch("sha256:[a-f0-9]{64}", image):
-            raise ValueError("Canonical image configuration ID required")
-        info = json.loads(run(["docker", "image", "inspect", image]))[0]
-        if (info["Id"], info["Os"], info["Architecture"],
-            (info["Config"].get("Labels") or {}).get("org.opencontainers.image.revision")) != (
-            image, "linux", "amd64", commit,
-        ):
-            raise ValueError("Candidate image platform or revision mismatch")
+    images = {}
+    with tarfile.open(incoming / "images.tar.gz", "r:gz") as archive:
+        rows = json.load(archive.extractfile("manifest.json"))
+        for role in ("app", "frontend"):
+            tag = f"autotrader-{role}:{commit}"
+            matches = [r for r in rows if tag in (r["RepoTags"] or [])]
+            if len(matches) != 1:
+                raise ValueError("Candidate image tag missing or ambiguous in archive")
+            config = archive.extractfile(matches[0]["Config"]).read()
+            canonical = "sha256:" + hashlib.sha256(config).hexdigest()
+            if canonical != binding[role]:
+                raise ValueError("Canonical image configuration digest mismatch")
+            info = json.loads(run(["docker", "image", "inspect", tag]))[0]
+            # Legacy storage reports config as Id; containerd may report manifest as Id.
+            descriptor = info.get("Descriptor") or {}
+            loaded_config = (descriptor.get("annotations") or {}).get("config.digest", info["Id"])
+            if (loaded_config, info["Os"], info["Architecture"],
+                (info["Config"].get("Labels") or {}).get("org.opencontainers.image.revision")) != (
+                canonical, "linux", "amd64", commit,
+            ) or not re.fullmatch("sha256:[a-f0-9]{64}", info["Id"]):
+                raise ValueError("Loaded image identity, platform or revision mismatch")
+            images[role] = info["Id"]
     expected = {n.removeprefix("src/autotrader/"): v for n, v in manifest["files"].items()
                 if n.startswith("src/autotrader/") and n.endswith(".py")}
     script = ("import hashlib,json,autotrader;from pathlib import Path;"

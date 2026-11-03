@@ -22,17 +22,23 @@ docker buildx build --platform linux/amd64 --provenance=false --load --build-arg
 docker save "autotrader-app:$commit" "autotrader-frontend:$commit" | gzip -n > "$out/images.tar.gz"
 cp "$archive" "$out/source.tar.gz"
 python3 - "$out" "$commit" <<'PY'
-import hashlib, json, pathlib, subprocess, sys
+import hashlib, json, pathlib, sys, tarfile
 out, commit = pathlib.Path(sys.argv[1]), sys.argv[2]
 def sha(path):
     with path.open('rb') as handle:
         return hashlib.file_digest(handle, 'sha256').hexdigest()
-def image(name):
-    return subprocess.check_output(['docker', 'image', 'inspect', '--format', '{{.Id}}',
-                                    'autotrader-' + name + ':' + commit], text=True).strip()
-binding = dict(commit=commit, app=image('app'), frontend=image('frontend'),
-               manifest_sha256=sha(out/'source/release-manifest.json'),
-               source_sha256=sha(out/'source.tar.gz'), images_sha256=sha(out/'images.tar.gz'))
+with tarfile.open(out/'images.tar.gz', 'r:gz') as archive:
+    manifest = json.load(archive.extractfile('manifest.json'))
+    def image(name):
+        tag = 'autotrader-' + name + ':' + commit
+        row, = (r for r in manifest if tag in (r['RepoTags'] or []))
+        config = archive.extractfile(row['Config']).read()
+        data = json.loads(config)
+        assert (data['os'], data['architecture'], data['config']['Labels']['org.opencontainers.image.revision']) == ('linux', 'amd64', commit)
+        return 'sha256:' + hashlib.sha256(config).hexdigest()
+    binding = dict(commit=commit, app=image('app'), frontend=image('frontend'),
+                   manifest_sha256=sha(out/'source/release-manifest.json'),
+                   source_sha256=sha(out/'source.tar.gz'), images_sha256=sha(out/'images.tar.gz'))
 (out/'binding.json').write_text(json.dumps(binding, indent=2)+'\n')
 PY
 (cd "$out" && shasum -a 256 source.tar.gz images.tar.gz binding.json > SHA256SUMS)
