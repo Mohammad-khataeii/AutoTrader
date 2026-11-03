@@ -50,7 +50,13 @@ u=make_url(get_settings().database_url)
 with psycopg.connect(dbname=sys.argv[1],user=u.username,password=u.password,host=u.host,port=u.port or 5432) as c:
  c.execute('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY')
  snapshot=c.execute('SELECT pg_export_snapshot()').fetchone()[0];seal={}
- for table in json.loads(sys.argv[2]):
+ tables=json.loads(sys.argv[2])
+ if sys.argv[1]=='autotrader_aruba_staging':
+  extra=('paper_perp_state','paper_perp_events','paper_perp_schema_version')
+  present=[table for table in extra if c.execute('SELECT to_regclass(%s)',(table,)).fetchone()[0] is not None]
+  if present and len(present)!=len(extra):raise ValueError('perpetuals_backup_schema_incomplete')
+  tables.extend(present)
+ for table in tables:
   rows=[x[0] for x in c.execute('SELECT to_jsonb(t)::text FROM '+table+' t ORDER BY to_jsonb(t)::text')]
   seal[table]={'rows':len(rows),'sha256':hashlib.sha256(b''.join(r.encode()+b'\\n' for r in rows)).hexdigest()}
  print(json.dumps({'snapshot':snapshot,'financial_seal':seal,'database_size_bytes':c.execute('SELECT pg_database_size(current_database())').fetchone()[0]}),flush=True);sys.stdin.readline();c.rollback()
@@ -74,6 +80,11 @@ async def main():
     for table,expected in r['financial_seal'].items():
      rows=(await c.execute(text('SELECT to_jsonb(t)::text FROM '+table+' t ORDER BY to_jsonb(t)::text'))).scalars().all()
      assert {'rows':len(rows),'sha256':hashlib.sha256(b''.join(x.encode()+b'\\n' for x in rows)).hexdigest()}==expected
+    if 'paper_perp_state' in r['financial_seal']:
+     from autotrader.perpetuals.engine import initial_state,reconcile
+     payload=(await c.execute(text('SELECT payload FROM paper_perp_state WHERE id=1'))).scalar_one()
+     reconcile(json.loads(payload) if payload else initial_state())
+     assert (await c.execute(text('SELECT version_num FROM paper_perp_schema_version'))).scalar_one()=='0001_paper_perpetuals'
     if r['manifest']:
      marker=(await c.execute(text('SELECT manifest_json,manifest_hash FROM shadow_identity WHERE singleton=1'))).one()
      origin=r['manifest'].get('account_origin',r['manifest'])

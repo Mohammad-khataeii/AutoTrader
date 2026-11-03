@@ -3,3 +3,8 @@ dist
 playwright-report
 test-results
 *.log
+.env
+.env.*
+.env-*
+.secrets
+.DS_Store

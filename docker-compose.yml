@@ -29,6 +29,7 @@ x-runtime: &runtime
     ALLOCATION_PROFILE: ${ALLOCATION_PROFILE:-balanced}
     SHADOW_ENABLED: ${SHADOW_ENABLED:-true}
     PERSONAL_PAPER_ENABLED: ${PERSONAL_PAPER_ENABLED:-false}
+    PAPER_PERPETUALS_ENABLED: ${PAPER_PERPETUALS_ENABLED:-false}
     APPROVED_STRATEGY_IDS: ${APPROVED_STRATEGY_IDS:-}
   volumes: [research-data:/app/research:ro, reports:/app/reports]
   restart: unless-stopped
@@ -95,6 +96,19 @@ services:
       retries: 3
       start_period: 120s
     stop_grace_period: 30s
+  perpetuals-worker:
+    <<: *runtime
+    profiles: [perpetuals]
+    command: [python, -m, autotrader.perpetuals.worker]
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      PAPER_PERPETUALS_ENABLED: ${PAPER_PERPETUALS_ENABLED:-false}
+      PAPER_TRADING_ENABLED: "true"
+      LIVE_TRADING_ENABLED: "false"
+      DATABASE_URL: postgresql+asyncpg://autotrader:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}@postgres:5432/${PAPER_PERPETUALS_DATABASE_NAME:-autotrader}
+    volumes: []
+    depends_on:
+      backend: {condition: service_healthy}
   frontend:
     image: ${COMPOSE_PROJECT_NAME:-autotrader-v41}-frontend:${AUTOTRADER_IMAGE_TAG:-4.2.0}
     build: {context: ./frontend}

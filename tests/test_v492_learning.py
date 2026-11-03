@@ -260,5 +260,5 @@ def test_api_learning_requires_auth_and_reports_running_backend(monkeypatch,tmp_
         assert client.get('/api/personal-paper/learning').status_code==401
         response=client.get('/api/personal-paper/learning',auth=('admin','change-me'))
         assert response.status_code==200
-        assert response.json()['backend_version']==app.version=='4.9.5-rc.1'
+        assert response.json()['backend_version']==app.version=='4.9.6-rc.1'
         assert response.json()['status']=='WAITING_FOR_COLLECTOR'

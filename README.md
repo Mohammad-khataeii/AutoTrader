@@ -1,4 +1,8 @@
-# Personal Plan — V4.9.3 paper release
+# Personal Plan — V4.9.6 paper perpetuals candidate
+
+The optional **Perpetuals** lab compares 1×, 3× and 10× isolated BTC/USDT perpetual accounts with simulated funds and public market data. It has its own worker and history, and starts with new entries paused. See the [strategy research and simulator design](docs/V4_9_6_PERPETUALS.md) and the [gated Aruba staging handoff](docs/V4_9_6_RELEASE_HANDOFF.md).
+
+## Historical V4.9.3 paper release
 
 V4.9.3 separates normal unpriced rejections from genuine data corruption, adds isolated market-state and midpoint-path learning, and improves public-data scheduling. The primary admission, risk and stop policies remain unchanged because independent evidence is insufficient. See the [engineering report](docs/V4_9_3_ENGINEERING_REPORT.md) and [release/recovery handoff](docs/V4_9_3_RELEASE_HANDOFF.md).
 

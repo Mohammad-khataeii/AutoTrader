@@ -1503,3 +1503,9 @@ dialog h2 {
 
 .plan-inspector { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 1rem 0; }
 .plan-inspector > div { min-width: 0; overflow-wrap: anywhere; }
+
+.perp-accounts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 1rem;
+}

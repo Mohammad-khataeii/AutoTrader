@@ -2,8 +2,11 @@
 .venv
 .tools
 .data
-.env
-.secrets
+**/.env
+**/.env.*
+**/.env-*
+**/.secrets
+deploy/releases
 *.db
 **/__pycache__
 frontend/node_modules
@@ -18,8 +21,6 @@ docs/evidence/v4_6_rc2/*
 !docs/evidence/v4_7
 docs/evidence/v4_7/*
 !docs/evidence/v4_7/research-results.json
-.env.local
-.env-dashboard-password
 **/.DS_Store
 
 !docs/evidence/v4_7_1

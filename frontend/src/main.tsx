@@ -25,6 +25,7 @@ const TradeGates = lazy(() => import("./TradeGates").then(m => ({ default: m.Tra
 import { Overview } from "./Overview";
 import { Dashboard } from "./Dashboard";
 import { PersonalPaper } from "./PersonalPaper";
+const Perpetuals = lazy(() => import("./Perpetuals").then(m => ({ default: m.Perpetuals })));
 const Opportunities = lazy(() => import("./Opportunities").then(m => ({ default: m.Opportunities })));
 const StrategiesWorkspace = lazy(() => import("./Opportunities").then(m => ({ default: m.StrategiesWorkspace })));
 const Trades = lazy(() => import("./Trades").then(m => ({ default: m.Trades })));
@@ -42,6 +43,7 @@ const navigation = [
   { name: "Dashboard", icon: LayoutDashboard },
   { name: "Opportunities", icon: Activity },
   { name: "Strategies", icon: FlaskConical },
+  { name: "Perpetuals", icon: BarChart3 },
   { name: "Activity", icon: ArrowRightLeft },
   { name: "Research", icon: BarChart3 },
   { name: "Decision Insights", icon: Activity },
@@ -63,7 +65,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
     Boolean(system.error || overview.error),
   );
   const primaryStatus = primary.error ? "Unavailable" : !primary.data?.portfolio ? "Checking" : primary.data?.reconciliation?.length || primary.data?.portfolio?.risk_state !== "HEALTHY" ? "Needs attention" : primary.data?.portfolio?.control !== "RUNNING" ? "Paused" : primary.data?.state === "PAPER_EXPERIMENTAL_ACTIVE" && primary.data?.worker_health?.fresh ? "Running" : primary.data?.runtime_matches === false ? "Entry suspended" : "Data syncing";
-  const status = active === "Advanced" ? legacyStatus : primaryStatus;
+  const status = active === "Advanced" ? legacyStatus : active === "Perpetuals" ? "Paper only" : primaryStatus;
   return (
     <div className="app-shell">
       <a className="skip-link" href="#workspace">
@@ -189,6 +191,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
         {active === "Dashboard" && <Dashboard/>}
         {active === "Opportunities" && <><PersonalPaper view="opportunities"/><Opportunities /></>}
         {active === "Strategies" && <><PersonalPaper view="strategies"/><StrategiesWorkspace /></>}
+        {active === "Perpetuals" && <Perpetuals />}
         {active === "Activity" && <><PersonalPaper view="activity"/><Trades /></>}
         {active === "Research" && <><PersonalPaper view="research"/><Research auth={auth} /></>}{" "}
         {active === "Advanced" && (
