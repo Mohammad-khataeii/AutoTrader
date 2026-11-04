@@ -1509,3 +1509,16 @@ dialog h2 {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
   gap: 1rem;
 }
+
+.perp-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: .8rem 1rem;
+  margin: 1rem 0;
+}
+.perp-metrics div { min-width: 0; }
+.perp-metrics dt { color: var(--muted, #66756c); font-size: .8rem; }
+.perp-metrics dd { margin: .2rem 0 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.perp-research-policy { border-top: 1px solid var(--border, #e1e7e1); margin-top: 1rem; padding-top: .75rem; }
+.perp-research-cohort { margin: .7rem 0; }
+.perp-research-cohort summary { cursor: pointer; padding: .5rem 0; }

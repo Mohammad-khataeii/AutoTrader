@@ -23,6 +23,7 @@ class Bar:
     high: Decimal
     low: Decimal
     close: Decimal
+    volume: Decimal | None = None
 
 
 @dataclass(frozen=True)
@@ -70,7 +71,7 @@ class PublicMarket:
         lot = row["lotSizeFilter"]
         return Instrument(*(number(lot[key]) for key in ("qtyStep", "minOrderQty", "minNotionalValue")))
 
-    async def bars(self, start: int, end: int, *, mark: bool) -> dict[int, Bar]:
+    async def bars(self, start: int, end: int, *, mark: bool, include_volume: bool = False) -> dict[int, Bar]:
         result = await self._get(
             "mark-price-kline" if mark else "kline",
             interval="1", start=start, end=end + MINUTE - 1,
@@ -83,7 +84,10 @@ class PublicMarket:
             t = int(row[0])
             if not start <= t <= end or t % MINUTE or t in bars:
                 raise ValueError("Invalid perpetuals candle timestamp")
-            bar = Bar(t, *(number(value) for value in row[1:5]))
+            volume = number(row[5], positive=False) if include_volume and not mark and len(row) > 5 else None
+            if volume is not None and volume < 0:
+                raise ValueError("Invalid perpetuals candle volume")
+            bar = Bar(t, *(number(value) for value in row[1:5]), volume=volume)
             if not bar.low <= min(bar.open, bar.close) <= max(bar.open, bar.close) <= bar.high:
                 raise ValueError("Invalid perpetuals candle range")
             bars[t] = bar

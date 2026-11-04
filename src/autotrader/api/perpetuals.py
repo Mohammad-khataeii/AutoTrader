@@ -6,7 +6,8 @@ from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel, StrictBool
 
 from autotrader.config import Settings
-from autotrader.perpetuals.service import Perpetuals, available
+from autotrader.perpetuals.service import Perpetuals, available, flag
+from autotrader.perpetuals.micro.research import ResearchPreview
 
 
 class EntryControl(BaseModel):
@@ -14,6 +15,12 @@ class EntryControl(BaseModel):
 
 
 def install(app: FastAPI, lab: Perpetuals, settings: Settings, require_user: Callable[..., Any]) -> None:
+    preview = ResearchPreview()
+
+    @app.get("/api/perpetuals/research", dependencies=[Depends(require_user)])
+    async def research_snapshot():
+        return await preview.snapshot(lab, enabled=available(settings) and flag("PERPETUALS_MICRO_RESEARCH_ENABLED"))
+
     @app.get("/api/perpetuals", dependencies=[Depends(require_user)])
     async def snapshot():
         return await lab.snapshot(enabled=available(settings))

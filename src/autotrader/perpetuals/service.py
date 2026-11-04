@@ -25,6 +25,7 @@ from autotrader.perpetuals.engine import (
 )
 from autotrader.perpetuals.market import MINUTE, SYMBOL, PublicMarket, clock_ms
 from autotrader.perpetuals.models import PaperPerpEvent, PaperPerpState
+from autotrader.perpetuals.projections import account_metrics, strategy_summary
 
 log = logging.getLogger(__name__)
 MAX_BATCH = 180
@@ -114,12 +115,14 @@ class Perpetuals:
             equity = account_equity(account, mark)
             accounts.append({
                 **account, "equity": equity,
+                "metrics": account_metrics(account, equity, mark, fresh=enabled and fresh(state)),
                 "position": {**position, "notional": Decimal(position["qty"]) * mark,
                              "liquidation_mark": liquidation_mark(position)}
                 if position and mark is not None else None,
             })
         return json.loads(encode({
             "available": enabled, "policy": state["policy"], "paper_only": True,
+            "strategy": strategy_summary(state["pending"]),
             "symbol": SYMBOL, "currency": "USDT", "source": "Bybit public market data",
             "entries_enabled": state["entries_enabled"], "data_fresh": enabled and fresh(state),
             "feed_status": "DISABLED" if not enabled else "DEGRADED" if state.get("feed_error")
