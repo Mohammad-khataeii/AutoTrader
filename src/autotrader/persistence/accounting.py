@@ -337,6 +337,10 @@ class AccountingRepositoryMixin:
             consumed={int(i): Decimal(q) for i, q in usage['BUY'].items()}, limit_price=limit,
             risk_cost_floor_bps=self.ledger_risk_limits.planned_loss_cost_bps)
 
+    def _entry_quote_error(self, book: OrderBook) -> str | None:
+        """Account-specific entry freshness; protective sells never use this hook."""
+        return None
+
     @retry_economic
     async def submit_order(self, pair: TradingPair, side: Side, order_type: OrderType,
             quantity: Decimal, quote_amount: Decimal, order_book: OrderBook, idempotency_key: str,
@@ -364,6 +368,8 @@ class AccountingRepositoryMixin:
             else:
                 quantity = quantize_down(quantity, pair.quantity_step)
                 error = self._validate_execution(pair, order_book, quantity, fee_bps, slippage_bps)
+                if side is Side.BUY and not error:
+                    error = self._entry_quote_error(order_book)
                 if order_type is OrderType.LIMIT and (limit_price is None or limit_price <= 0):
                     error = "invalid_limit_price"
                 buy_projection = None
@@ -431,6 +437,12 @@ class AccountingRepositoryMixin:
                 evidence: dict[str, Any] = {}
                 if buy_projection is not None:
                     payload['buy_admission'] = buy_projection.payload()
+                    payload['planned_loss_trace'] = {
+                        'modeled_loss_eur': str(buy_projection.planned_loss),
+                        'limit_eur': str(self.ledger_risk_limits.max_planned_loss_per_trade),
+                        'excess_eur': str(max(ZERO, buy_projection.planned_loss-self.ledger_risk_limits.max_planned_loss_per_trade)),
+                        'basis': 'Quantity-aware entry spend less net stop proceeds plus uncovered cost floor',
+                        'limits_unchanged': True}
                 if admission_quality is not None:
                     payload["admission_quality"] = admission_quality.payload()
                 if decision_id:
@@ -578,6 +590,8 @@ class AccountingRepositoryMixin:
                 max_order_base=Decimal(constraints['max_order_base']) if constraints.get('max_order_base') else None)
             fee_rate, slippage = Decimal(payload["fee_bps"]) / 10000, Decimal(payload["slippage_bps"]) / 10000
             error = self._validate_execution(pair, book, row.quantity, fee_rate * 10000, slippage * 10000)
+            if row.side == 'BUY' and not error:
+                error = self._entry_quote_error(book)
             if error:
                 await self._cancel(session, row, error)
                 return self._domain_order(row)

@@ -160,6 +160,8 @@ class PersonalPaperRuntime:
                 ranking(signal, D(committed[identity]))
                 signal.evidence['paper_manifest'] = digest(canonical(repo.manifest))
                 signal.evidence['execution_profile'] = repo.manifest['version']
+                from autotrader.personal_paper.freshness import entry_freshness
+                signal.evidence['entry_quote_freshness'] = entry_freshness(candidate.market.order_book)
                 from autotrader.provenance import release_identity
                 signal.evidence['backend_release'] = release_identity()
                 signal.evidence['learning_context'] = {**learning_context,
@@ -175,6 +177,7 @@ class PersonalPaperRuntime:
                     'raoe_regime': signal.evidence.get('raoe_regime'), 'entry_plan': signal.evidence['entry_plan'],
                     'pipeline': signal.evidence['pipeline'], 'entry_eligible': signal.evidence['entry_eligible'],
                     'quality_policy': signal.evidence['quality_policy'], 'primary_admission': signal.evidence['primary_admission'],
+                    'entry_quote_freshness': signal.evidence['entry_quote_freshness'],
                     'ranking_components': signal.evidence['ranking_components']}
                 all_rows.append(row)
                 ranked.append((candidate, signal, row))

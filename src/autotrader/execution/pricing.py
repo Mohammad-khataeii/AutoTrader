@@ -54,8 +54,10 @@ class ExecutionQuote:
     allocations: tuple[tuple[int, Decimal], ...]
 
     def payload(self) -> dict[str, Any]:
-        return {key: ([[i, str(q)] for i, q in value] if key == "allocations" else str(value))
-                for key, value in asdict(self).items()}
+        return {**{key: ([[i, str(q)] for i, q in value] if key == "allocations" else str(value))
+                   for key, value in asdict(self).items()},
+                'freshness_scope': 'Age at quote calculation; account entry policy is checked separately',
+                'quote_is_guaranteed_future_liquidity': False}
 
 
 def quote_execution(book: OrderBook, side: Side, quantity: Decimal, *,

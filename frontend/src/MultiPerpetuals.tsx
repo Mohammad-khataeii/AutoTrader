@@ -21,6 +21,7 @@ function MultiHistory() {
       <option value="EXIT_SETTLED">Closed trades: wins and losses</option>
       <option value="ENTRY_FILLED">Simulated entries</option>
       <option value="SIGNAL_REJECTED">Rejected hypotheses</option>
+      <option value="RESEARCH_OBSERVED">V2 research observations (no entry authority)</option>
       <option value="ENTRY_MISSED">Missed entries</option>
       <option value="ENTRY_EXPIRED">Expired entries</option>
       <option value="HYPOTHETICAL_FORECAST_REVIEW">Hypothetical forecast reviews</option>
@@ -34,6 +35,9 @@ function MultiHistory() {
       {event.position?.observed_exit?.classification && <p>{words(event.position.observed_exit.classification)}</p>}
       <p>{words(event.reason)}{event.planned_risk_exceeded ? " · Loss exceeded the planned stop risk." : ""}</p>
       {event.observed?.hypothetical_no_fill && <p>Forecast review only; no executable trade or profit is inferred. Barrier order may be ambiguous.</p>}
+      {event.observed?.actual_simulated_outcomes && <p>Linked financial records: {event.observed.actual_simulated_outcomes.fill_event_keys.length} simulated fills · {event.observed.actual_simulated_outcomes.settlements.length} settlements at the review cutoff. These actual records are separate from the candle proxy.</p>}
+      {(event.signal?.decision?.group || event.decision_group) && <p>Decision category: {words(event.signal?.decision?.group ?? event.decision_group)}</p>}
+      {event.observed?.cost_stressed_no_fill_proxy_fraction != null && <p>No-fill cost proxy {pct(Number(event.observed.cost_stressed_no_fill_proxy_fraction) * 100)} · Historical depth, spread and execution remain unknown. {words(event.observed.conservative_first_barrier)} first · {(event.observed.interpretations ?? []).map(words).join(" · ")}</p>}
       <Technical value={event} label="Original event evidence" />
     </details>)}
     <div className="pagination">
@@ -64,6 +68,7 @@ export function MultiPerpetuals() {
       {data && <>
         <Badge tone={data.status === "ACTIVE" && data.scan_fresh ? "positive" : "warning"}>{words(data.status)}</Badge>
         <p>{data.experiment}</p>
+        <p>Worker {words(data.status)} · Scanner {data.scan_fresh ? "Current" : "Stale or unavailable"} · Feature {data.feature_enabled ? "Enabled" : "Disabled"} · Entries {data.entries_enabled ? "Active" : "Paused"}</p>
         {!data.feature_enabled && <p>This independent feature is disabled in the current configuration.</p>}
         {data.feature_enabled && <button disabled={busy || (!data.entries_enabled && (!data.scan_fresh || data.status !== "ACTIVE"))} onClick={() => void control(!data.entries_enabled)}>
           {data.entries_enabled ? "Pause multi-coin entries" : "Enable experimental paper entries"}
@@ -73,11 +78,19 @@ export function MultiPerpetuals() {
         {data.scan && <>
           <p><strong>{data.scan.summary}</strong></p>
           <p>Scan observed {when(data.scan.at)} · {data.scan_fresh ? "Current" : "Stale or incomplete; previous counts are historical"}</p>
+          <p>No-entry explanations for the last detailed scan: {Object.entries(data.scan.no_entry_reasons ?? {}).map(([reason, count]) => `${words(reason)}: ${count}`).join(" · ") || "No refusals recorded"}.</p>
+          <p>V2 research {data.scan.research_v2?.enabled ? "Enabled" : "Disabled"} · No V2 entry authority or financial accounts · Future profitability: unknown.</p>
         </>}
         {data.monitor?.errors && Object.keys(data.monitor.errors).length > 0 && <Technical value={data.monitor} label="Protective data incidents" />}
       </>}
     </Panel>
     {data && <>
+      <Panel>
+        <h3>Decision evidence and sample sizes</h3>
+        <p>{data.decision_counts?.scope ?? "No decision evidence yet."} · {data.decision_counts?.simulated_fills ?? 0} simulated fills · {data.decision_counts?.realized_outcomes ?? 0} settlements · {data.decision_counts?.hypothetical_reviews ?? 0} hypothetical reviews.</p>
+        <p>{Object.entries(data.decision_counts?.groups ?? {}).map(([group, count]) => `${words(group)}: ${count}`).join(" · ")}</p>
+        <p>Rejected hypotheses, V2 observations and candle outcomes do not establish executable profit or a missed profitable trade.</p>
+      </Panel>
       <div className="perp-accounts">
         {(data.accounts ?? []).map((account: Row) => <Panel key={account.leverage}>
           <h3>{account.leverage}× multi-coin account</h3>
@@ -96,11 +109,22 @@ export function MultiPerpetuals() {
           <table><thead><tr><th>Coin / contract</th><th>Price</th><th>Regime / strategy</th><th>Target move</th><th>Cost / qualification</th><th>Status / reason</th></tr></thead>
             <tbody>{(data.scan?.rows ?? []).map((row: Row) => <tr key={row.symbol}>
               <td>{row.base} / {row.symbol}</td><td>{money(row.price)}</td>
-              <td>{words(row.regime)}<br />{row.policy ?? "Not detailed yet"}</td>
+              <td>{words(row.regime)}<br />{row.policy ?? "Not detailed yet"}<br />{words(row.selection)}</td>
               <td>{pct(row.target_move_pct)}</td><td>{pct(row.plans?.[0]?.round_trip_cost_pct)}<br />{words(row.qualification)}</td><td>{words(row.status)}<br />{row.reason ? words(row.reason) : ""}</td>
             </tr>)}</tbody></table>
         </div>
         <Technical value={data.scan?.unsupported ?? []} label="Unsupported or ambiguous asset mappings" />
+        <Technical value={(data.scan?.rows ?? []).filter((row: Row) => row.ranking_components || row.deferred_observation).map((row: Row) => ({ symbol: row.symbol, selection: row.selection, ranking: row.ranking_components, deferred_observation: row.deferred_observation, feature_status: row.feature_status }))} label="Scanner selection and deferred-market evidence" />
+      </Panel>
+      <Panel>
+        <h3>V2 research hypotheses</h3>
+        <p>Experimental long and short observations. Scenario ranking uses conditional net reward, planned risk and cost burden. Success probability and future expected profit remain unknown.</p>
+        {(data.scan?.rows ?? []).flatMap((row: Row) => row.v2_hypotheses ?? []).map((signal: Row) => <details key={signal.id}>
+          <summary>{signal.symbol} · {signal.side === 1 ? "Long" : "Short"} · {signal.policy} · {words(signal.reason)}</summary>
+          <p>Decision {when(signal.decision_at)} · Completed-data cutoff {when(signal.cutoff)} · Stop {money(signal.stop)} · Target {money(signal.target)} · {words(signal.regime)}</p>
+          {(signal.plans ?? []).map((plan: Row) => <p key={plan.leverage}>{plan.leverage}× reference sizing · Conditional net target {money(plan.scenario_gain)} · Planned loss {money(plan.planned_loss)} · Cost {pct(plan.round_trip_cost_pct)} · No allocation or fill.</p>)}
+          <Technical value={signal.decision_context} label="Quote freshness and cohort qualification" />
+        </details>)}
       </Panel>
       <Panel>
         <h3>Latest scenario-qualified opportunities</h3>
@@ -132,6 +156,10 @@ export function MultiPerpetuals() {
         </div>)}
       </Panel>
       <MultiHistory />
+      <Panel><h3>Realized distributions and uncertainty</h3>
+        <p>Closed simulated trades only; net results already include modeled costs. Groups separate market, policy, direction, regime, cohort and month. Cohorts share signals and are not independent evidence.</p>
+        {(data.realized_distributions ?? []).map((stats: Row) => <p key={[stats.symbol, stats.policy, stats.direction, stats.regime, stats.leverage, stats.period].join(":")}>{stats.symbol} · {stats.policy} · {stats.direction === 1 ? "Long" : "Short"} · {words(stats.regime)} · {stats.leverage}× · {stats.period} · {stats.closed} trades / {stats.independent_day_clusters} day clusters · Net/trade {money(stats.net_per_trade)} · Profit factor {num(stats.profit_factor)} · Worst trade {money(stats.worst_net_trade)} · Confidence {words(stats.confidence)}</p>)}
+      </Panel>
     </>}
   </>;
 }

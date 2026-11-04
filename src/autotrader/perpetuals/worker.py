@@ -58,7 +58,8 @@ async def main() -> None:
                 async with httpx.AsyncClient(timeout=4, follow_redirects=False) as scan_client, \
                         httpx.AsyncClient(timeout=3, follow_redirects=False) as protect_client:
                     multi_task = asyncio.create_task(MultiRuntime(MultiLedger(factory),
-                        MultiMarket(scan_client, protect_client)).run(stopping))
+                        MultiMarket(scan_client, protect_client),
+                        research_v2=flag('PAPER_MULTI_V2_RESEARCH_ENABLED')).run(stopping))
                     await legacy_task
             else:
                 await legacy_task

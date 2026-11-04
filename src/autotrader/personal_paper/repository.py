@@ -46,6 +46,11 @@ class PersonalPaperRepository(PersistentTradingRepository):
     ledger_risk_limits = LIMITS
     max_drawdown_fraction = MAX_DRAWDOWN
 
+    def _entry_quote_error(self, book) -> str | None:
+        from autotrader.personal_paper.freshness import entry_freshness
+        result = entry_freshness(book)
+        return None if result['entry_qualified'] else result['reason']
+
     def __init__(self, factory: Any, manifest: dict[str, Any]):
         self.manifest = manifest
         actual = factory.kw['bind'].url.database

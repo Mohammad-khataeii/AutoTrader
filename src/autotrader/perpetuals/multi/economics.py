@@ -67,4 +67,51 @@ def plan(signal: Signal, leverage: int, equity, free, contract: Contract, book: 
         'expected_net_pnl_usdt':None,'win_probability':None,'notional':notional,
         'liquidation_mark':liq,'liquidation_buffer_pct':side*(ticker.mark-liq)/ticker.mark*100,
         'qualification':'EXPERIMENTAL_DETERMINISTIC_SCENARIO','quote_evidence_id':quote.evidence_id,
-        'latency_stress_fraction':latency,'initial_account_equity':equity,'initial_spread':book.spread}
+        'latency_stress_fraction':latency,'initial_account_equity':equity,'initial_spread':book.spread,
+        'economic_components': {
+            'gross_directional_room_fraction':room,
+            'conditional_target_gross_usdt':quantity*side*(target-mid),
+            'entry_cost_usdt':quantity*side*(quote.entry-mid),
+            'exit_now_cost_usdt':quantity*side*(mid-quote.exit_now),
+            'entry_depth_impact_usdt':quantity*side*(quote.entry/(1+side*SLIP)-(book.asks[0][0] if side==1 else book.bids[0][0])),
+            'exit_now_depth_impact_usdt':quantity*side*((book.bids[0][0] if side==1 else book.asks[0][0])-quote.exit_now/(1-side*SLIP)),
+            'entry_fee_estimate_usdt':quantity*quote.entry*FEE,
+            'exit_target_fee_estimate_usdt':quantity*target*exit_factor*FEE,
+            'spread_fraction':book.spread,
+            'spread_already_in_depth_vwap':True,
+            'residual_slippage_per_side':SLIP,
+            'fee_per_side':FEE,'latency_stress_usdt':quantity*mid*latency,
+            'funding_exposure':'WINDOW_EXCLUDES_NEXT_FUNDING_NOT_PREDICTED_ZERO',
+            'expected_adverse_excursion':None,'planned_stop_loss_usdt':loss,
+            'conditional_target_net_usdt':gain,'success_probability':None,
+            'cost_to_gross_target_ratio':max(D(0),-net(mid))/(quantity*side*(target-mid)),
+            'account_notional_fraction':notional/equity,
+            'book_age_ms':now-book.exchange_at,'mark_age_ms':now-ticker.exchange_at,
+            'expected_net_profit':None,'confidence':'UNKNOWN',
+            'components_are_additive':False,
+            'component_scope':'Entry/exit totals include spread, impact and residual slippage; detail components explain those totals, not additional charges'}}
+
+
+def cohort_plans(signal, state, contract, book, ticker, now, equity_fn):
+    """Evaluate all cohorts independently, then retain V1 matched admission.
+
+    A passing small cohort never forces a larger cohort to accept risk. Failed
+    cohorts retain their own reason and no plan is silently resized to match.
+    """
+    from autotrader.perpetuals.multi.policy import COHORTS
+    plans, outcomes = [], []
+    for leverage in COHORTS:
+        try:
+            proposal = plan(signal, leverage, equity_fn(state, str(leverage), now=now),
+                            D(state['accounts'][str(leverage)]['cash']), contract, book, ticker, now)
+            plans.append(proposal)
+            outcomes.append({'leverage':leverage,'status':'SCENARIO_PASSED', 'plan':proposal})
+        except (ValueError, ArithmeticError) as error:
+            outcomes.append({'leverage':leverage,'status':'REJECTED','reason':str(error)})
+    return plans, outcomes
+
+
+def opportunity_rank(plans):
+    """Rank scenario robustness/cost burden, never a guessed win probability."""
+    return (min(D(p['scenario_gain'])/D(p['planned_loss']) for p in plans),
+            -max(D(p['economic_components']['cost_to_gross_target_ratio']) for p in plans))

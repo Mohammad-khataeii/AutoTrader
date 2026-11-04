@@ -25,7 +25,9 @@ def install(app: FastAPI, ledger: MultiLedger, settings: Settings, require_user:
     @app.get('/api/perpetuals/multi',dependencies=[Depends(require_user)])
     async def snapshot():
         body=await ledger.snapshot()
-        body.update(feature_enabled=enabled(),paper_only=True,real_orders_enabled=False)
+        body.update(feature_enabled=enabled(),paper_only=True,real_orders_enabled=False,
+                    research_v2_enabled=enabled() and flag('PAPER_MULTI_V2_RESEARCH_ENABLED'),
+                    research_v2_entry_authority=False)
         return json.loads(encode(body))
 
     @app.get('/api/perpetuals/multi/history',dependencies=[Depends(require_user)])

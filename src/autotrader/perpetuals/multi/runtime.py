@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import asyncio
-from collections import defaultdict
+from collections import Counter, defaultdict
 import json
 import logging
 from time import monotonic
@@ -15,21 +15,25 @@ from sqlalchemy import select
 from autotrader.perpetuals.market import MINUTE,clock_ms
 from autotrader.perpetuals.micro.execution import vwap
 from autotrader.perpetuals.multi.contracts import Contract,liquidation,maintenance
-from autotrader.perpetuals.multi.economics import plan
+from autotrader.perpetuals.multi.economics import cohort_plans, opportunity_rank
 from autotrader.perpetuals.multi.ledger import MultiLedger,Refused,equity
 from autotrader.perpetuals.multi.market import MultiMarket
 from autotrader.perpetuals.multi.models import MultiScan
 from autotrader.perpetuals.multi.policy import COHORTS,D,FEE,SLIP,encode
-from autotrader.perpetuals.multi.scanner import dashboard_assets,map_universe,screen
+from autotrader.perpetuals.multi.scanner import dashboard_assets,map_universe,screen,adaptive_screen
+from autotrader.perpetuals.micro.signals import features
+from autotrader.perpetuals.multi.evidence import candle_review, feature_snapshot
+from autotrader.perpetuals.multi.research_v2 import generate_v2, EXPERIMENT as V2_EXPERIMENT, POLICY_HASH as V2_HASH
 from autotrader.perpetuals.multi.strategies import generate
 
 log=logging.getLogger(__name__)
 
 
 class MultiRuntime:
-    def __init__(self, ledger: MultiLedger, market: MultiMarket, *, owner: str | None = None):
+    def __init__(self, ledger: MultiLedger, market: MultiMarket, *, owner: str | None = None, research_v2: bool = False):
         self.ledger,self.market=ledger,market
         self.owner=owner or uuid4().hex
+        self.research_v2=research_v2
         self.detail_slots=asyncio.Semaphore(2)
 
     async def detailed(self, row: dict[str,Any]) -> dict[str,Any]:
@@ -38,7 +42,14 @@ class MultiRuntime:
             try:
                 contract,bars=await asyncio.gather(self.market.contract(symbol),
                     self.market.bars(symbol,cutoff-90*MINUTE,cutoff-MINUTE))
+                row['feature_snapshot']=feature_snapshot(features(bars,cutoff,clock_ms()))
+                if self.research_v2:
+                    row['v2_hypotheses']=await self.observe_v2(symbol,bars,cutoff,contract)
+                # V2 journaling must not consume a V1 signal's three-second TTL.
                 signals=generate(symbol,bars,cutoff,clock_ms())
+                for signal in signals:
+                    signal.evidence['decision_context']={'contract_hash':contract.identity,
+                        'scanner_version':'CAUSAL_V2' if self.research_v2 else 'FROZEN_V1'}
                 technical=[s for s in signals if not s.reasons]
                 row.update(technical_passed=bool(technical),regime=signals[0].regime,
                     examined_policies=[s.policy for s in signals],current_signal=None)
@@ -46,15 +57,28 @@ class MultiRuntime:
                     for signal in signals:await self.ledger.record_signal(self.owner,signal.payload(),';'.join(signal.reasons))
                     return {**row,'status':'REJECTED','reason':'no_technical_setup','rejection_reasons':sorted({r for s in signals for r in s.reasons})}
                 _,state=await self.ledger.load()
-                book,ticker=await self.market.observation(symbol)
+                try:
+                    book,ticker=await self.market.observation(symbol)
+                except (ValueError,ArithmeticError,httpx.HTTPError) as error:
+                    for signal in signals:
+                        payload=signal.payload()
+                        payload['decision_context']={'contract_hash':contract.identity,'executable_quote_available':False}
+                        await self.ledger.record_signal(self.owner,payload,'quote_data_unavailable:'+str(error))
+                    return {**row,'status':'REJECTED','reason':'quote_data_unavailable:'+str(error)}
                 now=clock_ms();options=[];rejected=[]
                 for signal in signals:
                     if signal.reasons:
                         rejected.append((signal,';'.join(signal.reasons)));continue
-                    try:
-                        plans=[plan(signal,n,equity(state,str(n),now=now),D(state['accounts'][str(n)]['cash']),contract,book,ticker,now) for n in COHORTS]
-                        options.append((signal,plans))
-                    except (ValueError,ArithmeticError) as error:rejected.append((signal,str(error)))
+                    plans,outcomes=cohort_plans(signal,state,contract,book,ticker,now,equity)
+                    signal.evidence['decision_context']={'contract_hash':contract.identity,
+                        'executable_quote_available':True if plans else None,
+                        'quote_observation_available':True,
+                        'quote':{'book_exchange_at':book.exchange_at,'book_received_at':book.received_at,
+                                 'book_age_ms':now-book.exchange_at,'mark_age_ms':now-ticker.exchange_at,
+                                 'spread_fraction':book.spread},'cohorts':outcomes}
+                    if len(plans)==len(COHORTS):options.append((signal,plans))
+                    else:rejected.append((signal,';'.join(
+                        f"cohort_{r['leverage']}:{r['reason']}" for r in outcomes if r['status']=='REJECTED')))
                 if not options:
                     for signal,reason in rejected:await self.ledger.record_signal(self.owner,signal.payload(),reason)
                     return {**row,'status':'REJECTED','reason':'net_cost_or_risk_qualification',
@@ -66,7 +90,7 @@ class MultiRuntime:
                     accepted=await self.ledger.reserve(self.owner,signal_payload,plans,contract)
                     if accepted:
                         fresh_book,fresh_ticker=await self.market.observation(symbol,protective=True)
-                        await self.ledger.fill(self.owner,signal.id,fresh_book,fresh_ticker)
+                        filled=await self.ledger.fill(self.owner,signal.id,fresh_book,fresh_ticker)
                 except (ValueError,ArithmeticError,httpx.HTTPError) as error:
                     await self.ledger.cancel(self.owner,signal.id,str(error))
                     await self.ledger.record_signal(self.owner,signal_payload,str(error))
@@ -74,7 +98,7 @@ class MultiRuntime:
                 for candidate,reason in rejected:await self.ledger.record_signal(self.owner,candidate.payload(),reason)
                 for other,_ in options:
                     if other.id!=signal.id:await self.ledger.record_signal(self.owner,other.payload(),'another_strategy_has_better_net_scenario_ratio')
-                return {**row,'status':'PAPER_FILLED' if accepted else 'ALREADY_CONSUMED','reason':None,
+                return {**row,'status':('PAPER_FILLED' if filled else 'INTENT_NO_FILL') if accepted else 'ALREADY_CONSUMED','reason':None,
                     'policy':signal.policy,'direction':signal.side,'current_signal':signal_payload,'plans':plans,
                     'target_move_pct':signal.evidence['forecast_signed_move_fraction']*100,
                     'qualification':'EXPERIMENTAL_DETERMINISTIC','forecast_is_expected_value':False,
@@ -91,11 +115,16 @@ class MultiRuntime:
         assets=await dashboard_assets(self.ledger.factory)
         metadata,ticker_result=await asyncio.gather(self.market.instruments(),self.market.tickers())
         mapped,unsupported=map_universe(assets,metadata)
-        selected,rows,rotation=screen(mapped,ticker_result[0],ticker_result[1],prior)
+        scheduler=adaptive_screen if self.research_v2 else screen
+        selected,rows,rotation=scheduler(mapped,ticker_result[0],ticker_result[1],prior)
         detailed=await asyncio.gather(*(self.detailed(row) for row in selected))
         by_symbol={row['symbol']:row for row in detailed}
         rows=[by_symbol.get(row['symbol'],row) for row in rows]
-        for row in detailed:rotation['revisits'][row['symbol']]=clock_ms()
+        feature_cache={k:v for k,v in prior.get('feature_cache',{}).items() if k in {r['symbol'] for r in mapped}}
+        for row in detailed:
+            rotation['revisits'][row['symbol']]=clock_ms()
+            if row.get('feature_snapshot'):feature_cache[row['symbol']]=row['feature_snapshot']
+        rotation['feature_cache']=feature_cache
         technical=sum(bool(row.get('technical_passed')) for row in detailed)
         filled=sum(row['status']=='PAPER_FILLED' for row in detailed)
         _,state=await self.ledger.load()
@@ -105,9 +134,49 @@ class MultiRuntime:
             'rows':rows,'top_opportunities':[r for r in detailed if r.get('plans')],**rotation,
             'summary':f'{filled} matched paper entries: {len(rows)} markets screened; {technical} passed technical screening; '
                       f'{len(detailed)} detailed evaluations. Entries '+('enabled.' if state['entries_enabled'] else 'paused.'),
-            'ranking_basis':'Conditional net scenario/risk; positive expected value is unproven'}
+            'no_entry_reasons':dict(Counter(r.get('reason') or r['status'] for r in detailed if r['status']!='PAPER_FILLED')),
+            'research_v2':{'enabled':self.research_v2,'experiment':V2_EXPERIMENT,'policy_hash':V2_HASH,
+                           'entry_authority':False,'accounts_created':0},
+            'ranking_basis':'V1 frozen scenario/risk; V2 research scenario robustness/cost burden. Confidence and future EV UNKNOWN'}
         await self.ledger.record_scan(self.owner,payload)
         await self.review_forecasts()
+
+    async def observe_v2(self, symbol, bars, cutoff, contract):
+        """At most one extra public observation per detail; no V2 reservations.
+
+        Sizing uses a fixed notional research capital reference, never changes
+        or claims allocation in any existing account.
+        """
+        from autotrader.perpetuals.multi.policy import initial_state
+        research=generate_v2(symbol,bars,cutoff,clock_ms())
+        book=ticker=None;quote_error=None
+        if any(not s.reasons for s in research):
+            try:book,ticker=await self.market.observation(symbol)
+            except (ValueError,ArithmeticError,httpx.HTTPError) as error:quote_error=str(error)
+        rows=[]
+        for candidate in research:
+            payload=candidate.payload();plans=[];outcomes=[]
+            reason=';'.join(candidate.reasons) or 'research_only_no_entry_authority'
+            context={'contract_hash':contract.identity,'executable_quote_available':None,
+                     'sizing_scope':'FIXED_RESEARCH_1000_USDT_REFERENCE_NOT_ACCOUNT_ALLOCATION'}
+            if not candidate.reasons:
+                if book is None:
+                    reason='quote_data_unavailable:'+str(quote_error)
+                    context['executable_quote_available']=False
+                else:
+                    now=clock_ms()
+                    plans,outcomes=cohort_plans(candidate,initial_state(),contract,book,ticker,now,equity)
+                    context.update(executable_quote_available=True if plans else None,cohorts=outcomes,
+                        quote_observation_available=True,
+                        quote={'book_exchange_at':book.exchange_at,'book_age_ms':now-book.exchange_at,
+                               'spread_fraction':book.spread,'mark_age_ms':now-ticker.exchange_at})
+                    if len(plans)!=len(COHORTS):
+                        reason=';'.join(f"cohort_{o['leverage']}:{o['reason']}" for o in outcomes if o['status']=='REJECTED')
+            payload['decision_context']=context
+            await self.ledger.record_signal(self.owner,payload,reason)
+            rows.append({**payload,'plans':plans,'reason':reason,
+                         'scenario_rank':opportunity_rank(plans) if len(plans)==len(COHORTS) else None})
+        return sorted(rows,key=lambda r:(r['scenario_rank'] is not None,r['scenario_rank'] or (),r['id']),reverse=True)
 
     async def review_forecasts(self) -> None:
         due=await self.ledger.pending_reviews(clock_ms())
@@ -121,21 +190,7 @@ class MultiRuntime:
             try:
                 bars=await self.market.bars(symbol,first,end)
                 for s in signals:
-                    begin=(s['decision_at']+MINUTE-1)//MINUTE*MINUTE
-                    finish=(s['decision_at']+s['hold_minutes']*MINUTE)//MINUTE*MINUTE
-                    window=[bars[t] for t in range(begin,finish,MINUTE)]
-                    reference=D(s['reference']);side=s['side']
-                    target,stop=D(s['target']),D(s['stop']);hit_target=hit_stop=False;ambiguous=False
-                    for bar in window:
-                        favorable=bar.high if side==1 else bar.low;adverse=bar.low if side==1 else bar.high
-                        t=side*(favorable-target)>=0;r=side*(adverse-stop)<=0
-                        if t or r:
-                            hit_target,hit_stop,ambiguous=t,r,t and r;break
-                    observation={'hypothetical_no_fill':True,'target_touched':hit_target,'stop_touched':hit_stop,
-                        'ambiguous_first_barrier':ambiguous,'conservative_first_barrier':'STOP' if hit_stop else 'TARGET' if hit_target else 'TIME',
-                        'signed_horizon_move_pct':side*(window[-1].close/reference-1)*100,
-                        'forecast_move_pct':D(s['evidence']['forecast_signed_move_fraction'])*100,
-                        'regime_correct':None,'positive_executable_return_proven':False}
+                    observation=candle_review(s,bars,now=clock_ms())
                     await self.ledger.review(self.owner,s,observation)
             except (ValueError,ArithmeticError,KeyError,httpx.HTTPError):continue
 
@@ -250,6 +305,7 @@ class MultiRuntime:
                         await self.ledger.record_scan(self.owner,{'at':clock_ms(),'status':'ERROR','rows':[],
                             'top_opportunities':[],'error':type(error).__name__,
                             'samples':prior.get('samples',{}),'revisits':prior.get('revisits',{}),
+                            'feature_cache':prior.get('feature_cache',{}),
                             'summary':'Scan incomplete; no current qualification counts are available.'})
                 try:await asyncio.wait_for(stopping.wait(),timeout=max(.1,interval-(monotonic()-began)))
                 except TimeoutError:pass

@@ -13,7 +13,7 @@ D = Decimal
 ACCOUNT = "PERSONAL_PLAN_PAPER_7000"
 REGISTRY_KEY = "personal_paper_v47"
 INITIAL = D(7000)
-VERSION = "4.9.5-paper.1"
+VERSION = "4.9.9-paper.1"
 LIMITS = RiskLimits(max_allocated_capital=INITIAL, max_total_open_exposure=D(4200),
     min_uncommitted_reserve=D(2800), max_position_size=D(700), max_simultaneous_positions=6,
     max_planned_loss_per_trade=D(35), daily_loss_threshold=D(140),
@@ -34,7 +34,9 @@ STRATEGIES.update({s: {"strategy_version": STRATEGY_VERSION, "parameters": param
                       "exit_policy":exit_policy(s)} for s in PRIMARY_IDENTITIES})
 for identity,spec in STRATEGIES.items():
     spec['exit_policy']=policy_for(identity)
-EXECUTION_POLICY = {"version": "4.9.1-shared.1", "primary_admission": PRIMARY_ADMISSION, "baseline": BASELINE_POLICY, "raoe": RAOE_POLICY, "live_authorized": False,
+from autotrader.personal_paper.freshness import POLICY as FRESHNESS_POLICY
+
+EXECUTION_POLICY = {"version": "4.9.9-shared.1", "entry_freshness": FRESHNESS_POLICY, "primary_admission": PRIMARY_ADMISSION, "baseline": BASELINE_POLICY, "raoe": RAOE_POLICY, "live_authorized": False,
                     "approved_ml_model": None, "ml_authority": "ISOLATED_SHADOW_RESEARCH_ONLY",
                     "continuation":"Historical and isolated forward shadow research only; absent from primary authority"}
 

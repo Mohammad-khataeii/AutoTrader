@@ -238,6 +238,13 @@ class PersonalPaperService:
             problems = await repo._verify(session, INITIAL)
             modeled_impact = D(0)
             order_payloads = {o.order_id:json.loads(o.execution_json) for o in orders}
+            quote_ages = []
+            for order in orders:
+                payload = order_payloads[order.order_id]
+                quality = payload.get('execution_quality') or payload.get('buy_admission', {}).get('entry', {})
+                age = quality.get('book_age_seconds')
+                if age is not None:
+                    quote_ages.append(D(str(age)))
             for fill in fills:
                 observed = order_payloads[fill.order_id].get('book',{})
                 levels = observed.get('asks' if fill.side=='BUY' else 'bids',[])
@@ -266,6 +273,12 @@ class PersonalPaperService:
             'version': VERSION, 'manifest': repo.manifest, 'portfolio': portfolio, 'performance': outcomes,
             'strategies': strategies, 'worker_health': {'monitor_age_seconds': monitor_age, 'scan_age_seconds': scan_age, 'fresh': fresh}, 'runtime_matches': runtime_matches, 'live_authorized': False,
             'evidence_category': repo.manifest['data_kind'], 'reconciliation': problems,
+            'entry_freshness': {'policy': EXECUTION_POLICY.get('entry_freshness'),
+                'recorded_quotes': len(quote_ages), 'maximum_recorded_book_age_seconds': str(max(quote_ages)) if quote_ages else None,
+                'quotes_above_current_entry_age_limit': sum(age>D(20) for age in quote_ages),
+                'scope': 'Recorded orders across profiles; historical fills are not reclassified',
+                'protective_monitoring': 'Independent of entry freshness',
+                'costs_already_in_net_pnl': True},
             'scan': paper_scan, 'position_monitor': monitor_body, 'research_review': review_body,
             'positions': [{**asdict(p), 'strategy_id': attribution.get(p.position_id)} for p in await repo.list_positions()],
             'orders': [{'order_id':o.order_id,'symbol':o.symbol,'side':o.side,'status':o.status,
@@ -273,6 +286,8 @@ class PersonalPaperService:
                 'average_fill_price':str(o.average_fill_price) if o.average_fill_price is not None else None,
                 'created_at':o.created_at.isoformat(),'strategy_id':json.loads(o.execution_json).get('strategy_id'),
                 'rejection_reason':json.loads(o.execution_json).get('rejection_reason'),
+                'execution_quote':order_payloads[o.order_id].get('execution_quality'),
+                'planned_loss_trace':order_payloads[o.order_id].get('planned_loss_trace'),
                 'fee_eur':str(sum((f.fee for f in fills if f.order_id==o.order_id),D(0)))} for o in reversed(orders[-80:])],
             'fills': list(reversed((await repo.list_fills())[-80:])),
             'equity_history': [{'timestamp': r.timestamp.isoformat(), 'equity': str(r.equity), 'degraded': r.degraded} for r in reversed(snapshots)],

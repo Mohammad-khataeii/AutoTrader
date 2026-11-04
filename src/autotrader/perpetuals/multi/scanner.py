@@ -88,3 +88,61 @@ def screen(mapped: list[dict[str,Any]], tickers: list[dict[str,Any]], now: int,
     chosen=chosen[:batch]
     for row in chosen:row.update(status='DETAIL_SELECTED',selection='FAIR_REVISIT' if row in fair else 'SUMMARY_PRIORITY')
     return chosen,rows,{'revisits':{r['symbol']:int(recent.get(r['symbol'],0)) for r in rows},'samples':next_samples}
+
+
+def adaptive_screen(mapped, tickers, now, previous, batch=6):
+    """V2 opt-in scheduling, using cached causal candles without extra requests.
+
+    Half the slots always revisit the oldest eligible symbols. Candle features
+    older than five minutes expire; rolling turnover never earns volume credit.
+    """
+    if batch < 1:
+        return [], [], {'revisits': previous.get('revisits', {}), 'samples': {}}
+    _, rows, rotation = screen(mapped, tickers, now, previous, batch)
+    cache = previous.get('feature_cache', {})
+    for row in rows:
+        if row['status'] == 'REJECTED':
+            continue
+        row.update(status='DEFERRED', selection=None, reason='bounded_detail_budget')
+        symbol = row['symbol']; f = cache.get(symbol, {})
+        score = min(D(row['turnover_usdt'])/D(10_000_000), D(2))+max(D(0), 1-D(row['spread_pct'])/D('.15'))
+        parts = {'liquidity_and_spread': score}
+        if 0 <= now-int(f.get('cutoff', 0)) <= 300_000 and int(f.get('known_at', now+1)) <= now:
+            ranges = f.get('ranges', {})
+            volatility = min(D(str(ranges.get('5', 0)))/D('.005'), D(2))
+            volume = min(max(D(str(f.get('relative_volume') or 0))-1, D(0)), D(2))
+            persistence = D(str(f['persistence']))*D(str(f['efficiency']))
+            acceleration = min(abs(D(str(f['acceleration'])))/max(D(str(f['atr_fraction'])), D('1e-12')), D(1))
+            expansion = D(str(f['expansion']))
+            expansion_credit = D('.5') if D('1.1') <= expansion <= D('1.8') else D(0)
+            parts.update(completed_volatility=volatility, completed_relative_volume=volume,
+                         trend_persistence=persistence, acceleration=acceleration, controlled_expansion=expansion_credit)
+            row.update(completed_features=f, feature_status='RECENT_COMPLETED_CANDLES')
+        else:
+            row['feature_status'] = 'UNKNOWN_OR_EXPIRED_CANDLES'
+            f = {}  # Expired/future candle features cannot influence change thresholds.
+        history = rotation['samples'].get(symbol, [])
+        material = False
+        if len(history) > 1:
+            change = abs(D(history[-1]['mid'])/D(history[-2]['mid'])-1)
+            threshold = max(D('.001'), D(str(f.get('atr_fraction') or '.001')))
+            material = change >= threshold
+        parts['material_summary_change'] = D('.75') if material else D(0)
+        row.update(score=sum(parts.values(), D(0)), ranking_components=parts,
+                   material_state_change=material, detail_wait_minutes=max(0, now-row['last_detail_at'])/60_000 if row['last_detail_at'] else None,
+                   execution_cost_floor_fraction=D('.0022')+D(row['spread_pct'])/100,
+                   cost_floor_scope='Fees and residual slippage plus spread; depth and latency unknown')
+        old = previous.get('rows', [])
+        prior = next((r for r in old if r['symbol'] == symbol), {})
+        row['deferred_observation'] = {
+            'prior_status': prior.get('status'),
+            'sampled_mid_move_fraction': D(row['price'])/D(str(prior['price']))-1 if prior.get('price') else None,
+            'scope': 'Sampled summary change only; intrainterval path and executable missed profit unknown'}
+    eligible = [r for r in rows if r['status'] != 'REJECTED']
+    fair = sorted(eligible, key=lambda r: (r['last_detail_at'], r['symbol']))[:max(1, batch//2)]
+    priority = sorted((r for r in eligible if r not in fair), key=lambda r: (-r['score'], r['symbol']))
+    chosen = (fair+priority)[:batch]
+    for row in chosen:
+        row.update(status='DETAIL_SELECTED', reason=None,
+                   selection='FAIR_REVISIT' if row in fair else 'CAUSAL_CANDLE_AND_STATE_PRIORITY')
+    return chosen, rows, rotation

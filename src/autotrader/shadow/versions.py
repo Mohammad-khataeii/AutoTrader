@@ -43,6 +43,7 @@ EXECUTION_FILES = (
     "shadow/runtime.py",
     "shadow/lab.py",
     "shadow/views.py",
+    "shadow/performance.py",
     "worker/runner.py",
     "research/data.py",
     "research/artifacts.py",
@@ -72,6 +73,7 @@ def _execution_paths() -> set[str]:
     )
     paths.add("shadow/v45-boundary.json")
     paths.add('shadow/v493-observation-bridge.json')
+    paths.add('shadow/v499-reporting-bridge.json')
     return paths
 
 
@@ -126,17 +128,22 @@ OBSERVATION_CHANGES = frozenset({'market_data/revolut.py','persistence/repositor
 
 
 def verify_observation_bridge() -> None:
-    """Explicit acquisition revision; all original strategy/financial bytes pinned.
+    """Pin V4.9.9 reporting and the default no-op account entry hook.
 
-    Stored shadow manifests retain their original identity. The bridge permits
-    only reviewed public acquisition and compatibility metadata, never a change
-    in risk, strategy, pricing, stops, fills or accounting code.
+    Stored shadow manifests retain their original identity and strategy/risk
+    bytes. Reviewed accounting edits add traces and a hook returning None for
+    shadows; only PersonalPaperRepository overrides its entry freshness. No
+    shadow quote, stop, fill, fee or balance calculation is changed by the hook.
+    The original V4.9.3 bridge remains an immutable parent artifact.
     """
-    bridge=json.loads((ROOT/'shadow/v493-observation-bridge.json').read_text())
+    bridge=json.loads((ROOT/'shadow/v499-reporting-bridge.json').read_text())
     parent=bridge['parent_files'];reviewed=bridge['reviewed_files']
     if bridge['parent_fingerprint']!=V492_EXECUTION or digest(canonical(parent))!=V492_EXECUTION:
         raise ValueError('observation_bridge_parent_integrity_failed')
-    if set(reviewed)!=OBSERVATION_CHANGES or _execution_paths()!=set(parent)|{'shadow/v493-observation-bridge.json'}:
+    allowed=OBSERVATION_CHANGES|{'shadow/views.py','shadow/performance.py','execution/pricing.py',
+                                'persistence/accounting.py','shadow/v493-observation-bridge.json'}
+    if set(reviewed)!=allowed or _execution_paths()!=set(parent)|{'shadow/v493-observation-bridge.json',
+                                                               'shadow/v499-reporting-bridge.json','shadow/performance.py'}:
         raise ValueError('observation_bridge_scope_failed')
     expected={**parent,**reviewed}
     if any(digest((ROOT/name).read_bytes())!=value for name,value in expected.items()):
@@ -178,7 +185,7 @@ def compatibility(manifest: dict[str, Any]) -> dict[str, Any]:
             verify_boundary()
             result = {"compatible": True, "runner": runner, "reason": None}
             if manifest.get('execution_fingerprint') == V492_EXECUTION:
-                result['observation_revision'] = 'public-acquisition/4.9.3.1'
+                result['observation_revision'] = 'reporting-and-account-entry-hook/4.9.9.1'
             return result
         except (ValueError, OSError, KeyError) as exc:
             return {"compatible": False, "runner": runner, "reason": str(exc)}

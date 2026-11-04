@@ -218,7 +218,10 @@ async def test_full_runtime_durable_quote_then_monitor_settle(ledger,monkeypatch
         price='100'
         at=NOW
         async def contract(self,*args,**kwargs):return contract()
-        async def bars(self,*args,**kwargs):return {}
+        async def bars(self,*args,**kwargs):
+            from autotrader.perpetuals.market import Bar, MINUTE
+            return {NOW-i*MINUTE:Bar(NOW-i*MINUTE,D(100),D('100.01'),D('99.99'),D(100),D(50))
+                    for i in range(1,92)}
         async def observation(self,*args,**kwargs):
             self.calls+=1
             state=(await ledger.load())[1]

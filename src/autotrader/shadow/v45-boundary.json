@@ -44,8 +44,8 @@
     "shadow/legacy.py": "a03edb0c0afb27e3a00ec66dc3f78a7701983700c63a499f6832b58aecc4f185",
     "shadow/runtime.py": "3e10553b87feb899dcd11f98273fc015b3e0a4362eaed8559c8fa5c400bd3180",
     "shadow/trace.py": "238e327fa6b22cd4556dc7eb73f1064d978a38be8e0098a327580ed56d3be976",
-    "shadow/versions.py": "7b420020b641f77638150a525271b529172a82917ef982a329ab602fe72d12b4",
-    "shadow/views.py": "ea2ce9a33a2b6f5f62e55ce1d14d0606bc17d01da16ea22cf275eb81228b60d5",
+    "shadow/versions.py": "6655e4ce429615477ba74a0a1f751322a0465d63ae8e6f470b56349d9e90e6dc",
+    "shadow/views.py": "cee6129f58f3ab7d147088a22613e7a0a91f89b7fd94ed66132d6c62393f5440",
     "worker/runner.py": "3395e79bd874e83cf840c77d3af2847140d3aa9b3f79315a73dd7c4ca4536532"
   },
   "purpose": "V4.2 and V4.4 immutable execution bridges; update only with local parity, admission, protection and tampering tests.",

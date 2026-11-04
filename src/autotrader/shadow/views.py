@@ -312,7 +312,7 @@ async def experiment_view(lab: Any, identity: str) -> dict[str, Any]:
             await session.execute(
                 select(
                     func.count(),
-                    func.sum(m.PositionModel.realized_pnl),
+                    func.count(m.PositionModel.realized_pnl),
                     func.sum(m.PositionModel.realized_pnl),
                 ).where(m.PositionModel.closed_at.is_not(None))
             )
@@ -336,16 +336,12 @@ async def experiment_view(lab: Any, identity: str) -> dict[str, Any]:
 
         drawdown = await session.scalar(
             text(
-                "SELECT COALESCE(MAX((peak-equity)/NULLIF(peak,0)),0) FROM (SELECT equity, MAX(equity) OVER (ORDER BY timestamp,created_at,snapshot_id ROWS UNBOUNDED PRECEDING) AS peak FROM equity_snapshots WHERE degraded=false) s"
+                "SELECT MAX((peak-equity)/NULLIF(peak,0)) FROM (SELECT equity, MAX(equity) OVER (ORDER BY timestamp,created_at,snapshot_id ROWS UNBOUNDED PRECEDING) AS peak FROM equity_snapshots WHERE degraded=false) s"
             )
         )
     performance = summary["performance"]
-    performance.update(
-        win_rate=wins[0] / pnl[0] if pnl[0] else None,
-        profit_factor=str(wins[1] / -losses[1]) if losses[1] else None,
-        expectancy=str(pnl[1] / pnl[0]) if pnl[0] else None,
-        max_drawdown=str(drawdown),
-    )
+    from autotrader.shadow.performance import metrics
+    performance.update(metrics(pnl[0], pnl[1], pnl[2], wins[0], wins[1], losses[1], drawdown))
     reconciliation = summary["reconciliation_status"]
     return {
         **record,

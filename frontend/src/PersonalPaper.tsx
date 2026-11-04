@@ -29,6 +29,7 @@ export function PersonalPaper({ view = "overview" }: { view?: "overview" | "acti
       <div className="section-heading"><div><p className="eyebrow">Personal Plan · {profileRelease ? `V${profileRelease}` : "Profile unavailable"}</p><h2>€7,000 virtual portfolio</h2></div><Badge>Paper only</Badge></div>
       <p>{d?.state === "PAPER_EXPERIMENTAL_ACTIVE" ? "Autonomous experimental execution active" : d?.state?.replaceAll("_", " ") ?? "Connecting to the paper account"} · One EUR pool shared by the selected strategies.</p>
       <p className="small muted">Execution profile {d?.manifest?.version ?? "unavailable"} · {d?.evidence_category === "SYNTHETIC_ACCEPTANCE" ? "DETERMINISTIC ACCEPTANCE — synthetic fixtures" : "Prospective paper evidence · live Revolut X observations"}. Official €500 and research shadows are separate.</p>
+      {d?.entry_freshness && <p>Entry book limit {d.entry_freshness.policy?.maximum_entry_book_age_seconds ?? "Unknown"} seconds · {d.entry_freshness.recorded_quotes} recorded quote ages · {d.entry_freshness.quotes_above_current_entry_age_limit} exceed the current entry limit across historical profiles. Protective monitoring remains independent of entry freshness.</p>}
       {view === "overview" && <>
         <div className="kpi-grid">
           <div className="kpi"><span>Current equity</span><strong>{money(p?.equity)}</strong><small>Starting virtual balance {money(p?.initial_cash)}</small></div>

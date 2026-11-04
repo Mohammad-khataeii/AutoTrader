@@ -13,6 +13,7 @@ from autotrader.perpetuals.market import clock_ms
 from autotrader.perpetuals.micro.execution import estimate
 from autotrader.perpetuals.micro.types import Book, Intent, Ticker
 from autotrader.perpetuals.multi.contracts import Contract, liquidation, maintenance
+from autotrader.perpetuals.multi.evidence import decision, decision_counts, realized_distribution
 from autotrader.perpetuals.multi.models import MultiEvent, MultiScan, MultiSignal, MultiState
 from autotrader.perpetuals.multi.policy import (
     COHORTS,D,EXPERIMENT,FEE,FINGERPRINT,INITIAL,INTENT_TTL,MARK_MAX_AGE,MAX_DRAWDOWN,
@@ -97,7 +98,8 @@ class MultiLedger:
             state=json.loads(row.payload) if row.payload else initial_state();reconcile(state)
             return row.generation,state
 
-    async def atomic(self, owner: str | None, action: Callable, *, signal: dict[str,Any] | None = None):
+    async def atomic(self, owner: str | None, action: Callable, *, signal: dict[str,Any] | None = None,
+                     event_key: str | None = None):
         for _ in range(8):
             async with self.factory() as session,session.begin():
                 if session.bind.dialect.name=='sqlite':
@@ -116,6 +118,8 @@ class MultiLedger:
                 if owner is not None and (lease.get('owner')!=owner or lease.get('expires_at',0)<=now):
                     raise Refused('multi_worker_lease_expired')
                 if signal is not None and await session.get(MultiSignal,signal['id']):return False
+                if event_key is not None and await session.scalar(select(MultiEvent.id).where(MultiEvent.event_key==event_key)):
+                    return False
                 events=[]
                 if row.payload is None:
                     events=[event('initial:'+str(n),'INITIAL_FUNDING',now,cohort=str(n),cash_delta=INITIAL) for n in COHORTS]
@@ -154,17 +158,25 @@ class MultiLedger:
 
     async def reserve(self, owner: str, signal: dict[str,Any], plans: list[dict[str,Any]], contract: Contract) -> bool:
         def action(s,now):
-            if set(p['leverage'] for p in plans)!=set(COHORTS):raise Refused('matched_cohorts_required')
+            if signal['policy'] not in POLICIES or signal.get('evidence',{}).get('research_only'):
+                raise Refused('research_policy_has_no_entry_authority')
+            if len(plans)!=len(COHORTS) or set(p['leverage'] for p in plans)!=set(COHORTS):raise Refused('matched_cohorts_required')
             if now-signal['decision_at']>INTENT_TTL:raise Refused('signal_expired_before_reservation')
+            failures=[]
+            for proposal in plans:
+                try: risk_check(s,proposal,signal['symbol'],signal['side'],now)
+                except Refused as error: failures.append(f"cohort_{proposal['leverage']}:{error}")
+            if failures:raise Refused(';'.join(failures))
             events=[]
             for p in plans:
-                risk_check(s,p,signal['symbol'],signal['side'],now)
                 key=signal['id']+':'+str(p['leverage']);cohort=str(p['leverage'])
                 s['accounts'][cohort]['cash']=D(s['accounts'][cohort]['cash'])-D(p['reserved'])
                 s['intents'][key]={**p,'id':key,'signal':signal,'symbol':signal['symbol'],'side':signal['side'],
                     'created_at':now,'expires_at':now+INTENT_TTL,'contract':contract.payload(),
                     'contract_hash':contract.identity}
                 events.append(event('reserve:'+key,'ENTRY_RESERVED',now,cohort=cohort,cash_delta=-D(p['reserved']),intent=key,signal_id=signal['id']))
+            signal['decision_context']=signal.get('decision_context') or signal.get('evidence',{}).get('decision_context',{})
+            signal['decision']=decision(signal,s,'matched_intents_reserved',admitted=True)
             return True,events
         return await self.atomic(owner,action,signal=signal)
 
@@ -336,7 +348,10 @@ class MultiLedger:
 
     async def record_signal(self, owner: str, signal: dict[str,Any], reason: str) -> bool:
         def action(s,now):
-            return True,[event('rejected:'+signal['id'],'SIGNAL_REJECTED',now,signal=signal,reason=reason)]
+            signal['decision_context']=signal.get('decision_context') or signal.get('evidence',{}).get('decision_context',{})
+            signal['decision']=decision(signal,s,reason)
+            kind='RESEARCH_OBSERVED' if signal.get('evidence',{}).get('research_only') else 'SIGNAL_REJECTED'
+            return True,[event('rejected:'+signal['id'],kind,now,signal=signal,reason=reason)]
         return await self.atomic(owner,action,signal=signal)
 
     async def record_scan(self, owner: str, payload: dict[str,Any]) -> None:
@@ -357,12 +372,24 @@ class MultiLedger:
 
     async def review(self, owner: str, signal: dict[str,Any], observed: dict[str,Any]) -> bool:
         key='review:'+signal['id']
+        # Link committed financial facts without folding them into a no-fill
+        # candle proxy. Later settlements remain separate append-only events.
+        keys=[prefix+signal['id']+':'+str(n) for prefix in ('open:','close:') for n in COHORTS]
         async with self.factory() as session:
-            if await session.scalar(select(MultiEvent.id).where(MultiEvent.event_key==key)):return False
+            facts=(await session.execute(select(MultiEvent.payload).where(MultiEvent.event_key.in_(keys)))).scalars().all()
+        actual=[json.loads(row) for row in facts]
+        observed={**observed,'actual_simulated_outcomes': {
+            'facts_observed_at':clock_ms(),
+            'fill_event_keys':[e['event_key'] for e in actual if e['kind']=='ENTRY_FILLED'],
+            'settlements':[{'event_key':e['event_key'],'cohort':e['cohort'],'net':e['net'],'reason':e['reason']}
+                           for e in actual if e['kind']=='EXIT_SETTLED'],
+            'status':'SIMULATED_FILL_RECORDED' if any(e['kind']=='ENTRY_FILLED' for e in actual) else 'NO_FILL_RECORDED_AT_FACT_CUTOFF',
+            'scope':'Independent ledger facts; candle proxy is never substituted for these outcomes'}}
         def action(s,now):
             return True,[event(key,'HYPOTHETICAL_FORECAST_REVIEW',now,signal_id=signal['id'],
-                symbol=signal['symbol'],policy=signal['policy'],observed=observed)]
-        return await self.atomic(owner,action)
+                symbol=signal['symbol'],policy=signal['policy'],
+                decision_group=signal.get('decision',{}).get('group','LEGACY_CONTEXT_UNKNOWN'),observed=observed)]
+        return await self.atomic(owner,action,event_key=key)
 
     async def pending_reviews(self, now: int, limit: int = 60) -> list[dict[str,Any]]:
         # Signals remain immutable; completed reviews are append-only journal entries.
@@ -441,8 +468,10 @@ class MultiLedger:
             'experiment':EXPERIMENT,'entries_enabled':s['entries_enabled'],'accounts':accounts,'positions':positions,
             'intents':list(s['intents'].values()),'events':events,
             'performance':list(performance.values()),'performance_scope':'Last 500 recorded settlements, grouped by symbol/policy/cohort; cohorts are not independent samples',
-            'learning':[e for e in events if e['kind'] in ('EXIT_SETTLED','HYPOTHETICAL_FORECAST_REVIEW','SIGNAL_REJECTED','ENTRY_MISSED','ENTRY_EXPIRED')],
-            'scan':{k:v for k,v in json.loads(scan.payload).items() if k not in ('samples','revisits')} if scan else None,
+            'realized_distributions':realized_distribution([json.loads(r) for r in closed]),
+            'decision_counts':decision_counts(events),
+            'learning':[e for e in events if e['kind'] in ('EXIT_SETTLED','HYPOTHETICAL_FORECAST_REVIEW','SIGNAL_REJECTED','RESEARCH_OBSERVED','ENTRY_MISSED','ENTRY_EXPIRED')],
+            'scan':{k:v for k,v in json.loads(scan.payload).items() if k not in ('samples','revisits','feature_cache')} if scan else None,
             'scan_fresh':bool(scan and json.loads(scan.payload).get('status')=='COMPLETE'
                 and 0<=now-json.loads(scan.payload)['at']<=120_000),
             'monitor':s.get('monitor'),
