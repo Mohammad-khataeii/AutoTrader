@@ -56,6 +56,10 @@ with psycopg.connect(dbname=sys.argv[1],user=u.username,password=u.password,host
   present=[table for table in extra if c.execute('SELECT to_regclass(%s)',(table,)).fetchone()[0] is not None]
   if present and len(present)!=len(extra):raise ValueError('perpetuals_backup_schema_incomplete')
   tables.extend(present)
+  multi=('paper_multi_state','paper_multi_events','paper_multi_signals','paper_multi_scan','paper_multi_schema_version')
+  present_multi=[table for table in multi if c.execute('SELECT to_regclass(%s)',(table,)).fetchone()[0] is not None]
+  if present_multi and len(present_multi)!=len(multi):raise ValueError('multi_paper_backup_schema_incomplete')
+  tables.extend(present_multi)
  for table in tables:
   rows=[x[0] for x in c.execute('SELECT to_jsonb(t)::text FROM '+table+' t ORDER BY to_jsonb(t)::text')]
   seal[table]={'rows':len(rows),'sha256':hashlib.sha256(b''.join(r.encode()+b'\\n' for r in rows)).hexdigest()}
@@ -85,6 +89,15 @@ async def main():
      payload=(await c.execute(text('SELECT payload FROM paper_perp_state WHERE id=1'))).scalar_one()
      reconcile(json.loads(payload) if payload else initial_state())
      assert (await c.execute(text('SELECT version_num FROM paper_perp_schema_version'))).scalar_one()=='0001_paper_perpetuals'
+    if 'paper_multi_state' in r['financial_seal']:
+     from autotrader.perpetuals.multi.ledger import reconcile
+     payload=(await c.execute(text('SELECT payload FROM paper_multi_state WHERE id=1'))).scalar_one()
+     if payload:
+      state=json.loads(payload);reconcile(state)
+      cash=dict((await c.execute(text('SELECT cohort,sum(cash_delta) FROM paper_multi_events WHERE cohort IS NOT NULL GROUP BY cohort'))).all())
+      assert all(abs(Decimal(cash[k])-Decimal(a['cash']))<Decimal('1e-10') for k,a in state['accounts'].items())
+      assert (await c.execute(text("SELECT count(*) FROM paper_multi_events WHERE kind='INITIAL_FUNDING'"))).scalar_one()==3
+     assert (await c.execute(text('SELECT version_num FROM paper_multi_schema_version'))).scalar_one()=='0001_multi_paper'
     if r['manifest']:
      marker=(await c.execute(text('SELECT manifest_json,manifest_hash FROM shadow_identity WHERE singleton=1'))).one()
      origin=r['manifest'].get('account_origin',r['manifest'])

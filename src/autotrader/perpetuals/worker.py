@@ -4,6 +4,7 @@ from __future__ import annotations
 import asyncio
 import os
 import signal
+import httpx
 from pathlib import Path
 
 from alembic import command
@@ -45,7 +46,28 @@ async def main() -> None:
     await asyncio.to_thread(migrate, url)
     engine = create_async_engine(url, pool_pre_ping=True, hide_parameters=True)
     try:
-        await Perpetuals(make_session_factory(engine)).run(stopping)
+        factory = make_session_factory(engine)
+        legacy_task = asyncio.create_task(Perpetuals(factory).run(stopping))
+        multi_task = None
+        try:
+            if flag("PAPER_MULTI_PERPETUALS_ENABLED"):
+                from autotrader.perpetuals.multi.ledger import MultiLedger
+                from autotrader.perpetuals.multi.market import MultiMarket
+                from autotrader.perpetuals.multi.runtime import MultiRuntime
+                # Separate HTTP pools and tasks keep scanning independent of protection.
+                async with httpx.AsyncClient(timeout=4, follow_redirects=False) as scan_client, \
+                        httpx.AsyncClient(timeout=3, follow_redirects=False) as protect_client:
+                    multi_task = asyncio.create_task(MultiRuntime(MultiLedger(factory),
+                        MultiMarket(scan_client, protect_client)).run(stopping))
+                    await legacy_task
+            else:
+                await legacy_task
+        finally:
+            if multi_task:
+                multi_task.cancel()
+                await asyncio.gather(multi_task, return_exceptions=True)
+            legacy_task.cancel()
+            await asyncio.gather(legacy_task, return_exceptions=True)
     finally:
         await engine.dispose()
 

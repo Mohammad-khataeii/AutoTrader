@@ -16,6 +16,9 @@ class EntryControl(BaseModel):
 
 def install(app: FastAPI, lab: Perpetuals, settings: Settings, require_user: Callable[..., Any]) -> None:
     preview = ResearchPreview()
+    from autotrader.api.perpetuals_multi import install as install_multi
+    from autotrader.perpetuals.multi.ledger import MultiLedger
+    install_multi(app, MultiLedger(lab.factory), settings, require_user)
 
     @app.get("/api/perpetuals/research", dependencies=[Depends(require_user)])
     async def research_snapshot():

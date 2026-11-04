@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MultiPerpetuals } from "./MultiPerpetuals";
 import { errorMessage, useApi, useResource } from "./api";
 import { Badge, Panel, ResourceState, Technical } from "./ui";
 
@@ -149,6 +150,7 @@ export function Perpetuals() {
   }
 
   return <>
+    <MultiPerpetuals />
     <ResourceState resource={resource} label="Perpetuals lab" />
     {lab && <>
       <Panel>
