@@ -14,6 +14,8 @@ B=Path('/opt/personal-plan/staging');R=Path(__file__).resolve().parents[1]
 os.umask(0o077)
 spec=importlib.util.spec_from_file_location('financial',R/'deploy/financial_set.py');f=importlib.util.module_from_spec(spec);spec.loader.exec_module(f)
 TABLES=f.FINANCIAL_TABLES
+capacity_spec=importlib.util.spec_from_file_location('capacity',R/'deploy/capacity.py')
+capacity=importlib.util.module_from_spec(capacity_spec);capacity_spec.loader.exec_module(capacity)
 
 def run(args,data=None):
  p=subprocess.run(args,input=data,capture_output=True,check=False)
@@ -21,6 +23,15 @@ def run(args,data=None):
  return p.stdout
 
 def dc(*args,data=None):return run([str(B/'ops/compose'),*args],data)
+
+
+def transfer(args, path, *, writing=False):
+ """Stream dumps and restores instead of buffering a database in host RAM."""
+ with path.open('xb' if writing else 'rb') as stream:
+  result=subprocess.run(args,stdin=subprocess.DEVNULL if writing else stream,
+   stdout=stream if writing else subprocess.DEVNULL,stderr=subprocess.PIPE,check=False)
+ if result.returncode:
+  raise RuntimeError('staging_backup_stream_failed:'+result.stderr.decode(errors='replace')[-1600:])
 
 DISCOVER='''import asyncio,json
 from autotrader.config import get_settings
@@ -148,9 +159,10 @@ def wait_restore_postgres(container):
  raise RuntimeError('restore_clone_unavailable')
 
 
-def restore_clone(directory,records,image,manifest,result,*,rehearse_profile=False):
+def restore_clone(directory,records,image,manifest,result,*,rehearse_profile=False,evidence_directory=None):
+ evidence_directory=evidence_directory or directory
  token='autotrader-aruba-restore-'+uuid4().hex[:8];network=token+'-net';container=token+'-pg';volume=token+'-data'
- (directory/'restore-attempt.json').write_text(json.dumps({'network':network,'container':container,'volume':volume,'memory_limit_bytes':512*1024**2,'storage':'ISOLATED_NAMED_VOLUME','failed_resources_retained_for_diagnostics':True},indent=2)+'\n')
+ (evidence_directory/'restore-attempt.json').write_text(json.dumps({'network':network,'container':container,'volume':volume,'memory_limit_bytes':512*1024**2,'storage':'ISOLATED_NAMED_VOLUME','failed_resources_retained_for_diagnostics':True},indent=2)+'\n')
  run(['docker','volume','create','--label','personal-plan.restore=aruba',volume])
  required=max(1024**3,2*sum(int(r['database_size_bytes']) for r in records)+sum(int(r['bytes']) for r in records))
  probe="import shutil;print(shutil.disk_usage('/restore-space').free)"
@@ -161,8 +173,12 @@ def restore_clone(directory,records,image,manifest,result,*,rehearse_profile=Fal
  run(['docker','run','-d','--name',container,'--network',network,'--network-alias','restore-postgres','--label','personal-plan.restore=aruba','-v',volume+':/var/lib/postgresql/data','--memory','512m','-e','POSTGRES_USER=autotrader','-e','POSTGRES_DB=postgres','-e','POSTGRES_HOST_AUTH_METHOD=trust','postgres:16-alpine'])
  wait_restore_postgres(container)
  for r in records:
-  data=(directory/r['file']).read_bytes();assert hashlib.sha256(data).hexdigest()==r['sha256'];run(['docker','exec',container,'createdb','-U','autotrader',r['database']]);run(['docker','exec','-i',container,'pg_restore','--exit-on-error','--no-owner','-U','autotrader','-d',r['database']],data)
- verifier=directory/'verify.py';verifier.write_text(VERIFY)
+  dump=(directory/r['file']).resolve(strict=True)
+  if dump.parent!=directory.resolve() or capacity.sha256(dump)!=r['sha256']:
+   raise ValueError('restore_dump_checksum_mismatch')
+  run(['docker','exec',container,'createdb','-U','autotrader',r['database']])
+  transfer(['docker','exec','-i',container,'pg_restore','--exit-on-error','--no-owner','-U','autotrader','-d',r['database']],dump)
+ verifier=evidence_directory/'verify.py';verifier.write_text(VERIFY)
  # root owns the private host backup. Inside the isolated verifier only these
  # two mounted read-only files are readable; the host env/secrets are absent.
  restored=json.loads(run(['docker','run','--rm','--user','0:0','--network',network,'--read-only','--tmpfs','/tmp','-e','PYTHONDONTWRITEBYTECODE=1','-v',str(verifier)+':/verify.py:ro','-v',str(manifest)+':/backup-set.json:ro',image,'python','/verify.py']))
@@ -179,20 +195,101 @@ def restore_clone(directory,records,image,manifest,result,*,rehearse_profile=Fal
  result['isolated_restore_resources_removed']=True
 
 
+def capacity_report(records, *, restore, image_bytes=0, transfer_bytes=0):
+ sizes=json.loads(dc('exec','-T','postgres','psql','-U','autotrader','-d','postgres','-Atc',
+  "SELECT json_object_agg(datname,pg_database_size(datname)) FROM pg_database WHERE datallowconn"))
+ scoped={r['database']:sizes[r['database']] for r in records}
+ docker_path=Path(run(['docker','info','--format','{{.DockerRootDir}}']).decode().strip())
+ if not docker_path.is_absolute() or not docker_path.is_dir():
+  raise ValueError('local_docker_filesystem_measurement_required')
+ return {'observed_at':datetime.now(UTC).isoformat(),**capacity.forecast(scoped,backup_fs=capacity.filesystem(B/'backups'),
+  docker_fs=capacity.filesystem(docker_path),transfer_fs=capacity.filesystem(B/'incoming'),
+  image_bytes=image_bytes,transfer_bytes=transfer_bytes,restore=restore)}
+
+
+def restore_portable(manifest, expected_hash, image, evidence_directory):
+ """Verify a copied backup on an independent Docker host without contacting its source."""
+ import re
+ manifest=manifest.resolve(strict=True)
+ if capacity.sha256(manifest)!=expected_hash or not re.fullmatch('sha256:[a-f0-9]{64}',image or ''):
+  raise ValueError('portable_restore_requires_manifest_hash_and_canonical_image')
+ backup=json.loads(manifest.read_bytes())
+ if backup.get('schema')!='aruba-staging-backup/1' or backup.get('project')!='autotrader-aruba-test':
+  raise ValueError('portable_restore_scope_mismatch')
+ records=backup['databases']
+ dbs={r['database'] for r in records};accounts={r['account_id'] for r in records}
+ if (len(records)!=len(dbs) or len(records)!=len(accounts) or 'autotrader_aruba_staging' not in dbs
+     or not {'paper-eur','PERSONAL_PLAN_PAPER_7000'}<=accounts):
+  raise ValueError('portable_restore_account_inventory_mismatch')
+ allowed_tables=set(TABLES)|{'paper_perp_state','paper_perp_events','paper_perp_schema_version',
+  'paper_multi_state','paper_multi_events','paper_multi_signals','paper_multi_scan','paper_multi_schema_version'}
+ for record in records:
+  database=record['database']
+  if not re.fullmatch(r'autotrader_(aruba_staging|(?:paper|shadow)_[a-f0-9]{32})',database):
+   raise ValueError('portable_restore_database_outside_scope')
+  if not set(TABLES)<=set(record['financial_seal'])<=allowed_tables:
+   raise ValueError('portable_restore_financial_seal_scope')
+  dump=(manifest.parent/record['file']).resolve(strict=True)
+  if dump.parent!=manifest.parent or dump.stat().st_size!=record['bytes'] or capacity.sha256(dump)!=record['sha256']:
+   raise ValueError('portable_restore_dump_hash_mismatch')
+ config=json.loads(run(['docker','image','inspect',image]))[0]
+ if config['Id']!=image or config['Config'].get('Labels',{}).get('org.opencontainers.image.revision')!=backup['application_commit']:
+  raise ValueError('portable_restore_candidate_image_identity_mismatch')
+ evidence_directory=evidence_directory.resolve()
+ if evidence_directory.is_relative_to(manifest.parent):
+  raise ValueError('restore_evidence_directory_must_be_separate_from_backup')
+ evidence_directory.mkdir(mode=0o700)
+ result={'status':'PASS','manifest':str(manifest),'backup_manifest_sha256':expected_hash,
+         'accounts':len(records),'candidate_image_id':image,'restore_test':False}
+ restore_clone(manifest.parent,records,image,manifest,result,evidence_directory=evidence_directory)
+ (evidence_directory/'restore-proof.json').write_text(json.dumps(result,indent=2)+'\n')
+ return result
+
+
 def main():
+ parser=argparse.ArgumentParser()
+ parser.add_argument('--restore-test',action='store_true');parser.add_argument('--candidate-image');parser.add_argument('--rehearse-profile',action='store_true')
+ mode=parser.add_mutually_exclusive_group()
+ mode.add_argument('--capacity-only',action='store_true')
+ mode.add_argument('--restore-from',type=Path)
+ parser.add_argument('--plan-offhost-restore',action='store_true',
+  help='Budget the staging backup only, with isolated restore verification on a separate host')
+ parser.add_argument('--manifest-sha256');parser.add_argument('--restore-evidence',type=Path)
+ parser.add_argument('--image-bytes',type=int);parser.add_argument('--transfer-bytes',type=int)
+ args=parser.parse_args()
+ if args.restore_from:
+  if not args.manifest_sha256 or not args.restore_evidence:parser.error('portable restore needs --manifest-sha256 and --restore-evidence')
+  print(json.dumps(restore_portable(args.restore_from,args.manifest_sha256,args.candidate_image,args.restore_evidence),indent=2))
+  return
+ if args.capacity_only:
+  if args.image_bytes is None or args.transfer_bytes is None:parser.error('provide both capacity budgets, using zero only for bytes already on disk')
+  records=json.loads(dc('exec','-T','backend','python','-c',DISCOVER))
+  estimate=capacity_report(records,restore=not args.plan_offhost_restore,
+   image_bytes=args.image_bytes,transfer_bytes=args.transfer_bytes)
+  estimate['restore_site']='INDEPENDENT_HOST_REQUIRED' if args.plan_offhost_restore else 'LOCAL_ISOLATED_CLONE'
+  print(json.dumps(estimate,indent=2))
+  if estimate['shortfall_bytes']:raise SystemExit(2)
+  return
+ if args.plan_offhost_restore:parser.error('--plan-offhost-restore requires --capacity-only')
  import fcntl
  lock_handle=(B/'ops/backup.lock').open('a')
  fcntl.flock(lock_handle,fcntl.LOCK_EX|fcntl.LOCK_NB)
- parser=argparse.ArgumentParser();parser.add_argument('--restore-test',action='store_true');parser.add_argument('--candidate-image');parser.add_argument('--rehearse-profile',action='store_true');args=parser.parse_args()
  records=json.loads(dc('exec','-T','backend','python','-c',DISCOVER))
  assert len(records)>=2 and records[1]['database'].startswith('autotrader_paper_')
+ estimate=capacity_report(records,restore=args.restore_test,image_bytes=args.image_bytes or 0,transfer_bytes=args.transfer_bytes or 0)
+ if estimate['shortfall_bytes']:
+  print(json.dumps(estimate,indent=2));raise SystemExit(2)
  stamp=datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid4().hex[:8];directory=B/'backups'/stamp;directory.mkdir(mode=0o700)
  for r in records:
   p=subprocess.Popen([str(B/'ops/compose'),'exec','-T','backend','python','-c',OWNER,r['database'],json.dumps(TABLES)],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
   try:
-   snap=json.loads(p.stdout.readline());data=dc('exec','-T','postgres','pg_dump','-U','autotrader','-Fc','--snapshot',snap['snapshot'],r['database']);dc('exec','-T','postgres','pg_restore','--list',data=data)
-   path=directory/(r['database']+'.dump');path.write_bytes(data);path.chmod(0o600)
-   r.update(file=path.name,bytes=len(data),sha256=hashlib.sha256(data).hexdigest(),financial_seal=snap['financial_seal'],database_size_bytes=snap['database_size_bytes'])
+   snap=json.loads(p.stdout.readline())
+   compose=[str(B/'ops/compose'),'exec','-T','postgres']
+   path=directory/(r['database']+'.dump')
+   transfer([*compose,'pg_dump','-U','autotrader','-Fc','--snapshot',snap['snapshot'],r['database']],path,writing=True)
+   transfer([*compose,'pg_restore','--list'],path)
+   r.update(file=path.name,bytes=path.stat().st_size,sha256=capacity.sha256(path),
+            financial_seal=snap['financial_seal'],database_size_bytes=snap['database_size_bytes'])
   finally:p.communicate(input=b'release\n',timeout=15)
  container_id=dc('ps','-q','backend').decode().strip()
  image=args.candidate_image or run(['docker','inspect',container_id,'--format','{{.Image}}']).decode().strip()
@@ -200,9 +297,11 @@ def main():
  assert re.fullmatch('sha256:[a-f0-9]{64}',image)
  body={'schema':'aruba-staging-backup/1','application_commit':json.loads((R/'release-manifest.json').read_text())['commit'],'project':'autotrader-aruba-test','created_at':datetime.now(UTC).isoformat(),'method':'EXPORTED_REPEATABLE_READ_SNAPSHOT','worker_uninterrupted':True,'databases':records,'runtime_image_id':image}
  manifest=directory/'backup-set.json';manifest.write_text(json.dumps(body,indent=2)+'\n');manifest.chmod(0o600)
- result={'status':'PASS','manifest':str(manifest),'accounts':len(records),'dump_bytes':sum(r['bytes'] for r in records),'worker_uninterrupted':True,'restore_test':False}
+ result={'status':'PASS','manifest':str(manifest),'backup_manifest_sha256':capacity.sha256(manifest),
+         'accounts':len(records),'dump_bytes':sum(r['bytes'] for r in records),'worker_uninterrupted':True,'restore_test':False}
  if args.restore_test:
   restore_clone(directory,records,image,manifest,result,rehearse_profile=args.rehearse_profile)
+  (directory/'restore-proof.json').write_text(json.dumps(result,indent=2)+'\n')
  (B/'evidence/backup-latest.json').write_text(json.dumps(result,indent=2)+'\n')
  print(json.dumps(result,indent=2))
 

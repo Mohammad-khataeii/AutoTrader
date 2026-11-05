@@ -18,6 +18,7 @@ import {
   Technical,
 } from "./ui";
 import { AdvancedResearch } from "./advanced";
+import { ConsolidationPanel } from "./ConsolidationPanel";
 export function Research({ auth }: { auth: string }) {
   const data = useResource("/api/research/summary", { ttl: 300000 });
   const shadow = useResource("/api/shadow/summary", { ttl: 60000 });
@@ -176,6 +177,7 @@ export function Research({ auth }: { auth: string }) {
         <button onClick={() => setAdvanced(true)}>Advanced Research</button>
       </div>
       <ResourceState resource={data} label="Research" />
+      <ConsolidationPanel />
       <Panel>
         <div className="section-heading">
           <h2>Historical evidence</h2>

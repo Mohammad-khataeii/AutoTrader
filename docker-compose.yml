@@ -32,6 +32,7 @@ x-runtime: &runtime
     PAPER_PERPETUALS_ENABLED: ${PAPER_PERPETUALS_ENABLED:-false}
     PAPER_MULTI_PERPETUALS_ENABLED: ${PAPER_MULTI_PERPETUALS_ENABLED:-false}
     PAPER_MULTI_V2_RESEARCH_ENABLED: ${PAPER_MULTI_V2_RESEARCH_ENABLED:-false}
+    PERSONAL_PLAN_ACTIVE_SHADOW_CAP: ${PERSONAL_PLAN_ACTIVE_SHADOW_CAP:-3}
     APPROVED_STRATEGY_IDS: ${APPROVED_STRATEGY_IDS:-}
   volumes: [research-data:/app/research:ro, reports:/app/reports]
   restart: unless-stopped
@@ -59,6 +60,11 @@ services:
     <<: *runtime
     profiles: [research]
     command: [autotrader-research-worker]
+    environment:
+      <<: *environment
+      PERSONAL_PLAN_CONSOLIDATION_ENABLED: ${PERSONAL_PLAN_CONSOLIDATION_ENABLED:-false}
+      PERSONAL_PLAN_RESEARCH_SCORING: ${PERSONAL_PLAN_RESEARCH_SCORING:-false}
+      AUTOTRADER_RESEARCH_SOURCE_URL: ${AUTOTRADER_RESEARCH_SOURCE_URL:-}
     volumes: [research-data:/app/research, reports:/app/reports]
     mem_limit: 1536m
     depends_on:

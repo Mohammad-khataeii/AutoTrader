@@ -22,7 +22,9 @@ async def main() -> None:
     owner = new_id("researchworker")
     root = Path(settings.research_root)
     from autotrader.learning.worker import run as run_learning
+    from autotrader.learning.consolidation_service import run as run_consolidation
     learning = asyncio.create_task(run_learning(settings))
+    consolidation = asyncio.create_task(run_consolidation(settings))
     try:
         while True:
             job = await repo.claim_research(owner)
@@ -47,7 +49,8 @@ async def main() -> None:
             await repo.update_research_job(job["job_id"], owner, result)
     finally:
         learning.cancel()
-        await asyncio.gather(learning, return_exceptions=True)
+        consolidation.cancel()
+        await asyncio.gather(learning, consolidation, return_exceptions=True)
         await engine.dispose()
 
 

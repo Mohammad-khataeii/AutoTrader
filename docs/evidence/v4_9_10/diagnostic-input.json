@@ -1,0 +1,35 @@
+{
+  "schema": "research-design-input/1",
+  "capture_date_utc": "2026-11-05",
+  "provenance": "User-provided sampled export audit and scorecard, not independently re-extracted",
+  "training_eligible": false,
+  "database_inventory": {"operational": 1, "personal": 1, "shadow": 15},
+  "personal": {
+    "closed": 15,
+    "wins": 1,
+    "net_realized_eur_approx": -99.33,
+    "fees_eur_already_in_net_approx": 20.84,
+    "positions_with_filled_targets": 0,
+    "common_entry_notional_eur_approx": 697,
+    "initial_stop_distance_range_percent_approx": [0.28, 2.30]
+  },
+  "shadow": [
+    {"strategy": "RAOE_EARLY_RECOVERY", "closed": 11, "wins": 3, "net_eur_approx": -1.89},
+    {"strategy": "A3_COST_AWARE_CONTINUATION", "closed": 12, "wins": 2, "net_eur_approx": -6.10, "frozen_source_refusals": 68},
+    {"strategy": "RAOE_TREND_PULLBACK", "closed": 5, "wins": 0, "net_eur_approx": -4.54},
+    {"strategy": "B3_STATEFUL_BREAKOUT", "closed": 1, "wins": 0, "net_eur_approx": -0.41}
+  ],
+  "storage": {
+    "free_gib_approx": 10.1,
+    "backup_gib_approx": 9.59,
+    "shadow_gib_approx": 1.83,
+    "reported_restore_refusal": "isolated_restore_disk_capacity_insufficient"
+  },
+  "requires_full_history": [
+    "Independent outcome count and complete equity drawdown",
+    "Decision-time depth, ingestion clocks and target feasibility",
+    "Fill and fee reconciliation, stop and trailing behavior",
+    "Current backup capacity, controls and experiment status"
+  ],
+  "validation": "SOURCE_ONLY_UNRUN"
+}

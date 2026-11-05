@@ -210,7 +210,7 @@ def create_app() -> FastAPI:
         await market_data.close()
         await engine.dispose()
 
-    app = FastAPI(title=settings.app_name, version="4.9.9-rc.1", lifespan=lifespan)
+    app = FastAPI(title=settings.app_name, version="4.9.10-rc.1", lifespan=lifespan)
     app.state.auth_throttle = AuthenticationThrottle()
     app.state.shadow_lab = shadow_lab
     app.state.repository = repository
@@ -230,13 +230,15 @@ def create_app() -> FastAPI:
     install_v48(app, personal_paper, shadow_lab, require_user)
     from autotrader.api.learning import install as install_learning
     install_learning(app, personal_paper, require_user, settings)
+    from autotrader.api.research_consolidation import install as install_consolidation, shadow_admission
+    install_consolidation(app, settings, require_user)
     from autotrader.api.perpetuals import install as install_perpetuals
     from autotrader.perpetuals.service import Perpetuals
     install_perpetuals(app, Perpetuals(repository.session_factory), settings, require_user)
 
     @app.get("/healthz")
     async def healthz() -> dict[str, str]:
-        return {"status": "ok", "mode": "paper", "version":"4.9.9-rc.1"}
+        return {"status": "ok", "mode": "paper", "version":"4.9.10-rc.1"}
 
     @app.get("/readyz")
     async def readyz() -> dict[str, str | bool]:
@@ -262,7 +264,7 @@ def create_app() -> FastAPI:
     async def overview() -> dict[str, object]:
         snapshot = await repository.snapshot()
         return {
-            "application_version":"4.9.9-rc.1",
+            "application_version":"4.9.10-rc.1",
             "portfolio": snapshot,
             "health": {
                 "api": "ok",
@@ -453,7 +455,8 @@ def create_app() -> FastAPI:
     @app.post("/api/shadow", dependencies=[Depends(require_user)], status_code=201)
     async def shadow_create(request: ShadowCreateRequest) -> dict[str, Any]:
         try:
-            return await shadow_lab.create(request.request_id,request.name,request.strategy_id)
+            async with shadow_admission(repository, shadow_lab, request_id=request.request_id):
+                return await shadow_lab.create(request.request_id,request.name,request.strategy_id)
         except ValueError as exc:
             raise HTTPException(status_code=409,detail=str(exc)) from None
 
@@ -499,6 +502,9 @@ def create_app() -> FastAPI:
     @app.post("/api/shadow/{experiment_id}/{action}", dependencies=[Depends(require_user)])
     async def shadow_control(experiment_id: str, action: str) -> dict[str, Any]:
         try:
+            if action == 'resume':
+                async with shadow_admission(repository, shadow_lab, experiment_id=experiment_id):
+                    return await shadow_lab.control(experiment_id,action)
             return await shadow_lab.control(experiment_id,action)
         except ValueError as exc:
             raise HTTPException(status_code=409,detail=str(exc)) from None

@@ -8,8 +8,9 @@ COPY --chmod=0644 pyproject.toml ./
 COPY --chmod=0644 requirements.lock ./
 RUN pip install --no-cache-dir -r requirements.lock
 COPY src ./src
+ARG RELEASE_VERSION=4.9.10-rc.1
 # Reject a release where the backend application version does not match the packaged source.
-RUN python -c 'import ast,tomllib; from pathlib import Path; v=tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"]; tree=ast.parse(Path("src/autotrader/api/main.py").read_text()); values=[kw.value.value for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id=="FastAPI" for kw in n.keywords if kw.arg=="version" and isinstance(kw.value,ast.Constant) and isinstance(kw.value.value,str)]; normalize=lambda x: x.lower().replace("-rc.","rc"); assert len(values)==1 and normalize(values[0])==normalize(v), "backend source/version mismatch"'
+RUN python -c 'import ast,os,tomllib; from pathlib import Path; v=tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"]; tree=ast.parse(Path("src/autotrader/api/main.py").read_text()); values=[kw.value.value for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id=="FastAPI" for kw in n.keywords if kw.arg=="version" and isinstance(kw.value,ast.Constant) and isinstance(kw.value.value,str)]; normalize=lambda x: x.lower().replace("-rc.","rc"); assert len(values)==1 and values[0]==os.environ["RELEASE_VERSION"] and normalize(values[0])==normalize(v), "backend source/version mismatch"'
 COPY alembic ./alembic
 COPY --chmod=0644 docs/evidence/v4_6_rc2/research-comparison.json /app/evidence/v46/comparison-v46-rc2.json
 COPY --chmod=0644 docs/evidence/v4_7/research-results.json /app/evidence/v47/research-results.json
@@ -25,6 +26,7 @@ RUN adduser -S -D -u 10001 paper
 ARG RELEASE_COMMIT=unbound
 ENV AUTOTRADER_RELEASE_COMMIT=${RELEASE_COMMIT}
 LABEL org.opencontainers.image.revision=${RELEASE_COMMIT}
+LABEL org.opencontainers.image.version=${RELEASE_VERSION}
 USER paper
 EXPOSE 8000
 CMD ["autotrader-api"]

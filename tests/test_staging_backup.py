@@ -26,6 +26,7 @@ def test_restore_uses_scoped_disk_volume_and_preserves_failed_diagnostics(backup
         if '/verify.py' in args:return json.dumps({'status':'FAIL' if scenario=='verification_failed' else 'PASS','accounts':[{}]}).encode()
         return b''
     monkeypatch.setattr(backup,'run',run)
+    monkeypatch.setattr(backup,'transfer',lambda args,path,**kwargs:run(args,path.read_bytes()))
     monkeypatch.setattr(backup.subprocess,'run',lambda *a,**kw:type('Ready',(),{'returncode':0})())
     result={}
     if scenario=='success':
