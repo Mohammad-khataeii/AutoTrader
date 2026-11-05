@@ -3,7 +3,7 @@ import { date, money, percent } from "./model";
 import { Badge, CompactTable, Panel, ResourceState } from "./ui";
 
 const words = (value: unknown) =>
-  typeof value === "string" ? value.replaceAll("_", " ").toLowerCase() : "Unavailable";
+  typeof value === "string" ? value.replace(/_/g, " ").toLowerCase() : "Unavailable";
 
 export function ConsolidationPanel() {
   const resource = useResource("/api/research/consolidation", { poll: 60000 });
