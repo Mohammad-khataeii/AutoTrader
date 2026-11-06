@@ -3,6 +3,7 @@ ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 ARG RELEASE_COMMIT=unbound
 LABEL org.opencontainers.image.revision=${RELEASE_COMMIT}
+ENV STOCKSWATCH_BUILD_COMMIT=${RELEASE_COMMIT}
 USER root
 COPY deploy/stockswatch/requirements.txt /tmp/stockswatch-requirements.txt
 RUN python -m venv --system-site-packages /opt/stockswatch/venv \

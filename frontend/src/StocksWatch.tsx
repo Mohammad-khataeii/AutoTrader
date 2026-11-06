@@ -1,3 +1,4 @@
+import { IntradayMonitor } from "./StocksWatchIntraday";
 import { useMemo, useState } from "react";
 import { Activity, ArrowDownRight, ArrowUpRight, BarChart3, BrainCircuit, Database, ExternalLink, Flame, Gauge, Info, LineChart as LineIcon, Newspaper, Pause, Play, RefreshCw, ShieldAlert, ShieldCheck, TrendingUp, Wallet } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, Line, CartesianGrid, Tooltip, XAxis, YAxis, Legend } from "recharts";
@@ -64,12 +65,13 @@ export function StocksWatch(){
    <div className="sw-hero-main"><div className="sw-eyebrow"><span className="sw-led"/> US EQUITIES LAB <span className="sw-hero-sep">/</span> AUTONOMOUS PAPER RESEARCH</div>
      <h2>Invest with evidence.<br/><span>Learn from every market cycle.</span></h2>
      <p>{isBroker?"Balances, holdings and fills come from Alpaca Paper Trading. Orders use virtual money only.":"Market prices, filings, quantitative signals and bounded AI research. A separate virtual account—never a real-money trading connection."}</p>
-     <div className="sw-hero-tags"><Status value={isBroker?"ALPACA PAPER":"LOCAL PAPER"}/>{isBroker&&<Status value={broker.status??"CONNECTING"}/>}{brokerReadOnly&&<Status value="ORDERS DISABLED"/>}<Status value={status}/><span className="sw-subtle">{source} · EOD_ONLY</span></div>
+     <div className="sw-hero-tags"><Status value={isBroker?"ALPACA PAPER":"LOCAL PAPER"}/>{isBroker&&<Status value={broker.status??"CONNECTING"}/>}{brokerReadOnly&&<Status value="ORDERS DISABLED"/>}<Status value={status}/><span className="sw-subtle">{source} · EOD strategy</span></div>
    </div>
    <div className="sw-hero-right"><div className="sw-portfolio-label">{isBroker?"ALPACA PAPER EQUITY":"STOCKSWATCH PORTFOLIO"}</div><strong>{a.equity==null?"—":cash(a.equity)}</strong><div className={n(a.pnl)>=0?"sw-up":"sw-down"}>{n(a.pnl)>=0?<ArrowUpRight size={17}/>:<ArrowDownRight size={17}/>} {a.pnl==null?"—":pct(a.pnl_pct)} <span>{a.pnl==null?"—":cash(a.pnl)} {isBroker?"today":"all time"}</span></div><small>{isBroker?`Paper account ${d.broker_account?.masked??"unavailable"} · cash ${a.cash==null?"—":cash(a.cash)}`:`Starting balance ${cash(a.initial_cash)}`}</small></div>
   </section>
   {(resource.error || health.error || (isBroker && !brokerConnected)) && <p className="sw-warning" role="alert">{isBroker?"Alpaca Paper is unavailable or account verification failed. No local balances or fills are substituted. ":"StocksWatch service is unavailable or the data is stale. Existing crypto monitoring continues independently. "}{resource.error || health.error || broker.reason}</p>}
   {notice && <p className="sw-notice" role="status">{notice}</p>}
+  <IntradayMonitor/>
   <ScannerMonitor/>
   <article className="sw-panel sw-execution-summary">
     <Header icon={Activity} title="Decision funnel" note={`Market day ${val(paper.market_day)} · ${fromUTC(paper.at)}`}/>

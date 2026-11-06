@@ -64,12 +64,33 @@ def safe_error(e):
 
 
 from .alpaca_paper import broker_mode, broker_symbols, paper_cycle
+from .intraday import IntradayEngine
+
+
+def daily_refresh_boundary(now, day, broker):
+    local_day = now.astimezone(NY).date()
+    return (datetime.combine(local_day,datetime.min.time(),NY).astimezone(timezone.utc).isoformat()
+            if broker and local_day.isoformat()==next_day(day) else "")
+
+
+def daily_refresh_due(now):
+    day = completed_day(now)
+    broker = broker_mode()
+    return one("""SELECT COUNT(*) AS n FROM assets a LEFT JOIN sw_price_checks q ON q.symbol=a.symbol
+        LEFT JOIN positions p ON NOT :broker AND p.symbol=a.symbol
+        WHERE (a.enabled=1 OR p.symbol IS NOT NULL)
+          AND (q.day IS NULL OR q.day!=:day OR q.checked_at<:refresh_since
+               OR (q.status!='OK' AND q.checked_at<:cutoff))""",
+        {"day":day,"broker":broker,"refresh_since":daily_refresh_boundary(now,day,broker),
+         "cutoff":(now-timedelta(hours=1)).isoformat()})["n"]
 
 
 class Service:
     def __init__(self):
         self.task=None
         self.broker_task = None
+        self.intraday_task = None
+        self.intraday = IntradayEngine()
         self.broker_stop = asyncio.Event()
         self.broker_result = {'status': 'STARTING'}
         self.lock=asyncio.Lock()
@@ -77,8 +98,9 @@ class Service:
 
     def start(self):
         self.task=asyncio.create_task(self.loop(),name='stockswatch-eod-worker')
+        self.broker_stop.clear()
+        self.intraday_task = asyncio.create_task(self.intraday_loop(), name="stockswatch-intraday")
         if broker_mode():
-            self.broker_stop.clear()
             self.broker_task = asyncio.create_task(self.broker_loop(), name="stockswatch-paper-broker")
 
     async def stop(self):
@@ -90,6 +112,24 @@ class Service:
 
         if self.broker_task:
             await self.broker_task
+        if self.intraday_task:
+            await self.intraday_task
+        self.intraday.close()
+
+    async def intraday_loop(self):
+        while not self.broker_stop.is_set():
+            delay = 25
+            try:
+                result = await asyncio.to_thread(self.intraday.cycle)
+                if result["status"] in {"SESSION_CLOSED","DATA_UNAVAILABLE"}:
+                    delay = 60
+            except Exception as exc:
+                log.error("StocksWatch intraday cycle failed: %s", type(exc).__name__)
+                delay = 60
+            try:
+                await asyncio.wait_for(self.broker_stop.wait(), timeout=delay)
+            except TimeoutError:
+                pass
 
     async def broker_loop(self):
         while not self.broker_stop.is_set():
@@ -318,10 +358,7 @@ class Service:
         # behind symbols still unchecked for the completed market day.
         broker = broker_mode()
         local_day = now.astimezone(NY).date()
-        refresh_since = (
-            datetime.combine(local_day, datetime.min.time(), NY).astimezone(timezone.utc).isoformat()
-            if broker and local_day.isoformat() == next_day(day) else ""
-        )
+        refresh_since = daily_refresh_boundary(now, day, broker)
         held_symbols = broker_symbols() if broker else []
         entry_days = {}
         if held_symbols:

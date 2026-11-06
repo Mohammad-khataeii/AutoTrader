@@ -19,6 +19,7 @@ from decimal import ROUND_DOWN, Decimal, InvalidOperation
 
 import httpx
 
+from .intraday_policy import ORDER_PREFIX as INTRADAY_PREFIX, TRADABLE_PHASES, order_gate, phase_at
 from .ledger import (
     MAX_DRAWDOWN,
     MAX_GROSS_EXPOSURE,
@@ -42,6 +43,7 @@ OPEN_WINDOW = timedelta(hours=1)
 FILL_PAGE_SIZE = 100
 SYNC_MAX_AGE = 120
 _admission = threading.Lock()
+broker_cycle_lock = threading.Lock()
 _view_lock = threading.Lock()
 _last_view = None
 _sync_error = None
@@ -91,6 +93,10 @@ class PaperError(RuntimeError):
     """Stable diagnostic code. Never includes request data or credentials."""
 
 
+class PaperLocalRefusal(PaperError):
+    """Local validation refused a POST before any broker request."""
+
+
 class PaperRejection(PaperError):
     """An explicit broker rejection of this order."""
 
@@ -134,7 +140,9 @@ def _credentials():
 class PaperClient:
     """Only accepts constant paper host and narrowly defined endpoint paths."""
 
-    def __init__(self, transport=None):
+    def __init__(self, transport=None, *, retry_reads=False, clock=None):
+        self.retry_reads = retry_reads
+        self.now = clock or (lambda: datetime.now(UTC))
         self._client = httpx.Client(
             base_url=PAPER_ORIGIN,
             headers=_credentials(),
@@ -153,10 +161,26 @@ class PaperClient:
     def _request(self, method, path, **kwargs):
         if not path.startswith("/v2/") or "?" in path or "//" in path or ".." in path:
             raise PaperError("unapproved_paper_route")
-        try:
-            response = self._client.request(method, path, **kwargs)
-        except httpx.HTTPError:
-            raise PaperError("alpaca_paper_transport_unavailable") from None
+        attempts = 2 if method == "GET" and self.retry_reads else 1
+        for attempt in range(attempts):
+            try:
+                response = self._client.request(method, path, **kwargs)
+            except httpx.TransportError:
+                if attempt+1 == attempts:
+                    raise PaperError("alpaca_paper_transport_unavailable") from None
+            else:
+                if response.status_code not in (429, 500, 502, 503, 504) or attempt+1 == attempts:
+                    break
+                if response.status_code == 429:
+                    try:
+                        delay = float(response.headers.get("Retry-After", "1"))
+                    except ValueError:
+                        break
+                    if not 0 <= delay <= 1:
+                        break
+                    time.sleep(delay)
+                    continue
+            time.sleep(0.25)
         if (
             response.status_code == 404
             and path == "/v2/orders:by_client_order_id"
@@ -272,24 +296,41 @@ class PaperClient:
         return self.get(f"/v2/assets/{symbol}")
 
     def by_client_id(self, cid):
-        if not re.fullmatch(r"swp2-[a-f0-9]{40}", cid):
+        if not re.fullmatch(r"(?:swp2|swx1)-[a-f0-9]{40}", cid):
             raise PaperError("invalid_client_order_id")
         return self.get("/v2/orders:by_client_order_id", {"client_order_id": cid})
 
-    def submit(self, payload):
+    def submit(self, payload, *, phase=None):
         if not orders_enabled():
-            raise PaperError("alpaca_paper_orders_disabled")
-        if not re.fullmatch(r"swp2-[a-f0-9]{40}", payload.get("client_order_id", "")):
+            raise PaperLocalRefusal("alpaca_paper_orders_disabled")
+        cid = payload.get("client_order_id", "")
+        if not re.fullmatch(r"(?:swp2|swx1)-[a-f0-9]{40}", cid):
             raise PaperError("invalid_client_order_id")
         side = payload.get("side")
-        if (
-            side not in ("buy", "sell")
-            or payload.get("time_in_force") != "day"
-            or payload.get("extended_hours") is not False
-            or payload.get("type") != ("limit" if side == "buy" else "market")
-            or money(payload.get("qty")) <= 0
-            or (side == "buy" and money(payload.get("limit_price")) <= 0)
-        ):
+        if side not in ("buy", "sell") or payload.get("time_in_force") != "day" or money(payload.get("qty")) <= 0:
+            raise PaperError("unsafe_order_request")
+        if cid.startswith(INTRADAY_PREFIX):
+            gate = order_gate()
+            if gate:
+                raise PaperLocalRefusal(gate)
+            now = self.now()
+            live_phase = phase_at(now)
+            if (phase is None or phase != live_phase or phase.name not in TRADABLE_PHASES
+                    or not phase.start+timedelta(seconds=15) <= now < phase.end-timedelta(seconds=45)
+                    or payload.get("type") != "limit"
+                    or payload.get("extended_hours") is not (phase.name != "CORE")
+                    or set(payload) != {"side","symbol","type","qty","limit_price","time_in_force",
+                                        "extended_hours","client_order_id"}
+                    or not isinstance(payload["symbol"], str)
+                    or not re.fullmatch(r"[A-Z][A-Z0-9.]{0,9}", payload["symbol"])
+                    or not isinstance(payload["qty"], str)
+                    or not re.fullmatch(r"[0-9]+", payload["qty"])
+                    or money(payload.get("limit_price")) < 1
+                    or money(payload["limit_price"]) % Decimal(".01")):
+                raise PaperLocalRefusal("unsafe_intraday_order_request")
+        elif (payload.get("extended_hours") is not False
+              or payload.get("type") != ("limit" if side == "buy" else "market")
+              or (side == "buy" and money(payload.get("limit_price")) <= 0)):
             raise PaperError("unsafe_order_request")
         return self._request("POST", "/v2/orders", json=payload)
 
@@ -509,7 +550,7 @@ def _intent(c, cid, account_id, day, symbol, side, qty, reason, payload=None):
     """Persist the intent BEFORE the network call; unknown outcomes never retry blindly."""
     t = utc()
     detail = {
-        k: payload[k] for k in ("type", "limit_price", "time_in_force") if payload and k in payload
+        k: payload[k] for k in ("type", "limit_price", "time_in_force", "extended_hours", "session") if payload and k in payload
     }
     cur = c.execute(
         """INSERT OR IGNORE INTO sw_alpaca_intents
@@ -524,13 +565,14 @@ def _state(cid, status, order=None, reason=""):
     with connect() as c:
         c.execute(
             """UPDATE sw_alpaca_intents SET state=?,broker_order_id=?,broker_status=?,updated_at=?,
-                       detail_json=json_set(detail_json, '$.reason', ?) WHERE client_id=?""",
+                       detail_json=json_patch(detail_json, ?) WHERE client_id=?""",
             (
                 status,
                 str(order.get("id") or "") if isinstance(order, dict) else None,
                 str(order.get("status") or "") if isinstance(order, dict) else None,
                 utc(),
-                reason,
+                json.dumps({"reason":reason, **({"filled_qty":str(order["filled_qty"])}
+                    if cid.startswith(INTRADAY_PREFIX) and order and "filled_qty" in order else {})}),
                 cid,
             ),
         )
@@ -576,6 +618,18 @@ def _validated_order(order, intent):
         or money(order.get("qty")) != money(intent["qty"])
     ):
         raise PaperError("alpaca_paper_order_identity_mismatch")
+    if intent["client_id"].startswith(INTRADAY_PREFIX):
+        detail = json.loads(intent["detail_json"])
+        filled = money(order.get("filled_qty"))
+        if (not 0 <= filled <= money(intent["qty"])
+                or (order["status"] == "filled" and filled != money(intent["qty"]))
+                or (intent.get("broker_order_id") and intent["broker_order_id"] != order["id"])
+                or order["status"] == "replaced"
+                or order.get("extended_hours") is not detail.get("extended_hours")
+                or order.get("type") != detail.get("type")
+                or order.get("time_in_force") != detail.get("time_in_force")
+                or money(order.get("limit_price")) != money(detail.get("limit_price"))):
+            raise PaperError("alpaca_intraday_order_identity_mismatch")
     return order
 
 
@@ -589,6 +643,9 @@ def _reconcile(client, account_id, open_orders):
     unresolved = 0
     for intent in local:
         cid = intent["client_id"]
+        if intent["reason"] == "broker_order_without_local_intent":
+            unresolved += 1
+            continue
         try:
             order = by_client.get(cid) or client.by_client_id(cid)
             if order is None:
@@ -600,19 +657,22 @@ def _reconcile(client, account_id, open_orders):
             unresolved += 1
             continue
         terminal = order["status"] in TERMINAL
+        if cid.startswith(INTRADAY_PREFIX) and not terminal and cid not in by_client:
+            unresolved += 1
+            continue
         _state(cid, "TERMINAL" if terminal else "ACKNOWLEDGED", order)
     return unresolved
 
 
-def _position_owned(position, fills, account_id, actions_since=None):
+def _position_owned(position, fills, account_id, actions_since=None, *, prefix=PREFIX):
     """Require a known strategy entry and an uninterrupted broker fill trail."""
     if fills is None:
         return False
     intents = rows(
         """SELECT side,broker_order_id,created_at,signal_day FROM sw_alpaca_intents
-        WHERE account_id=? AND symbol=? AND broker_order_id IS NOT NULL
+        WHERE account_id=? AND symbol=? AND broker_order_id IS NOT NULL AND client_id LIKE ?
         ORDER BY created_at DESC,client_id DESC""",
-        (account_id, position["symbol"]),
+        (account_id, position["symbol"], prefix+"%"),
     )
     entry = next((intent for intent in intents if intent["side"] == "BUY"), None)
     if not entry or (actions_since and actions_since > entry["signal_day"]):
@@ -860,6 +920,12 @@ def _preview_and_submit(client, snapshot, signals, day, now):
         symbol = signal["symbol"]
         item = {"symbol": symbol, "action": "WATCH"}
         result["why_no_trade"].append(item)
+        if one(
+            "SELECT 1 FROM sw_alpaca_intents WHERE account_id=? AND symbol=? AND signal_day=? AND client_id LIKE ?",
+            (account_id, symbol, target, INTRADAY_PREFIX+"%"),
+        ):
+            item["reason"] = "intraday_same_symbol_same_session_interlock"
+            continue
         if symbol in today or (symbol not in known and buys_today >= 2):
             item["reason"] = "already_ordered_or_daily_buy_cap"
             continue
@@ -993,6 +1059,11 @@ def _preview_and_submit(client, snapshot, signals, day, now):
 
 
 def paper_cycle(now=None):
+    with broker_cycle_lock:
+        return _paper_cycle(now)
+
+
+def _paper_cycle(now=None):
     real_clock = now is None
     now = now or datetime.now(UTC)
     result = {
@@ -1074,7 +1145,11 @@ def record_confirmed_absence(client_id, support_case, now=None):
             or intent["state"] not in ("PREPARED", "UNKNOWN")
         ):
             raise PaperError("alpaca_paper_no_matching_uncertain_intent")
-        if now < session(next_day(intent["signal_day"]))[1]:
+        if client_id.startswith(INTRADAY_PREFIX):
+            original_session_ended = now.astimezone(NY).date().isoformat() > intent["signal_day"]
+        else:
+            original_session_ended = now >= session(next_day(intent["signal_day"]))[1]
+        if not original_session_ended:
             raise PaperError("alpaca_paper_wait_until_original_session_ends")
         with PaperClient() as client:
             if (

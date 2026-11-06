@@ -33,6 +33,9 @@ REQUIRED = {
 }
 OPTIONAL = {
     "STOCKSWATCH_TICK_SECONDS",
+    "STOCKSWATCH_INTRADAY_FEED",
+    "STOCKSWATCH_INTRADAY_OVERNIGHT_FEED",
+    "STOCKSWATCH_INTRADAY_REQUIRE_ALL_VALID",
     "STOCKSWATCH_LOG_LEVEL",
     "STOCKSWATCH_SEC_USER_AGENT",
     "STOCKSWATCH_GEMINI_ENABLED",
@@ -278,6 +281,7 @@ def compose_model(plan, sw, fe, state, orders=False):
                 "STOCKSWATCH_ALLOW_INIT": "0",
                 "STOCKSWATCH_PRICE_PROVIDER": "alpaca",
                 "STOCKSWATCH_ALPACA_PAPER_ALLOW_ORDERS": "1" if orders else "0",
+                "STOCKSWATCH_INTRADAY_ALLOW_ORDERS": "0",
             },
             "volumes": [
                 {
@@ -333,7 +337,7 @@ def compose(state, model, *args, timeout=120):
     )
 
 
-def fingerprint(db):
+def fingerprint(db, *, include_broker=False):
     require(
         db.execute("PRAGMA integrity_check").fetchall() == [("ok",)],
         "sqlite_integrity_check_failed",
@@ -344,6 +348,10 @@ def fingerprint(db):
         "unknown_stockswatch_sqlite_schema",
     )
     tables = ("portfolio", "positions", "pending_orders", "fills", "equity_curve")
+    broker_tables = ("sw_alpaca_intents", "sw_alpaca_state", "sw_intraday_fills", "sw_intraday_risk")
+    tables += tuple(name for name in broker_tables if include_broker and db.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (name,)
+    ).fetchone())
     return {
         table: hashlib.sha256(
             repr(db.execute(f'SELECT * FROM "{table}" ORDER BY rowid').fetchall()).encode()
@@ -390,14 +398,18 @@ def backup(data, destination):
     ):
         origin.execute("BEGIN")
         fingerprint_before = verified_ledger(origin)
+        complete_before = fingerprint(origin, include_broker=True)
         origin.backup(target)
     with open_readonly(destination) as restored:
         require(
-            verified_ledger(restored) == fingerprint_before, "backup_financial_fingerprint_mismatch"
+            verified_ledger(restored) == fingerprint_before
+            and fingerprint(restored, include_broker=True) == complete_before,
+            "backup_financial_fingerprint_mismatch"
         )
     with destination.open("rb") as file:
         os.fsync(file.fileno())
-    return {"sqlite_sha256": digest(destination), "financial_tables": fingerprint_before}
+    return {"sqlite_sha256": digest(destination), "financial_tables": fingerprint_before,
+            "broker_tables": {k:v for k,v in complete_before.items() if k not in fingerprint_before}}
 
 
 def scoped_containers(plan):

@@ -42,6 +42,7 @@ def test_scoped_compose_ignores_shared_environment(tmp_path):
         assert model["services"]["frontend"]["ports"] == ["127.0.0.1:13000:80"]
         sw = model["services"]["stockswatch"]
         assert sw["environment"]["STOCKSWATCH_ALPACA_PAPER_ALLOW_ORDERS"] == str(int(orders))
+        assert sw["environment"]["STOCKSWATCH_INTRADAY_ALLOW_ORDERS"] == "0"
         assert sw["volumes"][0]["bind"]["create_host_path"] is False
         assert model["networks"]["net0"] == {
             "external": True,

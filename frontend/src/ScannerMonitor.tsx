@@ -4,6 +4,7 @@ import { useResource } from "./api";
 import "./ScannerMonitor.css";
 
 type Row = Record<string, any>;
+function nBatch(v: unknown): boolean { return Number(v) > 0; }
 function fmt(v: unknown): string { return Number(v || 0).toLocaleString("en-US"); }
 function when(v?: string | null): string {if (!v) return "—";const d = new Date(v);return Number.isNaN(d.getTime()) ? "—" : d.toLocaleString(undefined, {month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"});}
 function stageLabel(v?: string | null): string {return String(v || "WAITING").replace(/_/g," ").toLowerCase().replace(/\b\w/g,x=>x.toUpperCase());}
@@ -57,7 +58,7 @@ export function ScannerMonitor() {
   {data.error&&<div className="sw-scanner-error" role="alert"><TriangleAlert size={16}/> Scanner status could not be refreshed. Last saved events remain available.</div>}
   <div className="sw-scanner-now">
     <div className="sw-scanner-now-copy"><span className="sw-scanner-eyebrow">{status==="SCANNING"?"CURRENT OPERATION":status==="STALLED"?"NO RECENT PROGRESS":"LAST RECORDED OPERATION"}</span><strong>{stageLabel(stage)}</strong><small>{active&&live.symbol?`Currently processing ${live.symbol}`:active?"Executing the next research stage":status==="IDLE"?`Waiting for the next automatic ${Number(live.batch_size||4)}-symbol EOD refresh`:`Last update: ${when(live.updated_at)}`}</small></div>
-    <div className="sw-scanner-progress"><div><b>{fmt(live.completed)} / {fmt(live.batch_size)}</b><span>Symbols this batch</span></div><div className="sw-scanner-meter"><div style={{width:`${progress}%`}}/></div><small>{active?`Started ${when(live.started_at)}`:live.next_due_at?`Next cycle approximately ${when(live.next_due_at)}`:"Scheduling next cycle"}</small></div>
+    <div className="sw-scanner-progress"><div><b>{nBatch(live.batch_size) ? `${fmt(live.completed)} / ${fmt(live.batch_size)}` : "0 due"}</b><span>Symbols in this EOD batch</span></div><div className="sw-scanner-meter"><div style={{width:`${progress}%`}}/></div><small>{active?`Started ${when(live.started_at)}`:live.next_due_at?`Next cycle approximately ${when(live.next_due_at)}`:"Scheduling next cycle"}</small></div>
   </div>
   <div className="sw-scanner-phases">
    {phases.map((p,i)=><div className={`sw-scanner-phase ${active&&i===phaseIndex?"current":active&&phaseIndex>=0&&i<phaseIndex?"done":""}`} key={p.key}><span>{i+1}</span><div><b>{p.title}</b><small>{p.note}</small></div>{active&&phaseIndex>=0&&i<phaseIndex?<CheckCircle2 size={14}/>:null}</div>)}

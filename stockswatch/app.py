@@ -15,7 +15,8 @@ from pydantic import BaseModel
 from .storage import connect, init, init_execution, one, rows, setting, utc, worker_ownership
 from .ledger import EXECUTION_MODE, mark_to_market, outcome
 from .alpaca_paper import PaperError, broker_mode, broker_init, enrich_dashboard, broker_status, set_broker_paused
-from .service import Service
+from .service import Service, daily_refresh_due
+from . import intraday_store
 from .observer import init_journal, scanner_snapshot, EXPORT_TABLES, export_jsonl
 
 logging.basicConfig(level=os.getenv("STOCKSWATCH_LOG_LEVEL", "INFO"))
@@ -32,6 +33,7 @@ async def lifespan(app):
         init_journal()
         if broker_mode():
             broker_init()
+        intraday_store.initialize()
         service.start()
         try:
             yield
@@ -234,6 +236,16 @@ def dashboard():
         "can_issue_live_orders": False,
     }
     return enrich_dashboard(payload) if broker else payload
+
+
+@app.get("/api/stockswatch/intraday", dependencies=[Depends(authenticated)])
+def intraday():
+    result = intraday_store.status()
+    result["orders"] = intraday_store.order_history() if broker_mode() else []
+    result["daily_refresh_due"] = daily_refresh_due(datetime.now(timezone.utc))
+    result.setdefault("tracked", one("SELECT COUNT(*) AS n FROM assets")["n"])
+    result["missed_proxies"] = intraday_store.missed_proxies()
+    return result
 
 
 @app.get('/api/stockswatch/scanner', dependencies=[Depends(authenticated)])

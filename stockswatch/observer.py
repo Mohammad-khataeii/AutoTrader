@@ -166,6 +166,8 @@ EXPORT_TABLES={
     'ai':'ai_insights','scanner_runs':'sw_scan_runs','scanner_events':'sw_scan_events',
     'signal_features':'sw_signal_snapshots',
     'order_outcomes':'sw_order_outcomes','execution_cycles':'sw_trade_cycles',
+    'intraday_cycles':'sw_intraday_cycles','intraday_observations':'sw_intraday_observations',
+    'intraday_followups':'sw_intraday_followups',
 }
 
 def export_jsonl(kind):
@@ -180,6 +182,10 @@ def export_jsonl(kind):
         c.execute('BEGIN')
         datasets=list(EXPORT_TABLES.items()) if kind=='all' else [(kind,EXPORT_TABLES[kind])]
         for label,table in datasets:
+            if label.startswith('intraday_') and not c.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)
+            ).fetchone():
+                continue
             cursor=c.execute('SELECT * FROM '+table+' ORDER BY rowid')
             while True:
                 batch=cursor.fetchmany(256)
