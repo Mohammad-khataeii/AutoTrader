@@ -1,0 +1,26 @@
+--- a/src/autotrader/api/main.py
++++ b/src/autotrader/api/main.py
+@@ -204,7 +204,11 @@
+             approved={s.strip() for s in settings.approved_strategy_ids.split(",") if s.strip()},
+             execution_costs={'fee_bps':str(settings.default_fee_bps),'slippage_bps':str(settings.default_slippage_bps),'spread_bps':'10','volume_participation':'.01'})
+         strategy_engine.member_parameters=await repository.frozen_runtime_parameters()
+-        yield
++        app.state.gemini_auto.start()
++        try:
++            yield
++        finally:
++            await app.state.gemini_auto.stop()
+         await shadow_lab.close()
+         await personal_paper.close()
+         await market_data.close()
+@@ -219,6 +223,10 @@
+     app.state.scanner = scanner_service
+     app.state.execution_gateway = gateway
+     install_session(app, settings, require_user)
++    from autotrader.api.gemini_advisory import install as install_gemini_advisory
++    install_gemini_advisory(app, repository, require_user)
++    from autotrader.api.gemini_auto import install as install_gemini_auto
++    app.state.gemini_auto = install_gemini_auto(app, repository, require_user)
+ 
+     from autotrader.api.v45 import install as install_v45
+     install_v45(app, repository, shadow_lab, require_user)

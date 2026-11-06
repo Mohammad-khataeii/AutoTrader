@@ -78,6 +78,24 @@ export class ApiClient {
         /* A gateway may return HTML. */
       }
       if (response.status === 401) {
+        // An optional, isolated StocksWatch service cannot terminate the entire
+        // crypto workspace session. Only a confirmed 401 from the core session
+        // endpoint can trigger global logout.
+        if (path.startsWith("/api/stockswatch/")) {
+          let primaryStatus = 0;
+          try {
+            const verification = await this.transport("/api/session", {
+              method: "GET",
+              credentials: "same-origin",
+              cache: "no-store",
+            });
+            primaryStatus = verification.status;
+          } catch {
+            // Transient core connectivity errors cannot prove session expiry.
+          }
+          if (primaryStatus !== 401)
+            throw new Error("StocksWatch could not verify its session. The main AutoTrader login remains active; please retry or inspect the StocksWatch service.");
+        }
         this.onUnauthorized?.();
         throw new Error(
           "Your sign-in was not accepted. Sign out and sign in again.",

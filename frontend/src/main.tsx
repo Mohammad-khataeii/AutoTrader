@@ -10,6 +10,7 @@ import {
   LogOut,
   RefreshCw,
   SlidersHorizontal,
+  TrendingUp,
 } from "lucide-react";
 import {
   ApiClient,
@@ -26,12 +27,15 @@ import { Overview } from "./Overview";
 import { Dashboard } from "./Dashboard";
 import { PersonalPaper } from "./PersonalPaper";
 const Perpetuals = lazy(() => import("./Perpetuals").then(m => ({ default: m.Perpetuals })));
+const WorkspaceVisual = lazy(() => import("./WorkspaceVisual").then(m => ({ default: m.WorkspaceVisual })));
 const Opportunities = lazy(() => import("./Opportunities").then(m => ({ default: m.Opportunities })));
 const StrategiesWorkspace = lazy(() => import("./Opportunities").then(m => ({ default: m.StrategiesWorkspace })));
 const Trades = lazy(() => import("./Trades").then(m => ({ default: m.Trades })));
 const Research = lazy(() => import("./Research").then(m => ({ default: m.Research })));
 import { advancedItems } from "./navigation";
 const AdvancedScreen = lazy(() => import("./advanced").then(m => ({ default: m.AdvancedScreen })));
+import { AutoGemini } from "./AutoGemini";
+const StocksWatch = lazy(() => import("./StocksWatch").then(m => ({ default: m.StocksWatch })));
 import "./styles.css";
 // Retained public formatter for existing callers; primary screens use localized EUR formatting.
 export function displayMoney(value: unknown): string {
@@ -40,6 +44,7 @@ export function displayMoney(value: unknown): string {
     : `EUR ${Number(value).toFixed(2)}`;
 }
 const navigation = [
+  { name: "StocksWatch", icon: TrendingUp },
   { name: "Dashboard", icon: LayoutDashboard },
   { name: "Opportunities", icon: Activity },
   { name: "Strategies", icon: FlaskConical },
@@ -65,7 +70,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
     Boolean(system.error || overview.error),
   );
   const primaryStatus = primary.error ? "Unavailable" : !primary.data?.portfolio ? "Checking" : primary.data?.reconciliation?.length || primary.data?.portfolio?.risk_state !== "HEALTHY" ? "Needs attention" : primary.data?.portfolio?.control !== "RUNNING" ? "Paused" : primary.data?.state === "PAPER_EXPERIMENTAL_ACTIVE" && primary.data?.worker_health?.fresh ? "Running" : primary.data?.runtime_matches === false ? "Entry suspended" : "Data syncing";
-  const status = active === "Advanced" ? legacyStatus : active === "Perpetuals" ? "Paper only" : primaryStatus;
+  const status = active === "Advanced" ? legacyStatus : active === "Perpetuals" || active === "StocksWatch" ? "Paper only" : primaryStatus;
   return (
     <div className="app-shell">
       <a className="skip-link" href="#workspace">
@@ -186,16 +191,18 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
             successful update.
           </div>
         )}
+        {["Dashboard","Perpetuals","Opportunities","Decision Insights"].includes(active) && <AutoGemini scope={active === "Perpetuals" ? "perpetuals" : "spot"}/>}
         <Suspense fallback={<div className="loading" role="status">Loading workspace…</div>}>
-        {active === "Decision Insights" && <><PersonalPaper view="monitor"/><TradeGates /></>}
+        {active === "Decision Insights" && <WorkspaceVisual view="insights" legacy={<><PersonalPaper view="monitor"/><TradeGates /></>} />}
         {active === "Dashboard" && <Dashboard/>}
-        {active === "Opportunities" && <><PersonalPaper view="opportunities"/><Opportunities /></>}
-        {active === "Strategies" && <><PersonalPaper view="strategies"/><StrategiesWorkspace /></>}
+        {active === "StocksWatch" && <StocksWatch />}
+        {active === "Opportunities" && <WorkspaceVisual view="opportunities" legacy={<><PersonalPaper view="opportunities"/><Opportunities /></>} />}
+        {active === "Strategies" && <WorkspaceVisual view="strategies" legacy={<><PersonalPaper view="strategies"/><StrategiesWorkspace /></>} />}
         {active === "Perpetuals" && <Perpetuals />}
-        {active === "Activity" && <><PersonalPaper view="activity"/><Trades /></>}
-        {active === "Research" && <><PersonalPaper view="research"/><Research auth={auth} /></>}{" "}
+        {active === "Activity" && <WorkspaceVisual view="activity" legacy={<><PersonalPaper view="activity"/><Trades /></>} />}
+        {active === "Research" && <WorkspaceVisual view="research" legacy={<><PersonalPaper view="research"/><Research auth={auth} /></>} />}{" "}
         {active === "Advanced" && (
-          advanced === "Accounts overview" ? <Overview system={system} onExperiments={() => setActive("Strategies")}/> : <AdvancedScreen key={advanced} page={advanced} auth={auth} />
+          <WorkspaceVisual view="settings" label={advanced} legacy={advanced === "Accounts overview" ? <Overview system={system} onExperiments={() => setActive("Strategies")}/> : <AdvancedScreen key={advanced} page={advanced} auth={auth} />} />
         )}
         </Suspense>
         <footer className="workspace-footer">

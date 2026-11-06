@@ -1,218 +1,251 @@
-import { useState } from "react";
-import { MultiPerpetuals } from "./MultiPerpetuals";
-import { errorMessage, useApi, useResource } from "./api";
-import { Badge, Panel, ResourceState, Technical } from "./ui";
+import { lazy, Suspense, useMemo, useState, type ReactNode } from "react";
+import {
+  Activity, ArrowDownRight, ArrowRight, ArrowUpRight, BarChart3, ChevronDown,
+  Clock3, Coins, Gauge, Layers3, PauseCircle, PlayCircle, Radio, Search,
+  ShieldCheck, TrendingUp, Wallet,
+} from "lucide-react";
+import { errorMessage, useApi, useResource, type Row } from "./api";
+import { ResourceState, Technical } from "./ui";
+import "./PerpetualsDashboard.css";
 
-const path = "/api/perpetuals";
-type Value = string | null | undefined;
-type PositionMetrics = {
-  underlying_price_change_pct: Value;
-  direction_adjusted_price_change_pct: Value;
-  gross_unrealized_pnl_usdt: Value;
-  estimated_net_unrealized_pnl_usdt: Value;
-  gross_margin_roi_pct: Value;
-  estimated_net_margin_roi_pct: Value;
-  estimated_position_account_roi_pct: Value;
-  margin_utilization_pct: Value;
-  liquidation_distance_pct: Value;
-  estimated_net_at_existing_target_usdt: Value;
-};
-type Position = {
-  side: number; qty: string; entry: string; notional: string; margin: string;
-  stop: string; target: string; liquidation_mark: string; funding: string;
-};
-type Account = {
-  leverage: number; equity: string; cash: string; realized: string;
-  max_drawdown: string; closed: number; liquidations: number; halted: boolean;
-  position: Position | null;
-  metrics?: {
-    account_roi_pct: Value; account_net_pnl_usdt: Value; valuation_fresh: boolean;
-    position_metrics: PositionMetrics | null;
-  };
-};
-type LabEvent = { kind: string; minute: number; leverage?: number; net?: string; amount?: string };
-type Lab = {
-  available: boolean; data_fresh: boolean; feed_status: string; entries_enabled: boolean;
-  policy: string; mark: string | null; bar_closed_at: number | null;
-  pending: { side: number; fill_at: number } | null; accounts: Account[]; events: LabEvent[];
-  strategy?: {
-    identity: string; timeframe: string; qualification: string; market_regime: string | null;
-    signal_direction: string | null; approximate_round_trip_cost_pct: Value;
-    break_even_underlying_move_long_pct: Value; break_even_underlying_move_short_pct: Value;
-  };
-};
-type Candidate = {
-  policy: string; direction: string; leverage: number; qualification: string;
-  candidate_move_pct: Value; expected_underlying_move_pct: Value; expected_net_move_pct: Value;
-  estimated_round_trip_cost_pct: Value; minimum_viable_move_pct: Value;
-  expected_net_pnl_usdt: Value; expected_margin_roi_pct: Value; expected_account_roi_pct: Value;
-  target_scenario_net_pnl_usdt?: Value; potential_loss_usdt: Value;
-  estimated_win_probability: Value; expected_holding_minutes: Value;
-  planned_max_holding_minutes: number; liquidation_buffer_pct: Value;
-  estimated_entry?: Value; stop?: Value; target?: Value;
-  notional_usdt?: Value; isolated_margin_usdt?: Value; margin_utilization_pct?: Value;
-  rejection_reasons: string[]; probability_source: string;
-};
-type Research = {
-  enabled: boolean; status: string; model_state: string; observed_at?: number;
-  quote_expires_at?: number; strategies: string[]; candidate_rows: Candidate[];
-  market?: { regime: string; spread_pct: Value; cutoff: number };
-};
+/* The original, full-detail page is retained for historical audit and research. */
+const OriginalPage = lazy(() => import("./PerpetualsLegacy").then(m => ({ default: m.Perpetuals })));
+const BTC_URL = "/api/perpetuals";
+const MULTI_URL = "/api/perpetuals/multi";
+type Desk = "multi" | "btc";
+type Tone = "good" | "bad" | "warn" | "plain";
 
-const amount = (value: Value, digits = 2) =>
-  value == null || value === "" || !Number.isFinite(Number(value)) ? "Unknown" :
-    Number(value).toLocaleString(undefined, { maximumFractionDigits: digits, minimumFractionDigits: digits });
-const usdt = (value: Value) => value == null || value === "" ? "Unknown" : amount(value) + " USDT";
-const pct = (value: Value) => value == null || value === "" ? "Unknown" : amount(value, 3) + "%";
-const at = (ms: number) => new Date(ms).toLocaleString();
-const side = (value: number) => value === 1 ? "Long" : "Short";
-const readable = (value: string) => value.toLowerCase().replace(/_/g, " ");
-const feedLabel: Record<string, string> = {
-  DISABLED: "Disabled", WAITING: "Waiting for market data", CURRENT: "Market data current",
-  STALE: "Market data stale", DEGRADED: "Market data unavailable or incomplete",
+const numeric = (value: unknown): number | null =>
+  value === null || value === undefined || value === "" || !Number.isFinite(Number(value)) ? null : Number(value);
+const format = (value: unknown, digits = 2) => {
+  const v = numeric(value);
+  return v === null ? "—" : v.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
 };
-const eventLabel: Record<string, string> = {
-  SIGNAL: "Signal queued", OPEN: "Opened", FUNDING: "Funding", STOP: "Stop",
-  TARGET: "Target", TIME_EXIT: "Time exit", LIQUIDATION: "Liquidated", RISK_HALT: "Risk halt",
-  ENTRY_SKIPPED: "Entry skipped", ENTRY_EXPIRED: "Entry expired",
-  RESUME_ENTRIES: "Entries resumed", PAUSE_ENTRIES: "Entries paused",
+const cash = (value: unknown) => numeric(value) === null ? "—" : `${format(value)} USDT`;
+const percentage = (value: unknown, digits = 2) => numeric(value) === null ? "—" : `${format(value, digits)}%`;
+const signedCash = (value: unknown) => {
+  const v = numeric(value);
+  return v === null ? "—" : `${v > 0 ? "+" : v < 0 ? "−" : ""}${format(Math.abs(v))} USDT`;
 };
-const policyLabel: Record<string, string> = {
-  BTC_MICRO_CONTINUATION_V1: "Micro-trend continuation",
-  BTC_MICRO_RETEST_V1: "Breakout and retest",
-  BTC_MICRO_RANGE_V1: "Range mean reversion",
+const toneOf = (value: unknown): Tone => (numeric(value) ?? 0) > 0 ? "good" : (numeric(value) ?? 0) < 0 ? "bad" : "plain";
+const label = (value: unknown) => String(value ?? "Unknown").replace(/_/g, " ").replace(/\s+/g, " ").trim().toLowerCase().replace(/^./, c => c.toUpperCase());
+const direction = (side: unknown) => Number(side) === 1 ? "Long" : Number(side) === -1 ? "Short" : label(side);
+const timestamp = (value: unknown) => {
+  const parsed = numeric(value);
+  if (parsed === null && typeof value !== "string") return "—";
+  const d = new Date(parsed ?? String(value));
+  return Number.isNaN(d.getTime()) ? "—" : d.toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 };
+const shorten = (value: unknown, max = 44) => {
+  const text = label(value);
+  return text.length <= max ? text : `${text.slice(0, max - 1)}…`;
+};
+const sum = (values: unknown[]) => values.reduce<number>((total, value) => total + (numeric(value) ?? 0), 0);
+const spread = (items: Row[]) => Math.max(1, ...items.map(a => Math.abs((numeric(a.equity) ?? 1000) - 1000)));
 
-function ResearchPanel() {
-  const resource = useResource(path + "/research", { poll: 15000 });
-  const research = resource.data as Research | undefined;
-  const expired = Boolean(research?.quote_expires_at && Date.now() > research.quote_expires_at);
-  return <Panel>
-    <h2>Micro-move research</h2>
-    <ResourceState resource={resource} label="Micro-move research" />
-    <p>Untested and unvalidated. These candidates cannot place trades or change the existing accounts.</p>
-    {research && <>
-      <Badge tone="warning">{research.enabled ? readable(research.status) : "Preview disabled"}</Badge>
-      <p>Qualification: {readable(research.model_state)}. Probabilities and expected profits stay unknown until supported by reviewed outcome evidence.</p>
-      {!research.enabled && <p>The optional preview is disabled by default. No micro-strategy is active.</p>}
-      {research.market && <p>Regime: {readable(research.market.regime)} · Observed spread {pct(research.market.spread_pct)} · Completed data through {at(research.market.cutoff)}</p>}
-      {research.observed_at && <p>Snapshot {at(research.observed_at)}{research.quote_expires_at && <> · Quote expires {at(research.quote_expires_at)}</>}. {expired ? "The depth quote has expired; values below are historical estimates." : "Depth estimates can change before execution."}</p>}
-      {research.strategies.map(policy => <div className="perp-research-policy" key={policy}>
-        <h3>{policyLabel[policy] ?? policy}</h3>
-        <p className="small muted">{policy} · Completed 1m / 3m / 5m data</p>
-        {research.candidate_rows.filter(row => row.policy === policy).map(row => <details key={row.leverage} className="perp-research-cohort">
-          <summary>{row.leverage}× · {readable(row.direction)} · {row.rejection_reasons.length ? "Abstain" : "Research proposal only"}</summary>
-          <dl className="perp-metrics">
-            <div><dt>Candidate target move</dt><dd>{pct(row.candidate_move_pct)}</dd></div>
-            <div><dt>Estimated round-trip cost</dt><dd>{pct(row.estimated_round_trip_cost_pct)}</dd></div>
-            <div><dt>Move needed to break even</dt><dd>{pct(row.minimum_viable_move_pct)}</dd></div>
-            <div><dt>Expected underlying move</dt><dd>{pct(row.expected_underlying_move_pct)}</dd></div>
-            <div><dt>Expected net move</dt><dd>{pct(row.expected_net_move_pct)}</dd></div>
-            <div><dt>Expected net P&amp;L</dt><dd>{usdt(row.expected_net_pnl_usdt)}</dd></div>
-            <div><dt>Expected margin ROI</dt><dd>{pct(row.expected_margin_roi_pct)}</dd></div>
-            <div><dt>Expected account ROI</dt><dd>{pct(row.expected_account_roi_pct)}</dd></div>
-            <div><dt>Net at target scenario</dt><dd>{usdt(row.target_scenario_net_pnl_usdt)}</dd></div>
-            <div><dt>Planned stop loss estimate</dt><dd>{usdt(row.potential_loss_usdt)}</dd></div>
-            <div><dt>Notional / isolated margin</dt><dd>{usdt(row.notional_usdt)} / {usdt(row.isolated_margin_usdt)}</dd></div>
-            <div><dt>Margin utilization</dt><dd>{pct(row.margin_utilization_pct)}</dd></div>
-            <div><dt>Stop / target</dt><dd>{usdt(row.stop)} / {usdt(row.target)}</dd></div>
-            <div><dt>Liquidation buffer</dt><dd>{pct(row.liquidation_buffer_pct)}</dd></div>
-            <div><dt>Probability of target first</dt><dd>{row.estimated_win_probability == null ? "Unknown" : pct(String(Number(row.estimated_win_probability) * 100))}</dd></div>
-            <div><dt>Holding period</dt><dd>{amount(row.expected_holding_minutes)} expected · {row.planned_max_holding_minutes} min limit</dd></div>
-          </dl>
-          <p>Gap losses can exceed the planned stop estimate. Target scenarios are conditional calculations.</p>
-          <p>Qualification: {readable(row.qualification)}. Probability source: {readable(row.probability_source)}.</p>
-          {row.rejection_reasons.length > 0 && <ul>{row.rejection_reasons.map(reason => <li key={reason}>{readable(reason)}</li>)}</ul>}
-        </details>)}
-      </div>)}
-      {research.candidate_rows.length > 0 && <Technical value={research} label="Research assumptions and source timestamps" />}
-    </>}
-  </Panel>;
+function Flag({ children, tone = "plain" }: { children: ReactNode; tone?: Tone }) {
+  return <span className={`pd-flag pd-${tone}`}><i aria-hidden="true" />{children}</span>;
 }
-
+function Value({ amount, suffix = "USDT" }: { amount: unknown; suffix?: string }) {
+  return <>{format(amount)}{numeric(amount) === null ? null : <small> {suffix}</small>}</>;
+}
+function Metric({ icon: Icon, name, value, note, tone = "plain" }: {
+  icon: typeof Wallet; name: string; value: ReactNode; note: string; tone?: Tone;
+}) {
+  return <div className={`pd-metric pd-metric-${tone}`}>
+    <div className="pd-metric-top"><span>{name}</span><Icon size={18} aria-hidden="true" /></div>
+    <strong>{value}</strong><small>{note}</small>
+  </div>;
+}
+function SectionTitle({ title, hint, right }: { title: string; hint?: string; right?: ReactNode }) {
+  return <div className="pd-section-title"><div><h2>{title}</h2>{hint && <p>{hint}</p>}</div>{right}</div>;
+}
+function UsageBar({ value, labelText }: { value: unknown; labelText?: string }) {
+  const v = numeric(value);
+  const width = v === null ? 0 : Math.max(0, Math.min(100, v));
+  return <div className="pd-usage"><div className="pd-track" role="progressbar" aria-label={labelText ?? "Margin utilization"} aria-valuemin={0} aria-valuemax={100} aria-valuenow={v === null ? undefined : width}><span style={{ width: `${width}%` }} /></div><span>{percentage(v, 1)}</span></div>;
+}
+function AccountCards({ accounts, desk }: { accounts: Row[]; desk: Desk }) {
+  return <div className="pd-account-grid">{[...accounts].sort((a, b) => Number(a.leverage) - Number(b.leverage)).map(account => {
+    const net = (numeric(account.equity) ?? 1000) - 1000;
+    const unrealized = desk === "btc" ? account.metrics?.position_metrics?.estimated_net_unrealized_pnl_usdt ?? 0 : account.estimated_net_unrealized;
+    const utilization = desk === "btc" ? account.metrics?.position_metrics?.margin_utilization_pct ?? 0 : account.margin_utilization_pct;
+    const maxDrawdown = desk === "btc" ? (numeric(account.max_drawdown) ?? 0) * 100 : (numeric(account.drawdown) ?? 0) * 100;
+    const hasPosition = desk === "btc" ? Boolean(account.position) : (numeric(account.margin_used) ?? 0) > 0;
+    return <article className="pd-account" key={`${desk}-${account.leverage}`}>
+      <div className="pd-account-heading"><span className="pd-leverage">{account.leverage}×</span><Flag tone={account.halted ? "bad" : hasPosition ? "good" : "plain"}>{account.halted ? "Risk halted" : hasPosition ? "In a trade" : "No position"}</Flag></div>
+      <p className="pd-mini-label">Account equity</p>
+      <strong className="pd-equity"><Value amount={account.equity} /></strong>
+      <div className="pd-account-net"><span className={`pd-pnl pd-${toneOf(net)}`}>{signedCash(net)}</span><span className="pd-small-muted">{percentage(desk === "btc" ? account.metrics?.account_roi_pct : account.account_roi_pct)} ROI</span></div>
+      <div className="pd-account-stats">
+        <div><span>Realized</span><strong className={`pd-${toneOf(account.realized)}`}>{signedCash(account.realized)}</strong></div>
+        <div><span>Open est.</span><strong className={`pd-${toneOf(unrealized)}`}>{signedCash(unrealized)}</strong></div>
+        <div><span>Free cash</span><strong>{cash(desk === "btc" ? account.cash : account.free_collateral)}</strong></div>
+        <div><span>Closed</span><strong>{format(account.closed, 0)} trades</strong></div>
+      </div>
+      <div className="pd-card-bottom"><div className="pd-card-row"><span>Margin used</span><span>{desk === "multi" ? cash(account.margin_used) : cash(account.position?.margin ?? 0)}</span></div><UsageBar value={utilization} labelText={`${account.leverage}× margin utilization`} /><div className="pd-card-row"><span>Max drawdown</span><strong>{percentage(maxDrawdown)}</strong></div></div>
+      {Number(account.liquidations) > 0 && <p className="pd-card-warning">{account.liquidations} liquidation(s) recorded</p>}
+    </article>;
+  })}</div>;
+}
+function NetBars({ accounts }: { accounts: Row[] }) {
+  const scale = spread(accounts);
+  return <div className="pd-bars" role="img" aria-label="Net account profit and loss by leverage">
+    {[...accounts].sort((a, b) => Number(a.leverage) - Number(b.leverage)).map(a => {
+      const net = (numeric(a.equity) ?? 1000) - 1000;
+      return <div className="pd-bar-row" key={a.leverage}>
+        <span className="pd-bar-label">{a.leverage}×</span>
+        <div className="pd-bar-track"><span className={`pd-bar-fill ${net < 0 ? "negative" : "positive"}`} style={{ width: `${Math.max(1, Math.abs(net) / scale * 100)}%` }} /></div>
+        <strong className={`pd-${toneOf(net)}`}>{signedCash(net)}</strong>
+      </div>;
+    })}
+    <p className="pd-footnote">Each leverage level is a separate simulated account. Profit does not imply a proven strategy.</p>
+  </div>;
+}
+function PositionRange({ stop, mark, target }: { stop: unknown; mark: unknown; target: unknown }) {
+  const a = numeric(stop), b = numeric(mark), c = numeric(target);
+  if (a === null || b === null || c === null || a === c) return null;
+  const progress = Math.max(0, Math.min(100, (b - a) / (c - a) * 100));
+  return <div className="pd-position-range" aria-label={`Current price is ${format(progress, 0)} percent of the distance from stop to target`}>
+    <div className="pd-range-track"><span style={{ left: `${progress}%` }} /></div>
+    <div><span>Stop {format(a)}</span><span>Target {format(c)}</span></div>
+  </div>;
+}
+function Positions({ data, desk }: { data: Row; desk: Desk }) {
+  const positions: Row[] = desk === "multi" ? (data.positions ?? []).map((p: Row) => ({ ...p, symbol: p.symbol })) : (data.accounts ?? []).filter((a: Row) => a.position).map((a: Row) => ({
+    ...a.position, symbol: "BTCUSDT", leverage: a.leverage, mark: data.mark, metrics: a.metrics?.position_metrics,
+  }));
+  return <section className="pd-surface">
+    <SectionTitle title="Open positions" hint="Stops and targets are simulated protective levels" right={<Flag tone={positions.length ? "good" : "plain"}>{positions.length} open</Flag>} />
+    {positions.length === 0 ? <div className="pd-empty"><ShieldCheck size={28} /><strong>No open positions</strong><span>The scanner will keep evaluating new setups while entries are enabled.</span></div> :
+      <div className="pd-table-scroll" role="region" aria-label="Open perpetual positions" tabIndex={0}><table className="pd-table pd-positions-table"><thead><tr><th>Account</th><th>Position</th><th>Entry / current</th><th>Est. net open P&L</th><th>Stop → target</th><th>Liquidation</th></tr></thead><tbody>
+        {positions.map((p, i) => {
+          const pnl = desk === "btc" ? p.metrics?.estimated_net_unrealized_pnl_usdt : p.estimated_net_unrealized;
+          return <tr key={p.id ?? `${p.leverage}-${i}`}>
+            <td><span className="pd-cell-strong">{p.leverage}× isolated</span></td>
+            <td><span className="pd-symbol">{p.symbol}</span><br /><Flag tone={Number(p.side) === 1 ? "good" : "warn"}>{direction(p.side)}</Flag></td>
+            <td><span>{format(p.entry)}</span><br /><strong>{format(p.mark)}</strong></td>
+            <td><strong className={`pd-${toneOf(pnl)}`}>{signedCash(pnl)}</strong><br /><span className="pd-small-muted">Net close estimate</span></td>
+            <td><div className="pd-levels"><span>{format(p.stop)} → {format(p.target)}</span><PositionRange stop={p.stop} mark={p.mark} target={p.target} /></div></td>
+            <td><span>{format(p.liquidation_mark)}</span><br /><span className="pd-small-muted">{percentage(desk === "btc" ? p.metrics?.liquidation_distance_pct : p.liquidation_distance_pct)} distance</span></td>
+          </tr>;
+        })}
+      </tbody></table></div>}
+    <p className="pd-footnote">Open P&L is an estimate after modeled exit costs; actual modeled settlement may differ. No real orders are placed.</p>
+  </section>;
+}
+function Scanner({ scan, fresh }: { scan: Row | undefined; fresh: boolean }) {
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
+  const [limit, setLimit] = useState(10);
+  const rows: Row[] = scan?.rows ?? [];
+  const visible = useMemo(() => rows.filter(row => {
+    const term = search.trim().toLowerCase();
+    const matches = !term || String(row.symbol ?? "").toLowerCase().includes(term) || String(row.base ?? "").toLowerCase().includes(term);
+    const status = String(row.status ?? "").toLowerCase();
+    return matches && (filter === "all" || (filter === "selected" && !["deferred", "rejected"].includes(status)) || status === filter);
+  }), [rows, search, filter]);
+  const stages = [
+    ["Screened", numeric(scan?.markets_screened) ?? rows.length],
+    ["Technical passes", numeric(scan?.technical_passed) ?? 0],
+    ["Detailed", numeric(scan?.details_completed) ?? 0],
+    ["Paper fills / scan", numeric(scan?.matched_opportunities_filled) ?? 0],
+  ] as const;
+  const max = Math.max(1, stages[0][1]);
+  return <section className="pd-surface">
+    <SectionTitle title="Market scanner" hint="Actual market observations · no fabricated candidates" right={<Flag tone={fresh ? "good" : "warn"}>{fresh ? "Current" : "Stale"}</Flag>} />
+    <div className="pd-scanner-stages">{stages.map(([name, count], i) => <div className="pd-scanner-stage" key={name}><span>{name}</span><strong>{count}</strong><div className="pd-stage-bar"><i style={{ width: `${Math.max(1, count / max * 100)}%`, backgroundColor: i === 3 ? "#2a9367" : undefined }} /></div></div>)}</div>
+    <div className="pd-search-row"><label className="pd-search"><Search size={17} aria-hidden="true"/><span className="sr-only">Search markets</span><input placeholder="Search BTC, ETH, SOL…" value={search} onChange={e => {setSearch(e.target.value);setLimit(10);}} /></label>
+      <label className="pd-select"><span className="sr-only">Filter market status</span><select value={filter} onChange={e => {setFilter(e.target.value);setLimit(10);}}><option value="all">All markets</option><option value="selected">Candidates</option><option value="rejected">Rejected</option><option value="deferred">Deferred</option></select><ChevronDown size={14} /></label>
+    </div>
+    {rows.length ? <><div className="pd-table-scroll" tabIndex={0} role="region" aria-label="Market scanner results"><table className="pd-table"><thead><tr><th>Market</th><th>Price</th><th>Regime</th><th>Strategy</th><th>Status</th><th>Why</th></tr></thead><tbody>{visible.slice(0, limit).map((row, i) => {
+      const s = String(row.status ?? "UNKNOWN").toUpperCase();
+      const kind: Tone = s.includes("FILL") || s === "QUALIFIED" ? "good" : s === "REJECTED" ? "bad" : s === "DEFERRED" ? "plain" : "warn";
+      return <tr key={`${row.symbol}-${i}`}><td><strong className="pd-symbol">{row.base ?? String(row.symbol ?? "").replace("USDT", "")}</strong><br /><span className="pd-small-muted">{row.symbol}</span></td><td>{cash(row.price)}</td><td>{label(row.regime)}</td><td>{row.policy ? label(row.policy) : <span className="pd-small-muted">Not detailed</span>}</td><td><Flag tone={kind}>{s === "PAPER_FILLED" ? "Filled" : label(s)}</Flag></td><td><span className="pd-reason" title={label(row.reason ?? row.selection)}>{shorten(row.reason ?? row.selection ?? "Not selected", 45)}</span></td></tr>;
+    })}</tbody></table></div>{visible.length > limit && <button className="pd-more" onClick={() => setLimit(x => x + 12)}>Show more markets <ArrowRight size={16}/></button>}{visible.length === 0 && <div className="pd-empty pd-small-empty">No markets match this filter.</div>}</> : <div className="pd-empty pd-small-empty">No scanner results available yet.</div>}
+    <details className="pd-collapse"><summary>Why candidates were rejected <ChevronDown size={16}/></summary><div className="pd-chip-wrap">{Object.entries(scan?.no_entry_reasons ?? {}).map(([reason, count]) => <span className="pd-reason-chip" key={reason}>{label(reason)} <strong>{String(count)}</strong></span>)}{!Object.keys(scan?.no_entry_reasons ?? {}).length && <span className="pd-small-muted">No rejection details recorded.</span>}</div></details>
+    <p className="pd-footnote">Deferred markets were not fully evaluated. Technical passes and detailed evaluations are separate counts, not a conversion funnel. USDT contract prices are not EUR spot quotes.</p>
+  </section>;
+}
+function Outcomes({ accounts, data, desk }: { accounts: Row[]; data: Row; desk: Desk }) {
+  const rows: Row[] = desk === "multi" ? (data.performance ?? []) : [];
+  const ranked = [...rows].sort((a, b) => Math.abs(numeric(b.net) ?? 0) - Math.abs(numeric(a.net) ?? 0)).slice(0, 6);
+  return <section className="pd-surface"><SectionTitle title="Performance" hint="Measured virtual account results" />
+    <div className="pd-performance-grid"><div className="pd-subpanel"><h3>Net P&L by leverage</h3><NetBars accounts={accounts}/></div><div className="pd-subpanel"><h3>{desk === "multi" ? "Recent strategy outcomes" : "Strategy status"}</h3>
+      {ranked.length ? <div className="pd-results">{ranked.map((row, i) => <div className="pd-result" key={`${row.symbol}-${row.policy}-${row.leverage}-${i}`}><div><strong>{row.symbol}</strong><span>{row.leverage}× · {label(row.policy)}</span></div><div><strong className={`pd-${toneOf(row.net)}`}>{signedCash(row.net)}</strong><small>{row.wins ?? 0}W / {row.losses ?? 0}L</small></div></div>)}</div> : <div className="pd-empty pd-small-empty">{desk === "btc" ? "Baseline breakout model · paper results shown by account." : "No settled trades yet."}</div>}
+    </div></div>
+    {desk === "multi" && <p className="pd-footnote">Grouped outcomes may share the same market signal across 1× / 3× / 10× accounts. They are not independent samples.</p>}
+  </section>;
+}
+function ActivityList({ desk, events, history }: { desk: Desk; events: Row[]; history?: Row }) {
+  const rows: Row[] = desk === "multi" ? history?.rows ?? [] : events.slice(0, 16);
+  return <section className="pd-surface"><SectionTitle title="Recent activity" hint="Saved simulated events, newest first" />
+    {rows.length ? <div className="pd-activity">{rows.slice(0, 10).map((event: Row, i: number) => {
+      const kind = String(event.kind ?? "EVENT");
+      const value = desk === "multi" ? event.net : event.net ?? event.amount;
+      const good = kind === "TARGET" || (numeric(value) ?? 0) > 0;
+      const bad = kind === "STOP" || kind === "LIQUIDATION" || (numeric(value) ?? 0) < 0;
+      const symbol = desk === "multi" ? (event.position?.symbol ?? event.signal?.symbol ?? event.symbol ?? "Ledger") : "BTCUSDT";
+      const leverage = desk === "multi" ? event.cohort : event.leverage;
+      return <div className="pd-activity-item" key={`${event.id ?? event.event_key ?? event.minute}-${i}`}><span className={`pd-activity-icon ${good ? "pd-good" : bad ? "pd-bad" : ""}`}>{good ? <ArrowUpRight size={16}/> : bad ? <ArrowDownRight size={16}/> : <Activity size={16}/>}</span><div><strong>{symbol} <span className="pd-small-muted">{leverage ? `${leverage}×` : ""}</span></strong><span>{label(kind)} · {timestamp(desk === "multi" ? event.at : event.minute)}</span></div><div className={`pd-activity-value pd-${toneOf(value)}`}>{value == null ? "" : signedCash(value)}</div></div>;
+    })}</div> : <div className="pd-empty pd-small-empty">No completed events in this view yet.</div>}
+    {desk === "multi" && <p className="pd-footnote">Latest settled trades only. Other event categories and the full journal remain in Advanced evidence.</p>}
+  </section>;
+}
 export function Perpetuals() {
   const api = useApi();
-  const resource = useResource(path, { poll: 12000 });
-  const lab = resource.data as Lab | undefined;
+  const [desk, setDesk] = useState<Desk>("multi");
   const [busy, setBusy] = useState(false);
-  const [problem, setProblem] = useState("");
-  async function change(enabled: boolean) {
-    setBusy(true);
-    setProblem("");
-    try {
-      await api.request(path + "/entries", "POST", { enabled });
-      await api.refresh(path);
-    } catch (error) {
-      setProblem(errorMessage(error));
-    } finally {
-      setBusy(false);
-    }
+  const [error, setError] = useState("");
+  const [showOriginal, setShowOriginal] = useState(false);
+  const multi = useResource(MULTI_URL, { poll: 12000, enabled: desk === "multi" });
+  const btc = useResource(BTC_URL, { poll: 12000, enabled: desk === "btc" });
+  const history = useResource(MULTI_URL + "/history?limit=20&kind=EXIT_SETTLED", { poll: 15000, enabled: desk === "multi" });
+  const resource = desk === "multi" ? multi : btc;
+  const data = resource.data as Row | undefined;
+  const accounts = (data?.accounts ?? []) as Row[];
+  const active = Boolean(data?.entries_enabled);
+  const valid = desk === "multi" ? Boolean(data?.feature_enabled && data?.scan_fresh && data?.status === "ACTIVE" && !Object.keys(data?.monitor?.errors ?? {}).length) : Boolean(data?.available && data?.data_fresh);
+  const marketFresh = desk === "multi" ? Boolean(data?.scan_fresh && data?.status === "ACTIVE") : Boolean(data?.data_fresh);
+  const totalEquity = sum(accounts.map(a => a.equity));
+  const net = totalEquity - 1000 * accounts.length;
+  const openCount = desk === "multi" ? (data?.positions ?? []).length : accounts.filter(a => a.position).length;
+  const scanCount = desk === "multi" ? (numeric(data?.scan?.markets_screened) ?? 0) : null;
+  const lastTime = desk === "multi" ? data?.scan?.at : data?.bar_closed_at;
+  const subtitle = desk === "multi" ? "Multi-coin strategy engine" : "Bitcoin breakout strategy";
+  async function setEntries(enabled: boolean) {
+    setBusy(true);setError("");
+    try { await api.request((desk === "multi" ? MULTI_URL : BTC_URL) + "/entries", "POST", { enabled });await api.refresh(desk === "multi" ? MULTI_URL : BTC_URL); }
+    catch (e) {setError(errorMessage(e));}
+    finally {setBusy(false);}
   }
-
-  return <>
-    <MultiPerpetuals />
-    <ResourceState resource={resource} label="Perpetuals lab" />
-    {lab && <>
-      <Panel>
-        <h2>BTC/USDT perpetuals</h2>
-        <p>Paper only · isolated margin · 1×, 3× and 10× accounts each start with 1,000 simulated USDT.</p>
-        <p>Strategy: {lab.strategy?.identity ?? lab.policy} · {lab.strategy?.timeframe ?? "15m signal / 1m protection"}</p>
-        <p>Qualification: {readable(lab.strategy?.qualification ?? "UNVALIDATED_BASELINE")} · Regime: {lab.strategy?.market_regime ? readable(lab.strategy.market_regime) : "Unknown"} · Signal: {lab.strategy?.signal_direction ? readable(lab.strategy.signal_direction) : "No queued entry"}</p>
-        <p>10× changes required collateral and liquidation risk. Margin ROI and total-account ROI use different amounts of capital.</p>
-        <Badge tone={lab.data_fresh && !resource.error ? "positive" : "warning"}>{feedLabel[lab.feed_status] ?? "Unknown"}</Badge>
-        <p>Bybit mark: <strong>{usdt(lab.mark)}</strong>{lab.bar_closed_at && <> · Last processed minute closed {at(lab.bar_closed_at)}</>}</p>
-        {lab.strategy && <p>Fixed-model round-trip cost approximately {pct(lab.strategy.approximate_round_trip_cost_pct)}. Underlying move to break even: long {pct(lab.strategy.break_even_underlying_move_long_pct)}, short {pct(lab.strategy.break_even_underlying_move_short_pct)}, before additional funding and observed liquidity costs.</p>}
-        <p className="small muted">The existing strategy uses candle-based price proxies. Those records do not establish executable micro-move returns.</p>
-        {lab.available ? <>
-          <p>{lab.entries_enabled ? "New baseline entries enabled" : "New baseline entries paused"}. Pausing entries keeps protection running for open positions.</p>
-          {lab.pending && <p>{side(lab.pending.side)} entry queued for the minute starting {at(lab.pending.fill_at)}.</p>}
-          <button className="button" disabled={busy || (!lab.entries_enabled && (!lab.data_fresh || Boolean(resource.error)))}
-            onClick={() => void change(!lab.entries_enabled)}>{lab.entries_enabled ? "Pause new entries" : "Enable baseline paper entries"}</button>
-        </> : <p>Enable the Perpetuals lab in the local or staging configuration to start receiving market data.</p>}
-        {problem && <p role="alert" className="notice warning">{problem}</p>}
-      </Panel>
-      <div className="perp-accounts">
-        {lab.accounts.map(a => {
-          const metrics = a.metrics?.position_metrics;
-          return <Panel key={a.leverage}>
-            <h3>{a.leverage}× isolated</h3>
-            <p>Equity <strong>{usdt(a.equity)}</strong></p>
-            <p>Total-account ROI {pct(a.metrics?.account_roi_pct)} · Net account P&amp;L {usdt(a.metrics?.account_net_pnl_usdt)}</p>
-            <p>Free cash {usdt(a.cash)} · Realized net P&amp;L {usdt(a.realized)}</p>
-            <p>{a.closed} closed · {a.liquidations} liquidated · {(Number(a.max_drawdown) * 100).toFixed(2)}% max drawdown</p>
-            {a.halted && <Badge tone="warning">Drawdown limit reached; new entries halted</Badge>}
-            {a.position ? <>
-              <p><strong>{side(a.position.side)}</strong> · {amount(a.position.qty, 6)} BTC · Entry {usdt(a.position.entry)}</p>
-              <p>Notional {usdt(a.position.notional)} · Margin {usdt(a.position.margin)} · Funding {usdt(a.position.funding)}</p>
-              <dl className="perp-metrics">
-                <div><dt>Underlying entry-price change</dt><dd>{pct(metrics?.underlying_price_change_pct)}</dd></div>
-                <div><dt>Direction-adjusted move</dt><dd>{pct(metrics?.direction_adjusted_price_change_pct)}</dd></div>
-                <div><dt>Gross unrealized P&amp;L</dt><dd>{usdt(metrics?.gross_unrealized_pnl_usdt)}</dd></div>
-                <div><dt>Estimated net unrealized P&amp;L</dt><dd>{usdt(metrics?.estimated_net_unrealized_pnl_usdt)}</dd></div>
-                <div><dt>Gross margin ROI</dt><dd>{pct(metrics?.gross_margin_roi_pct)}</dd></div>
-                <div><dt>Estimated net margin ROI</dt><dd>{pct(metrics?.estimated_net_margin_roi_pct)}</dd></div>
-                <div><dt>Position contribution to entry account equity</dt><dd>{pct(metrics?.estimated_position_account_roi_pct)}</dd></div>
-                <div><dt>Current margin utilization</dt><dd>{pct(metrics?.margin_utilization_pct)}</dd></div>
-                <div><dt>Mark distance to liquidation</dt><dd>{pct(metrics?.liquidation_distance_pct)}</dd></div>
-                <div><dt>Net at existing target scenario</dt><dd>{usdt(metrics?.estimated_net_at_existing_target_usdt)}</dd></div>
-              </dl>
-              <p>Stop {usdt(a.position.stop)} · Target {usdt(a.position.target)} · Model liquidation mark {usdt(a.position.liquidation_mark)}</p>
-              <p className="small muted">Net position estimates include paid entry fees, current funding and modeled closing fees and slippage. Account equity keeps the existing mark valuation. Future funding and liquidity can change the outcome.</p>
-            </> : <p>No open position.</p>}
-          </Panel>;
-        })}
-      </div>
-      <ResearchPanel />
-      <Panel>
-        <h2>Recent simulated activity</h2>
-        {lab.events.length === 0 ? <p>No activity yet.</p> : <>
-          <ul>{lab.events.slice(0, 20).map((event, index) => <li key={event.minute + ":" + index}>
-            {at(event.minute)} · {event.leverage ? event.leverage + "× · " : ""}{eventLabel[event.kind] ?? event.kind}
-            {event.net != null || event.amount != null ? " · " + usdt(event.net ?? event.amount) : ""}
-          </li>)}</ul>
-          <Technical value={lab.events} label="Last 60 event records" />
-        </>}
-      </Panel>
-    </>}
-  </>;
+  return <div className="pd-shell" data-ui-revision="pd-visual-20261105-v1">
+    <div className="pd-hero"><div><p className="pd-kicker"><Radio size={14}/> PAPER TRADING DESK</p><h2>See your strategies at a glance.</h2><p>Live market observations. Virtual trades. Independent leverage accounts.</p></div><div className="pd-hero-status"><Flag tone="good">Simulation only</Flag><span><Clock3 size={14}/> Data {timestamp(lastTime)}</span></div></div>
+    <div className="pd-tabs" role="tablist" aria-label="Perpetual trading systems"><button role="tab" id="pd-tab-multi" aria-controls="pd-content" aria-selected={desk === "multi"} className={desk === "multi" ? "active" : ""} onClick={() => {setDesk("multi");setError("");}}><Layers3 size={17}/> Multi-coin <span>USDT markets</span></button><button role="tab" id="pd-tab-btc" aria-controls="pd-content" aria-selected={desk === "btc"} className={desk === "btc" ? "active" : ""} onClick={() => {setDesk("btc");setError("");}}><Coins size={17}/> Bitcoin <span>BTC / USDT</span></button></div>
+    <div id="pd-content" role="tabpanel" aria-labelledby={desk === "multi" ? "pd-tab-multi" : "pd-tab-btc"} className="pd-content">
+      <ResourceState resource={resource} label={subtitle}/>
+      {data && <>
+        <div className="pd-operation"><div><h3>{subtitle}</h3><div className="pd-operation-flags"><Flag tone={marketFresh ? "good" : "warn"}><Radio size={12}/> {marketFresh ? "Scanner current" : "Scanner unavailable"}</Flag><Flag tone={active ? "good" : "warn"}>{active ? "Entries on" : "Entries paused"}</Flag><Flag tone="plain">1× / 3× / 10×</Flag></div></div><button className={`pd-entry-control ${active ? "pd-control-stop" : "pd-control-start"}`} disabled={busy || Boolean(resource.error) || !data || (!active && !valid)} onClick={() => void setEntries(!active)}>{active ? <PauseCircle size={19}/> : <PlayCircle size={19}/>} {busy ? "Updating…" : active ? "Pause entries" : "Enable entries"}</button></div>
+        {error && <div className="pd-error" role="alert">{error}</div>}
+        {!marketFresh && <div className="pd-caution"><ShieldCheck size={16}/> Data freshness unavailable. New entries should stay paused until monitoring recovers.</div>}
+        {desk === "btc" && data.pending && <div className="pd-caution">Queued {direction(data.pending.side)} BTC entry for {timestamp(data.pending.fill_at)}.</div>}
+        <div className="pd-metrics">
+          <Metric name="Total virtual equity" icon={Wallet} value={accounts.length ? <Value amount={totalEquity}/> : "—"} note={`${accounts.length} independent USDT accounts`} />
+          <Metric name="Net account P&L" icon={TrendingUp} value={accounts.length ? signedCash(net) : "—"} tone={toneOf(net)} note="Equity minus starting virtual capital" />
+          <Metric name="Open positions" icon={Activity} value={openCount} note="Across all three leverage accounts" />
+          <Metric name={desk === "multi" ? "Markets screened" : "BTC market mark"} icon={desk === "multi" ? BarChart3 : Gauge} value={desk === "multi" ? scanCount ?? "—" : cash(data.mark)} note={desk === "multi" ? "Latest completed multi-coin scan" : "Observed USDT price"} />
+        </div>
+        <SectionTitle title="Your leverage accounts" hint="Compare separate simulated 1×, 3× and 10× portfolios" />
+        <AccountCards accounts={accounts} desk={desk}/>
+        <Positions data={data} desk={desk}/>
+        {desk === "multi" && <Scanner scan={data.scan} fresh={marketFresh}/>}
+        <div className="pd-two-columns"><Outcomes accounts={accounts} data={data} desk={desk}/><ActivityList desk={desk} events={data.events ?? []} history={history.data}/></div>
+        <section className="pd-surface pd-research-summary"><SectionTitle title="Strategy & research" hint="Optional detail — no effect on live paper execution" /><div className="pd-research-row"><span><ShieldCheck size={17}/> {desk === "multi" ? "Experimental deterministic strategies; expected profitability unproven" : "BTC breakout baseline; fixed-model costs and candle-based execution"}</span><Flag tone="plain">Research only</Flag></div>{desk === "multi" ? <><details className="pd-collapse"><summary>Scenario candidates <ChevronDown size={15}/></summary><div className="pd-list-grid">{(data.scan?.top_opportunities ?? []).slice(0, 10).map((o: Row) => <div key={o.signal_id ?? o.symbol} className="pd-inline-row"><strong>{o.symbol} · {direction(o.direction)}</strong><span>{label(o.policy)} · {percentage(o.target_move_pct)} target move</span></div>)}{!(data.scan?.top_opportunities ?? []).length && <p className="pd-small-muted">No qualified scenarios in this scan.</p>}</div></details><details className="pd-collapse"><summary>Scanner / modeling evidence <ChevronDown size={15}/></summary><Technical value={data.scan?.unsupported ?? []} label="Unsupported asset mappings"/><Technical value={data.decision_counts} label="Decision evidence counts"/><Technical value={data.realized_distributions} label="Realized distributions"/></details></> : <details className="pd-collapse"><summary>Model assumptions <ChevronDown size={15}/></summary><div className="pd-inline-row"><span>Strategy</span><strong>{label(data.strategy?.identity ?? data.policy)}</strong></div><div className="pd-inline-row"><span>Estimated round-trip cost</span><strong>{percentage(data.strategy?.approximate_round_trip_cost_pct, 3)}</strong></div><div className="pd-inline-row"><span>Completed bar</span><strong>{timestamp(data.bar_closed_at)}</strong></div></details>}</section>
+      </>}
+    </div>
+    <section className="pd-legacy"><div><h3>Full evidence and original reports</h3><p>Every technical field, complete research panel and historical report remains available.</p></div><button onClick={() => setShowOriginal(v => !v)} aria-expanded={showOriginal}>{showOriginal ? "Hide full reports" : "Open advanced reports"}<ChevronDown size={16}/></button></section>
+    {showOriginal && <div className="pd-original"><Suspense fallback={<div className="pd-empty">Loading advanced reports…</div>}><OriginalPage/></Suspense></div>}
+    <p className="pd-disclaimer">Paper simulation only. Observed market prices and modeled trading results are not executable returns, investment guarantees or proof of profitability.</p>
+  </div>;
 }
+
