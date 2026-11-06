@@ -14,11 +14,13 @@ from fastapi import FastAPI, Depends, HTTPException, Request
 from pydantic import BaseModel
 from .storage import connect, init, init_execution, one, rows, setting, utc, worker_ownership
 from .ledger import EXECUTION_MODE, mark_to_market, outcome
-from .alpaca_paper import broker_mode, broker_init, enrich_dashboard, broker_status, set_broker_paused
+from .alpaca_paper import PaperError, broker_mode, broker_init, enrich_dashboard, broker_status, set_broker_paused
 from .service import Service
 from .observer import init_journal, scanner_snapshot, EXPORT_TABLES, export_jsonl
 
 logging.basicConfig(level=os.getenv("STOCKSWATCH_LOG_LEVEL", "INFO"))
+# httpx INFO includes URLs with query strings, including broker IDs and API parameters.
+logging.getLogger("httpx").setLevel(logging.WARNING)
 service = Service()
 
 
@@ -42,7 +44,8 @@ app = FastAPI(title="StocksWatch isolated USD simulator", version="stocks-v1", l
 
 @app.get("/healthz")
 def health():
-    return {"status": "ok", "mode": "paper", "system": "stockswatch", "schema": "stocks-v1"}
+    return {"status": "ok", "mode": "alpaca_paper" if broker_mode() else "paper",
+            "system": "stockswatch", "schema": "stocks-v1"}
 
 
 async def authenticated(req:Request):
@@ -79,6 +82,9 @@ def cycle_status():
     from .sessions import completed_day, instant
 
     last = setting("last_cycle", {"state": "STARTING"})
+    if broker_mode():
+        paper = service.broker_result
+        return {**last, "state": paper["status"], "paper": paper, "scanner_state": service.last_result["state"]}
     if service.last_result.get("state") in {"STARTING", "ERROR"}:
         return service.last_result
     stamp = last.get("completed_at")
@@ -103,10 +109,11 @@ def status():
         r["source"]: r["num"] for r in rows("SELECT source,COUNT(*) num FROM bars GROUP BY source")
     }
     state = cycle_status()
-    acct = one("SELECT paused FROM portfolio WHERE id=1")
+    broker = broker_status() if broker_mode() else None
+    acct = broker if broker else one("SELECT paused FROM portfolio WHERE id=1")
     return {
         "mode": "ALPACA_PAPER" if broker_mode() else "PAPER_ONLY",
-        "broker_connection": broker_status() if broker_mode() else None,
+        "broker_connection": broker,
         "live_trading_enabled": False,
         "version": "stocks-v1",
         "provider": os.getenv("STOCKSWATCH_PRICE_PROVIDER", "stooq"),
@@ -130,8 +137,10 @@ def load_research_evidence():
 
 @app.get("/api/stockswatch/dashboard", dependencies=[Depends(authenticated)])
 def dashboard():
-    account, positions, equity, exposure, drawdown = mark_to_market()
-    recent = rows("SELECT * FROM equity_curve ORDER BY day DESC LIMIT 370")
+    broker = broker_mode()
+    if not broker:
+        account, positions, equity, exposure, drawdown = mark_to_market()
+    recent = [] if broker else rows("SELECT * FROM equity_curve ORDER BY day DESC LIMIT 370")
     recent.reverse()
     decisions = rows("""SELECT d.symbol,d.signal_day,d.score,d.regime,d.signals_json,d.reasons_json,d.action,d.policy_version,a.name,a.sector
           FROM decisions d JOIN assets a ON a.symbol=d.symbol WHERE d.signal_day=(SELECT MAX(signal_day) FROM decisions)
@@ -153,15 +162,15 @@ def dashboard():
     )
     for a in ai:
         a["analysis"] = json.loads(a.pop("analysis_json"))
-    fills = rows("""SELECT f.*,o.detail_json FROM fills f LEFT JOIN sw_order_outcomes o
+    fills = [] if broker else rows("""SELECT f.*,o.detail_json FROM fills f LEFT JOIN sw_order_outcomes o
         ON o.order_id=f.order_id ORDER BY f.created_at DESC,f.id DESC LIMIT 50""")
     for fill in fills:
         fill["evidence"] = json.loads(fill.pop("detail_json") or "{}")
-    orders = rows("""SELECT p.id,p.symbol,p.side,p.signal_day,p.state,p.created_at,e.target_day,o.reason,o.recorded_at
+    orders = [] if broker else rows("""SELECT p.id,p.symbol,p.side,p.signal_day,p.state,p.created_at,e.target_day,o.reason,o.recorded_at
         FROM pending_orders p LEFT JOIN sw_order_evidence e ON e.order_id=p.id
         LEFT JOIN sw_order_outcomes o ON o.order_id=p.id
         ORDER BY (p.state='PENDING') DESC,p.created_at DESC LIMIT 50""")
-    last_fill = one("""SELECT MAX(CASE WHEN side='BUY' THEN created_at END) last_buy,
+    last_fill = {} if broker else one("""SELECT MAX(CASE WHEN side='BUY' THEN created_at END) last_buy,
         MAX(CASE WHEN side='SELL' THEN created_at END) last_sell FROM fills""")
     price_updates = rows("""SELECT symbol,day,observed_at,source,c FROM sw_eod_observations
         ORDER BY day DESC,observed_at DESC,symbol LIMIT 20""")
@@ -179,9 +188,10 @@ def dashboard():
     coverage = rows(
         "SELECT a.symbol,a.name,a.sector,COUNT(b.day) bars,MAX(b.day) last_day FROM assets a LEFT JOIN bars b USING(symbol) GROUP BY a.symbol ORDER BY a.symbol"
     )
+    state = cycle_status()
     payload = {
-        "status": cycle_status(),
-        "account": {
+        "status": state,
+        "account": {} if broker else {
             "currency": "USD",
             "initial_cash": account["initial_cash"],
             "cash": round(account["cash"], 2),
@@ -194,10 +204,10 @@ def dashboard():
             "pnl_pct": round((equity / account["initial_cash"] - 1) * 100, 3),
             "paused": bool(account["paused"]),
         },
-        "positions": positions,
+        "positions": [] if broker else positions,
         "equity_curve": recent,
         "benchmark_change_pct": benchmark,
-        "signals": decisions,
+        "signals": state["paper"].get("signals", []) if broker else decisions,
         "filings": filings,
         "fundamentals": facts,
         "macro": macro,
@@ -223,13 +233,7 @@ def dashboard():
         "execution_mode": EXECUTION_MODE,
         "can_issue_live_orders": False,
     }
-    if broker_mode():
-        try:
-            return enrich_dashboard(payload)
-        except RuntimeError as exc:
-            # Fail closed: never render the legacy $10k ledger as the broker portfolio.
-            raise HTTPException(503, detail=str(exc)) from None
-    return payload
+    return enrich_dashboard(payload) if broker else payload
 
 
 @app.get('/api/stockswatch/scanner', dependencies=[Depends(authenticated)])
@@ -254,7 +258,10 @@ class Control(BaseModel):
 @app.post("/api/stockswatch/control", dependencies=[Depends(authenticated)])
 def control(body: Control):
     if broker_mode():
-        return set_broker_paused(body.action == "pause")
+        try:
+            return set_broker_paused(body.action == "pause")
+        except PaperError as exc:
+            raise HTTPException(409, detail=str(exc)) from None
     with connect() as c:
         c.execute("BEGIN IMMEDIATE")
         c.execute("UPDATE portfolio SET paused=? WHERE id=1", (1 if body.action == "pause" else 0,))

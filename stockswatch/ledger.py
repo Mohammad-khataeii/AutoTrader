@@ -372,30 +372,36 @@ def settle(c, day, now, spy):
     return result
 
 
-def eligible_signals():
-    """Retain the research-facing preview contract with certified data only."""
-    now = datetime.now(timezone.utc)
+def eligible_signals(now=None, broker=False):
+    """Build a causal ranking from a single consistent, certified daily snapshot."""
+    now = now or datetime.now(timezone.utc)
     day = completed_day(now)
     with connect() as c:
         c.execute("BEGIN")
         _, spy, _ = series(c, "SPY", day, now)
+        if not spy:
+            return [], None
+        assets = c.execute("""SELECT symbol,name,sector FROM assets
+            WHERE enabled=1 AND sector!='Benchmark'""").fetchall()
+        ranking_complete = True
+        if broker:
+            from .sessions import NY
+            target = next_day(day)
+            current_checks = {r["symbol"] for r in c.execute(
+                "SELECT symbol,checked_at FROM sw_price_checks WHERE day=?", (day,)
+            ) if instant(r["checked_at"]).astimezone(NY).date().isoformat() == target}
+            ranking_complete = all(a["symbol"] in current_checks for a in assets)
         output = []
-        for a in c.execute(
-            "SELECT symbol,name,sector FROM assets WHERE enabled=1 AND sector!='Benchmark'"
-        ):
+        for a in assets:
             bar, bars, _ = series(c, a["symbol"], day, now)
             ev = evaluate(bars, spy)
             if ev:
-                output.append(
-                    {
-                        **dict(a),
-                        "day": day,
-                        **ev,
-                        "source": bar["source"],
-                        "adjustment": bar["adjustment"],
-                    }
-                )
-    return sorted(output, key=lambda r: (-r["score"], r["symbol"])), day if spy else None
+                output.append({
+                    **dict(a), "day": day, **ev, "source": bar["source"],
+                    "adjustment": bar["adjustment"], "ranking_complete": ranking_complete,
+                    "iex_dollar_volume_20d": sum(b["c"] * b["v"] for b in bars[-20:]) / 20,
+                })
+    return sorted(output, key=lambda r: (-r["score"], r["symbol"])), day
 
 
 def queue(c, assets, view, day, now, spy, entry_gate, run_id):

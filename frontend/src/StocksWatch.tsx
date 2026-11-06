@@ -35,8 +35,12 @@ export function StocksWatch(){
  const d:Row=resource.data??{};
  const h:Row=health.data??{};
  const isBroker=h.mode==="ALPACA_PAPER" || d.execution_mode==="ALPACA_PAPER";
- const a:Row=isBroker && !d.broker_account?{}:(d.account??{});
- const brokerReadOnly=isBroker && !d.broker_account?.order_submission_enabled;
+ const broker:Row=d.broker_account??h.broker_connection??{};
+ const brokerReadOnly=isBroker && !broker.orders_enabled;
+ const brokerConnected=broker.status==="CONNECTED";
+ const a:Row=isBroker && !brokerConnected?{}:(d.account??{});
+ const paused=isBroker?(broker.paused??true):a.paused;
+ const canControl=isBroker?(broker.paused!=null&&(!paused||(!brokerReadOnly&&brokerConnected))):Boolean(d.account);
  const positions:Row[]=Array.isArray(d.positions)?d.positions:[];
  const signals:Row[]=Array.isArray(d.signals)?d.signals:[];
  const visible=useMemo(()=>signals.filter(s=>`${s.symbol} ${s.name} ${s.sector}`.toLowerCase().includes(ticker.trim().toLowerCase())),[signals,ticker]);
@@ -51,7 +55,7 @@ export function StocksWatch(){
  const holdout=d.historical_comparison?.segments?.holdout;
  async function control(action:"pause"|"resume"){
    if(busy)return;setBusy(true);setNotice("");
-   try {await api.request("/api/stockswatch/control","POST",{action}); await Promise.all([api.refresh("/api/stockswatch/dashboard"),api.refresh("/api/stockswatch/status")]);setNotice(isBroker&&action==="resume"&&brokerReadOnly?"Alpaca paper orders remain disabled in server configuration.":action==="pause"?"StocksWatch automated new orders paused.":"StocksWatch automated paper order admission resumed.");}
+   try {await api.request("/api/stockswatch/control","POST",{action}); await Promise.all([api.refresh("/api/stockswatch/dashboard"),api.refresh("/api/stockswatch/status")]);setNotice(isBroker&&action==="resume"&&brokerReadOnly?"Alpaca paper orders remain disabled in server configuration.":action==="pause"?"New automated orders paused. Open Alpaca orders remain active.":"StocksWatch automated paper order admission resumed.");}
    catch {setNotice("Action was not confirmed. Please check the service status.");}
    finally {setBusy(false);}
  }
@@ -59,12 +63,12 @@ export function StocksWatch(){
   <section className="sw-hero">
    <div className="sw-hero-main"><div className="sw-eyebrow"><span className="sw-led"/> US EQUITIES LAB <span className="sw-hero-sep">/</span> AUTONOMOUS PAPER RESEARCH</div>
      <h2>Invest with evidence.<br/><span>Learn from every market cycle.</span></h2>
-     <p>{isBroker?"Connected to Alpaca Paper Trading: balances, holdings and fills are broker-sourced. Orders use virtual money only.":"Market prices, filings, quantitative signals and bounded AI research. A separate virtual account—never a real-money trading connection."}</p>
-     <div className="sw-hero-tags"><Status value={isBroker?"ALPACA PAPER":"LOCAL PAPER"}/>{brokerReadOnly&&<Status value="ORDERS DISABLED"/>}<Status value={status}/><span className="sw-subtle">{source} · EOD_ONLY</span></div>
+     <p>{isBroker?"Balances, holdings and fills come from Alpaca Paper Trading. Orders use virtual money only.":"Market prices, filings, quantitative signals and bounded AI research. A separate virtual account—never a real-money trading connection."}</p>
+     <div className="sw-hero-tags"><Status value={isBroker?"ALPACA PAPER":"LOCAL PAPER"}/>{isBroker&&<Status value={broker.status??"CONNECTING"}/>}{brokerReadOnly&&<Status value="ORDERS DISABLED"/>}<Status value={status}/><span className="sw-subtle">{source} · EOD_ONLY</span></div>
    </div>
    <div className="sw-hero-right"><div className="sw-portfolio-label">{isBroker?"ALPACA PAPER EQUITY":"STOCKSWATCH PORTFOLIO"}</div><strong>{a.equity==null?"—":cash(a.equity)}</strong><div className={n(a.pnl)>=0?"sw-up":"sw-down"}>{n(a.pnl)>=0?<ArrowUpRight size={17}/>:<ArrowDownRight size={17}/>} {a.pnl==null?"—":pct(a.pnl_pct)} <span>{a.pnl==null?"—":cash(a.pnl)} {isBroker?"today":"all time"}</span></div><small>{isBroker?`Paper account ${d.broker_account?.masked??"unavailable"} · cash ${a.cash==null?"—":cash(a.cash)}`:`Starting balance ${cash(a.initial_cash)}`}</small></div>
   </section>
-  {(resource.error || health.error || h.broker_connection?.broker==="DISCONNECTED") && <p className="sw-warning" role="alert">{isBroker?"Alpaca Paper is unavailable or account verification failed. No local balances or fills are substituted. ":"StocksWatch service is unavailable or the data is stale. Existing crypto monitoring continues independently. "}{resource.error || health.error || h.broker_connection?.reason}</p>}
+  {(resource.error || health.error || (isBroker && !brokerConnected)) && <p className="sw-warning" role="alert">{isBroker?"Alpaca Paper is unavailable or account verification failed. No local balances or fills are substituted. ":"StocksWatch service is unavailable or the data is stale. Existing crypto monitoring continues independently. "}{resource.error || health.error || broker.reason}</p>}
   {notice && <p className="sw-notice" role="status">{notice}</p>}
   <ScannerMonitor/>
   <article className="sw-panel sw-execution-summary">
@@ -78,8 +82,8 @@ export function StocksWatch(){
   <section className="sw-metrics">
    <Metric icon={Wallet} label="Available cash" value={a.cash==null?"—":cash(a.cash)} note={isBroker?`Alpaca paper buying power ${a.buying_power==null?"—":cash(a.buying_power)} (not available cash)`:"Uncommitted virtual USD"}/>
    <Metric icon={LineIcon} label="Virtual exposure" value={a.exposure==null?"—":cash(a.exposure)} note={`${positions.length} ${isBroker?"broker positions":"of 5 position slots used"}`}/>
-   <Metric icon={TrendingUp} label={isBroker?"Unrealized P&L":"Realized P&L"} value={isBroker?cash(a.unrealized):cash(a.realized)} note={isBroker?"Based on open Alpaca paper positions":`${cash(a.unrealized)} unrealized`} tone={n(isBroker?a.unrealized:a.realized)<0?"sw-bad":"sw-good"}/>
-   <Metric icon={ShieldCheck} label={isBroker?"Recent drawdown":"Drawdown"} value={a.drawdown_pct==null?"—":pct(-n(a.drawdown_pct))} note={isBroker?"Approximate from available broker history":"Safety pause at 12%"} tone={n(a.drawdown_pct)>=10?"sw-bad":""}/>
+   <Metric icon={TrendingUp} label={isBroker?"Unrealized P&L":"Realized P&L"} value={(isBroker?a.unrealized:a.realized)==null?"—":cash(isBroker?a.unrealized:a.realized)} note={isBroker?"Based on open Alpaca paper positions":`${cash(a.unrealized)} unrealized`} tone={n(isBroker?a.unrealized:a.realized)<0?"sw-bad":"sw-good"}/>
+   <Metric icon={ShieldCheck} label={isBroker?"Recent drawdown":"Drawdown"} value={a.drawdown_pct==null?"—":pct(-n(a.drawdown_pct))} note={isBroker?"Based on available one-month broker equity history":"Safety pause at 12%"} tone={n(a.drawdown_pct)>=10?"sw-bad":""}/>
   </section>
   <section className="sw-mid-grid">
    <article className="sw-panel sw-equity-panel"><div className="sw-panel-top"><Header icon={BarChart3} title="Equity performance" note={isBroker?"Alpaca Paper portfolio history, directly from broker":"Virtual equity compared with SPY, aligned to available EOD history"}/><div className="sw-small-tag">{isBroker?"Alpaca virtual funds":"No live market execution"}</div></div>
@@ -90,16 +94,19 @@ export function StocksWatch(){
       <div className="sw-intel-row"><span>Strategy regime</span><strong>{val(d.signals?.[0]?.regime ?? "AWAITING HISTORY")}</strong></div>
       <div className="sw-intel-row"><span>AI interpretation</span><strong>{val(d.status?.components?.gemini)} · advisory only</strong></div>
       <div className="sw-intel-row"><span>Price feed</span><strong>{source}</strong></div>
-      {isBroker&&<div className="sw-intel-row"><span>Paper account</span><strong>{d.broker_account?.masked??"unavailable"} · {brokerReadOnly?"Orders disabled":"Orders enabled"}</strong></div>}
+      {isBroker&&<div className="sw-intel-row"><span>Paper account</span><strong>{broker.masked??"unavailable"} · {brokerReadOnly?"Read-only":broker.paused?"Paused":"Paper submission armed"}</strong></div>}
+      {isBroker&&<div className="sw-intel-row"><span>Last successful account sync</span><strong>{fromUTC(broker.as_of)}</strong></div>}
+      {isBroker&&<div className="sw-intel-row"><span>Broker account status</span><strong>{val(broker.account_status)}</strong></div>}
+      {isBroker&&<div className="sw-intel-row"><span>Most recent certified price</span><strong>{fromUTC(d.price_updates?.[0]?.observed_at)}</strong></div>}
       <div className="sw-intel-row"><span>Last research run</span><strong>{fromUTC(d.research?.created_at)}</strong></div>
       <details className="sw-disclosure"><summary>Component health</summary>
         {Object.entries(d.status?.components??{}).map(([name,state])=><div className="sw-intel-row" key={name}><span>{name.replace(/_/g," ")}</span><strong>{val(state)}</strong></div>)}
         <div className="sw-intel-row"><span>Last completed cycle</span><strong>{fromUTC(d.status?.completed_at)}</strong></div>
         <div className="sw-intel-row"><span>Next core session opens</span><strong>{fromUTC(paper.next_core_open)}</strong></div>
       </details>
-      <div className="sw-risk-label"><span>Portfolio capital at risk</span><strong>{pct(n(a.initial_cash)?(n(a.exposure)/n(a.equity))*100:0)}</strong></div>
+      <div className="sw-risk-label"><span>Portfolio capital at risk</span><strong>{n(a.equity)>0?pct(100*n(a.exposure)/n(a.equity)):"—"}</strong></div>
       <div className="sw-risk-track"><div style={{width:`${Math.min(100,100*n(a.exposure)/Math.max(1,n(a.equity)))}%`}}/></div>
-      <div className="sw-actionline"><button disabled={busy||!d.account} onClick={()=>control(a.paused?"resume":"pause")}>{a.paused?<Play size={16}/>:<Pause size={16}/>} {a.paused?"Resume paper orders":"Pause new paper orders"}</button><span>{isBroker?"Only affects StocksWatch automated Alpaca paper orders, not orders placed manually in Alpaca.":"Trade controls affect StocksWatch only."}</span></div>
+      <div className="sw-actionline"><button disabled={busy||!canControl} onClick={()=>control(paused?"resume":"pause")}>{paused?<Play size={16}/>:<Pause size={16}/>} {paused?"Resume paper orders":"Pause new paper orders"}</button><span>{isBroker?"Only affects StocksWatch automated Alpaca paper orders, not orders placed manually in Alpaca.":"Trade controls affect StocksWatch only."}</span></div>
    </article>
   </section>
   <section className="sw-nav" role="tablist" aria-label="StocksWatch details">
@@ -112,23 +119,35 @@ export function StocksWatch(){
      {gates.length ? gates.map(s=><div className="sw-reason" key={s.symbol}><b>{s.symbol} · {s.action}</b><p>{val(s.reason).replace(/_/g," ")} · observed {fromUTC(s.observed_at)}</p></div>)
        : <Blank text="No execution gate observations for this filter."/>}
    </details></article></div>}
-  {tab==="Portfolio" && <div className="sw-detail-grid"><article className="sw-panel"><Header icon={Wallet} title="Open virtual positions" note="Position-level P&L and EOD stop reference"/>{positions.length ? positions.map(p=><div className="sw-position" key={p.symbol}><div><b>{p.symbol}</b><small>{p.sector} · {p.qty} shares</small></div><div><b className={n(p.unrealized)>=0?"sw-up":"sw-down"}>{cash(p.unrealized)}</b><small>{cash(p.mark)}{p.stop!=null?` · Stop ${cash(p.stop)}`:" · No broker stop placed"}</small></div></div>):<Blank text={isBroker?"No Alpaca paper positions are currently open.":"No open stock positions. New orders require validated EOD signals and the next completed session."}/>}</article>
+  {tab==="Portfolio" && <div className="sw-detail-grid"><article className="sw-panel"><Header icon={Wallet} title={isBroker?"Alpaca paper positions":"Open virtual positions"} note={isBroker?"Broker unrealized P&L · software EOD exits":"Position-level P&L and EOD stop reference"}/>{positions.length ? positions.map(p=><div className="sw-position" key={p.symbol}><div><b>{p.symbol}</b><small>{p.sector} · {p.qty} shares</small></div><div><b className={n(p.unrealized)>=0?"sw-up":"sw-down"}>{p.unrealized==null?"—":cash(p.unrealized)}{isBroker&&p.unrealized_pct!=null?` · ${pct(p.unrealized_pct)}`:""}</b><small>{cash(p.mark)}{p.stop!=null?` · Stop ${cash(p.stop)}`:" · No broker stop placed"}</small></div></div>):<Blank text={isBroker?"No Alpaca paper positions are currently open.":"No open stock positions. New orders require validated EOD signals and the next completed session."}/>}</article>
      <article className="sw-panel"><Header icon={Activity} title="Pending paper orders" note={isBroker?"Orders returned by Alpaca Paper Trading API":"Awaiting the next eligible daily observation"}/>
-       {(d.pending_orders??[]).map((o:Row)=><div className="sw-position" key={`${o.symbol}-${o.signal_day}`}><div><b>{o.symbol} · {o.side}</b>
-         <small>Queued {fromUTC(o.created_at)} · {elapsed(o.created_at)}{isBroker?` · Filled ${val(o.filled_qty)} / ${val(o.qty)}`:` · Target ${val(o.target_day)}`}</small>
+       {(d.pending_orders??[]).map((o:Row)=><div className="sw-position" key={o.id}><div><b>{o.symbol} · {o.side}</b>
+         <small>{isBroker?(o.managed?"StocksWatch-tagged · ":"External · "):"Queued "}{fromUTC(o.created_at)} · {elapsed(o.created_at)}{isBroker?` · Filled ${val(o.filled_qty)} / ${val(o.qty)}`:` · Target ${val(o.target_day)}`}</small>
          {paper.order_checks?.[o.id] && <small>{String(paper.order_checks[o.id]).replace(/_/g," ")}</small>}
          </div><Status value={o.state}/></div>)}
        {!d.pending_orders?.length && <Blank text="No pending paper orders."/>}
        <details className="sw-disclosure"><summary>Completed order outcomes</summary>{(d.order_history??[]).map((o:Row,i:number)=>
-         <div className="sw-reason" key={i}><b>{o.symbol} · {o.state}</b><p>{val(o.reason).replace(/_/g," ")} · {fromUTC(o.recorded_at)}</p></div>)}</details>
+         <div className="sw-reason" key={i}><b>{o.symbol} · {o.state}</b><p>{isBroker?`${o.side} · filled ${val(o.filled_qty)} / ${val(o.qty)}${o.filled_avg_price==null?"":` at average ${cash(o.filled_avg_price)}`} · ${fromUTC(o.filled_at??o.created_at)}`:`${val(o.reason).replace(/_/g," ")} · ${fromUTC(o.recorded_at)}`}</p></div>)}</details>
      </article>
-     <article className="sw-panel"><Header icon={Activity} title="Actual virtual fills" note={isBroker?"Confirmed Alpaca paper fill activities, never simulated locally":"Daily close plus modeled execution cost. Fill time follows observation."}/>
+     <article className="sw-panel"><Header icon={Activity} title={isBroker?"Alpaca execution fills":"Actual virtual fills"} note={isBroker?"Confirmed Alpaca paper fill activities, never simulated locally":"Daily close plus modeled execution cost. Fill time follows observation."}/>
        {(d.fills??[]).slice(0,20).map((f:Row,i:number)=><div className="sw-position" key={i}><div><b>{f.symbol} · {f.side}</b>
          <small>{f.qty} shares · filled {fromUTC(f.created_at)}</small>
          <small>{isBroker?"ALPACA PAPER · broker-confirmed":f.evidence?.mode ? `${f.source} · observed ${fromUTC(f.evidence.observed_at)}` : "Legacy fill · observation evidence unavailable"}</small>
          </div><div><b>{cash(f.price)}</b><small>{isBroker?"Confirmed paper fill":`${cash(f.realized)} realized · ${cash(f.fee)} fee`}</small></div></div>)}
-       {!d.fills?.length && <Blank text="No completed virtual fills yet."/>}
+       {!d.fills?.length && <Blank text={isBroker&&broker.warnings?.fills?"Broker fill activity unavailable.":"No fills in the current view."}/>}
      </article>
+     {isBroker&&<article className="sw-panel"><Header icon={ShieldCheck} title="Automation and audit" note="Local intent records and legacy research history"/>
+       <p>Entries use cash, a 40% equity cash buffer, 12% per position, 26% per sector and 60% total exposure. At most five positions and two new BUY attempts per signal day. The daily loss and one-month drawdown entry gates are 3.5% and 12%.</p>
+       <p>Pause stops new automated BUYs and SELLs. Alpaca continues processing already accepted orders. Realized P&L is unavailable in this view.</p>
+       {Object.entries(broker.warnings??{}).map(([name,warning])=><p key={name}>{name.replace(/_/g," ")} · {val(warning)}</p>)}
+       <details className="sw-disclosure"><summary>Recent submission and reconciliation records</summary>
+         {(d.broker_intents??[]).map((o:Row)=><div className="sw-reason" key={o.client_id}><b>{o.symbol} · {o.side} · {o.state}</b>
+           <p>{val(o.broker_status)} · {val(o.diagnostic??o.reason).replace(/_/g," ")} · {fromUTC(o.updated_at)}{o.limit_price==null?"":` · limit ${cash(o.limit_price)}`}</p><small>{o.client_id}</small></div>)}
+       </details>
+       <details className="sw-disclosure"><summary>Legacy local pending records · {(d.legacy_local_pending_orders??[]).length}</summary>
+         {(d.legacy_local_pending_orders??[]).map((o:Row)=><div className="sw-reason" key={o.id}><b>{o.symbol} · {o.side}</b><p>{o.signal_day} · {o.state} · local ledger</p></div>)}
+       </details>
+     </article>}
      <article className="sw-panel"><Header icon={Database} title="Observed prices" note="Certified daily observations used by the paper engine"/>
        {(d.price_updates??[]).slice(0,12).map((b:Row)=><div className="sw-position" key={`${b.symbol}-${b.day}`}><div><b>{b.symbol} · {b.day}</b>
          <small>{b.source} · {fromUTC(b.observed_at)}</small></div><b>{cash(b.c)}</b></div>)}
@@ -144,6 +163,6 @@ export function StocksWatch(){
       <p>Earnings surprise study · {val(d.historical_comparison?.event_catalysts)}</p>
       </details>}<details className="sw-disclosure"><summary>Research limitations and model evidence</summary><div className="sw-notes">{(d.research?.warnings??[]).map((w:string,i:number)=><p key={i}>{w}</p>)}<p>Model Brier: {d.ml?.brier??"Not evaluated"}; null Brier: {d.ml?.no_skill_brier??"Not evaluated"}. ML trading authority: disabled.</p></div></details></article></div>}
   {tab==="Catalysts" && <div className="sw-detail-grid"><article className="sw-panel"><Header icon={Newspaper} title="SEC filings & announcements" note="Official source links; timestamps retained for time-of-knowledge controls"/>{(d.filings??[]).length ? (d.filings??[]).map((f:Row,i:number)=><div key={i} className="sw-filing"><span className="sw-mini">{f.form}</span><div><b>{f.symbol}</b><p>{f.description||"Official SEC filing"}</p><small>{fromUTC(f.accepted_at)}</small></div><a href={f.url} target="_blank" rel="noopener noreferrer" title="Open SEC filing"><ExternalLink size={15}/></a></div>):<Blank text="SEC integration requires a contact User-Agent; no filing claims are invented."/>}</article><article className="sw-panel"><Header icon={BrainCircuit} title="AI & macro research" note="AI explanations use sourced SEC evidence only; not trading instructions"/>{(d.ai_insights??[]).length?(d.ai_insights??[]).map((x:Row,i:number)=><div className="sw-ai-note" key={i}><b>{x.symbol} · {x.model}</b><p>{x.analysis?.summary}</p><small>{fromUTC(x.generated_at)} · <a href={x.source_url} target="_blank" rel="noopener noreferrer">Official filing</a></small></div>):<Blank text="AI waits for new official filings and shared Gemini quota. It does not control orders."/>}<div className="sw-macro-title">Current macro observations <small>Not backtest vintages</small></div>{(d.macro??[]).slice(0,6).map((m:Row,i:number)=><div className="sw-intel-row" key={i}><span>{m.series} · {m.observation_day}</span><strong>{m.value}</strong></div>)}<div className="sw-macro-title">Company financial facts <small>Official SEC XBRL · publication dated</small></div>{(d.fundamentals??[]).slice(0,10).map((f:Row,i:number)=><div className="sw-intel-row" key={"fund-"+i}><span>{f.symbol} · {f.tag} · {f.end_day}</span><strong>{f.unit==="USD"?cash(f.value):val(f.value)} <a href={f.source_url} target="_blank" rel="noopener noreferrer" aria-label="Open official SEC company facts"><ExternalLink size={12}/></a></strong></div>)}</article></div>}
-  <footer className="sw-footer"><ShieldAlert size={15}/> {isBroker?"Connected only to Alpaca Paper Trading. Real-money execution is impossible from this adapter. EOD orders are not protected by intraday stops. Local legacy orders remain separate.":"Paper-only. No broker integration."} Free EOD data may be delayed or corporate-action incomplete. ML remains shadow-only; historical backtests have survivorship bias. <span>Updated {fromUTC(d.updated_at)}</span></footer>
+  <footer className="sw-footer"><ShieldAlert size={15}/> {isBroker?"Alpaca Paper Trading uses virtual funds. Software evaluates exits from certified daily prices and submits during the next opening window. Local legacy orders remain separate.":"Paper-only. No broker integration."} Free EOD data may be delayed or corporate-action incomplete. ML remains shadow-only; historical backtests have survivorship bias. <span>Updated {fromUTC(d.updated_at)}</span></footer>
  </div>;
 }

@@ -3,6 +3,7 @@
 Local sw_alpaca_* tables hold audit/intents, never account balances/fills.
 Paper order submission is OFF until specifically enabled on the server.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -11,20 +12,54 @@ import logging
 import math
 import os
 import re
-from datetime import datetime, timezone
+import threading
+import time
+from datetime import UTC, datetime, timedelta
+from decimal import ROUND_DOWN, Decimal, InvalidOperation
 
 import httpx
 
-from .storage import connect, rows, one, utc
-from .sessions import completed_day, instant, next_day, session
 from .ledger import (
-    MAX_DRAWDOWN, MAX_GROSS_EXPOSURE, MAX_POSITIONS, MAX_SECTOR_WEIGHT,
-    MAX_SYMBOL_WEIGHT, MAX_VOLATILITY, SCORE_MIN, eligible_signals,
+    MAX_DRAWDOWN,
+    MAX_GROSS_EXPOSURE,
+    MAX_ONE_DAY_LOSS,
+    MAX_POSITIONS,
+    MAX_SECTOR_WEIGHT,
+    MAX_SYMBOL_WEIGHT,
+    MAX_VOLATILITY,
+    SCORE_MIN,
+    eligible_signals,
+    execution_configuration_gate,
 )
+from .sessions import NY, completed_day, instant, next_day, session
+from .storage import connect, one, rows, utc
 
 PAPER_ORIGIN = "https://paper-api.alpaca.markets"
 PREFIX = "swp2-"
+CASH_BUFFER = Decimal("0.40")
+MIN_IEX_DOLLAR_VOLUME = 1_000_000
+OPEN_WINDOW = timedelta(hours=1)
+FILL_PAGE_SIZE = 100
+SYNC_MAX_AGE = 120
+_admission = threading.Lock()
+_view_lock = threading.Lock()
+_last_view = None
+_sync_error = None
+_last_sync = 0.0
 TERMINAL = {"filled", "canceled", "expired", "rejected", "replaced"}
+ORDER_STATES = TERMINAL | {
+    "new",
+    "accepted",
+    "pending_new",
+    "partially_filled",
+    "accepted_for_bidding",
+    "pending_cancel",
+    "pending_replace",
+    "done_for_day",
+    "calculated",
+    "stopped",
+    "suspended",
+}
 log = logging.getLogger(__name__)
 
 SCHEMA = """
@@ -52,8 +87,19 @@ INSERT OR IGNORE INTO sw_alpaca_state(id,paused) VALUES (1,1);
 """
 
 
+class PaperError(RuntimeError):
+    """Stable diagnostic code. Never includes request data or credentials."""
+
+
+class PaperRejection(PaperError):
+    """An explicit broker rejection of this order."""
+
+
 def broker_mode():
-    return os.getenv("STOCKSWATCH_EXECUTION_BACKEND", "local").strip().lower() == "alpaca_paper"
+    mode = os.getenv("STOCKSWATCH_EXECUTION_BACKEND", "local").strip().lower()
+    if mode not in ("local", "alpaca_paper"):
+        raise PaperError("stockswatch_execution_backend_invalid")
+    return mode == "alpaca_paper"
 
 
 def orders_enabled():
@@ -81,12 +127,13 @@ def _credentials():
     key = os.getenv("STOCKSWATCH_ALPACA_PAPER_KEY", "").strip()
     secret = os.getenv("STOCKSWATCH_ALPACA_PAPER_SECRET", "").strip()
     if not (key and secret):
-        raise RuntimeError("alpaca_paper_credentials_missing")
+        raise PaperError("alpaca_paper_credentials_missing")
     return {"APCA-API-KEY-ID": key, "APCA-API-SECRET-KEY": secret}
 
 
 class PaperClient:
     """Only accepts constant paper host and narrowly defined endpoint paths."""
+
     def __init__(self, transport=None):
         self._client = httpx.Client(
             base_url=PAPER_ORIGIN,
@@ -105,72 +152,145 @@ class PaperClient:
 
     def _request(self, method, path, **kwargs):
         if not path.startswith("/v2/") or "?" in path or "//" in path or ".." in path:
-            raise RuntimeError("unapproved_paper_route")
+            raise PaperError("unapproved_paper_route")
         try:
             response = self._client.request(method, path, **kwargs)
-            if response.status_code >= 400:
-                if response.status_code == 404:
-                    return None
-                # Do not log response bodies/headers; some contain account details.
-                raise RuntimeError(f"alpaca_paper_http_{response.status_code}")
+        except httpx.HTTPError:
+            raise PaperError("alpaca_paper_transport_unavailable") from None
+        if (
+            response.status_code == 404
+            and path == "/v2/orders:by_client_order_id"
+            and method == "GET"
+        ):
+            return None
+        if not response.is_success:
+            # A documented insufficient-buying-power rejection is definitive.
+            # Duplicate-ID errors, throttling, 5xx and unclassified errors are uncertain.
+            if method == "POST" and response.status_code == 403:
+                try:
+                    body = response.json()
+                except ValueError:
+                    body = None
+                if isinstance(body, dict) and str(body.get("code")) == "40310000":
+                    raise PaperRejection("alpaca_paper_insufficient_buying_power")
+            raise PaperError(f"alpaca_paper_http_{response.status_code}")
+        try:
             return response.json()
-        except httpx.HTTPError as e:
-            raise RuntimeError("alpaca_paper_transport_unavailable") from e
-        except ValueError as e:
-            raise RuntimeError("alpaca_paper_invalid_json") from e
+        except ValueError:
+            raise PaperError("alpaca_paper_invalid_json") from None
 
     def get(self, path, params=None):
         return self._request("GET", path, params=params)
 
     def account(self):
         account = self.get("/v2/account")
-        if not isinstance(account, dict):
-            raise RuntimeError("alpaca_paper_account_unavailable")
-        account_id = str(account.get("id") or "")
-        number = str(account.get("account_number") or "")
+        if not isinstance(account, dict) or not account.get("id"):
+            raise PaperError("alpaca_paper_account_unavailable")
         expected = expected_account()
         if not expected:
-            raise RuntimeError("alpaca_paper_expected_account_not_configured")
-        if expected not in (account_id, number):
-            raise RuntimeError("alpaca_paper_account_mismatch")
-        if account.get("currency") != "USD" or account.get("status") != "ACTIVE":
-            raise RuntimeError("alpaca_paper_account_not_active_usd")
-        if account.get("trading_blocked") or account.get("account_blocked"):
-            raise RuntimeError("alpaca_paper_account_blocked")
+            raise PaperError("alpaca_paper_expected_account_not_configured")
+        if expected not in (account["id"], account.get("account_number")):
+            raise PaperError("alpaca_paper_account_mismatch")
+        if account.get("currency") != "USD":
+            raise PaperError("alpaca_paper_account_not_usd")
         return account
+
+    def _optional(self, path, params, expected_type):
+        try:
+            value = self.get(path, params)
+            if isinstance(value, expected_type):
+                return value, None
+            return None, "alpaca_paper_invalid_snapshot_component"
+        except PaperError as exc:
+            return None, str(exc)
 
     def snapshot(self):
         account = self.account()
+        # The history limit is solely a display limit. Risk uses an independent open-order book.
+        open_orders = self.get("/v2/orders", {"status": "open", "limit": 500, "nested": "false"})
         positions = self.get("/v2/positions")
-        orders = self.get("/v2/orders", {"status": "all", "limit": 500, "direction": "desc", "nested": "false"})
-        if not isinstance(positions, list) or not isinstance(orders, list):
-            raise RuntimeError("alpaca_paper_snapshot_incomplete")
-        try:
-            history = self.get("/v2/account/portfolio/history", {"period": "1M", "timeframe": "1D"})
-        except RuntimeError:
-            history = None
-        try:
-            fills = self.get("/v2/account/activities/FILL", {"direction": "desc", "page_size": 100})
-        except RuntimeError:
-            fills = None
-        if not isinstance(fills, list):
-            fills = []
-        if not isinstance(history, dict):
-            history = {}
-        return {"account": account, "positions": positions, "orders": orders, "fills": fills, "history": history}
+        if not all(
+            isinstance(items, list) and all(isinstance(x, dict) for x in items)
+            for items in (positions, open_orders)
+        ):
+            raise PaperError("alpaca_paper_snapshot_incomplete")
+        recent, order_error = self._optional(
+            "/v2/orders",
+            {
+                "status": "closed",
+                "limit": 100,
+                "direction": "desc",
+                "nested": "false",
+            },
+            list,
+        )
+        history, history_error = self._optional(
+            "/v2/account/portfolio/history",
+            {
+                "period": "1M",
+                "timeframe": "1D",
+            },
+            dict,
+        )
+        fills, fill_error = self._optional(
+            "/v2/account/activities/FILL",
+            {
+                "direction": "desc",
+                "page_size": FILL_PAGE_SIZE,
+            },
+            list,
+        )
+        if fills is not None and not all(isinstance(f, dict) for f in fills):
+            fills, fill_error = None, "alpaca_paper_invalid_fill_activity"
+        orders = {
+            o["id"]: o for o in (recent or []) + open_orders if isinstance(o, dict) and o.get("id")
+        }
+        open_error = "alpaca_paper_open_order_page_full" if len(open_orders) >= 500 else None
+        return {
+            "account": account,
+            "positions": positions,
+            "orders": list(orders.values()),
+            "open_orders": open_orders,
+            "fills": fills,
+            "history": history,
+            "warnings": {
+                name: error
+                for name, error in (
+                    ("order_history", order_error),
+                    ("open_orders", open_error),
+                    ("portfolio_history", history_error),
+                    ("fills", fill_error),
+                )
+                if error
+            },
+        }
+
+    def clock(self):
+        return self.get("/v2/clock")
+
+    def asset(self, symbol):
+        return self.get(f"/v2/assets/{symbol}")
 
     def by_client_id(self, cid):
         if not re.fullmatch(r"swp2-[a-f0-9]{40}", cid):
-            raise RuntimeError("invalid_client_order_id")
+            raise PaperError("invalid_client_order_id")
         return self.get("/v2/orders:by_client_order_id", {"client_order_id": cid})
 
     def submit(self, payload):
         if not orders_enabled():
-            raise RuntimeError("alpaca_paper_orders_disabled")
-        if payload.get("client_order_id", "")[:len(PREFIX)] != PREFIX:
-            raise RuntimeError("invalid_client_order_id")
-        if payload.get("side") not in ("buy", "sell") or payload.get("time_in_force") != "day":
-            raise RuntimeError("unsafe_order_request")
+            raise PaperError("alpaca_paper_orders_disabled")
+        if not re.fullmatch(r"swp2-[a-f0-9]{40}", payload.get("client_order_id", "")):
+            raise PaperError("invalid_client_order_id")
+        side = payload.get("side")
+        if (
+            side not in ("buy", "sell")
+            or payload.get("time_in_force") != "day"
+            or payload.get("extended_hours") is not False
+            or payload.get("type") != ("limit" if side == "buy" else "market")
+            or money(payload.get("qty")) <= 0
+            or (side == "buy" and money(payload.get("limit_price")) <= 0)
+        ):
+            raise PaperError("unsafe_order_request")
         return self._request("POST", "/v2/orders", json=payload)
 
 
@@ -182,23 +302,27 @@ def masked_account(account):
 def account_ui(snapshot):
     a = snapshot["account"]
     positions = snapshot["positions"]
-    equity = safe_number(a.get("equity"))
-    cash = safe_number(a.get("cash"))
+    equity = safe_number(a.get("equity"), None)
+    cash = safe_number(a.get("cash"), None)
     last_equity = safe_number(a.get("last_equity"))
-    exposure = sum(max(0.0, safe_number(p.get("market_value"))) for p in positions)
-    history = snapshot["history"]
+    exposure = sum(abs(safe_number(p.get("market_value"))) for p in positions)
+    history = snapshot["history"] or {}
     times, equities = history.get("timestamp", []), history.get("equity", [])
     curve = []
     if isinstance(times, list) and isinstance(equities, list):
         for t, val in zip(times, equities):
-            if val is None or not isinstance(t, (int, float)):
+            if safe_number(val) <= 0 or not isinstance(t, (int, float)):
                 continue
-            curve.append({"day": datetime.fromtimestamp(t, timezone.utc).isoformat(), "equity": safe_number(val), "spy_close": None})
+            try:
+                stamp = datetime.fromtimestamp(t, UTC).isoformat()
+            except (ValueError, OverflowError, OSError):
+                continue
+            curve.append({"day": stamp, "equity": safe_number(val), "spy_close": None})
     base = safe_number(history.get("base_value")) or (curve[0]["equity"] if curve else equity)
-    delta = equity - last_equity if last_equity else 0.0
-    pnl_pct = delta / last_equity * 100 if last_equity else 0.0
-    high = max((x["equity"] for x in curve), default=equity)
-    drawdown = max(0, (high - equity) / high * 100) if high else 0.0
+    delta = equity - last_equity if last_equity and equity is not None else None
+    pnl_pct = delta / last_equity * 100 if delta is not None else None
+    high = max((x["equity"] for x in curve), default=0)
+    drawdown = max(0, (high - equity) / high * 100) if high and equity is not None else None
     ui_positions = [
         {
             "symbol": p.get("symbol"),
@@ -214,362 +338,773 @@ def account_ui(snapshot):
         }
         for p in positions
     ]
-    active = {"new", "accepted", "pending_new", "partially_filled", "accepted_for_bidding", "pending_cancel", "pending_replace", "done_for_day", "calculated", "stopped", "suspended"}
+    open_ids = {o.get("id") for o in snapshot.get("open_orders", [])}
     orders = [
         {
-            "id": o.get("id"), "client_order_id": o.get("client_order_id"),
-            "symbol": o.get("symbol"), "side": str(o.get("side", "")).upper(),
-            "state": str(o.get("status", "")).upper(), "qty": o.get("qty"),
-            "filled_qty": o.get("filled_qty"), "filled_avg_price": o.get("filled_avg_price"),
-            "created_at": o.get("created_at"), "submitted_at": o.get("submitted_at"),
-            "filled_at": o.get("filled_at"), "signal_day": None,
+            "id": o.get("id"),
+            "client_order_id": o.get("client_order_id"),
+            "symbol": o.get("symbol"),
+            "side": str(o.get("side", "")).upper(),
+            "state": str(o.get("status", "")).upper(),
+            "qty": o.get("qty"),
+            "filled_qty": o.get("filled_qty"),
+            "filled_avg_price": o.get("filled_avg_price"),
+            "created_at": o.get("created_at"),
+            "submitted_at": o.get("submitted_at"),
+            "filled_at": o.get("filled_at"),
+            "signal_day": None,
             "broker_order": True,
             "managed": str(o.get("client_order_id") or "").startswith(PREFIX),
         }
         for o in snapshot["orders"]
     ]
-    fills = [{
-        "id": f.get("id"), "symbol": f.get("symbol"),
-        "side": str(f.get("side", "")).upper(),
-        "qty": safe_number(f.get("qty")),
-        "price": safe_number(f.get("price")),
-        "created_at": f.get("transaction_time") or f.get("date"),
-        "order_id": f.get("order_id"),
-        "source": "ALPACA_PAPER_FILLS", "broker_fill": True,
-    } for f in snapshot["fills"]]
+    fills = [
+        {
+            "id": f.get("id"),
+            "symbol": f.get("symbol"),
+            "side": str(f.get("side", "")).upper(),
+            "qty": safe_number(f.get("qty")),
+            "price": safe_number(f.get("price")),
+            "created_at": f.get("transaction_time") or f.get("date"),
+            "order_id": f.get("order_id"),
+            "source": "ALPACA_PAPER_FILLS",
+            "broker_fill": True,
+        }
+        for f in (snapshot["fills"] or [])
+    ]
     return {
         "account": {
-            "currency": "USD", "initial_cash": base, "cash": cash,
-            "equity": equity, "exposure": exposure, "unrealized": sum(p["unrealized"] for p in ui_positions),
-            "realized": None, "drawdown_pct": round(drawdown, 3),
-            "pnl": round(delta, 2), "pnl_pct": round(pnl_pct, 3),
-            "buying_power": safe_number(a.get("buying_power")),
+            "currency": "USD",
+            "initial_cash": base,
+            "cash": cash,
+            "equity": equity,
+            "exposure": exposure,
+            "unrealized": sum(p["unrealized"] for p in ui_positions),
+            "realized": None,
+            "drawdown_pct": round(drawdown, 3) if drawdown is not None else None,
+            "pnl": round(delta, 2) if delta is not None else None,
+            "pnl_pct": round(pnl_pct, 3) if pnl_pct is not None else None,
+            "buying_power": safe_number(a.get("buying_power"), None),
             "daytrading_buying_power": safe_number(a.get("daytrading_buying_power")),
-            "paused": bool((one("SELECT paused FROM sw_alpaca_state WHERE id=1") or {}).get("paused", 1)),
-            "account_masked": masked_account(a), "broker": "Alpaca Paper", "pnl_period": "day",
+            "paused": bool(
+                (one("SELECT paused FROM sw_alpaca_state WHERE id=1") or {}).get("paused", 1)
+            ),
+            "account_masked": masked_account(a),
+            "broker": "Alpaca Paper",
+            "pnl_period": "day",
         },
-        "positions": ui_positions, "equity_curve": curve,
-        "pending_orders": [o for o in orders if o["state"].lower() in active],
-        "order_history": [o for o in orders if o["state"].lower() not in active],
+        "positions": ui_positions,
+        "equity_curve": curve,
+        "pending_orders": [o for o in orders if o["id"] in open_ids],
+        "order_history": [o for o in orders if o["id"] not in open_ids],
         "fills": fills,
-        "last_fill": {"last_buy": next((f["created_at"] for f in fills if f["side"] == "BUY"), None),
-                      "last_sell": next((f["created_at"] for f in fills if f["side"] == "SELL"), None)},
-        "broker_account": {"masked": masked_account(a), "status": "CONNECTED", "as_of": utc(),
-                           "source": "Alpaca Paper Trading API", "order_submission_enabled": orders_enabled()},
+        "last_fill": {
+            "last_buy": next((f["created_at"] for f in fills if f["side"] == "BUY"), None),
+            "last_sell": next((f["created_at"] for f in fills if f["side"] == "SELL"), None),
+        },
+        "broker_account": {
+            "masked": masked_account(a),
+            "status": "CONNECTED",
+            "as_of": utc(),
+            "source": "Alpaca Paper Trading API",
+            "order_submission_enabled": orders_enabled(),
+            "account_status": a.get("status"),
+            "warnings": snapshot.get("warnings", {}),
+        },
+    }
+
+
+def _publish_snapshot(snapshot=None, error=None):
+    global _last_view, _last_sync, _sync_error
+    view = account_ui(snapshot) if snapshot is not None else None
+    with _view_lock:
+        if view is not None:
+            _last_view, _last_sync = view, time.monotonic()
+        if error in {
+            "alpaca_paper_account_mismatch",
+            "alpaca_paper_linked_account_mismatch",
+            "alpaca_paper_http_401",
+            "alpaca_paper_http_403",
+        }:
+            _last_view = None
+        _sync_error = error
+
+
+def broker_symbols():
+    with _view_lock:
+        return [p["symbol"] for p in (_last_view or {}).get("positions", [])]
+
+
+def broker_status():
+    with _view_lock:
+        account = dict((_last_view or {}).get("broker_account", {}))
+        state = (
+            "CONNECTED"
+            if account and not _sync_error and time.monotonic() - _last_sync <= SYNC_MAX_AGE
+            else ("STALE" if account else "DISCONNECTED" if _sync_error else "CONNECTING")
+        )
+        reason = _sync_error or ("alpaca_paper_sync_stale" if state == "STALE" else None)
+    paused = bool((one("SELECT paused FROM sw_alpaca_state WHERE id=1") or {}).get("paused", 1))
+    return {
+        **account,
+        "mode": "ALPACA_PAPER",
+        "broker": state,
+        "status": state,
+        "reason": reason,
+        "orders_enabled": orders_enabled(),
+        "paused": paused,
     }
 
 
 def enrich_dashboard(local):
-    """Return broker-authoritative financial fields; never silently fall back to local cash."""
-    with PaperClient() as client:
-        snapshot = client.snapshot()
-    view = account_ui(snapshot)
-    local.update(view)
-    local["paper_only"] = True
-    local["execution_mode"] = "ALPACA_PAPER"
-    local["can_issue_live_orders"] = False
-    local["legacy_local_pending_orders"] = rows(
-        "SELECT symbol,side,signal_day,state,created_at FROM pending_orders WHERE state='PENDING' ORDER BY created_at"
+    status = broker_status()
+    with _view_lock:
+        view = _last_view
+    if (
+        status["status"] == "CONNECTED"
+        and view
+        and view["broker_account"]["as_of"] == status.get("as_of")
+    ):
+        local.update(view)
+        local["account"] = {**local["account"], "paused": status["paused"]}
+    local.update(
+        {
+            "paper_only": True,
+            "execution_mode": "ALPACA_PAPER",
+            "can_issue_live_orders": False,
+            "broker_account": status,
+            "benchmark_change_pct": None,
+        }
     )
+    local["legacy_local_pending_orders"] = rows(
+        "SELECT id,symbol,side,signal_day,state,created_at FROM pending_orders WHERE state='PENDING' ORDER BY created_at"
+    )
+    local["broker_intents"] = (
+        rows("""SELECT client_id,signal_day,symbol,side,qty,reason,state,broker_status,
+        updated_at,detail_json FROM sw_alpaca_intents ORDER BY created_at DESC LIMIT 50""")
+    )
+    for intent in local["broker_intents"]:
+        detail = json.loads(intent.pop("detail_json"))
+        intent["diagnostic"] = detail.get("reason")
+        intent["limit_price"] = detail.get("limit_price")
     return local
 
 
-def broker_status():
-    if not broker_mode():
-        return {"mode": "LOCAL_PAPER", "broker": "NOT_SELECTED"}
-    try:
-        with PaperClient() as client:
-            account = client.account()
-        return {"mode": "ALPACA_PAPER", "broker": "CONNECTED", "account_masked": masked_account(account),
-                "orders_enabled": orders_enabled(), "updated_at": utc()}
-    except Exception as exc:
-        return {"mode": "ALPACA_PAPER", "broker": "DISCONNECTED", "reason": str(exc),
-                "orders_enabled": False, "updated_at": utc()}
-
-
 def set_broker_paused(paused):
-    with connect() as c:
+    with _admission, connect() as c:
+        if not paused and not orders_enabled():
+            raise PaperError("alpaca_paper_orders_disabled")
         c.execute("UPDATE sw_alpaca_state SET paused=? WHERE id=1", (int(paused),))
     return {"paused": paused, "mode": "alpaca_paper"}
 
 
 def cid_for(account_id, symbol, day, side):
-    return PREFIX + hashlib.sha256(f"paper2|{account_id}|{day}|{symbol}|{side}".encode()).hexdigest()[:40]
+    return (
+        PREFIX
+        + hashlib.sha256(f"paper2|{account_id}|{day}|{symbol}|{side}".encode()).hexdigest()[:40]
+    )
 
 
-def _intent(c, cid, account_id, day, symbol, side, qty, reason):
+def _intent(c, cid, account_id, day, symbol, side, qty, reason, payload=None):
     """Persist the intent BEFORE the network call; unknown outcomes never retry blindly."""
     t = utc()
-    cur = c.execute("""INSERT OR IGNORE INTO sw_alpaca_intents
+    detail = {
+        k: payload[k] for k in ("type", "limit_price", "time_in_force") if payload and k in payload
+    }
+    cur = c.execute(
+        """INSERT OR IGNORE INTO sw_alpaca_intents
         (client_id,account_id,signal_day,symbol,side,qty,reason,state,created_at,updated_at,detail_json)
         VALUES(?,?,?,?,?,?,?,'PREPARED',?,?,?)""",
-        (cid,account_id,day,symbol,side,str(qty),reason,t,t,"{}"))
+        (cid, account_id, day, symbol, side, str(qty), reason, t, t, json.dumps(detail)),
+    )
     return cur.rowcount == 1
 
 
 def _state(cid, status, order=None, reason=""):
     with connect() as c:
-        c.execute("""UPDATE sw_alpaca_intents SET state=?,broker_order_id=?,broker_status=?,updated_at=?,detail_json=?
-                   WHERE client_id=?""",
-                  (status, str(order.get("id") or "") if isinstance(order, dict) else None,
-                   str(order.get("status") or "") if isinstance(order, dict) else None,
-                   utc(), json.dumps({"reason": reason}), cid))
+        c.execute(
+            """UPDATE sw_alpaca_intents SET state=?,broker_order_id=?,broker_status=?,updated_at=?,
+                       detail_json=json_set(detail_json, '$.reason', ?) WHERE client_id=?""",
+            (
+                status,
+                str(order.get("id") or "") if isinstance(order, dict) else None,
+                str(order.get("status") or "") if isinstance(order, dict) else None,
+                utc(),
+                reason,
+                cid,
+            ),
+        )
 
 
-def _guard_snapshot(snapshot):
-    a = snapshot["account"]
-    if safe_number(a.get("equity")) <= 0 or safe_number(a.get("cash")) < 0:
-        raise RuntimeError("invalid_broker_account_balance")
-    for p in snapshot["positions"]:
-        if str(p.get("side")) != "long" or p.get("asset_class") != "us_equity":
-            raise RuntimeError("unsupported_or_short_broker_position")
-    if len(snapshot["orders"]) >= 500:
-        raise RuntimeError("broker_order_history_truncated")
-    if any(safe_number(p.get("qty")) <= 0 for p in snapshot["positions"]):
-        raise RuntimeError("broker_position_quantity_invalid")
+def money(value, fallback=None):
+    try:
+        parsed = Decimal(str(value))
+        if parsed.is_finite():
+            return parsed
+    except InvalidOperation:
+        pass
+    if fallback is not None:
+        return fallback
+    raise PaperError("alpaca_paper_invalid_numeric_evidence")
 
 
-def _risk_inputs(snapshot):
-    eq = safe_number(snapshot["account"].get("equity"))
-    cash = safe_number(snapshot["account"].get("cash"))
-    gross = sum(max(0, safe_number(p.get("market_value"))) for p in snapshot["positions"])
-    active = [o for o in snapshot["orders"] if str(o.get("status")) not in TERMINAL]
-    return eq, cash, gross, active
+def _linked_account(account_id):
+    with connect() as c:
+        c.execute("BEGIN IMMEDIATE")
+        if c.execute(
+            "SELECT 1 FROM sw_alpaca_intents WHERE account_id!=? LIMIT 1", (account_id,)
+        ).fetchone():
+            raise PaperError("alpaca_paper_linked_account_mismatch")
+        c.execute(
+            "UPDATE sw_alpaca_state SET linked_account=?,linked_at=? WHERE id=1 AND linked_account IS NULL",
+            (account_id, utc()),
+        )
+        linked = c.execute("SELECT linked_account FROM sw_alpaca_state WHERE id=1").fetchone()
+        if linked is None or linked["linked_account"] != account_id:
+            raise PaperError("alpaca_paper_linked_account_mismatch")
+        c.commit()
 
 
-def _tracked_fills(snapshot):
-    # Managed holdings: only shares attributable to this strategy's confirmed broker buys.
-    # If there were intervening manual trades on a symbol, ownership is ambiguous => no sell.
-    orders = {str(o.get("id")): o for o in snapshot["orders"]}
-    managed = {}
-    for f in snapshot["fills"]:
-        o = orders.get(str(f.get("order_id")))
-        if not o or not str(o.get("client_order_id") or "").startswith(PREFIX):
+def _validated_order(order, intent):
+    if (
+        not isinstance(order, dict)
+        or not order.get("id")
+        or order.get("status") not in ORDER_STATES
+        or order.get("client_order_id") != intent["client_id"]
+        or order.get("symbol") != intent["symbol"]
+        or order.get("side") != intent["side"].lower()
+        or money(order.get("qty")) != money(intent["qty"])
+    ):
+        raise PaperError("alpaca_paper_order_identity_mismatch")
+    return order
+
+
+def _reconcile(client, account_id, open_orders):
+    local = rows(
+        """SELECT * FROM sw_alpaca_intents WHERE account_id=?
+        AND state IN ('PREPARED','UNKNOWN','ACKNOWLEDGED') ORDER BY created_at,client_id""",
+        (account_id,),
+    )
+    by_client = {order.get("client_order_id"): order for order in open_orders}
+    unresolved = 0
+    for intent in local:
+        cid = intent["client_id"]
+        try:
+            order = by_client.get(cid) or client.by_client_id(cid)
+            if order is None:
+                unresolved += 1
+                continue
+            order = _validated_order(order, intent)
+        except PaperError:
+            # Continue reconciling the other intents. Never unlock a missing or mismatched intent.
+            unresolved += 1
             continue
-        sym = str(f.get("symbol"))
-        side = str(f.get("side", "")).lower()
-        qty = safe_number(f.get("qty"))
-        if side in ("buy", "sell") and qty > 0:
-            managed[sym] = managed.get(sym, 0.0) + qty * (1 if side == "buy" else -1)
-    return managed
+        terminal = order["status"] in TERMINAL
+        _state(cid, "TERMINAL" if terminal else "ACKNOWLEDGED", order)
+    return unresolved
 
 
-def _preview_and_submit(client, snapshot, signals, day):
-    """EOD decisions; capped cash-backed paper LIMIT buys, managed long exits only.
+def _position_owned(position, fills, account_id, actions_since=None):
+    """Require a known strategy entry and an uninterrupted broker fill trail."""
+    if fills is None:
+        return False
+    intents = rows(
+        """SELECT side,broker_order_id,created_at,signal_day FROM sw_alpaca_intents
+        WHERE account_id=? AND symbol=? AND broker_order_id IS NOT NULL
+        ORDER BY created_at DESC,client_id DESC""",
+        (account_id, position["symbol"]),
+    )
+    entry = next((intent for intent in intents if intent["side"] == "BUY"), None)
+    if not entry or (actions_since and actions_since > entry["signal_day"]):
+        return False
+    start = instant(entry["created_at"])
+    try:
+        stamped = [(instant(f["transaction_time"]), f) for f in fills]
+        if len(fills) >= FILL_PAGE_SIZE and min(t for t, _ in stamped) >= start:
+            return False
+        after = [f for t, f in stamped if t >= start and f.get("symbol") == position["symbol"]]
+        allowed = {
+            i["broker_order_id"]: i["side"].lower()
+            for i in intents
+            if i["created_at"] >= entry["created_at"]
+        }
+        allowed = {
+            oid: side
+            for oid, side in allowed.items()
+            if side == "sell" or oid == entry["broker_order_id"]
+        }
+        if (
+            not any(f.get("order_id") == entry["broker_order_id"] for f in after)
+            or len({f["id"] for f in after}) != len(after)
+            or any(allowed.get(f["order_id"]) != f["side"] or money(f["qty"]) <= 0 for f in after)
+        ):
+            return False
+        qty = sum((money(f["qty"]) * (1 if f["side"] == "buy" else -1) for f in after), Decimal(0))
+        return qty == money(position["qty"]) == money(position.get("qty_available")) > 0
+    except (KeyError, ValueError, TypeError, PaperError):
+        return False
 
-    Does not trade while paused, without documented source provenance or broker state.
-    It checks the broker by client ID before and after any uncertain POST.
-    """
-    result = {"status": "RESEARCH_ONLY", "processed": len(signals), "orders_queued": 0,
-              "broker_orders_submitted": 0, "market_day": day, "why_no_trade": [],
-              "mode": "ALPACA_PAPER", "at": utc()}
-    _guard_snapshot(snapshot)
-    if not orders_enabled():
-        result["status"] = "BROKER_ORDERS_DISABLED"
-        return result
-    state = one("SELECT paused FROM sw_alpaca_state WHERE id=1")
-    if state is None or state["paused"]:
-        result["status"] = "BROKER_PAUSED"
-        return result
-    now = datetime.now(timezone.utc)
-    if not signals or completed_day(now) != day:
-        result["status"] = "NO_CERTIFIED_CURRENT_SIGNALS"
-        return result
-    if now >= session(next_day(day))[0]:
-        # The next-session opening execution window was already missed.
-        result["status"] = "STALE_SIGNAL_TARGET_SESSION_ALREADY_OPENED"
-        return result
-    eq, cash, gross, active = _risk_inputs(snapshot)
-    if not eq:
-        raise RuntimeError("invalid_paper_equity")
-    # Only exchange-verified, certified, completed EOD signals can be executed.
-    sources = {r["symbol"]: r for r in rows("""SELECT o.symbol,o.day,o.c,o.observed_at,q.status AS check_status
-                FROM sw_eod_observations o JOIN sw_price_checks q ON q.symbol=o.symbol AND q.day=o.day
-                WHERE o.day=? AND o.source='alpaca_iex_daily' AND o.adjustment='RAW'""", (day,))}
-    known = {str(p.get("symbol")): p for p in snapshot["positions"]}
-    sectors = {r["symbol"]: r["sector"] for r in rows("SELECT symbol,sector FROM assets")}
-    reserved = {str(o.get("symbol")) for o in active}
-    if any(not str(o.get("symbol") or "") for o in active):
-        raise RuntimeError("broker_open_order_missing_symbol")
-    managed_qty = _tracked_fills(snapshot)
-    today_prefix = {str(r["symbol"]) for r in rows(
-        "SELECT symbol FROM sw_alpaca_intents WHERE signal_day=?", (day,))}
-    buys_today = (one("SELECT COUNT(*) AS n FROM sw_alpaca_intents WHERE signal_day=? AND side='BUY'", (day,)) or {})["n"]
-    # All open broker orders and all manual positions count against allocation.
-    if any(not str(o.get("client_order_id") or "").startswith(PREFIX) for o in active):
-        result["status"] = "EXTERNAL_BROKER_ORDERS_OPEN"
-        return result
-    if len(active) >= 15:
-        result["status"] = "BROKER_TOO_MANY_PENDING_ORDERS"
-        return result
-    if gross > eq * MAX_GROSS_EXPOSURE:
-        result["status"] = "EXPOSURE_OVER_CAP"
-        return result
-    # Drawdown and daily-loss circuit breakers restrict new entries, not exits.
+
+def _open_window(client, day, now):
+    bounds = session(next_day(day))
+    if not bounds[0] <= now < min(bounds[0] + OPEN_WINDOW, bounds[1]):
+        return False
+    clock = client.clock()
+    try:
+        stamp = instant(clock["timestamp"])
+        return (
+            clock["is_open"] is True
+            and abs(stamp - now) <= timedelta(seconds=30)
+            and bounds[0] <= stamp < bounds[0] + OPEN_WINDOW
+            and instant(clock["next_close"]) == bounds[1]
+        )
+    except (KeyError, ValueError, TypeError):
+        return False
+
+
+def _entry_budget(snapshot, sectors, sector, active, known):
+    account = snapshot["account"]
+    eq, cash, last, cash_buying_power = (
+        money(account.get(k))
+        for k in (
+            "equity",
+            "cash",
+            "last_equity",
+            "non_marginable_buying_power",
+        )
+    )
+    if min(eq, last) <= 0 or cash < 0:
+        raise PaperError("alpaca_paper_invalid_account_balance")
     history = snapshot.get("history") or {}
-    valid_marks = [safe_number(x) for x in history.get("equity", []) if safe_number(x) > 0]
-    peak = max(valid_marks + [eq])
-    drawdown = (peak - eq) / peak if peak > 0 else 1
-    last_equity = safe_number(snapshot["account"].get("last_equity"))
-    day_loss = (last_equity - eq) / last_equity if last_equity > 0 else 0
-    buy_paused = drawdown >= MAX_DRAWDOWN or day_loss >= 0.035
-    # No unattended order if any existing broker position lies outside researched universe.
-    if any(sym not in sectors for sym in known):
-        result["status"] = "EXTERNAL_POSITION_OUTSIDE_UNIVERSE"
-        return result
-    # If history/fill window is insufficient to attribute owned shares, no SELL is authorized.
-    # The strategy still reads/monitors such positions from broker dashboard.
-    # Exits have priority over buys. The signal list still sorts deterministically.
-    ordered = sorted(signals, key=lambda s: (str(s.get("symbol")) not in known,
-                                                -safe_number(s.get("score")), str(s.get("symbol"))))
-    for signal in ordered:
-        sym = str(signal.get("symbol") or "")
-        certified = sources.get(sym)
-        item = {"symbol": sym, "action": "WATCH", "reason": "no_entry_signal"}
-        result["why_no_trade"].append(item)
-        if not certified or certified["check_status"] != "OK":
-            item["reason"] = "uncertified_daily_observation"
-            continue
-        if signal.get("day") != day or signal.get("source") != "alpaca_iex_daily":
-            item["reason"] = "stale_or_untrusted_signal"
-            continue
-        if not safe_number(certified["c"]) or sym in reserved or sym in today_prefix:
-            item["reason"] = "pending_or_already_ordered"
-            continue
-        if sym in known:
-            # No blind liquidation of user-managed or mixed holdings. Exit only when
-            # strategy-owned filled quantity equals broker-held quantity and data verified.
-            p = known[sym]
-            match_qty = abs(managed_qty.get(sym, 0.0) - safe_number(p.get("qty"))) < 1e-6
-            if not match_qty:
-                item["reason"] = "external_position_not_strategy_owned"
-                continue
-            ev = signal.get("features") or {}
-            px = safe_number(certified["c"])
-            avg = safe_number(p.get("avg_entry_price"))
-            sma50 = safe_number(ev.get("sma50"))
-            if not avg or not sma50:
-                item["reason"] = "exit_evidence_missing"
-                continue
-            if px >= avg * 0.92 and px >= sma50 * 0.96 and safe_number(signal.get("score")) >= 0.8:
-                item["reason"] = "no_exit_trigger"
-                continue
-            action, qty, reason = "SELL", int(safe_number(p.get("qty"))), "eod_stop_or_trend_exit"
-            if qty <= 0:
-                continue
-            payload = {"symbol": sym, "qty": str(qty), "side": "sell", "type": "market",
-                       "time_in_force": "day", "extended_hours": False}
+    marks = [money(x, Decimal(0)) for x in history.get("equity", []) or [] if x is not None]
+    if not any(x > 0 for x in marks):
+        raise PaperError("alpaca_paper_drawdown_history_unavailable")
+    peak = max(marks + [eq])
+    if 1 - eq / peak >= money(MAX_DRAWDOWN) or 1 - eq / last >= money(MAX_ONE_DAY_LOSS):
+        raise PaperError("alpaca_paper_drawdown_or_daily_loss_pause")
+    if any(
+        p.get("side") != "long" or p.get("asset_class") != "us_equity" or not sectors.get(sym)
+        for sym, p in known.items()
+    ):
+        raise PaperError("alpaca_paper_external_position_unclassified_or_short")
+    gross = sector_used = reserved = Decimal(0)
+    for sym, position in known.items():
+        value = money(position.get("market_value"))
+        if value <= 0 or money(position.get("qty")) <= 0:
+            raise PaperError("alpaca_paper_invalid_position_value")
+        gross += value
+        if sectors[sym] == sector:
+            sector_used += value
+    reserved_symbols = set()
+    for order in active:
+        sym = order.get("symbol")
+        if (
+            not order.get("owned_intent")
+            or not sectors.get(sym)
+            or order.get("side") not in ("buy", "sell")
+        ):
+            raise PaperError("alpaca_paper_external_or_unclassified_open_order")
+        if order["side"] == "buy":
+            price = money(order.get("limit_price"))
+            qty = money(order.get("qty")) - money(order.get("filled_qty"))
+            if price <= 0 or qty < 0:
+                raise PaperError("alpaca_paper_open_buy_reserve_unverifiable")
+            reserved += price * qty
+            reserved_symbols.add(sym)
+            if sectors[sym] == sector:
+                sector_used += price * qty
+    if len(set(known) | reserved_symbols) >= MAX_POSITIONS:
+        raise PaperError("alpaca_paper_position_cap")
+    return min(
+        eq * money(MAX_SYMBOL_WEIGHT),
+        eq * money(MAX_SECTOR_WEIGHT) - sector_used,
+        eq * money(MAX_GROSS_EXPOSURE) - gross - reserved,
+        cash - eq * CASH_BUFFER - reserved,
+        cash_buying_power - reserved,
+    )
+
+
+def _payload_for(client, snapshot, signal, target, active, known, sectors, account_id):
+    symbol = signal["symbol"]
+    if any(o.get("symbol") == symbol for o in active):
+        raise PaperError("alpaca_paper_symbol_has_open_order")
+    if not re.fullmatch(r"[A-Z][A-Z0-9.]{0,9}", symbol):
+        raise PaperError("alpaca_paper_symbol_invalid")
+    if symbol not in known:
+        if signal["score"] < SCORE_MIN or signal["regime"] != "RISK_ON":
+            raise PaperError("alpaca_paper_score_or_regime_gate")
+        if signal["features"]["volatility_annual"] >= MAX_VOLATILITY:
+            raise PaperError("alpaca_paper_volatility_cap")
+        if signal["iex_dollar_volume_20d"] < MIN_IEX_DOLLAR_VOLUME:
+            raise PaperError("alpaca_paper_liquidity_gate")
+    asset = client.asset(symbol)
+    if (
+        not isinstance(asset, dict)
+        or asset.get("symbol") != symbol
+        or asset.get("class") != "us_equity"
+        or asset.get("status") != "active"
+        or asset.get("tradable") is not True
+    ):
+        raise PaperError("alpaca_paper_asset_not_tradable")
+    check = one("SELECT * FROM sw_price_checks WHERE symbol=? AND day=?", (symbol, signal["day"]))
+    if (
+        not check
+        or instant(check["checked_at"]).astimezone(NY).date().isoformat() != target
+        or any(e["day"] == target for e in json.loads(check["actions_json"]))
+    ):
+        raise PaperError("alpaca_paper_execution_day_corporate_action_check_missing_or_blocked")
+    px = money(signal["features"]["close"])
+    if symbol in known:
+        # Retain the conservative recent share-change gate for broker-owned inventory.
+        if any(e["kind"] != "cash_dividends" for e in json.loads(check["actions_json"])):
+            raise PaperError("alpaca_paper_corporate_action_requires_reconciliation")
+        position = known[symbol]
+        if (
+            position.get("side") != "long"
+            or position.get("asset_class") != "us_equity"
+            or position.get("asset_id") != asset.get("id")
+            or not asset.get("id")
+            or not check["actions_since"]
+            or not _position_owned(position, snapshot["fills"], account_id, check["actions_since"])
+        ):
+            raise PaperError("alpaca_paper_external_or_unverified_position")
+        avg = money(position.get("avg_entry_price"))
+        if avg <= 0:
+            raise PaperError("alpaca_paper_position_cost_unavailable")
+        if px <= avg * Decimal("0.92"):
+            reason = "eod_stop"
+        elif px < money(signal["features"]["sma50"]) * Decimal("0.96") or signal["score"] < 0.8:
+            reason = "eod_trend_exit"
         else:
-            if buy_paused:
-                item["reason"] = "broker_drawdown_or_daily_loss_pause"
-                continue
-            if safe_number(signal.get("score")) < SCORE_MIN:
-                item["reason"] = "score_below_threshold"
-                continue
-            if buys_today >= 2 or len(known) + buys_today >= MAX_POSITIONS:
-                item["reason"] = "daily_or_position_cap"
-                continue
-            features = signal.get("features") or {}
-            if safe_number(features.get("volatility_annual"), 999) >= MAX_VOLATILITY:
-                item["reason"] = "volatility_cap"
-                continue
-            if signal.get("regime") != "RISK_ON":
-                item["reason"] = "benchmark_regime_unapproved"
-                continue
-            sector = sectors.get(sym)
-            if not sector or sector == "Benchmark":
-                item["reason"] = "unknown_sector"
-                continue
-            # Account may include externally placed holdings. Unknown sector is a block.
-            if any(sectors.get(h) is None for h in known):
-                item["reason"] = "unknown_existing_sector"
-                continue
-            sector_used = sum(safe_number(p.get("market_value")) for h,p in known.items() if sectors.get(h)==sector)
-            for order in active:
-                if sectors.get(str(order.get("symbol"))) == sector and str(order.get("side")) == "buy":
-                    sector_used += safe_number(order.get("qty"))*safe_number(certified["c"])
-            px = safe_number(certified["c"])
-            # Conservative limit buys: protect against opening gaps rather than using market buys.
-            limit = math.floor(px * 1.005 * 100) / 100
-            # Hard minimum tick and reserved financial buffer.
-            if limit <= 0:
-                item["reason"] = "invalid_limit"
-                continue
-            open_reserve = sum(safe_number(o.get("qty"))*safe_number(o.get("limit_price") or o.get("stop_price") or px)
-                               for o in active if str(o.get("side")) == "buy")
-            budget = min(eq*MAX_SYMBOL_WEIGHT, eq*MAX_SECTOR_WEIGHT-sector_used,
-                         eq*MAX_GROSS_EXPOSURE-gross-open_reserve,
-                         cash-eq*0.40-open_reserve)
-            qty = int(max(0, math.floor(budget / limit / 1.01)))
-            if qty < 1:
-                item["reason"] = "cash_or_exposure_cap"
-                continue
-            action, reason = "BUY", "certified_eod_signal"
-            payload = {"symbol": sym, "qty": str(qty), "side": "buy", "type": "limit",
-                       "limit_price": f"{limit:.2f}", "time_in_force": "day", "extended_hours": False}
-        cid = cid_for(str(snapshot["account"].get("id")), sym, day, action)
-        payload["client_order_id"] = cid
-        # Broker lookup first; never resubmit the same decision.
-        present = client.by_client_id(cid)
-        if present:
-            item["reason"] = "broker_order_already_exists"
+            raise PaperError("alpaca_paper_no_exit_trigger")
+        return {
+            "side": "sell",
+            "qty": format(money(position["qty"]), "f"),
+            "type": "market",
+        }, reason
+
+    sector = sectors.get(symbol)
+    if not sector or sector == "Benchmark":
+        raise PaperError("alpaca_paper_unknown_sector")
+    budget = _entry_budget(snapshot, sectors, sector, active, known)
+    limit = (px * Decimal("1.005")).quantize(Decimal("0.01"), rounding=ROUND_DOWN)
+    qty = int(max(Decimal(0), budget) / limit / Decimal("1.01")) if limit >= 1 else 0
+    if qty < 1:
+        raise PaperError("alpaca_paper_cash_or_exposure_cap")
+    return {
+        "side": "buy",
+        "qty": str(qty),
+        "type": "limit",
+        "limit_price": str(limit),
+    }, "certified_eod_signal"
+
+
+def _preview_and_submit(client, snapshot, signals, day, now):
+    result = {
+        "status": "NO_APPROVED_BROKER_SIGNAL",
+        "processed": len(signals),
+        "orders_queued": 0,
+        "next_core_open": session(next_day(day))[0].isoformat(),
+        "broker_orders_submitted": 0,
+        "market_day": day,
+        "why_no_trade": [],
+        "mode": "ALPACA_PAPER",
+        "at": utc(),
+        "signals": [
+            {k: s[k] for k in ("symbol", "name", "sector", "score", "regime", "signals", "reasons")}
+            for s in signals
+        ],
+    }
+    if not signals or day != completed_day(now):
+        return {**result, "status": "NO_CERTIFIED_CURRENT_SIGNALS"}
+    if not _open_window(client, day, now):
+        return {**result, "status": "WAITING_FOR_NEXT_CORE_OPEN_WINDOW"}
+    account = snapshot["account"]
+    if (
+        account.get("status") != "ACTIVE"
+        or account.get("trading_blocked") is not False
+        or account.get("account_blocked") is not False
+    ):
+        return {**result, "status": "ALPACA_ACCOUNT_TRADING_UNAVAILABLE"}
+    active = snapshot["open_orders"]
+    if len(active) >= 500 or any(
+        not o.get("symbol") or not o.get("id") or not o.get("status") or o.get("legs")
+        for o in active
+    ):
+        return {**result, "status": "BROKER_OPEN_ORDERS_INCOMPLETE"}
+    known = {p.get("symbol"): p for p in snapshot["positions"]}
+    if None in known or len(known) != len(snapshot["positions"]):
+        return {**result, "status": "BROKER_POSITIONS_INVALID"}
+    if any(p.get("side") != "long" or money(p.get("qty")) <= 0 for p in known.values()):
+        return {**result, "status": "BROKER_SHORT_OR_INVALID_POSITION"}
+    account_id = account["id"]
+    intents = rows(
+        "SELECT * FROM sw_alpaca_intents WHERE account_id=? AND signal_day=?", (account_id, day)
+    )
+    active_ids = {o.get("id") for o in active}
+    own_ids = {
+        r["broker_order_id"]
+        for r in rows(
+            "SELECT broker_order_id FROM sw_alpaca_intents WHERE account_id=? AND state='ACKNOWLEDGED'",
+            (account_id,),
+        )
+    }
+    active = [{**o, "owned_intent": o.get("id") in own_ids} for o in active]
+    today = {r["symbol"] for r in intents}
+    buys_today = sum(r["side"] == "BUY" for r in intents)
+    sectors = {r["symbol"]: r["sector"] for r in rows("SELECT symbol,sector FROM assets")}
+    target = next_day(day)
+    for signal in sorted(
+        signals, key=lambda s: (s["symbol"] not in known, -s["score"], s["symbol"])
+    ):
+        symbol = signal["symbol"]
+        item = {"symbol": symbol, "action": "WATCH"}
+        result["why_no_trade"].append(item)
+        if symbol in today or (symbol not in known and buys_today >= 2):
+            item["reason"] = "already_ordered_or_daily_buy_cap"
             continue
-        with connect() as c:
-            c.execute("BEGIN IMMEDIATE")
-            fresh = _intent(c, cid, str(snapshot["account"].get("id")), day, sym, action, qty, reason)
-            c.commit()
-        if not fresh:
-            item["reason"] = "existing_or_uncertain_intent"
+        if symbol not in known and not signal.get("ranking_complete", False):
+            item["reason"] = "awaiting_completed_universe_scan"
             continue
         try:
-            # A POST timeout is UNKNOWN, never interpreted as a safe retry.
-            order = client.submit(payload)
-            if not isinstance(order, dict) or order.get("client_order_id") != cid:
-                raise RuntimeError("broker_order_response_mismatch")
-            _state(cid, "ACKNOWLEDGED", order)
-            item.update({"action": action, "reason": "broker_order_submitted"})
-            result["broker_orders_submitted"] += 1
+            payload, reason = _payload_for(
+                client, snapshot, signal, target, active, known, sectors, account_id
+            )
+        except PaperError as exc:
+            item["reason"] = str(exc)
+            continue
+        action = payload["side"].upper()
+        cid = cid_for(account_id, symbol, day, action)
+        payload.update(
+            {
+                "symbol": symbol,
+                "client_order_id": cid,
+                "time_in_force": "day",
+                "extended_hours": False,
+            }
+        )
+        with _admission:
+            if (one("SELECT paused FROM sw_alpaca_state WHERE id=1") or {}).get("paused", 1):
+                return {**result, "status": "BROKER_PAUSED"}
+            if client.by_client_id(cid):
+                item["reason"] = "broker_order_already_exists"
+                # A broker order without a durable local intent needs operator review.
+                return {**result, "status": "BROKER_ORDER_WITHOUT_LOCAL_INTENT"}
+            # Recheck the independently mutable broker state just before reserving.
+            fresh_account = client.account()
+            fresh_positions = client.get("/v2/positions")
+            fresh_orders = client.get(
+                "/v2/orders", {"status": "open", "limit": 500, "nested": "false"}
+            )
+
+            def positions_key(items):
+                return {
+                    p.get("symbol"): (
+                        p.get("asset_id"),
+                        p.get("qty"),
+                        p.get("qty_available"),
+                        p.get("side"),
+                        p.get("avg_entry_price"),
+                    )
+                    for p in items
+                }
+
+            if (
+                any(
+                    fresh_account.get(k) != account.get(k)
+                    for k in (
+                        "id",
+                        "cash",
+                        "last_equity",
+                        "status",
+                        "account_blocked",
+                        "trading_blocked",
+                    )
+                )
+                or not isinstance(fresh_positions, list)
+                or not isinstance(fresh_orders, list)
+                or positions_key(fresh_positions) != positions_key(snapshot["positions"])
+                or {o.get("id") for o in fresh_orders} != active_ids
+                or fresh_orders != snapshot["open_orders"]
+            ):
+                return {**result, "status": "BROKER_STATE_CHANGED_RECHECK_NEXT_CYCLE"}
             if action == "BUY":
-                buys_today += 1
-                cash -= qty * safe_number(payload["limit_price"])
-                gross += qty * safe_number(payload["limit_price"])
-            reserved.add(sym)
-            today_prefix.add(sym)
-        except Exception as exc:
-            _state(cid, "UNKNOWN", reason=type(exc).__name__)
-            item["reason"] = "broker_order_outcome_uncertain_do_not_retry"
-            log.warning("Alpaca paper order outcome uncertain for %s", sym)
-            # Stop, reconcile externally before the next decision cycle.
-            result["status"] = "BROKER_ORDER_UNCERTAIN"
-            return result
-    result["status"] = "BROKER_SUBMITTED" if result["broker_orders_submitted"] else "NO_APPROVED_BROKER_SIGNAL"
-    result["orders_queued"] = result["broker_orders_submitted"]
+                fresh_budget = _entry_budget(
+                    {**snapshot, "account": fresh_account},
+                    sectors,
+                    sectors[symbol],
+                    active,
+                    {p["symbol"]: p for p in fresh_positions},
+                )
+                if (
+                    money(payload["qty"]) * money(payload["limit_price"]) * Decimal("1.01")
+                    > fresh_budget
+                ):
+                    return {**result, "status": "BROKER_BUDGET_CHANGED_RECHECK_NEXT_CYCLE"}
+            if action == "SELL":
+                fills = client.get(
+                    "/v2/account/activities/FILL",
+                    {
+                        "direction": "desc",
+                        "page_size": FILL_PAGE_SIZE,
+                    },
+                )
+                if not isinstance(fills, list) or not _position_owned(
+                    known[symbol], fills, account_id
+                ):
+                    return {**result, "status": "BROKER_OWNERSHIP_CHANGED_RECHECK_NEXT_CYCLE"}
+            if not _open_window(client, day, datetime.now(UTC)):
+                return {**result, "status": "EXECUTION_WINDOW_CLOSED"}
+            with connect() as c:
+                c.execute("PRAGMA synchronous=FULL")
+                fresh = _intent(
+                    c, cid, account_id, day, symbol, action, payload["qty"], reason, payload
+                )
+            if not fresh:
+                return {**result, "status": "EXISTING_INTENT"}
+            try:
+                order = _validated_order(
+                    client.submit(payload),
+                    {
+                        "client_id": cid,
+                        "symbol": symbol,
+                        "side": action,
+                        "qty": payload["qty"],
+                    },
+                )
+            except PaperRejection as exc:
+                _state(cid, "REJECTED", reason=str(exc))
+                item["reason"] = str(exc)
+                return {**result, "status": "BROKER_REJECTED"}
+            except PaperError as exc:
+                _state(cid, "UNKNOWN", reason=str(exc))
+                item["reason"] = "broker_order_outcome_uncertain_do_not_retry"
+                log.warning("Alpaca paper order outcome uncertain for %s (%s)", symbol, exc)
+                return {**result, "status": "BROKER_ORDER_UNCERTAIN"}
+            status = order["status"]
+            _state(cid, "TERMINAL" if status in TERMINAL else "ACKNOWLEDGED", order)
+            item.update({"action": action, "reason": f"broker_{status}"})
+            return {
+                **result,
+                "status": "BROKER_REJECTED" if status == "rejected" else "BROKER_ACKNOWLEDGED",
+                "broker_orders_submitted": 1,
+            }
     return result
 
 
-def paper_cycle():
-    broker_init()
-    with PaperClient() as client:
-        snapshot = client.snapshot()
-        _guard_snapshot(snapshot)
-        # Reconcile intents from authoritative broker state; never derive fills locally.
-        local_intents = rows("SELECT client_id,state FROM sw_alpaca_intents ORDER BY created_at DESC LIMIT 50")
-        for intent in local_intents:
-            broker = client.by_client_id(intent["client_id"])
-            if broker:
-                current = str(broker.get("status") or "").lower()
-                _state(intent["client_id"], "TERMINAL" if current in TERMINAL else "ACKNOWLEDGED", broker)
-            elif intent["state"] in ("PREPARED", "UNKNOWN"):
-                # Not found after an uncertain POST does not authorize resubmission.
-                return {"status": "UNCERTAIN_BROKER_INTENT", "mode": "ALPACA_PAPER",
-                        "market_day": completed_day(datetime.now(timezone.utc)),
-                        "orders_queued": 0, "pending_count": 1, "at": utc()}
-        if not orders_enabled():
-            return {"status": "BROKER_READ_ONLY", "mode": "ALPACA_PAPER",
-                    "market_day": completed_day(datetime.now(timezone.utc)),
-                    "orders_queued": 0, "pending_count": 0, "at": utc()}
-        signals, day = eligible_signals()
-        if not day:
-            return {"status": "NO_CERTIFIED_BENCHMARK", "mode": "ALPACA_PAPER", "orders_queued": 0,
-                    "market_day": completed_day(datetime.now(timezone.utc)), "at": utc()}
-        return _preview_and_submit(client, snapshot, signals, day)
+def paper_cycle(now=None):
+    real_clock = now is None
+    now = now or datetime.now(UTC)
+    result = {
+        "mode": "ALPACA_PAPER",
+        "market_day": completed_day(now),
+        "orders_queued": 0,
+        "at": utc(),
+    }
+    try:
+        with PaperClient() as client:
+            snapshot = client.snapshot()
+            account_id = snapshot["account"]["id"]
+            _linked_account(account_id)
+            _publish_snapshot(snapshot)
+            unresolved = _reconcile(client, account_id, snapshot["open_orders"])
+            if unresolved:
+                return {**result, "status": "UNCERTAIN_BROKER_INTENT", "pending_count": unresolved}
+            if real_clock:
+                now = datetime.now(UTC)
+            configuration = execution_configuration_gate()
+            signals, day = (
+                eligible_signals(now=now, broker=True) if not configuration else ([], None)
+            )
+            preview = {
+                "signals": [
+                    {
+                        k: s[k]
+                        for k in (
+                            "symbol",
+                            "name",
+                            "sector",
+                            "score",
+                            "regime",
+                            "signals",
+                            "reasons",
+                        )
+                    }
+                    for s in signals
+                ]
+            }
+            if not orders_enabled():
+                return {**result, **preview, "status": "BROKER_READ_ONLY"}
+            if (one("SELECT paused FROM sw_alpaca_state WHERE id=1") or {}).get("paused", 1):
+                return {**result, **preview, "status": "BROKER_PAUSED"}
+            if configuration or day is None:
+                return {**result, "status": "NO_CERTIFIED_BENCHMARK", "reason": configuration}
+            return _preview_and_submit(client, snapshot, signals, day, now)
+    except PaperError as exc:
+        if str(exc).startswith("alpaca_paper_http_") or str(exc) in {
+            "alpaca_paper_credentials_missing",
+            "alpaca_paper_expected_account_not_configured",
+            "alpaca_paper_account_mismatch",
+            "alpaca_paper_linked_account_mismatch",
+            "alpaca_paper_snapshot_incomplete",
+            "alpaca_paper_account_unavailable",
+            "alpaca_paper_account_not_usd",
+            "alpaca_paper_transport_unavailable",
+            "alpaca_paper_invalid_json",
+        }:
+            _publish_snapshot(error=str(exc))
+        return {**result, "status": "BROKER_CHECK_FAILED", "reason": str(exc)}
+
+
+def record_confirmed_absence(client_id, support_case, now=None):
+    """Operator recovery for an uncertain submission after external Alpaca confirmation."""
+    now = now or datetime.now(UTC)
+    if not broker_mode() or orders_enabled():
+        raise PaperError("alpaca_paper_read_only_required_for_resolution")
+    if not re.fullmatch(r"[A-Za-z0-9_-]{4,64}", support_case):
+        raise PaperError("alpaca_paper_support_case_required")
+    with _admission:
+        state = one("SELECT paused,linked_account FROM sw_alpaca_state WHERE id=1")
+        if not state or not state["paused"]:
+            raise PaperError("alpaca_paper_pause_required_for_resolution")
+        intent = one("SELECT * FROM sw_alpaca_intents WHERE client_id=?", (client_id,))
+        if (
+            not intent
+            or intent["account_id"] != state["linked_account"]
+            or intent["state"] not in ("PREPARED", "UNKNOWN")
+        ):
+            raise PaperError("alpaca_paper_no_matching_uncertain_intent")
+        if now < session(next_day(intent["signal_day"]))[1]:
+            raise PaperError("alpaca_paper_wait_until_original_session_ends")
+        with PaperClient() as client:
+            if (
+                client.account()["id"] != intent["account_id"]
+                or client.by_client_id(client_id) is not None
+            ):
+                raise PaperError("alpaca_paper_broker_order_exists_or_account_mismatch")
+        with connect() as c:
+            cur = c.execute(
+                """UPDATE sw_alpaca_intents SET state='CONFIRMED_ABSENT',updated_at=?,
+                detail_json=json_set(detail_json,'$.reason','operator_confirmed_absence','$.support_case',?)
+                WHERE client_id=? AND state IN ('PREPARED','UNKNOWN')""",
+                (utc(), support_case, client_id),
+            )
+            if cur.rowcount != 1:
+                raise PaperError("alpaca_paper_intent_changed_during_resolution")
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Record broker-confirmed absence of an uncertain paper order"
+    )
+    parser.add_argument("client_id")
+    parser.add_argument("--support-case", required=True)
+    parser.add_argument("--alpaca-confirmed-absence", action="store_true", required=True)
+    args = parser.parse_args()
+    try:
+        record_confirmed_absence(args.client_id, args.support_case)
+    except PaperError as exc:
+        parser.exit(1, f"{exc}\n")
+    print("Recorded broker-confirmed absence. The original client order ID remains reserved.")

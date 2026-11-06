@@ -508,3 +508,19 @@ def test_sell_fills_while_buys_paused_and_spy_stale(queued):
     latest = storage.one("SELECT cash,equity,spy_close FROM equity_curve WHERE day=?", (EXIT_FILL,))
     assert latest["cash"] == latest["equity"]
     assert latest["spy_close"] is None
+
+
+def test_broker_ranking_requires_current_target_day_attempts(ledger_db):
+    with storage.connect() as c:
+        c.execute("UPDATE assets SET enabled=1 WHERE symbol='MSFT'")
+    signals, day = ledger.eligible_signals(now=cycle_time(SIGNAL), broker=True)
+    assert day == SIGNAL
+    assert [s["symbol"] for s in signals] == ["AAPL"]
+    assert not signals[0]["ranking_complete"]
+    with storage.connect() as c:
+        c.execute("INSERT INTO sw_price_checks VALUES(?,?,?,?,?,?)",
+                  ("MSFT", SIGNAL, observed(SIGNAL).isoformat(), "no_recent_core_session_activity", SIGNAL, "[]"))
+    signals, day = ledger.eligible_signals(now=cycle_time(SIGNAL), broker=True)
+    assert [s["symbol"] for s in signals] == ["AAPL"]
+    assert signals[0]["ranking_complete"]
+    assert signals[0]["iex_dollar_volume_20d"] > 1_000_000

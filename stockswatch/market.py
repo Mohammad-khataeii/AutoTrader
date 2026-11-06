@@ -109,6 +109,8 @@ async def alpaca(client: httpx.AsyncClient, symbol: str, from_day="2000-01-01", 
             break
     else:
         raise RuntimeError("alpaca_pagination_truncated")
+    if len({bar["day"] for bar in result}) != len(result):
+        raise RuntimeError("alpaca_duplicate_daily_bars")
     clean = [b for b in validate_bars(result, through) if session(b["day"])]
     if len(clean) < 2:
         raise RuntimeError("alpaca_no_valid_bars")
@@ -124,7 +126,7 @@ async def fetch_bars(client, symbol, from_day="2000-01-01", through=None):
     raise RuntimeError("provider_not_supported")
 
 
-async def alpaca_execution_checks(client, symbol, day, since):
+async def alpaca_execution_checks(client, symbol, day, since, through=None):
     """Check for closing IEX activity and recent corporate-action ambiguity."""
     _, close = session(day)
     start = close - timedelta(minutes=15)
@@ -161,7 +163,7 @@ async def alpaca_execution_checks(client, symbol, day, since):
         params={
             "symbols": symbol,
             "start": since,
-            "end": datetime.now(NY).date().isoformat(),
+            "end": through or datetime.now(NY).date().isoformat(),
             "data_quality": "all",
             "region": "all",
             "limit": 1000,

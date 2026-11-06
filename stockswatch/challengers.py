@@ -9,13 +9,14 @@ import argparse
 import hashlib
 import json
 from collections import defaultdict
+from math import sqrt
 from pathlib import Path
 
 from .market import validate_bars
 from .sessions import calendar
-from .signals import avg, evaluate, features, returns
+from .signals import avg, evaluate, features, returns, sigma
 
-POLICY = "stockswatch-historical-challengers-v1"
+POLICY = "stockswatch-historical-challengers-v2-opening-proxy"
 HOLDOUT_START = "2025-11-06"
 UNIVERSE = {
     "AAPL": "Technology",
@@ -52,7 +53,7 @@ def panel_at(data, i):
     for symbol, sector in UNIVERSE.items():
         bars = data[symbol][: i + 1]
         f = features(bars, spy)
-        o, h, low, close, volume = (bars[-1][key] for key in ("o", "h", "l", "c", "v"))
+        o, h, low, close = (bars[-1][key] for key in ("o", "h", "l", "c"))
         prior = bars[-2]
         atr = avg(
             [
@@ -137,15 +138,17 @@ def play(panel, start, stop, mode, bps):
     drawdown = turnover = costs = 0.0
     opportunities = gaps = 0
     trades = []
+    daily_returns, exposures = [], []
+    by_regime = defaultdict(list)
+    previous_equity = cash
     for i in range(start, stop):
         signals = panel[i]
         marks = {s: p["bar"]["c"] for s, p in signals.items()}
-        for side, symbol, reference in pending:
-            mark = marks[symbol]
-            bar = signals[symbol]["bar"]
-            if (
-                max(abs(mark / reference - 1), abs(bar["o"] / reference - 1)) > 0.15
-                or bar["h"] / bar["l"] > 1.25
+        opens = {s: p["bar"]["o"] for s, p in signals.items()}
+        for side, symbol, reference, signal_atr in pending:
+            mark = opens[symbol]
+            if abs(mark / reference - 1) > 0.15 or (
+                side == "BUY" and mark * (1 + friction) > reference * 1.005
             ):
                 gaps += 1
                 continue
@@ -155,33 +158,40 @@ def play(panel, start, stop, mode, bps):
                 cash += qty * price
                 trades.append((price / cost - 1, qty * (price - cost)))
             else:
-                exposure = sum(p[0] * marks[s] for s, p in positions.items())
+                exposure = sum(p[0] * opens[s] for s, p in positions.items())
                 equity = cash + exposure
                 peak = max(peak, equity)
-                if not signals[symbol]["risk_on"] or equity <= 0.88 * peak:
+                if equity <= 0.88 * peak or equity <= 0.965 * previous_equity:
                     continue
                 sector = UNIVERSE[symbol]
                 sector_value = sum(
-                    p[0] * marks[s] for s, p in positions.items() if UNIVERSE[s] == sector
+                    p[0] * opens[s] for s, p in positions.items() if UNIVERSE[s] == sector
                 )
                 budget = min(
-                    cash - 4000,
-                    min(equity, 10000) * 0.12,
+                    cash - equity * 0.40,
+                    equity * 0.12,
                     equity * 0.60 - exposure,
                     equity * 0.26 - sector_value,
                 )
                 price = mark * (1 + friction)
-                qty = max(0, int(budget / price))
+                qty = max(0, int(budget / price / 1.01))
                 if not qty:
                     continue
                 cash -= qty * price
-                positions[symbol] = (qty, price, i, mark, signals[symbol]["atr"])
+                positions[symbol] = (qty, price, i, mark, signal_atr)
             costs += qty * abs(price - mark)
             turnover += qty * price
         pending = []
         equity = cash + sum(p[0] * marks[s] for s, p in positions.items())
         peak = max(peak, equity)
         drawdown = max(drawdown, 1 - equity / peak)
+        daily = equity / previous_equity - 1
+        daily_returns.append(daily)
+        exposures.append((equity - cash) / equity)
+        if i > start:
+            regime = "risk_on" if panel[i - 1][next(iter(UNIVERSE))]["risk_on"] else "risk_off"
+            by_regime[regime].append(daily)
+        previous_equity = equity
         if i == stop - 1:
             continue
         for symbol, p in list(positions.items()):
@@ -198,7 +208,7 @@ def play(panel, start, stop, mode, bps):
                 stop_level = max(entry - 2.5 * entry_atr, high - 3 * f["atr"])
                 exit_position |= mark < stop_level or i - opened >= 40
             if exit_position:
-                pending.append(("SELL", symbol, mark))
+                pending.append(("SELL", symbol, mark, f["atr"]))
         candidates = []
         for symbol, f in signals.items():
             if symbol in positions:
@@ -211,8 +221,21 @@ def play(panel, start, stop, mode, bps):
             for _, symbol in sorted(candidates, key=lambda x: (-x[0], x[1]))[
                 : min(2, 5 - len(positions))
             ]:
-                pending.append(("BUY", symbol, marks[symbol]))
+                pending.append(("BUY", symbol, marks[symbol], signals[symbol]["atr"]))
+    wins = [p for _, p in trades if p > 0]
+    losses = [p for _, p in trades if p < 0]
+    volatility = sigma(daily_returns)
     return {
+        "annualized_sharpe_zero_rate": round(avg(daily_returns) / volatility * sqrt(252), 3)
+        if volatility > 0 and len(daily_returns) >= 60
+        else None,
+        "profit_factor_closed_trades": round(sum(wins) / -sum(losses), 3) if losses else None,
+        "closed_win_loss_flat": [len(wins), len(losses), len(trades) - len(wins) - len(losses)],
+        "mean_market_exposure_pct": round(avg(exposures) * 100, 3),
+        "regime_daily_return_bps": {
+            name: {"sessions": len(rs), "mean_bps": round(avg(rs) * 10000, 3)}
+            for name, rs in by_regime.items()
+        },
         "return_pct": round((equity / 10000 - 1) * 100, 3),
         "max_drawdown_pct": round(drawdown * 100, 3),
         "closed_trades": len(trades),
@@ -270,10 +293,10 @@ def run(source):
             "Single IEX venue and current-ticker sample. No delistings, survivorship correction or historical universe.",
             "Raw prices, no total-return dividends or comprehensive corporate actions. Gap guards do not correct shares.",
             "Existing historical data was fetched in one batch. No original provider publication timestamps or revisions.",
-            "Signal-day close, next session close proxy. Starting portfolios reset per segment. Open trades marked, no forced liquidation.",
+            "Signal-day close with a next-session opening-price proxy, cash allocation marked at that opening, and entry gaps beyond a 0.5% buy limit skipped. No later intraday limit-fill assumption. Portfolios reset per segment and open trades are marked.",
             "Modeled combined spread/slippage 12/30/60 bps per side, zero commission. No measured spread, fees or market impact.",
-            "Baseline reimplementation compares on shared allocator and close proxy, not the saved legacy open replay.",
-            "One predeclared chronological holdout in a small survivor sample. No inference of a forward edge or policy promotion.",
+            "Baseline reimplementation uses the same opening proxy and allocation as the challengers. It omits broker partials, account activity, liquidity during the order window, and the hourly runtime admission gates.",
+            "One historical chronological holdout in a small survivor sample. This comparison is retrospective and has no authority to promote an execution policy.",
         ],
         "segments": {
             name: {

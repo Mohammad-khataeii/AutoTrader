@@ -19,7 +19,7 @@ from .market import (
     fred_latest,
 )
 from .ledger import TRUSTED, decide_and_queue
-from .sessions import completed_day, instant, market_session_state, published_after
+from .sessions import NY, completed_day, instant, market_session_state, next_day, published_after
 from .research import research_report, train_and_evaluate
 from .observer import Observer
 
@@ -45,6 +45,7 @@ def safe_error(e):
         "alpaca_pagination_truncated",
         "alpaca_symbol_mismatch",
         "alpaca_invalid_close_check",
+        "alpaca_duplicate_daily_bars",
         "no_recent_core_session_activity",
         "corporate_actions_incomplete",
         "corporate_action_date_unknown",
@@ -62,23 +63,48 @@ def safe_error(e):
     return type(e).__name__
 
 
-from .alpaca_paper import broker_mode, paper_cycle
+from .alpaca_paper import broker_mode, broker_symbols, paper_cycle
 
 
 class Service:
     def __init__(self):
         self.task=None
+        self.broker_task = None
+        self.broker_stop = asyncio.Event()
+        self.broker_result = {'status': 'STARTING'}
         self.lock=asyncio.Lock()
         self.last_result={'state':'STARTING','at':utc()}
 
     def start(self):
         self.task=asyncio.create_task(self.loop(),name='stockswatch-eod-worker')
+        if broker_mode():
+            self.broker_stop.clear()
+            self.broker_task = asyncio.create_task(self.broker_loop(), name="stockswatch-paper-broker")
 
     async def stop(self):
+        self.broker_stop.set()
         if self.task:
             self.task.cancel()
             try:await self.task
             except asyncio.CancelledError:pass
+
+        if self.broker_task:
+            await self.broker_task
+
+    async def broker_loop(self):
+        while not self.broker_stop.is_set():
+            try:
+                result = await asyncio.to_thread(paper_cycle)
+            except Exception as exc:
+                result = {"status": "BROKER_CYCLE_ERROR", "reason": safe_error(exc)}
+            previous = self.broker_result
+            if (result["status"], result.get("reason")) != (previous["status"], previous.get("reason")):
+                log.info("Alpaca paper cycle %s %s", result["status"], result.get("reason", ""))
+            self.broker_result = result
+            try:
+                await asyncio.wait_for(self.broker_stop.wait(), timeout=45)
+            except TimeoutError:
+                pass
 
     async def loop(self):
         await asyncio.sleep(3)
@@ -135,7 +161,7 @@ class Service:
                 observer.event(
                     "PAPER_EVALUATION", "RUNNING", "Evaluating price signals and paper risk gates"
                 )
-                out["paper"] = (await asyncio.to_thread(paper_cycle)) if broker_mode() else decide_and_queue(observer=observer, now=datetime.now(timezone.utc))
+                out["paper"] = self.broker_result if broker_mode() else decide_and_queue(observer=observer, now=datetime.now(timezone.utc))
                 observer.event(
                     "PAPER_COMPLETE",
                     "OK",
@@ -290,22 +316,38 @@ class Service:
         cutoff = (now - timedelta(hours=1)).isoformat()
         # Run SPY, current holdings and open orders first. Failed symbols rotate
         # behind symbols still unchecked for the completed market day.
+        broker = broker_mode()
+        local_day = now.astimezone(NY).date()
+        refresh_since = (
+            datetime.combine(local_day, datetime.min.time(), NY).astimezone(timezone.utc).isoformat()
+            if broker and local_day.isoformat() == next_day(day) else ""
+        )
+        held_symbols = broker_symbols() if broker else []
+        entry_days = {}
+        if held_symbols:
+            entry_days = {r["symbol"]: r["entry_day"] for r in rows("""SELECT symbol,MAX(signal_day) AS entry_day
+                FROM sw_alpaca_intents WHERE side='BUY' AND broker_order_id IS NOT NULL
+                AND account_id=(SELECT linked_account FROM sw_alpaca_state WHERE id=1)
+                AND symbol IN (SELECT value FROM json_each(?)) GROUP BY symbol""", (json.dumps(held_symbols),))}
+        held = json.dumps(held_symbols)
         due = rows(
             """SELECT a.symbol,p.entry_day,s.last_success,
                            (SELECT MIN(signal_day) FROM pending_orders o WHERE o.symbol=a.symbol
-                                AND o.state='PENDING') AS signal_day,
+                                AND NOT :broker AND o.state='PENDING') AS signal_day,
                            (SELECT COUNT(*) FROM bars b WHERE b.symbol=a.symbol
                                 AND b.source='alpaca_iex_daily' AND b.adjustment='RAW') AS raw_count
                     FROM assets a LEFT JOIN sw_price_checks q ON q.symbol=a.symbol
-                    LEFT JOIN positions p ON p.symbol=a.symbol
+                    LEFT JOIN positions p ON NOT :broker AND p.symbol=a.symbol
                     LEFT JOIN sources s ON s.symbol=a.symbol
                     WHERE (a.enabled=1 OR p.symbol IS NOT NULL)
-                        AND (q.day IS NULL OR q.day!=? OR (q.status!='OK' AND q.checked_at<?))
-                    ORDER BY CASE WHEN q.day=? THEN 1 ELSE 0 END,
-                        CASE WHEN a.symbol='SPY' THEN 0 WHEN p.symbol IS NOT NULL THEN 1
+                        AND (q.day IS NULL OR q.day!=:day OR q.checked_at<:refresh_since
+                             OR (q.status!='OK' AND q.checked_at<:cutoff))
+                    ORDER BY CASE WHEN q.day=:day AND q.checked_at>=:refresh_since THEN 1 ELSE 0 END,
+                        CASE WHEN a.symbol='SPY' THEN 0
+                            WHEN p.symbol IS NOT NULL OR a.symbol IN (SELECT value FROM json_each(:held)) THEN 1
                             WHEN signal_day IS NOT NULL THEN 2 ELSE 3 END,
                         COALESCE(q.checked_at,''),a.symbol LIMIT 4""",
-            (day, cutoff, day),
+            {"day": day, "cutoff": cutoff, "refresh_since": refresh_since, "broker": broker, "held": held},
         )
         out["source_state"] = "CACHED_OR_AWAITING_PUBLICATION"
         observer.event(
@@ -328,6 +370,8 @@ class Service:
             )
             since = min(x for x in (record["entry_day"], record["signal_day"], day) if x)
             actions_since = (date.fromisoformat(since) - timedelta(days=30)).isoformat()
+            if symbol in entry_days:
+                actions_since = min(actions_since, entry_days[symbol])
             start = (date.fromisoformat(day) - timedelta(days=24)).isoformat()
             if provider != "alpaca" or record["raw_count"] < 201:
                 start = "2000-01-01"
@@ -344,7 +388,7 @@ class Service:
                 elif bars[-1]["day"] != day:
                     status = "current_daily_bar_missing"
                 else:
-                    events = await alpaca_execution_checks(client, symbol, day, actions_since)
+                    events = await alpaca_execution_checks(client, symbol, day, actions_since, through=local_day.isoformat())
             except Exception as exc:
                 status = safe_error(exc)
                 if isinstance(exc, httpx.HTTPStatusError):
