@@ -29,6 +29,21 @@ def install(app: FastAPI, service: PersonalPaperService, require_user: Any) -> N
                 return dict(json.loads(path.read_text()))
         return {'status':'RESEARCH_NOT_PUBLISHED','results':[]}
 
+    @app.get('/api/personal-paper/challenger', dependencies=[Depends(require_user)])
+    async def challenger() -> dict[str, Any]:
+        from autotrader.crypto_research.context import VERSION
+        path = Path(service.settings.research_root)/'crypto-7000'/'report.json'
+        try:
+            with path.open('rb') as stream:
+                body = json.loads(stream.read(1024*1024))
+            if (body['schema'] == VERSION and body['authority'] == 'RESEARCH_ONLY'
+                    and body['qualification']['automatic_activation'] is False):
+                return body
+        except (ValueError, KeyError, TypeError, OSError):
+            pass
+        return {'qualification':{'status':'INSUFFICIENT_EVIDENCE','automatic_activation':False},
+                'authority':'RESEARCH_ONLY','capture_cycles':0}
+
     @app.post('/api/personal-paper/control/{action}', dependencies=[Depends(require_user)])
     async def control(action: Literal['pause', 'resume', 'emergency']) -> dict[str, Any]:
         repo = await service.repository()

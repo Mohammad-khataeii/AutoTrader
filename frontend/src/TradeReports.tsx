@@ -1,6 +1,6 @@
 import React from "react";
 import { type Row } from "./api";
-import { date, money, price, strategyName } from "./model";
+import { date, money, percent, price, strategyName } from "./model";
 import { Badge, Empty, Panel, Pnl } from "./ui";
 
 const duration = (value: unknown) => value == null ? "Unavailable" : `${Math.floor(Number(value)/3600)}h ${Math.floor(Number(value)%3600/60)}m ${Math.floor(Number(value)%60)}s`;
@@ -18,6 +18,11 @@ export function TradeReports({rows = []}: {rows?: Row[]}) {
           <div><dt>Net P&amp;L</dt><dd><Pnl value={r.net_pnl_eur}/></dd></div>
           <div><dt>Realized risk multiple</dt><dd>{r.realized_r == null ? "Unavailable" : `${Number(r.realized_r).toFixed(2)}R`}</dd></div>
           <div><dt>Entry → exit</dt><dd>{price(r.entry_price)} → {price(r.exit_price)}</dd></div>
+          <div><dt>Strategy version / profile</dt><dd>{r.strategy_version ?? "Unavailable"} · {r.execution_profile ?? "Unavailable"}</dd></div>
+          <div><dt>Planned stop loss / realized P&amp;L</dt><dd>{money(r.actual_size_initial_net_stop_risk_eur ?? r.planned_net_stop_risk_eur)} / <Pnl value={r.net_pnl_eur}/></dd></div>
+          <div><dt>Modeled round-trip cost at entry</dt><dd>{money(r.planned_round_trip_cost_eur)}</dd></div>
+          <div><dt>Realized cost vs fill midpoints</dt><dd>{money(r.realized_cost_vs_midpoint_eur)}</dd></div>
+          <div><dt>Completed OHLC MFE / MAE</dt><dd>{percent(r.completed_price_path?.mfe_fraction)} / {percent(r.completed_price_path?.mae_fraction)}</dd></div>
           <div><dt>Original stop</dt><dd>{price(r.initial_stop)}</dd></div>
           <div><dt>TP1 · TP2 · TP3</dt><dd>{r.targets?.map((t:string)=>price(t)).join(" · ")}</dd></div>
           {r.target_semantics === "MINIMUM_NET_UNIT_EXIT_PROCEEDS" && <div><dt>Broker minimum net proceeds per unit</dt><dd>{r.broker_net_unit_targets?.map((t:string)=>price(t)).join(" · ")}</dd><p className="small muted">Original targets are supported bid scenarios. The broker floors account for exit fees, modeled slippage and assumed depth once.</p></div>}
@@ -28,7 +33,11 @@ export function TradeReports({rows = []}: {rows?: Row[]}) {
           <div><dt>Entry regime</dt><dd>{r.entry_regime?.trend ?? "Unavailable"} · BTC/ETH {r.entry_regime?.benchmark ?? "unavailable"}</dd></div>
           <div><dt>Exit regime</dt><dd>{r.exit_regime?.local_trend ?? "Not recorded at exit"}</dd></div>
         </dl>
-        <p className="small muted">{r.cost_note}</p>
+        <p className="small muted">{r.cost_note} {r.actual_cost_scope}</p>
+        {!!r.completed_price_path?.points?.length && <details><summary>Completed candle price path</summary>
+          <ul>{r.completed_price_path.points.map((p: Row)=><li key={p.available_at}>{date(p.available_at,true)} · {price(p.close)}</li>)}</ul>
+          <p className="small muted">Completed candle observations omit the entry and exit fragments and cannot establish executable bid depth.</p>
+        </details>}
         <h3>Why the entry qualified</h3><ul>{Object.entries(r.entry_reason ?? {}).map(([condition,passed])=><li key={condition}>{condition.replace(/_/g," ")}: {passed ? "passed" : "failed"}</li>)}</ul>
         {!!r.entry_concerns_known_then?.length && <><h3>Quality concerns visible at entry</h3><ul>{r.entry_concerns_known_then.map((c:string)=><li key={c}>{c}</li>)}</ul><p className="small muted">The reviewed experimental policy checks these concerns before new entries. It cannot guarantee a winning trade.</p></>}
         {!!r.issues?.length && <div className="notice warning"><strong>Record review</strong>{r.issues.map((issue:string)=><p key={issue}>{issue}</p>)}</div>}

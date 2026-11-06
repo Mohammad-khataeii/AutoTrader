@@ -2,10 +2,11 @@
 from __future__ import annotations
 
 import json
+from datetime import timedelta
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import select, text
+from sqlalchemy import and_, or_, select, text
 
 from autotrader.persistence.accounting import aware
 from autotrader.persistence.models import (
@@ -14,6 +15,7 @@ from autotrader.persistence.models import (
     ExitTargetModel,
     FillModel,
     JournalEventModel,
+    MarketCandle,
     OrderModel,
     PositionModel,
     SystemStateModel,
@@ -43,6 +45,8 @@ def explain_position(p: Any, plan: Any, orders: list[Any], fills: list[Any],
     by_order = {o.order_id:o for o in orders}
     legs = []
     modeled = D(0)
+    midpoint_cost = D(0)
+    midpoint_coverage = 0
     issues = []
     for f in sorted(fills,key=lambda f:f.created_at):
         o = by_order[f.order_id]
@@ -53,6 +57,10 @@ def explain_position(p: Any, plan: Any, orders: list[Any], fills: list[Any],
         cost = f.quantity*((f.price-reference) if f.side=='BUY' else (reference-f.price)) if reference else None
         if cost is not None:
             modeled += cost
+        if book.get('bids') and book.get('asks'):
+            midpoint = (D(book['bids'][0][0])+D(book['asks'][0][0]))/2
+            midpoint_cost += f.quantity*(f.price-midpoint if f.side=='BUY' else midpoint-f.price)
+            midpoint_coverage += 1
         intent = next((i for i in intents if i.exit_intent_id==o.exit_intent_id),None)
         if f.side=='SELL' and payload.get('strategy_id')!=strategy:
             issues.append('Historical SELL label differs from entry plan; linked attribution corrected, raw record retained.')
@@ -94,7 +102,13 @@ def explain_position(p: Any, plan: Any, orders: list[Any], fills: list[Any],
     sell_quantity = sum((f.quantity for f in fills if f.side=='SELL'),D(0))
     exit_price = sum((f.price*f.quantity for f in fills if f.side=='SELL'),D(0))/sell_quantity if sell_quantity else None
     return {'position_id':p.position_id,'symbol':p.symbol,'state':p.state,'strategy_id':strategy,
-        'execution_profile':evidence.get('execution_profile'),'backend_release':evidence.get('backend_release'),'entry_reason':evidence.get('conditions',{}),
+        'execution_profile':evidence.get('execution_profile'),'strategy_version':evidence.get('strategy_version'),
+        'benchmark_admission':(evidence.get('primary_admission') or {}).get('inputs',{}).get('peers'),
+        'recorded_benchmark_returns':recorded_regime.get('benchmarks'),
+        'planned_round_trip_cost_eur':measurements.get('estimated_total_round_trip_cost_eur'),
+        'realized_cost_vs_midpoint_eur':str(fees+midpoint_cost) if fills and midpoint_coverage==len(fills) else None,
+        'actual_cost_scope':'Fees plus fill-price deviations from each fill book midpoint, including spread. The planned cost uses one entry-time book.',
+        'backend_release':evidence.get('backend_release'),'entry_reason':evidence.get('conditions',{}),
         'entry_concerns_known_then':concerns,'entry_regime':evidence.get('regime_assessment') or evidence.get('raoe_regime'),
         'exit_regime':exit_context[-1] if exit_context else None,
         'exit_regime_status':'RECORDED_POSITION_SPECIFIC' if exit_context else 'NOT_RECORDED_AT_EXIT',
@@ -116,6 +130,26 @@ def explain_position(p: Any, plan: Any, orders: list[Any], fills: list[Any],
         'fills':legs,'entry_economics':measurements,'raw_records_preserved':True}
 
 
+def completed_price_path(position: Any, bars: list[Any]) -> dict[str, Any]:
+    from autotrader.market_data.synchronization import cutoff
+
+    step = timedelta(minutes=5)
+    opened, closed = aware(position.opened_at), aware(position.closed_at)
+    start = cutoff(opened)
+    if start < opened:
+        start += step
+    expected = max(0, (cutoff(closed)-start)//step)
+    rows = [b for b in bars if start <= aware(b.timestamp) and aware(b.timestamp)+step <= closed]
+    complete = bool(expected and len(rows)==expected and
+                    all(aware(b.timestamp)==start+i*step for i,b in enumerate(rows)))
+    return {'status':'COMPLETED_OHLC_PROXY' if complete else 'INSUFFICIENT_EVIDENCE',
+            'observed_bars':len(rows), 'expected_bars':expected,
+            'mfe_fraction':str(max(D(0),max(b.high for b in rows)/position.average_entry_price-1)) if complete else None,
+            'mae_fraction':str(min(D(0),min(b.low for b in rows)/position.average_entry_price-1)) if complete else None,
+            'points':[{'available_at':(aware(b.timestamp)+step).isoformat(),'close':str(b.close)}
+                      for i,b in enumerate(rows) if i % max(1, (len(rows)+19)//20) == 0] if complete else []}
+
+
 async def trade_reports(repo: Any) -> list[dict[str, Any]]:
     async with repo.session_factory() as session:
         if session.bind.dialect.name=='postgresql':
@@ -127,10 +161,21 @@ async def trade_reports(repo: Any) -> list[dict[str, Any]]:
         plans = {p.position_id:p for p in await rows(ExitPlanModel)}
         orders, fills, targets, intents, journal = [await rows(m) for m in (OrderModel,FillModel,ExitTargetModel,ExitIntentModel,JournalEventModel)]
         contexts = [json.loads(r.payload_json) for r in (await session.scalars(select(SystemStateModel).where(SystemStateModel.state=='EXIT_ASSESSMENT'))).all()]
+        # Keep the detail query bounded even for legacy multi-day positions.
+        intervals = [and_(MarketCandle.symbol==p.symbol, MarketCandle.timestamp>=p.opened_at,
+                          MarketCandle.timestamp<=p.closed_at)
+                     for p in positions if p.closed_at and p.closed_at-p.opened_at<=timedelta(hours=48)]
+        candles = (await session.scalars(select(MarketCandle).where(MarketCandle.timeframe=='5m', or_(*intervals))
+                                        .order_by(MarketCandle.timestamp))).all() if intervals else []
+        by_symbol: dict[str, list[Any]] = {}
+        for bar in candles:
+            by_symbol.setdefault(bar.symbol, []).append(bar)
         reports = []
         for p in positions:
             groups = [[r for r in group if r.position_id==p.position_id] for group in (orders,fills,targets,intents,journal)]
-            reports.append(explain_position(p,plans.get(p.position_id),groups[0],groups[1],groups[2],groups[3],groups[4],contexts))
+            result = explain_position(p,plans.get(p.position_id),groups[0],groups[1],groups[2],groups[3],groups[4],contexts)
+            result['completed_price_path'] = completed_price_path(p, by_symbol.get(p.symbol, []))
+            reports.append(result)
         return reports
 
 

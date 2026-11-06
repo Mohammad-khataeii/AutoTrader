@@ -9,6 +9,9 @@ import { Badge, CompactTable, Empty, EquityChart, Panel, Pnl, ResourceState } fr
 export function PersonalPaper({ view = "overview" }: { view?: "overview" | "activity" | "strategies" | "opportunities" | "monitor" | "research" }) {
   const resource = useResource("/api/personal-paper", { poll: 15000 });
   const historical = useResource("/api/personal-paper/research", { enabled: view === "research", ttl: 60000 });
+  const challenger = useResource("/api/personal-paper/challenger", { enabled: view === "research" || view === "opportunities", poll: 60000 });
+  const proxy = challenger.data;
+  const macro = proxy?.latest_macro;
   const api = useApi();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -47,7 +50,7 @@ export function PersonalPaper({ view = "overview" }: { view?: "overview" | "acti
         </div>
         <div className="balance-summary">
           <div><span>Win rate</span><strong>{percent(performance?.win_rate)}</strong></div>
-          <div><span>Net expectancy</span><strong>{money(performance?.expectancy)}</strong></div>
+          <div><span>Mean realized P&amp;L</span><strong>{money(performance?.expectancy)}</strong></div>
           <div><span>Profit factor</span><strong>{performance?.profit_factor ?? "Insufficient sample"}</strong></div>
           <div><span>Capital utilization</span><strong>{percent(performance?.capital_utilization)}</strong></div>
           <div><span>Modeled slippage / impact</span><strong>{money(performance?.modeled_slippage_and_impact_eur)}</strong></div>
@@ -68,9 +71,23 @@ export function PersonalPaper({ view = "overview" }: { view?: "overview" | "acti
       { label: "Status", render: () => <Badge>Experimental paper</Badge> },
       { label: "Completed", render: (r: Row) => r.closed_positions },
       { label: "Net realized", render: (r: Row) => <Pnl value={r.net_realized_pnl}/> },
-      { label: "Expectancy / position", render: (r: Row) => money(r.expectancy) },
+      { label: "Mean realized / position", render: (r: Row) => money(r.expectancy) },
       { label: "Evidence", render: (r: Row) => r.confidence.replaceAll("_", " ").toLowerCase() },
     ]}/><p className="small muted">Frozen parameters. Conditional net economics and portfolio fit rank eligible candidates; expected profitability is unknown. No automatic promotion based on a handful of trades. Maximum €700 per position, €35 planned stop risk, €140 aggregate stop risk and €2,100 crypto cluster exposure. Losses and missed opportunities remain recorded.</p></Panel>}
+    {(view === "research" || view === "opportunities") && <Panel>
+      <div className="section-heading"><h2>Crypto challenger</h2><Badge>Research only</Badge></div>
+      <p>{proxy?.qualification?.status?.replaceAll("_", " ").toLowerCase() ?? "Waiting for a research report"} · {proxy?.capture_cycles ?? 0} observed cycles. Estimated edge requires matched, cost-stressed evidence.</p>
+      {macro && <p>Completed {date(macro.completed_at, true)} · {macro.regime?.replaceAll("_", " ").toLowerCase()} · BTC 1h {percent(macro.returns?.["BTC-EUR"]?.["60"])} · ETH 1h {percent(macro.returns?.["ETH-EUR"]?.["60"])} · {macro.breadth?.advancing}/{macro.breadth?.sample} synchronized altcoins advancing.</p>}
+      {proxy?.funnel && <p>{proxy.funnel.screened} ticker observations screened · {proxy.funnel.selected} selected for detail · {proxy.funnel.validated} validated. Missed executable opportunities remain unmeasured.</p>}
+      {view === "research" && proxy?.periods && <CompactTable label="Challenger holdout and shadow" rows={["holdout","shadow"].flatMap(period =>
+        Object.entries(proxy.periods[period] ?? {}).map(([name, value]) => ({ period, name, ...(value as Row) })))} columns={[
+        { label: "Period", render: (r: Row) => r.period },
+        { label: "Setup", render: (r: Row) => r.name.replaceAll("_", " ") },
+        { label: "Selected / resolved", render: (r: Row) => `${r.selected} / ${r.stress?.["0"]?.observations}` },
+        { label: "Net candle proxy", render: (r: Row) => money(r.stress?.["0"]?.proxy_net_eur) },
+        { label: "+50 bps exit stress", render: (r: Row) => money(r.stress?.["50"]?.proxy_net_eur) },
+      ]}/>}
+    </Panel>}
     {view === "research" && <>
       <LearningPerformance primary={d} />
       <Panel><h2>Continuous prospective review</h2><p>{d?.research_review?.conclusion ?? "Waiting for the first hourly evidence review"}</p><p className="small muted">Evidence cutoff {date(d?.research_review?.evidence_cutoff, true)}. Active parameters are frozen. Research proposals require a separate evaluation identity.</p>
@@ -113,6 +130,11 @@ export function PersonalPaper({ view = "overview" }: { view?: "overview" | "acti
       { label: "Market / strategy", render: (r: Row) => <>{r.symbol}<div className="small muted">{strategyName(r.strategy_id)}</div></> },
       { label: "Technical", render: (r: Row) => r.technical ? "Qualified" : "Waiting" },
       { label: "Net economics", render: (r: Row) => r.economic ? "Feasible" : "Not qualified" },
+      { label: "Completed BTC / ETH", render: (r: Row) => {
+        const peers = r.primary_admission?.inputs?.peers;
+        return peers ? `${peers["BTC-EUR"]?.trend ?? "—"} / ${peers["ETH-EUR"]?.trend ?? "—"}` : "Unavailable";
+      } },
+      { label: "Conditional TP1 net", render: (r: Row) => money(r.economics?.measurements?.conditional_target_net_eur?.[0]) },
       { label: "Broker outcome", render: (r: Row) => r.execution?.replaceAll("_", " ") },
       { label: "Reason", render: (r: Row) => r.reasons?.join(", ").replaceAll("_", " ") || "Account admission required" },
     ]}/><p className="small muted">Economics use current ask/bid depth, assumed taker fees and modeled slippage. USD markets remain excluded until a separate FX ledger is verified.</p></Panel>}
