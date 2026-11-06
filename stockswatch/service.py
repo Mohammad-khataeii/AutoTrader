@@ -62,6 +62,9 @@ def safe_error(e):
     return type(e).__name__
 
 
+from .alpaca_paper import broker_mode, paper_cycle
+
+
 class Service:
     def __init__(self):
         self.task=None
@@ -132,7 +135,7 @@ class Service:
                 observer.event(
                     "PAPER_EVALUATION", "RUNNING", "Evaluating price signals and paper risk gates"
                 )
-                out["paper"] = decide_and_queue(observer=observer, now=datetime.now(timezone.utc))
+                out["paper"] = (await asyncio.to_thread(paper_cycle)) if broker_mode() else decide_and_queue(observer=observer, now=datetime.now(timezone.utc))
                 observer.event(
                     "PAPER_COMPLETE",
                     "OK",

@@ -14,6 +14,7 @@ from fastapi import FastAPI, Depends, HTTPException, Request
 from pydantic import BaseModel
 from .storage import connect, init, init_execution, one, rows, setting, utc, worker_ownership
 from .ledger import EXECUTION_MODE, mark_to_market, outcome
+from .alpaca_paper import broker_mode, broker_init, enrich_dashboard, broker_status, set_broker_paused
 from .service import Service
 from .observer import init_journal, scanner_snapshot, EXPORT_TABLES, export_jsonl
 
@@ -27,6 +28,8 @@ async def lifespan(app):
         init()
         init_execution()
         init_journal()
+        if broker_mode():
+            broker_init()
         service.start()
         try:
             yield
@@ -102,7 +105,8 @@ def status():
     state = cycle_status()
     acct = one("SELECT paused FROM portfolio WHERE id=1")
     return {
-        "mode": "PAPER_ONLY",
+        "mode": "ALPACA_PAPER" if broker_mode() else "PAPER_ONLY",
+        "broker_connection": broker_status() if broker_mode() else None,
         "live_trading_enabled": False,
         "version": "stocks-v1",
         "provider": os.getenv("STOCKSWATCH_PRICE_PROVIDER", "stooq"),
@@ -175,7 +179,7 @@ def dashboard():
     coverage = rows(
         "SELECT a.symbol,a.name,a.sector,COUNT(b.day) bars,MAX(b.day) last_day FROM assets a LEFT JOIN bars b USING(symbol) GROUP BY a.symbol ORDER BY a.symbol"
     )
-    return {
+    payload = {
         "status": cycle_status(),
         "account": {
             "currency": "USD",
@@ -219,6 +223,13 @@ def dashboard():
         "execution_mode": EXECUTION_MODE,
         "can_issue_live_orders": False,
     }
+    if broker_mode():
+        try:
+            return enrich_dashboard(payload)
+        except RuntimeError as exc:
+            # Fail closed: never render the legacy $10k ledger as the broker portfolio.
+            raise HTTPException(503, detail=str(exc)) from None
+    return payload
 
 
 @app.get('/api/stockswatch/scanner', dependencies=[Depends(authenticated)])
@@ -242,6 +253,8 @@ class Control(BaseModel):
 
 @app.post("/api/stockswatch/control", dependencies=[Depends(authenticated)])
 def control(body: Control):
+    if broker_mode():
+        return set_broker_paused(body.action == "pause")
     with connect() as c:
         c.execute("BEGIN IMMEDIATE")
         c.execute("UPDATE portfolio SET paused=? WHERE id=1", (1 if body.action == "pause" else 0,))
