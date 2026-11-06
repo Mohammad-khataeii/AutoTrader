@@ -9,6 +9,9 @@ import httpx
 
 from .market import alpaca_headers
 from .sessions import instant, session
+from .universe import REGISTRY
+
+BATCH = 32
 
 DATA_ORIGIN = "https://data.alpaca.markets"
 FEEDS = frozenset({"iex", "sip", "delayed_sip", "boats", "overnight"})
@@ -34,7 +37,7 @@ def positive(value):
 
 
 class IntradayData:
-    def __init__(self, transport=None, sleeper=time.sleep):
+    def __init__(self, transport=None, sleeper=time.sleep, *, background=False):
         self.client = httpx.Client(
             base_url=DATA_ORIGIN,
             timeout=httpx.Timeout(4, connect=2),
@@ -44,6 +47,7 @@ class IntradayData:
             transport=transport,
         )
         self.sleep = sleeper
+        self.background = background
         self.closes = {}
 
     def close(self):
@@ -52,19 +56,30 @@ class IntradayData:
     def get(self, path, params):
         if path not in {"/v2/stocks/snapshots", "/v2/stocks/bars", "/v1/corporate-actions"}:
             raise ObservationError("unapproved_intraday_data_route")
-        for attempt in range(2):
+        if self.background:
+            self.sleep(0.6)
+        attempts = 3 if self.background else 2
+        for attempt in range(attempts):
             try:
                 response = self.client.get(path, params=params)
             except httpx.TransportError:
-                if attempt:
+                if attempt + 1 == attempts:
                     raise ObservationError("intraday_data_transport_unavailable") from None
             else:
                 status = response.status_code
                 if status in (401, 403, 422):
                     raise ObservationError("intraday_feed_or_entitlement_denied")
                 if status == 429:
-                    # Let the next bounded cycle respect the quota instead of looping.
-                    raise ObservationError("intraday_data_rate_limited")
+                    try:
+                        delay = float(response.headers.get("Retry-After", str(2**attempt)))
+                        reset = float(response.headers.get("X-RateLimit-Reset", "0"))
+                        delay = max(delay, reset - time.time())
+                    except ValueError:
+                        delay = 60
+                    if not self.background or attempt + 1 == attempts or not 0 <= delay <= 10:
+                        raise ObservationError("intraday_data_rate_limited")
+                    self.sleep(delay)
+                    continue
                 if response.is_success:
                     try:
                         if len(response.content) > 2_000_000:
@@ -75,49 +90,82 @@ class IntradayData:
                     if isinstance(value, dict):
                         return value
                     raise ObservationError("intraday_data_invalid_shape")
-                if status < 500 or attempt:
+                if status < 500 or attempt + 1 == attempts:
                     raise ObservationError(f"intraday_data_http_{status}")
-            self.sleep(0.25)
+            self.sleep(0.25 * 2**attempt)
 
     def snapshots(self, symbols, feed):
-        if feed not in FEEDS or not 0 < len(symbols) <= 32:
-            raise ObservationError("intraday_feed_or_universe_invalid")
-        result = self.get("/v2/stocks/snapshots", {"symbols": ",".join(symbols), "feed": feed})
-        if set(result) - set(symbols):
-            raise ObservationError("intraday_snapshot_unexpected_symbol")
+        self._validate_symbols(symbols, feed)
+        result = {}
+        for offset in range(0, len(symbols), BATCH):
+            batch = symbols[offset : offset + BATCH]
+            body = self.get("/v2/stocks/snapshots", {"symbols": ",".join(batch), "feed": feed})
+            if set(body) - set(batch):
+                raise ObservationError("intraday_snapshot_unexpected_symbol")
+            result.update(body)
         return result
 
-    def bars(self, symbols, feed, start, end):
-        if feed not in FEEDS or not 0 < len(symbols) <= 32 or end - start > 30 * MINUTE:
-            raise ObservationError("intraday_bar_request_outside_budget")
+    @staticmethod
+    def _validate_symbols(symbols, feed):
+        if (
+            feed not in FEEDS
+            or not symbols
+            or len(set(symbols)) != len(symbols)
+            or set(symbols) - REGISTRY.keys()
+        ):
+            raise ObservationError("intraday_feed_or_universe_invalid")
+
+    def bar_page(self, symbols, feed, start, end, timeframe, adjustment, token=None):
+        self._validate_symbols(symbols, feed)
+        if len(symbols) > BATCH:
+            raise ObservationError("intraday_bar_batch_too_large")
         params = {
             "symbols": ",".join(symbols),
             "feed": feed,
-            "timeframe": "1Min",
-            "adjustment": "raw",
+            "timeframe": timeframe,
+            "adjustment": adjustment,
             "start": start.isoformat(),
             "end": end.isoformat(),
             "limit": 1000,
         }
-        result = {s: [] for s in symbols}
-        tokens = set()
-        for _ in range(3):
-            body = self.get("/v2/stocks/bars", params)
-            data = body.get("bars")
-            if not isinstance(data, dict) or set(data) - set(symbols):
-                raise ObservationError("intraday_bar_response_invalid")
-            for symbol, items in data.items():
-                if not isinstance(items, list) or not all(isinstance(b, dict) for b in items):
-                    raise ObservationError("intraday_bar_response_invalid")
-                result[symbol].extend(items)
-            token = body.get("next_page_token")
-            if not token:
-                return result
-            if not isinstance(token, str) or token in tokens:
-                break
-            tokens.add(token)
+        if token:
             params["page_token"] = token
-        raise ObservationError("intraday_bar_pagination_incomplete")
+        body = self.get("/v2/stocks/bars", params)
+        data = body.get("bars")
+        next_token = body.get("next_page_token")
+        if (
+            not isinstance(data, dict)
+            or set(data) - set(symbols)
+            or any(
+                not isinstance(items, list) or any(not isinstance(b, dict) for b in items)
+                for items in data.values()
+            )
+            or (next_token is not None and not isinstance(next_token, str))
+        ):
+            raise ObservationError("intraday_bar_response_invalid")
+        return data, next_token
+
+    def bars(self, symbols, feed, start, end, *, max_window=30 * MINUTE):
+        self._validate_symbols(symbols, feed)
+        if not start < end or end - start > max_window:
+            raise ObservationError("intraday_bar_request_outside_budget")
+        result = {s: [] for s in symbols}
+        for offset in range(0, len(symbols), BATCH):
+            batch = symbols[offset : offset + BATCH]
+            tokens = set()
+            token = None
+            for _ in range(16 if max_window > 30 * MINUTE else 3):
+                page, token = self.bar_page(batch, feed, start, end, "1Min", "raw", token)
+                for symbol, items in page.items():
+                    result[symbol].extend(items)
+                if not token:
+                    break
+                if token in tokens:
+                    raise ObservationError("intraday_bar_pagination_incomplete")
+                tokens.add(token)
+            else:
+                raise ObservationError("intraday_bar_pagination_incomplete")
+        return result
 
     def regular_closes(self, symbols, feed, day):
         # BOATS cannot provide an NYSE regular close. Use explicit IEX
@@ -200,7 +248,16 @@ def parse_bars(rows, start, end):
                 raise ObservationError("intraday_invalid_bar_sequence")
         except (KeyError, TypeError, ValueError):
             raise ObservationError("intraday_invalid_bar") from None
-        result.append({"at": stamp, "close": close, "volume": volume, "turnover": volume * close})
+        result.append(
+            {
+                "at": stamp,
+                "close": close,
+                "volume": volume,
+                "turnover": volume * close,
+                "high": high,
+                "low": low,
+            }
+        )
         previous = stamp
     return result
 
@@ -256,6 +313,7 @@ def observe(symbol, raw, bars, reference, phase, feed, observed_at):
             raise ObservationError("intraday_trade_condition_unverified")
         if not bid * Decimal(".995") <= price <= ask * Decimal("1.005") or size <= 0:
             raise ObservationError("intraday_trade_quote_disagreement")
+        data["quote_ready"] = True
         if not reference:
             raise ObservationError("intraday_previous_regular_close_missing")
         end = observed_at.replace(second=0, microsecond=0)

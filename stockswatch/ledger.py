@@ -390,9 +390,18 @@ def eligible_signals(now=None, broker=False):
             current_checks = {r["symbol"] for r in c.execute(
                 "SELECT symbol,checked_at FROM sw_price_checks WHERE day=?", (day,)
             ) if instant(r["checked_at"]).astimezone(NY).date().isoformat() == target}
-            ranking_complete = all(a["symbol"] in current_checks for a in assets)
+            from .universe import NEW
+            ranking_complete = all(a["symbol"] in current_checks for a in assets if a["symbol"] not in NEW)
         output = []
+        from .universe import NEW
         for a in assets:
+            if broker and a["symbol"] in NEW:
+                check=c.execute("SELECT 1 FROM sqlite_master WHERE name='sw_asset_verification'").fetchone()
+                verified=c.execute("""SELECT evidence,at FROM sw_asset_verification
+                    WHERE symbol=?""",(a["symbol"],)).fetchone() if check else None
+                if (a["symbol"] not in current_checks or not verified or not json.loads(verified["evidence"])["verified"]
+                        or not timedelta(0)<=now-instant(verified["at"])<=timedelta(days=3)):
+                    continue
             bar, bars, _ = series(c, a["symbol"], day, now)
             ev = evaluate(bars, spy)
             if ev:

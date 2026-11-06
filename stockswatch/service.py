@@ -65,6 +65,7 @@ def safe_error(e):
 
 from .alpaca_paper import broker_mode, broker_symbols, paper_cycle
 from .intraday import IntradayEngine
+from . import backfill
 
 
 def daily_refresh_boundary(now, day, broker):
@@ -90,6 +91,7 @@ class Service:
         self.task=None
         self.broker_task = None
         self.intraday_task = None
+        self.history_task = None
         self.intraday = IntradayEngine()
         self.broker_stop = asyncio.Event()
         self.broker_result = {'status': 'STARTING'}
@@ -101,6 +103,8 @@ class Service:
         self.broker_stop.clear()
         self.intraday_task = asyncio.create_task(self.intraday_loop(), name="stockswatch-intraday")
         if broker_mode():
+            if os.getenv("STOCKSWATCH_HISTORY_BACKGROUND","1")=="1":
+                self.history_task=asyncio.create_task(self.history_loop(),name="stockswatch-history")
             self.broker_task = asyncio.create_task(self.broker_loop(), name="stockswatch-paper-broker")
 
     async def stop(self):
@@ -114,7 +118,47 @@ class Service:
             await self.broker_task
         if self.intraday_task:
             await self.intraday_task
+        if self.history_task:
+            await self.history_task
         self.intraday.close()
+
+    async def history_loop(self):
+        from .alpaca_paper import PaperClient, PaperError
+        from .intraday_market import IntradayData, ObservationError
+        import contextlib
+
+        queued=None
+        next_verify=None
+        try:
+            with contextlib.closing(IntradayData(background=True)) as data:
+                while not self.broker_stop.is_set():
+                    now=datetime.now(timezone.utc)
+                    try:
+                        if completed_day(now)!=queued:
+                            minute_feed="sip" if os.getenv("STOCKSWATCH_INTRADAY_FEED")=="sip" else "iex"
+                            await asyncio.to_thread(backfill.queue,now,new_only=True,minute_feed=minute_feed)
+                            await asyncio.to_thread(backfill.prune,now)
+                            queued=completed_day(now)
+                        if next_verify is None or now>=next_verify:
+                            next_verify=now+timedelta(hours=6)
+                            def assets():
+                                with PaperClient(retry_reads=True) as broker:
+                                    backfill.verify_assets(broker,now)
+                            try:
+                                await asyncio.to_thread(assets)
+                            except (PaperError,ObservationError) as exc:
+                                log.info("StocksWatch asset verification %s",str(exc))
+                        await asyncio.to_thread(backfill.step,data,now)
+                    except Exception as exc:
+                        log.warning("StocksWatch historical ingestion deferred: %s",type(exc).__name__)
+                    try:
+                        await asyncio.wait_for(self.broker_stop.wait(),timeout=120)
+                    except TimeoutError:
+                        pass
+        except RuntimeError as exc:
+            if str(exc)!="alpaca_credentials_not_configured":
+                raise
+            log.info("StocksWatch history awaits configured Alpaca data credentials")
 
     async def intraday_loop(self):
         while not self.broker_stop.is_set():
@@ -367,6 +411,8 @@ class Service:
                 AND account_id=(SELECT linked_account FROM sw_alpaca_state WHERE id=1)
                 AND symbol IN (SELECT value FROM json_each(?)) GROUP BY symbol""", (json.dumps(held_symbols),))}
         held = json.dumps(held_symbols)
+        from .universe import NEW
+        new_symbols = json.dumps(sorted(NEW))
         due = rows(
             """SELECT a.symbol,p.entry_day,s.last_success,
                            (SELECT MIN(signal_day) FROM pending_orders o WHERE o.symbol=a.symbol
@@ -382,9 +428,10 @@ class Service:
                     ORDER BY CASE WHEN q.day=:day AND q.checked_at>=:refresh_since THEN 1 ELSE 0 END,
                         CASE WHEN a.symbol='SPY' THEN 0
                             WHEN p.symbol IS NOT NULL OR a.symbol IN (SELECT value FROM json_each(:held)) THEN 1
-                            WHEN signal_day IS NOT NULL THEN 2 ELSE 3 END,
+                            WHEN signal_day IS NOT NULL THEN 2
+                            WHEN a.symbol NOT IN (SELECT value FROM json_each(:new_symbols)) THEN 3 ELSE 4 END,
                         COALESCE(q.checked_at,''),a.symbol LIMIT 4""",
-            {"day": day, "cutoff": cutoff, "refresh_since": refresh_since, "broker": broker, "held": held},
+            {"day": day, "cutoff": cutoff, "refresh_since": refresh_since, "broker": broker, "held": held, "new_symbols":new_symbols},
         )
         out["source_state"] = "CACHED_OR_AWAITING_PUBLICATION"
         observer.event(
@@ -411,7 +458,7 @@ class Service:
                 actions_since = min(actions_since, entry_days[symbol])
             start = (date.fromisoformat(day) - timedelta(days=24)).isoformat()
             if provider != "alpaca" or record["raw_count"] < 201:
-                start = "2000-01-01"
+                start = (date.fromisoformat(day)-timedelta(days=550)).isoformat() if symbol in NEW and provider=="alpaca" else "2000-01-01"
             source = None
             bars = []
             status = "OK"

@@ -1,12 +1,15 @@
 """Independent deterministic intraday decisions, sharing only Alpaca paper authority."""
 
 import hashlib
+import json
 import os
 from datetime import UTC, datetime, timedelta
 from decimal import ROUND_DOWN, ROUND_UP, Decimal
 
 from . import alpaca_paper as paper
 from . import intraday_store as journal
+from . import shorts
+from .direction import SHORT_PREFIX, Action, position
 from .intraday_market import FEEDS, MINUTE, IntradayData, ObservationError, observe, positive
 from .intraday_policy import (
     ORDER_PREFIX,
@@ -15,12 +18,14 @@ from .intraday_policy import (
     order_gate,
     phase_at,
     previous_regular_day,
+    short_gate,
 )
 from .sessions import instant
 from .storage import connect, one, rows
 
 D = Decimal
-BENCHMARKS = {"SPY", "QQQ"}
+from .universe import BENCHMARKS, NEW, REGISTRY
+
 MAX_OBSERVATION_AGE = timedelta(seconds=12)
 
 
@@ -35,6 +40,9 @@ def decide(observations):
             if all(D(r["momentum"]) < D("-.0015") for r in peers)
             else "MIXED_OR_SUPPORTIVE"
         )
+    long_floor = D(os.getenv("STOCKSWATCH_INTRADAY_LONG_MIN_EDGE_BPS", "0"))
+    if not long_floor.is_finite() or not 0 <= long_floor <= 150:
+        raise ValueError("intraday_long_edge_threshold_outside_reviewed_range")
     for row in observations:
         if not row["valid"]:
             continue
@@ -73,7 +81,7 @@ def decide(observations):
             reason = "intraday_benchmark_risk_off_or_unknown"
         elif not setup:
             reason = "intraday_momentum_persistence_or_cost_gate"
-        elif (gap + move) * 10000 < cost + D(20):
+        elif (gap + move) * 10000 < cost + D(20) + long_floor:
             reason = "intraday_adverse_cost_gate"
         else:
             reason = "intraday_entry_candidate"
@@ -111,9 +119,9 @@ def _store_fills(account_id, fills):
         o["broker_order_id"]: o
         for o in rows(
             """SELECT client_id,broker_order_id,symbol,
-        side,created_at,detail_json FROM sw_alpaca_intents WHERE account_id=? AND client_id LIKE ?
+        side,created_at,detail_json FROM sw_alpaca_intents WHERE account_id=? AND (client_id LIKE ? OR client_id LIKE ?)
         AND broker_order_id IS NOT NULL""",
-            (account_id, ORDER_PREFIX + "%"),
+            (account_id, ORDER_PREFIX + "%", SHORT_PREFIX + "%"),
         )
     }
     with connect() as c:
@@ -149,6 +157,21 @@ def _store_fills(account_id, fills):
             if existing and tuple(existing) != values:
                 raise paper.PaperError("intraday_broker_fill_revision_unverified")
             c.execute("INSERT OR IGNORE INTO sw_intraday_fills VALUES(?,?,?,?,?,?,?)", values)
+            for component in ("fee", "commission"):
+                if f.get(component) is None:
+                    continue
+                cost = paper.money(f[component])
+                existing_cost = c.execute(
+                    """SELECT usd FROM sw_intraday_fill_costs
+                    WHERE fill_id=? AND component=?""",
+                    (f["id"], component),
+                ).fetchone()
+                if cost < 0 or (existing_cost and D(existing_cost["usd"]) != cost):
+                    raise paper.PaperError("intraday_broker_fill_cost_unverified")
+                c.execute(
+                    "INSERT OR IGNORE INTO sw_intraday_fill_costs VALUES(?,?,?)",
+                    (f["id"], component, str(cost)),
+                )
         c.commit()
 
 
@@ -265,6 +288,8 @@ def _asset(client, symbol):
         or asset.get("exchange") in {"OTC", "CRYPTO"}
     ):
         raise paper.PaperError("intraday_asset_halted_or_unverified")
+    if symbol in NEW and not shorts.backfill.asset_evidence(symbol, asset)["verified"]:
+        raise paper.PaperError("intraday_new_listing_unverified")
     return asset
 
 
@@ -329,7 +354,7 @@ def _eligible_order(client, snapshot, row, phase, side, now, asset, sectors):
     }
 
 
-def _submit(client, data, snapshot, row, raw_bars, phase, side, reason, sectors):
+def _submit(client, data, snapshot, row, raw_bars, phase, side, reason, sectors, action=None):
     symbol = row["symbol"]
     account_id = snapshot["account"]["id"]
     now = client.now()
@@ -338,27 +363,60 @@ def _submit(client, data, snapshot, row, raw_bars, phase, side, reason, sectors)
     ) <= now < phase.end - timedelta(seconds=45):
         raise paper.PaperError("intraday_session_transition")
     start = previous_regular_day(phase)
-    if side == "sell":
+    if action == Action.BUY_TO_COVER_SHORT:
+        raw = next((p for p in snapshot["positions"] if p["symbol"] == symbol), None)
+        entry = shorts.owned(raw, snapshot["fills"], account_id) if raw else None
+        if not entry:
+            raise paper.PaperError("short_cover_ownership_unverified")
+        start = min(start, entry["signal_day"])
+    elif action is None and side == "sell":
         start = min(start, _owned_entry(symbol, account_id)["signal_day"])
     events = data.corporate_actions(symbol, start, phase.day)
     if events:
         row["corporate_actions"] = events
         raise paper.PaperError("intraday_corporate_action_review_required")
-    asset = _asset(client, symbol)
+    if action == Action.SELL_TO_OPEN_SHORT:
+        if phase.name != "CORE" or short_gate():
+            raise paper.PaperError("short_entry_disabled_or_phase")
+        if not shorts.backfill.short_history_ready(symbol, now):
+            raise paper.PaperError("short_history_or_listing_unverified")
+        row["short_price_test"] = shorts.restriction_check(data, symbol, phase, now)
     # Fresh broker state, quote and clock immediately before persisting the intent.
     fresh = _snapshot(client)
     if fresh["account"]["id"] != account_id:
         raise paper.PaperError("intraday_account_changed")
+    asset = _asset(client, symbol)
+    asset_received = client.now()
+    if action:
+        row.update(borrow=shorts.borrow(asset), borrow_verified_at=asset_received.isoformat())
     raw = data.snapshots([symbol], "sip").get(symbol)
     now = client.now()
     refreshed = observe(symbol, raw, raw_bars, row["previous_regular_close"], phase, "sip", now)
-    if not refreshed["valid"] or refreshed["latest_completed_at"] != row["latest_completed_at"]:
+    if action == Action.BUY_TO_COVER_SHORT:
+        valid = refreshed.get("quote_ready")
+    else:
+        valid = (
+            refreshed["valid"] and refreshed["latest_completed_at"] == row["latest_completed_at"]
+        )
+    if not valid:
         raise paper.PaperError("intraday_dispatch_quote_or_context_stale")
     key = "ap" if side == "buy" else "bp"
-    if abs(positive(refreshed["quote"][key]) / positive(row["quote"][key]) - 1) > D(".0015"):
+    if abs(positive(refreshed["quote"][key]) / positive(row["quote"][key]) - 1) > (
+        D(".005") if action == Action.BUY_TO_COVER_SHORT else D(".0015")
+    ):
         raise paper.PaperError("intraday_price_moved_recheck")
-    refreshed["market_risk"] = row["market_risk"]
-    payload = _eligible_order(client, fresh, refreshed, phase, side, now, asset, sectors)
+    refreshed["market_risk"] = row.get("market_risk")
+    details = {"session": phase.name}
+    if action:
+        refreshed["short_price_test"] = row.get("short_price_test")
+        if action.opening and _daily_loss(fresh["account"], phase, now):
+            raise paper.PaperError("short_daily_loss_pause")
+        payload, risk = shorts.payload(
+            client, fresh, refreshed, phase, action, now, asset, sectors, reason
+        )
+        details.update(action=action.value, risk=risk)
+    else:
+        payload = _eligible_order(client, fresh, refreshed, phase, side, now, asset, sectors)
     cid = payload["client_order_id"]
     if one("SELECT 1 FROM sw_alpaca_intents WHERE client_id=?", (cid,)):
         raise paper.PaperError("intraday_existing_intent")
@@ -374,7 +432,7 @@ def _submit(client, data, snapshot, row, raw_bars, phase, side, reason, sectors)
                 side.upper(),
                 payload["qty"],
                 "broker_order_without_local_intent",
-                {**payload, "session": phase.name},
+                {**payload, **details},
             )
         paper._state(cid, "UNKNOWN", reason="broker_order_without_local_intent")
         raise paper.PaperError("intraday_broker_order_without_local_intent")
@@ -385,6 +443,9 @@ def _submit(client, data, snapshot, row, raw_bars, phase, side, reason, sectors)
             raise paper.PaperError("intraday_paper_kill_switch")
         if (
             phase_at(now) != phase
+            or (
+                action == Action.SELL_TO_OPEN_SHORT and now - asset_received > timedelta(seconds=15)
+            )
             or not timedelta(0) <= now - instant(refreshed["quote"]["t"]) <= MAX_OBSERVATION_AGE
         ):
             raise paper.PaperError("intraday_dispatch_quote_or_context_stale")
@@ -399,7 +460,7 @@ def _submit(client, data, snapshot, row, raw_bars, phase, side, reason, sectors)
                 side.upper(),
                 payload["qty"],
                 reason,
-                {**payload, "session": phase.name},
+                {**payload, **details},
             ):
                 raise paper.PaperError("intraday_existing_intent")
         intent = one("SELECT * FROM sw_alpaca_intents WHERE client_id=?", (cid,))
@@ -416,9 +477,47 @@ def _submit(client, data, snapshot, row, raw_bars, phase, side, reason, sectors)
         status = order["status"]
         paper._state(cid, "TERMINAL" if status in paper.TERMINAL else "ACKNOWLEDGED", order, reason)
         row.update(
-            action=side.upper(), reason=reason, client_id=cid, risk_decision=f"broker_{status}"
+            action=(("SHORT" if action.opening else "COVER_SHORT") if action else side.upper()),
+            reason=reason,
+            client_id=cid,
+            risk_decision=f"broker_{status}",
         )
         return f"BROKER_{status.upper()}"
+
+
+def _cancel_resting_short(client, snapshot, phase):
+    now = client.now()
+    for order in snapshot["open_orders"]:
+        cid = order["client_order_id"]
+        if not cid.startswith(SHORT_PREFIX) or order.get("side") != "sell":
+            continue
+        intent = one(
+            "SELECT * FROM sw_alpaca_intents WHERE client_id=? AND account_id=?",
+            (cid, snapshot["account"]["id"]),
+        )
+        if not intent:
+            raise paper.PaperError("short_open_order_without_local_intent")
+        detail = json.loads(intent["detail_json"])
+        if detail.get("cancel_requested_at"):
+            return "SHORT_CANCEL_AWAITING_BROKER_TERMINAL"
+        if now < phase.end - shorts.FLATTEN_BEFORE and now - instant(
+            intent["created_at"]
+        ) < timedelta(seconds=90):
+            continue
+        with paper._admission, connect() as c:
+            if (one("SELECT paused FROM sw_alpaca_state WHERE id=1") or {}).get("paused", 1):
+                return "intraday_paper_kill_switch"
+            c.execute("PRAGMA synchronous=FULL")
+            c.execute(
+                "UPDATE sw_alpaca_intents SET detail_json=json_set(detail_json,'$.cancel_requested_at',?) WHERE client_id=?",
+                (now.isoformat(), cid),
+            )
+            try:
+                client.cancel_short_entry(order, intent)
+            except paper.PaperError:
+                return "SHORT_CANCEL_UNCERTAIN_AWAITING_BROKER_TERMINAL"
+        return "SHORT_CANCEL_REQUESTED"
+    return None
 
 
 def execute(client, data, report, candidates, all_bars, phase, sectors):
@@ -444,8 +543,41 @@ def _execute(client, data, report, candidates, all_bars, phase, sectors):
         )
         for p in snapshot["positions"]
     }
+    short_positions = {}
+    account_short_gross = D(0)
+    for p in snapshot["positions"]:
+        if p.get("side") == "short":
+            account_short_gross += position(p).gross
+            if entry := shorts.owned(p, snapshot["fills"], account_id):
+                short_positions[p["symbol"]] = (p, entry)
+                ownership[p["symbol"]] = "SHORT"
     for row in report["rows"]:
         row["position_owner"] = ownership.get(row["symbol"])
+    short_pnl = journal.pnl(account_id, SHORT_PREFIX)
+    if (
+        short_positions
+        and set(short_positions) == set(short_pnl.get("open_quantity", {}))
+        and all(
+            position(p).quantity == D(short_pnl["open_quantity"][s])
+            for s, (p, _) in short_positions.items()
+        )
+    ):
+        short_pnl["unrealized_usd"] = str(
+            D(short_pnl["open_cost_basis_usd"])
+            - sum(position(p).gross for p, _ in short_positions.values())
+        )
+    report["short_pnl"] = short_pnl
+    report["short_positions"] = [
+        {
+            "symbol": s,
+            "direction": "SHORT",
+            "quantity": str(position(p).quantity),
+            "entry_price": str(position(p).entry),
+            "gross": str(position(p).gross),
+            "broker_unrealized": p.get("unrealized_pl"),
+        }
+        for s, (p, _) in short_positions.items()
+    ]
     pnl = journal.pnl(account_id)
     quantities = pnl.get("open_quantity", {})
     if (
@@ -468,27 +600,95 @@ def _execute(client, data, report, candidates, all_bars, phase, sectors):
     if report["feed"] != "sip":
         return "intraday_realtime_sip_required"
     by_symbol = {r["symbol"]: r for r in report["rows"]}
+    if (
+        phase.name == "CORE"
+        and not short_gate(cover=True)
+        and (cancellation := _cancel_resting_short(client, snapshot, phase))
+    ):
+        return cancellation
     attempts = []
+    if phase.name == "CORE" and short_positions and not short_gate(cover=True):
+        for symbol, (pos, entry) in short_positions.items():
+            row = by_symbol.get(symbol)
+            if not row:
+                continue
+            try:
+                asset = _asset(client, symbol)
+                status = shorts.borrow(asset)
+            except paper.PaperError:
+                status = "UNKNOWN"
+            row.update(borrow=status, borrow_verified_at=client.now().isoformat())
+            if not row.get("quote_ready"):
+                row["short_risk"] = (
+                    "short_cover_quote_unavailable"
+                    if status == "ETB"
+                    else "short_borrow_and_cover_quote_unverified"
+                )
+                row["short_risk_priority"] = "HIGH"
+                continue
+            reason = shorts.cover_trigger(
+                row,
+                pos,
+                entry,
+                phase,
+                client.now(),
+                status,
+                report["daily_loss_paused"],
+                account_short_gross / paper.money(snapshot["account"]["equity"]),
+            )
+            if reason:
+                row["short_risk"] = reason
+                row["short_risk_priority"] = (
+                    "HIGH" if "borrow" in reason or "risk" in reason else "NORMAL"
+                )
+                attempts.append((row, "buy", reason, Action.BUY_TO_COVER_SHORT))
     for pos in snapshot["positions"]:
         row = by_symbol.get(pos["symbol"])
         entry = _owned_entry(pos["symbol"], account_id)
         if row and entry and row["valid"] and pos["symbol"] in owned:
             reason = _exit_trigger(row, pos, entry, client.now())
             if reason:
-                attempts.append((row, "sell", reason))
+                attempts.append((row, "sell", reason, None))
     if not attempts:
-        if not candidates:
+        short_candidates = [r for r in report["rows"] if r.get("short_reason") == "short_candidate"]
+        if short_gate():
+            short_candidates = []
+        if not candidates and not short_candidates:
             return "WAIT"
         if (
             report["valid"] < report["required_confidence"]
             or report["snapshot_symbols"] != report["tracked"]
         ):
             return "intraday_universe_confidence_insufficient"
-        attempts = [(row, "buy", "intraday_cost_adjusted_momentum") for row in candidates]
-    for row, side, reason in attempts[:2]:
+        ranked = [
+            (D(row["score"]), row, "buy", "intraday_cost_adjusted_momentum", None)
+            for row in candidates
+        ]
+        ranked += [
+            (
+                D(row["short_score"]),
+                row,
+                "sell",
+                "intraday_short_breakdown",
+                Action.SELL_TO_OPEN_SHORT,
+            )
+            for row in short_candidates
+        ]
+        ranked.sort(key=lambda r: (-r[0], r[1]["symbol"]))
+        attempts = [(row, side, reason, action) for _, row, side, reason, action in ranked]
+    for row, side, reason, action in attempts[:2]:
         try:
             return _submit(
-                client, data, snapshot, row, all_bars[row["symbol"]], phase, side, reason, sectors
+                client,
+                data,
+                snapshot,
+                row,
+                all_bars[row["symbol"]],
+                phase,
+                side,
+                reason,
+                sectors,
+                action,
             )
         except (paper.PaperError, ObservationError) as exc:
             row["risk_decision"] = str(exc)
@@ -533,7 +733,9 @@ class IntradayEngine:
             else os.getenv("STOCKSWATCH_INTRADAY_FEED", "iex")
         )
         confidence = (
-            len(symbols) if os.getenv("STOCKSWATCH_INTRADAY_REQUIRE_ALL_VALID") == "1" else 26
+            len(symbols)
+            if os.getenv("STOCKSWATCH_INTRADAY_REQUIRE_ALL_VALID") == "1"
+            else (4 * len(symbols) + 4) // 5
         )
         report = {
             "strategy": STRATEGY,
@@ -548,6 +750,7 @@ class IntradayEngine:
             "rows": [],
             "status": "SESSION_CLOSED",
             "order_gate": order_gate(),
+            "short_order_gate": short_gate(),
             "paper_only": True,
             "feed_scope": {
                 "iex": "IEX_SINGLE_VENUE",
@@ -560,7 +763,7 @@ class IntradayEngine:
         snapshots, bars, reference = {}, {}, {}
         if phase.start:
             try:
-                if feed not in FEEDS or len(symbols) != 32 or not BENCHMARKS.issubset(symbols):
+                if feed not in FEEDS or set(symbols) != REGISTRY.keys():
                     raise ObservationError("intraday_feed_or_universe_invalid")
                 if self.data is None:
                     try:
@@ -643,6 +846,7 @@ class IntradayEngine:
                 report["rows"].append(row)
             report["valid"] = sum(r["valid"] for r in report["rows"])
             report["market_risk"], candidates = decide(report["rows"])
+            report["short_candidates"] = len(shorts.rank(report["rows"]))
             if report["status"] != "DATA_UNAVAILABLE":
                 report["status"] = "OBSERVING"
                 if paper.broker_mode() and phase.name in TRADABLE_PHASES and feed == "sip":

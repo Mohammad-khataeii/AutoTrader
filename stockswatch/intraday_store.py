@@ -4,6 +4,7 @@ import json
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
+from .direction import SHORT_PREFIX, fifo, intent_action
 from .intraday_policy import ORDER_PREFIX, STRATEGY, phase_at
 from .storage import connect, one, rows
 
@@ -31,6 +32,11 @@ CREATE TABLE IF NOT EXISTS sw_intraday_risk (
 CREATE TABLE IF NOT EXISTS sw_intraday_fills (
     id TEXT PRIMARY KEY, client_id TEXT NOT NULL REFERENCES sw_alpaca_intents(client_id),
     symbol TEXT NOT NULL, at TEXT NOT NULL, side TEXT NOT NULL, qty TEXT NOT NULL, price TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS sw_intraday_fill_costs (
+    fill_id TEXT NOT NULL REFERENCES sw_intraday_fills(id),
+    component TEXT NOT NULL, usd TEXT NOT NULL,
+    PRIMARY KEY(fill_id,component)
 );
 """
 
@@ -142,9 +148,9 @@ def order_history():
     result = rows(
         """
         SELECT client_id,symbol,side,qty,state,broker_status,created_at,updated_at,detail_json
-        FROM sw_alpaca_intents WHERE client_id LIKE ? ORDER BY created_at DESC LIMIT 24
+        FROM sw_alpaca_intents WHERE client_id LIKE ? OR client_id LIKE ? ORDER BY created_at DESC LIMIT 24
     """,
-        (ORDER_PREFIX + "%",),
+        (ORDER_PREFIX + "%", SHORT_PREFIX + "%"),
     )
     for row in result:
         detail = json.loads(row.pop("detail_json"))
@@ -153,49 +159,41 @@ def order_history():
             limit_price=detail.get("limit_price"),
             session=detail.get("session"),
             filled_qty=detail.get("filled_qty"),
+            action=intent_action(row["client_id"], row["side"]).value,
+            risk=detail.get("risk"),
         )
     return result
 
 
-def pnl(account_id):
+def pnl(account_id, prefix=ORDER_PREFIX):
     """FIFO from confirmed own fill activities. Suppress if the order set is incomplete."""
     intents = rows(
         """
         SELECT client_id,state,broker_status,detail_json FROM sw_alpaca_intents
         WHERE account_id=? AND client_id LIKE ?
     """,
-        (account_id, ORDER_PREFIX + "%"),
+        (account_id, prefix + "%"),
     )
     if not intents:
         return {"status": "NO_CONFIRMED_INTRADAY_FILLS", "realized_usd": None}
     fills = rows(
         """
         SELECT f.* FROM sw_intraday_fills f JOIN sw_alpaca_intents i USING(client_id)
-        WHERE i.account_id=? ORDER BY f.at,f.id
+        WHERE i.account_id=? AND i.client_id LIKE ? ORDER BY f.at,f.id
     """,
-        (account_id,),
+        (account_id, prefix + "%"),
     )
     totals = {}
-    lots = {}
-    realized = Decimal(0)
-    for fill in fills:
-        qty = Decimal(fill["qty"])
-        price = Decimal(fill["price"])
-        cid = fill["client_id"]
-        totals[cid] = totals.get(cid, Decimal(0)) + qty
-        inventory = lots.setdefault(fill["symbol"], [])
-        if fill["side"] == "buy":
-            inventory.append([qty, price])
-            continue
-        while qty > 0 and inventory:
-            used = min(qty, inventory[0][0])
-            realized += used * (price - inventory[0][1])
-            qty -= used
-            inventory[0][0] -= used
-            if inventory[0][0] == 0:
-                inventory.pop(0)
-        if qty:
-            return {"status": "INCOMPLETE_FILL_LINEAGE", "realized_usd": None}
+    tape = []
+    try:
+        for fill in fills:
+            qty, price = (Decimal(fill[k]) for k in ("qty", "price"))
+            cid = fill["client_id"]
+            totals[cid] = totals.get(cid, Decimal(0)) + qty
+            tape.append((intent_action(cid, fill["side"]), fill["symbol"], qty, price))
+        realized, lots = fifo(tape)
+    except ValueError:
+        return {"status": "INCOMPLETE_FILL_LINEAGE", "realized_usd": None}
     for i in intents:
         detail = json.loads(i["detail_json"])
         if i["state"] in {"PREPARED", "UNKNOWN"} or (
@@ -206,12 +204,21 @@ def pnl(account_id):
             )
         ):
             return {"status": "INCOMPLETE_FILL_LINEAGE", "realized_usd": None}
+    costs = rows(
+        """SELECT x.usd FROM sw_intraday_fill_costs x JOIN sw_intraday_fills f ON f.id=x.fill_id
+        JOIN sw_alpaca_intents i USING(client_id) WHERE i.account_id=? AND i.client_id LIKE ?""",
+        (account_id, prefix + "%"),
+    )
+    known_costs = sum((Decimal(r["usd"]) for r in costs), Decimal(0))
     return {
         "status": "BROKER_FILL_FIFO_PRICE_PNL",
         "realized_usd": str(realized) if fills else None,
         "confirmed_fills": len(fills),
-        "open_cost_basis_usd": str(sum(q * p for inv in lots.values() for q, p in inv)),
-        "open_quantity": {s: str(sum(q for q, _ in inv)) for s, inv in lots.items() if inv},
+        "fees_and_financing": "UNVERIFIED_TOTAL",
+        "known_broker_fill_costs_usd": str(known_costs) if costs else None,
+        "pnl_after_known_costs_usd": str(realized - known_costs) if costs else None,
+        "open_cost_basis_usd": str(sum(q * p for inv in lots.values() for _, q, p in inv)),
+        "open_quantity": {s: str(sum(q for _, q, _ in inv)) for s, inv in lots.items() if inv},
     }
 
 

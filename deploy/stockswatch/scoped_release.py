@@ -36,6 +36,7 @@ OPTIONAL = {
     "STOCKSWATCH_INTRADAY_FEED",
     "STOCKSWATCH_INTRADAY_OVERNIGHT_FEED",
     "STOCKSWATCH_INTRADAY_REQUIRE_ALL_VALID",
+    "STOCKSWATCH_HISTORY_BACKGROUND",
     "STOCKSWATCH_LOG_LEVEL",
     "STOCKSWATCH_SEC_USER_AGENT",
     "STOCKSWATCH_GEMINI_ENABLED",
@@ -282,6 +283,7 @@ def compose_model(plan, sw, fe, state, orders=False):
                 "STOCKSWATCH_PRICE_PROVIDER": "alpaca",
                 "STOCKSWATCH_ALPACA_PAPER_ALLOW_ORDERS": "1" if orders else "0",
                 "STOCKSWATCH_INTRADAY_ALLOW_ORDERS": "0",
+                "STOCKSWATCH_SHORT_ALLOW_ORDERS": "0",
             },
             "volumes": [
                 {
@@ -348,7 +350,7 @@ def fingerprint(db, *, include_broker=False):
         "unknown_stockswatch_sqlite_schema",
     )
     tables = ("portfolio", "positions", "pending_orders", "fills", "equity_curve")
-    broker_tables = ("sw_alpaca_intents", "sw_alpaca_state", "sw_intraday_fills", "sw_intraday_risk")
+    broker_tables = ("sw_alpaca_intents", "sw_alpaca_state", "sw_intraday_fills", "sw_intraday_risk", "sw_intraday_fill_costs")
     tables += tuple(name for name in broker_tables if include_broker and db.execute(
         "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (name,)
     ).fetchone())

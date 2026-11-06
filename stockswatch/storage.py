@@ -4,6 +4,8 @@ import json
 import os
 import sqlite3
 from contextlib import contextmanager
+
+from .universe import ASSETS
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -36,19 +38,6 @@ CREATE TABLE IF NOT EXISTS ai_insights(id TEXT PRIMARY KEY,symbol TEXT NOT NULL,
 CREATE TABLE IF NOT EXISTS metadata(key TEXT PRIMARY KEY,value TEXT NOT NULL);
 '''
 
-ASSETS = [
-('AAPL','Apple','Technology'),('MSFT','Microsoft','Technology'),('GOOGL','Alphabet','Communication'),
-('AMZN','Amazon','Consumer Discretionary'),('NVDA','NVIDIA','Technology'),('META','Meta','Communication'),
-('AMD','AMD','Technology'),('TSM','TSMC ADR','Technology'),('QCOM','Qualcomm','Technology'),
-('AVGO','Broadcom','Technology'),('JPM','JPMorgan Chase','Financials'),('V','Visa','Financials'),
-('MA','Mastercard','Financials'),('UNH','UnitedHealth','Healthcare'),('JNJ','Johnson & Johnson','Healthcare'),
-('ABBV','AbbVie','Healthcare'),('LLY','Eli Lilly','Healthcare'),('XOM','Exxon Mobil','Energy'),
-('CVX','Chevron','Energy'),('COST','Costco','Consumer Staples'),('WMT','Walmart','Consumer Staples'),
-('PG','Procter & Gamble','Consumer Staples'),('KO','Coca-Cola','Consumer Staples'),
-('CAT','Caterpillar','Industrials'),('GE','GE Aerospace','Industrials'),('DIS','Disney','Communication'),
-('NFLX','Netflix','Communication'),('UBER','Uber','Industrials'),('ORCL','Oracle','Technology'),
-('CRM','Salesforce','Technology'),('SPY','S&P 500 ETF','Benchmark'),('QQQ','Nasdaq-100 ETF','Benchmark'),
-]
 
 @contextmanager
 def connect():

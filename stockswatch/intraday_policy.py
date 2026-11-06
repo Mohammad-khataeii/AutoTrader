@@ -96,3 +96,33 @@ def order_gate():
     except (OSError, ValueError, KeyError, TypeError):
         pass
     return "intraday_pinned_preflight_required"
+
+
+SHORT_STRATEGY = "stockswatch-short/1"
+SHORT_GATES = GATES | {"account_short", "etb", "history", "sip"}
+
+
+def short_gate(*, cover=False):
+    if not cover and os.getenv("STOCKSWATCH_SHORT_ALLOW_ORDERS") != "1":
+        return "short_orders_disabled"
+    common = order_gate()
+    if common:
+        return common
+    try:
+        expected = os.environ["STOCKSWATCH_SHORT_PREFLIGHT_SHA256"]
+        with Path(os.environ["STOCKSWATCH_SHORT_PREFLIGHT"]).open("rb") as stream:
+            data = stream.read(16385)
+        proof = json.loads(data)
+        if (
+            len(data) <= 16384
+            and hashlib.sha256(data).hexdigest() == expected
+            and proof["commit"] == os.environ["STOCKSWATCH_BUILD_COMMIT"]
+            and proof["strategy"] == SHORT_STRATEGY
+            and proof["paper_only"] is True
+            and set(proof["checks"]) == SHORT_GATES
+            and all(v == "PASS" for v in proof["checks"].values())
+        ):
+            return None
+    except (OSError, KeyError, ValueError, TypeError):
+        pass
+    return "short_pinned_preflight_required"

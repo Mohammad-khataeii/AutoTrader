@@ -19,7 +19,8 @@ from decimal import ROUND_DOWN, Decimal, InvalidOperation
 
 import httpx
 
-from .intraday_policy import ORDER_PREFIX as INTRADAY_PREFIX, TRADABLE_PHASES, order_gate, phase_at
+from .direction import SHORT_PREFIX, Action, intent_action, position as normalized_position
+from .intraday_policy import ORDER_PREFIX as INTRADAY_PREFIX, TRADABLE_PHASES, order_gate, phase_at, short_gate
 from .ledger import (
     MAX_DRAWDOWN,
     MAX_GROSS_EXPOSURE,
@@ -198,6 +199,8 @@ class PaperClient:
                 if isinstance(body, dict) and str(body.get("code")) == "40310000":
                     raise PaperRejection("alpaca_paper_insufficient_buying_power")
             raise PaperError(f"alpaca_paper_http_{response.status_code}")
+        if method=="DELETE" and response.status_code==204:
+            return None
         try:
             return response.json()
         except ValueError:
@@ -296,27 +299,41 @@ class PaperClient:
         return self.get(f"/v2/assets/{symbol}")
 
     def by_client_id(self, cid):
-        if not re.fullmatch(r"(?:swp2|swx1)-[a-f0-9]{40}", cid):
+        if not re.fullmatch(r"(?:swp2|swx1|sws1)-[a-f0-9]{40}", cid):
             raise PaperError("invalid_client_order_id")
         return self.get("/v2/orders:by_client_order_id", {"client_order_id": cid})
+
+    def cancel_short_entry(self, order, intent):
+        if not orders_enabled() or short_gate(cover=True):
+            raise PaperLocalRefusal("short_cancellation_disabled")
+        if (not intent["client_id"].startswith(SHORT_PREFIX)
+                or intent_action(intent["client_id"],intent["side"])!=Action.SELL_TO_OPEN_SHORT):
+            raise PaperLocalRefusal("short_cancellation_owner_mismatch")
+        validated=_validated_order(order,intent)
+        identifier=validated["id"]
+        if validated["status"] in TERMINAL or not re.fullmatch(r"[A-Za-z0-9-]{1,80}",identifier):
+            raise PaperLocalRefusal("short_cancellation_identity_invalid")
+        self._request("DELETE",f"/v2/orders/{identifier}")
 
     def submit(self, payload, *, phase=None):
         if not orders_enabled():
             raise PaperLocalRefusal("alpaca_paper_orders_disabled")
         cid = payload.get("client_order_id", "")
-        if not re.fullmatch(r"(?:swp2|swx1)-[a-f0-9]{40}", cid):
+        if not re.fullmatch(r"(?:swp2|swx1|sws1)-[a-f0-9]{40}", cid):
             raise PaperError("invalid_client_order_id")
         side = payload.get("side")
         if side not in ("buy", "sell") or payload.get("time_in_force") != "day" or money(payload.get("qty")) <= 0:
             raise PaperError("unsafe_order_request")
-        if cid.startswith(INTRADAY_PREFIX):
-            gate = order_gate()
+        if cid.startswith((INTRADAY_PREFIX,SHORT_PREFIX)):
+            short = cid.startswith(SHORT_PREFIX)
+            gate = short_gate(cover=side=="buy") if short else order_gate()
             if gate:
                 raise PaperLocalRefusal(gate)
             now = self.now()
             live_phase = phase_at(now)
             if (phase is None or phase != live_phase or phase.name not in TRADABLE_PHASES
                     or not phase.start+timedelta(seconds=15) <= now < phase.end-timedelta(seconds=45)
+                    or (short and phase.name!="CORE")
                     or payload.get("type") != "limit"
                     or payload.get("extended_hours") is not (phase.name != "CORE")
                     or set(payload) != {"side","symbol","type","qty","limit_price","time_in_force",
@@ -346,6 +363,8 @@ def account_ui(snapshot):
     equity = safe_number(a.get("equity"), None)
     cash = safe_number(a.get("cash"), None)
     last_equity = safe_number(a.get("last_equity"))
+    long_exposure = sum(abs(safe_number(p.get("market_value"))) for p in positions if p.get("side")=="long")
+    short_exposure = sum(abs(safe_number(p.get("market_value"))) for p in positions if p.get("side")=="short")
     exposure = sum(abs(safe_number(p.get("market_value"))) for p in positions)
     history = snapshot["history"] or {}
     times, equities = history.get("timestamp", []), history.get("equity", [])
@@ -368,6 +387,8 @@ def account_ui(snapshot):
         {
             "symbol": p.get("symbol"),
             "qty": safe_number(p.get("qty")),
+            "direction": str(p.get("side","unknown")).upper(),
+            "absolute_exposure": abs(safe_number(p.get("market_value"))),
             "avg_cost": safe_number(p.get("avg_entry_price")),
             "mark": safe_number(p.get("current_price")),
             "market_value": safe_number(p.get("market_value")),
@@ -395,7 +416,7 @@ def account_ui(snapshot):
             "filled_at": o.get("filled_at"),
             "signal_day": None,
             "broker_order": True,
-            "managed": str(o.get("client_order_id") or "").startswith(PREFIX),
+            "managed": str(o.get("client_order_id") or "").startswith((PREFIX,INTRADAY_PREFIX,SHORT_PREFIX)),
         }
         for o in snapshot["orders"]
     ]
@@ -420,6 +441,9 @@ def account_ui(snapshot):
             "cash": cash,
             "equity": equity,
             "exposure": exposure,
+            "long_exposure":long_exposure,"short_exposure":short_exposure,
+            "net_exposure":long_exposure-short_exposure,
+            "realized_scope":"BROKER_ACCOUNT_REALIZED_NOT_PROVIDED",
             "unrealized": sum(p["unrealized"] for p in ui_positions),
             "realized": None,
             "drawdown_pct": round(drawdown, 3) if drawdown is not None else None,
@@ -550,8 +574,10 @@ def _intent(c, cid, account_id, day, symbol, side, qty, reason, payload=None):
     """Persist the intent BEFORE the network call; unknown outcomes never retry blindly."""
     t = utc()
     detail = {
-        k: payload[k] for k in ("type", "limit_price", "time_in_force", "extended_hours", "session") if payload and k in payload
+        k: payload[k] for k in ("type", "limit_price", "time_in_force", "extended_hours", "session", "action", "risk") if payload and k in payload
     }
+    if cid.startswith((PREFIX,INTRADAY_PREFIX,SHORT_PREFIX)):
+        detail.setdefault("action",intent_action(cid,side).value)
     cur = c.execute(
         """INSERT OR IGNORE INTO sw_alpaca_intents
         (client_id,account_id,signal_day,symbol,side,qty,reason,state,created_at,updated_at,detail_json)
@@ -572,7 +598,7 @@ def _state(cid, status, order=None, reason=""):
                 str(order.get("status") or "") if isinstance(order, dict) else None,
                 utc(),
                 json.dumps({"reason":reason, **({"filled_qty":str(order["filled_qty"])}
-                    if cid.startswith(INTRADAY_PREFIX) and order and "filled_qty" in order else {})}),
+                    if cid.startswith((INTRADAY_PREFIX,SHORT_PREFIX)) and order and "filled_qty" in order else {})}),
                 cid,
             ),
         )
@@ -618,8 +644,10 @@ def _validated_order(order, intent):
         or money(order.get("qty")) != money(intent["qty"])
     ):
         raise PaperError("alpaca_paper_order_identity_mismatch")
-    if intent["client_id"].startswith(INTRADAY_PREFIX):
+    if intent["client_id"].startswith((INTRADAY_PREFIX,SHORT_PREFIX)):
         detail = json.loads(intent["detail_json"])
+        if intent["client_id"].startswith(SHORT_PREFIX) and detail.get("action")!=intent_action(intent["client_id"],intent["side"]).value:
+            raise PaperError("alpaca_short_intent_action_mismatch")
         filled = money(order.get("filled_qty"))
         if (not 0 <= filled <= money(intent["qty"])
                 or (order["status"] == "filled" and filled != money(intent["qty"]))
@@ -657,7 +685,7 @@ def _reconcile(client, account_id, open_orders):
             unresolved += 1
             continue
         terminal = order["status"] in TERMINAL
-        if cid.startswith(INTRADAY_PREFIX) and not terminal and cid not in by_client:
+        if cid.startswith((INTRADAY_PREFIX,SHORT_PREFIX)) and not terminal and cid not in by_client:
             unresolved += 1
             continue
         _state(cid, "TERMINAL" if terminal else "ACKNOWLEDGED", order)
@@ -733,6 +761,12 @@ def _entry_budget(snapshot, sectors, sector, active, known):
             "non_marginable_buying_power",
         )
     )
+    if short_gate(cover=True) is None:
+        from .intraday_store import daily_loss_paused
+        now=datetime.now(UTC)
+        if last<=0 or daily_loss_paused(account["id"],now.astimezone(NY).date().isoformat(),
+                                       eq<=last*Decimal(".98"),now):
+            raise PaperError("alpaca_shared_daily_loss_pause")
     if min(eq, last) <= 0 or cash < 0:
         raise PaperError("alpaca_paper_invalid_account_balance")
     history = snapshot.get("history") or {}
@@ -742,19 +776,27 @@ def _entry_budget(snapshot, sectors, sector, active, known):
     peak = max(marks + [eq])
     if 1 - eq / peak >= money(MAX_DRAWDOWN) or 1 - eq / last >= money(MAX_ONE_DAY_LOSS):
         raise PaperError("alpaca_paper_drawdown_or_daily_loss_pause")
-    if any(
-        p.get("side") != "long" or p.get("asset_class") != "us_equity" or not sectors.get(sym)
-        for sym, p in known.items()
-    ):
-        raise PaperError("alpaca_paper_external_position_unclassified_or_short")
-    gross = sector_used = reserved = Decimal(0)
-    for sym, position in known.items():
-        value = money(position.get("market_value"))
-        if value <= 0 or money(position.get("qty")) <= 0:
-            raise PaperError("alpaca_paper_invalid_position_value")
-        gross += value
-        if sectors[sym] == sector:
-            sector_used += value
+    gross = sector_used = reserved = cash_reserved = short_proceeds = Decimal(0)
+    for sym, raw in known.items():
+        if not sectors.get(sym):
+            raise PaperError("alpaca_paper_external_position_unclassified")
+        try:
+            holding=normalized_position(raw)
+        except ValueError:
+            # Older long fixtures/legacy responses may lack cost basis, which
+            # is required only to prevent spending short proceeds.
+            if raw.get("side")!="long" or raw.get("asset_class")!="us_equity" or money(raw.get("qty"))<=0:
+                raise PaperError("alpaca_paper_invalid_position_value") from None
+            value=money(raw.get("market_value"))
+            if value<=0:
+                raise PaperError("alpaca_paper_invalid_position_value")
+        else:
+            value=holding.gross
+            short_proceeds+=holding.proceeds
+        gross+=value
+        if sectors[sym]==sector:
+            sector_used+=value
+
     reserved_symbols = set()
     for order in active:
         sym = order.get("symbol")
@@ -764,23 +806,31 @@ def _entry_budget(snapshot, sectors, sector, active, known):
             or order.get("side") not in ("buy", "sell")
         ):
             raise PaperError("alpaca_paper_external_or_unclassified_open_order")
-        if order["side"] == "buy":
-            price = money(order.get("limit_price"))
-            qty = money(order.get("qty")) - money(order.get("filled_qty"))
-            if price <= 0 or qty < 0:
+        try:
+            action=intent_action(order.get("client_order_id",""),order["side"])
+        except ValueError:
+            if order.get("client_order_id"):
+                raise PaperError("alpaca_paper_unknown_order_direction") from None
+            action=Action.BUY_TO_OPEN_LONG if order["side"]=="buy" else Action.SELL_TO_CLOSE_LONG
+        if action.opening or action==Action.BUY_TO_COVER_SHORT:
+            price=money(order.get("limit_price"))
+            qty=money(order.get("qty"))-money(order.get("filled_qty"))
+            if price<=0 or qty<0:
                 raise PaperError("alpaca_paper_open_buy_reserve_unverifiable")
-            reserved += price * qty
-            reserved_symbols.add(sym)
-            if sectors[sym] == sector:
-                sector_used += price * qty
+            if action.opening:
+                reserved+=price*qty
+                reserved_symbols.add(sym)
+                if sectors[sym]==sector:
+                    sector_used+=price*qty
+            cash_reserved+=price*qty
     if len(set(known) | reserved_symbols) >= MAX_POSITIONS:
         raise PaperError("alpaca_paper_position_cap")
     return min(
         eq * money(MAX_SYMBOL_WEIGHT),
         eq * money(MAX_SECTOR_WEIGHT) - sector_used,
         eq * money(MAX_GROSS_EXPOSURE) - gross - reserved,
-        cash - eq * CASH_BUFFER - reserved,
-        cash_buying_power - reserved,
+        cash - short_proceeds - eq * CASH_BUFFER - cash_reserved,
+        cash_buying_power - short_proceeds - cash_reserved,
     )
 
 
@@ -921,8 +971,8 @@ def _preview_and_submit(client, snapshot, signals, day, now):
         item = {"symbol": symbol, "action": "WATCH"}
         result["why_no_trade"].append(item)
         if one(
-            "SELECT 1 FROM sw_alpaca_intents WHERE account_id=? AND symbol=? AND signal_day=? AND client_id LIKE ?",
-            (account_id, symbol, target, INTRADAY_PREFIX+"%"),
+            "SELECT 1 FROM sw_alpaca_intents WHERE account_id=? AND symbol=? AND signal_day=? AND (client_id LIKE ? OR client_id LIKE ?)",
+            (account_id, symbol, target, INTRADAY_PREFIX+"%",SHORT_PREFIX+"%"),
         ):
             item["reason"] = "intraday_same_symbol_same_session_interlock"
             continue
@@ -1145,7 +1195,7 @@ def record_confirmed_absence(client_id, support_case, now=None):
             or intent["state"] not in ("PREPARED", "UNKNOWN")
         ):
             raise PaperError("alpaca_paper_no_matching_uncertain_intent")
-        if client_id.startswith(INTRADAY_PREFIX):
+        if client_id.startswith((INTRADAY_PREFIX,SHORT_PREFIX)):
             original_session_ended = now.astimezone(NY).date().isoformat() > intent["signal_day"]
         else:
             original_session_ended = now >= session(next_day(intent["signal_day"]))[1]

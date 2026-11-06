@@ -1,5 +1,7 @@
 # StocksWatch autonomous intraday paper
 
+This guide describes the original 32-instrument release. For the expanded universe, directional risk, and compatible shared-frontend cutover, see [StocksWatch Long and Short Paper](LONG_SHORT_50.md).
+
 Implements [AutoTrader Issue #1](https://github.com/Mohammad-khataeii/AutoTrader/issues/1) on the StocksWatch Alpaca integration base `0925751f2c82e6ccad1ef404a8ae71408008f48c`. The release starts with intraday order admission disabled. The existing EOD scorer, order window, policy, and local ledger stay independent. The two Alpaca paper strategies share broker account truth, reconciliation, the order pause, and a serialization lock. No strategy reads or writes crypto storage.
 
 ## Phases and evidence

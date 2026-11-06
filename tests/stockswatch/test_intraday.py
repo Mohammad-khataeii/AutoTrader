@@ -12,7 +12,7 @@ from stockswatch.intraday_market import IntradayData, ObservationError, observe,
 from stockswatch.intraday_policy import GATES, STRATEGY, order_gate, phase_at
 
 from stockswatch import alpaca_paper as paper
-from stockswatch import intraday, intraday_store, storage
+from stockswatch import backfill, intraday, intraday_store, storage
 
 NY = ZoneInfo("America/New_York")
 NOW = datetime(2026, 11, 6, 12, 0, 30, tzinfo=UTC)
@@ -175,6 +175,7 @@ def offline(tmp_path, monkeypatch):
     storage.init_execution()
     paper.broker_init()
     intraday_store.initialize()
+    backfill.initialize()
     paper.set_broker_paused(False)
 
     class Fixture:
@@ -199,6 +200,12 @@ def offline(tmp_path, monkeypatch):
             self.trade_price = None
             self.lookup_hidden = False
             self.bar_page = False
+            self.bearish = False
+            self.short_enabled = True
+            self.borrow_status = "easy_to_borrow"
+            self.short_restricted = False
+            self.short_margin = "0"
+            self.cancels = []
 
         def data(self, request):
             assert request.url.host == "data.alpaca.markets" and request.method == "GET"
@@ -218,7 +225,13 @@ def offline(tmp_path, monkeypatch):
             assert params["feed"] in {"sip", "iex", "delayed_sip", "overnight", "boats"}
             if path.endswith("snapshots"):
                 values = {
-                    s: snap(self.now, s == "AAPL", self.trade_price if s == "AAPL" else None)
+                    s: snap(
+                        self.now,
+                        s == "AAPL",
+                        (self.trade_price or (98.3 if self.bearish else None))
+                        if s == "AAPL"
+                        else None,
+                    )
                     for s in syms
                     if s != self.missing
                 }
@@ -226,6 +239,34 @@ def offline(tmp_path, monkeypatch):
                     values["AAPL"]["latestQuote"]["as"] = 1
                 return httpx.Response(200, json=values)
             end = datetime.fromisoformat(params["end"])
+            start = datetime.fromisoformat(params["start"])
+            if end - start > timedelta(minutes=30):
+                values = [
+                    {
+                        "t": (start + timedelta(minutes=i)).isoformat(),
+                        "o": 99,
+                        "h": 99,
+                        "l": 99,
+                        "c": 99,
+                        "v": 3000,
+                    }
+                    for i in range(int((end - start).total_seconds() / 60))
+                ]
+                return httpx.Response(200, json={"bars": {s: values for s in syms}})
+            if self.bearish and end - start >= timedelta(minutes=10):
+                values = [
+                    {
+                        **r,
+                        "o": 99 - i * 0.10,
+                        "h": 99 - i * 0.10,
+                        "l": 99 - i * 0.10,
+                        "c": 99 - i * 0.10,
+                    }
+                    for i, r in enumerate(bars(end))
+                ]
+                return httpx.Response(
+                    200, json={"bars": {s: values if s == "AAPL" else bars(end) for s in syms}}
+                )
             if end.date() != self.now.date() or end.hour == 21:
                 values = [
                     {
@@ -254,6 +295,13 @@ def offline(tmp_path, monkeypatch):
             assert request.url.host == "paper-api.alpaca.markets"
             assert request.headers["APCA-API-KEY-ID"] == "test-broker"
             path = request.url.path
+            if request.method == "DELETE":
+                identifier = path.split("/")[-1]
+                self.cancels.append(identifier)
+                order = next(o for o in self.open if o["id"] == identifier)
+                self.open.remove(order)
+                order["status"] = "canceled"
+                return httpx.Response(204)
             if request.method == "POST":
                 payload = json.loads(request.content)
                 self.posts.append(payload)
@@ -300,6 +348,21 @@ def offline(tmp_path, monkeypatch):
                         "equity": self.equity,
                         "last_equity": "100000",
                         "non_marginable_buying_power": "100000",
+                        "shorting_enabled": self.short_enabled,
+                        "multiplier": "2",
+                        "initial_margin": self.short_margin,
+                        "maintenance_margin": self.short_margin,
+                        "buying_power": "200000",
+                        "regt_buying_power": "100000",
+                    },
+                )
+            if path == "/v2/account/configurations":
+                return httpx.Response(
+                    200,
+                    json={
+                        "no_shorting": False,
+                        "suspend_trade": False,
+                        "max_margin_multiplier": "2",
                     },
                 )
             if path == "/v2/clock":
@@ -335,6 +398,12 @@ def offline(tmp_path, monkeypatch):
                         "status": "active",
                         "tradable": True,
                         "id": "asset-a",
+                        "exchange": "NASDAQ",
+                        "marginable": True,
+                        "shortable": True,
+                        "borrow_status": self.borrow_status,
+                        "short_sale_restricted": self.short_restricted,
+                        "margin_requirement_short": "30",
                     },
                 )
             return httpx.Response(
@@ -362,18 +431,18 @@ def offline(tmp_path, monkeypatch):
     fx.engine.close()
 
 
-def test_bounded_32_symbol_cycle_and_idempotent_restart(offline):
+def test_bounded_52_symbol_cycle_and_idempotent_restart(offline):
     offline.bar_page = True
     report = offline.cycle()
     assert report["execution"] == "BROKER_ACCEPTED"
-    assert report["tracked"] == report["snapshot_symbols"] == report["valid"] == 32
-    assert storage.one("SELECT count(*) AS n FROM sw_intraday_observations")["n"] == 32
+    assert report["tracked"] == report["snapshot_symbols"] == report["valid"] == 52
+    assert storage.one("SELECT count(*) AS n FROM sw_intraday_observations")["n"] == 52
     (order,) = offline.posts
     assert order["side"] == "buy" and order["extended_hours"] is True
     assert order["type"] == "limit" and order["time_in_force"] == "day"
     assert order["client_order_id"].startswith("swx1-")
     assert Decimal(order["qty"]) * Decimal(order["limit_price"]) <= 5000
-    assert len(offline.requests) <= 7
+    assert len(offline.requests) <= 11
     offline.now += timedelta(seconds=15)
     offline.cycle()
     assert len(offline.posts) == 1
@@ -445,7 +514,7 @@ def test_rejections_without_orders(offline, fault, expected):
 def test_pause_and_daily_loss_leave_observations_active(offline):
     paper.set_broker_paused(True)
     paused = offline.cycle()
-    assert paused["valid"] == 32 and paused["execution"] == "intraday_paper_kill_switch"
+    assert paused["valid"] == 52 and paused["execution"] == "intraday_paper_kill_switch"
     paper.set_broker_paused(False)
     offline.equity = "98000"
     offline.now += timedelta(seconds=5)
@@ -491,7 +560,7 @@ def test_read_retries_and_recovery(offline):
 def test_data_outage_persists_and_recovers(offline, status, reason):
     offline.data_status = status
     failed = offline.cycle()
-    assert failed["reason"] == reason and len(failed["rows"]) == 32
+    assert failed["reason"] == reason and len(failed["rows"]) == 52
     assert not offline.posts
     offline.data_status = None
     offline.now += timedelta(minutes=1)
@@ -583,7 +652,7 @@ def test_rank_replay_of_persisted_evidence(offline, tmp_path):
     path = tmp_path / "saved.jsonl"
     path.write_bytes(b"".join(export_jsonl("intraday_observations")))
     result = replay(path)
-    assert result["observations"] == 32 and result["rank_mismatches"] == 0
+    assert result["observations"] == 52 and result["rank_mismatches"] == 0
     assert result["entry_candidates"] == 1 and result["broker_calls"] == 0
 
 
@@ -618,3 +687,209 @@ def test_full_or_invalid_broker_snapshot_cannot_submit(offline):
     ] * 500
     assert offline.cycle()["execution"] == "intraday_broker_snapshot_incomplete"
     assert not offline.posts
+
+
+@pytest.fixture
+def short_offline(offline, tmp_path, monkeypatch):
+    from stockswatch.intraday_policy import SHORT_GATES, SHORT_STRATEGY
+    from stockswatch.sessions import completed_day, history_days
+
+    offline.now = datetime(2026, 11, 6, 16, 0, 30, tzinfo=UTC)
+    offline.bearish = True
+    proof = tmp_path / "short-proof.json"
+    proof.write_text(
+        json.dumps(
+            {
+                "commit": "a" * 40,
+                "strategy": SHORT_STRATEGY,
+                "paper_only": True,
+                "checks": {k: "PASS" for k in SHORT_GATES},
+            }
+        )
+    )
+    monkeypatch.setenv("STOCKSWATCH_SHORT_ALLOW_ORDERS", "1")
+    monkeypatch.setenv("STOCKSWATCH_SHORT_PREFLIGHT", str(proof))
+    monkeypatch.setenv(
+        "STOCKSWATCH_SHORT_PREFLIGHT_SHA256", hashlib.sha256(proof.read_bytes()).hexdigest()
+    )
+    day = completed_day(offline.now)
+    days = history_days(day)
+    with storage.connect() as c:
+        evidence = backfill.asset_evidence(
+            "AAPL",
+            {
+                "id": "asset-a",
+                "symbol": "AAPL",
+                "exchange": "NASDAQ",
+                "class": "us_equity",
+                "status": "active",
+                "tradable": True,
+            },
+        )
+        c.execute(
+            "INSERT INTO sw_asset_verification VALUES(?,?,?)",
+            ("AAPL", offline.now.isoformat(), json.dumps(evidence)),
+        )
+        c.executemany(
+            "INSERT INTO sw_eod_observations VALUES(?,?,?,?,?,?,?,?,?,?)",
+            [
+                (
+                    "AAPL",
+                    d,
+                    100,
+                    100,
+                    100,
+                    100,
+                    1000,
+                    "alpaca_iex_daily",
+                    "RAW",
+                    offline.now.isoformat(),
+                )
+                for d in days
+            ],
+        )
+        c.executemany(
+            "INSERT INTO sw_historical_bars VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            [
+                (
+                    "AAPL",
+                    "1Min",
+                    "sip",
+                    "raw",
+                    f"{d}T{14 + i // 60:02}:{i % 60:02}:00+00:00",
+                    d,
+                    "CORE",
+                    offline.now.isoformat(),
+                    "100",
+                    "100",
+                    "100",
+                    "100",
+                    "1000",
+                )
+                for d in days[-5:]
+                for i in range(180)
+            ],
+        )
+    return offline
+
+
+def test_core_short_partial_fill_restart_and_recalled_borrow_cover(short_offline):
+    fx = short_offline
+    result = fx.cycle()
+    row = next(r for r in result["rows"] if r["symbol"] == "AAPL")
+    assert result["execution"] == "BROKER_ACCEPTED", row
+    assert row["action"] == "SHORT"
+    sell = fx.open.pop()
+    assert sell["client_order_id"].startswith("sws1-") and sell["side"] == "sell"
+    assert sell["extended_hours"] is False
+    assert Decimal(sell["qty"]) * Decimal(sell["limit_price"]) <= 3000
+    sell.update(status="canceled", filled_qty="5")
+    fx.now += timedelta(minutes=1)
+    fx.fills = [
+        {
+            "id": "short-fill",
+            "order_id": sell["id"],
+            "side": "sell",
+            "symbol": "AAPL",
+            "qty": "5",
+            "price": "98.30",
+            "transaction_time": fx.now.isoformat(),
+        }
+    ]
+    fx.positions = [
+        {
+            "symbol": "AAPL",
+            "asset_id": "asset-a",
+            "asset_class": "us_equity",
+            "side": "short",
+            "qty": "-5",
+            "qty_available": "-5",
+            "avg_entry_price": "98.30",
+            "market_value": "-485",
+        }
+    ]
+    fx.borrow_status = "hard_to_borrow"
+    fx.trade_price = 97
+    result = fx.cycle()
+    assert result["execution"] == "BROKER_ACCEPTED", result
+    cover = fx.open.pop()
+    assert cover["side"] == "buy" and cover["qty"] == "5"
+    cover.update(status="filled", filled_qty="5")
+    fx.now += timedelta(seconds=10)
+    fx.positions = []
+    fx.fills.insert(
+        0,
+        {
+            "id": "cover-fill",
+            "order_id": cover["id"],
+            "side": "buy",
+            "symbol": "AAPL",
+            "qty": "5",
+            "price": "97",
+            "transaction_time": fx.now.isoformat(),
+        },
+    )
+    result = fx.cycle()
+    assert result["short_pnl"]["realized_usd"] == "6.50"
+    assert len(fx.posts) == 2
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "reason"),
+    [
+        ("short_enabled", False, "short_account_not_eligible"),
+        ("borrow_status", "hard_to_borrow", "short_borrow_not_etb"),
+        ("short_margin", "100000", "short_margin_or_displayed_depth_insufficient"),
+        ("short_restricted", True, "short_borrow_not_etb"),
+    ],
+)
+def test_short_account_borrow_margin_restriction_gates(short_offline, field, value, reason):
+    setattr(short_offline, field, value)
+    result = short_offline.cycle()
+    row = next(r for r in result["rows"] if r["symbol"] == "AAPL")
+    assert row["risk_decision"] == reason
+    assert not short_offline.posts
+
+
+def test_resting_short_is_cancelled_once_before_reusing_slot(short_offline):
+    fx = short_offline
+    assert fx.cycle()["execution"] == "BROKER_ACCEPTED"
+    fx.now += timedelta(minutes=2)
+    assert fx.cycle()["execution"] == "SHORT_CANCEL_REQUESTED"
+    fx.now += timedelta(seconds=15)
+    fx.cycle()
+    assert len(fx.posts) == 1 and len(fx.cancels) == 1
+
+
+def test_unknown_short_acknowledgement_quarantines_and_never_repeats(short_offline):
+    fx = short_offline
+    fx.mode = "timeout"
+    assert fx.cycle()["execution"] == "BROKER_ORDER_UNCERTAIN"
+    fx.lookup_hidden = True
+    order = fx.open.pop()
+    fx.now += timedelta(seconds=15)
+    assert fx.cycle()["execution"] == "intraday_uncertain_broker_intent"
+    fx.lookup_hidden = False
+    fx.open.append(order)
+    fx.now += timedelta(seconds=15)
+    fx.cycle()
+    assert len(fx.posts) == 1
+
+
+def test_external_short_never_covered(short_offline):
+    fx = short_offline
+    fx.positions = [
+        {
+            "symbol": "AAPL",
+            "asset_id": "asset-a",
+            "asset_class": "us_equity",
+            "side": "short",
+            "qty": "-5",
+            "qty_available": "5",
+            "avg_entry_price": "95",
+            "market_value": "-490",
+        }
+    ]
+    fx.borrow_status = "hard_to_borrow"
+    assert fx.cycle()["execution"] == "WAIT"
+    assert not fx.posts
