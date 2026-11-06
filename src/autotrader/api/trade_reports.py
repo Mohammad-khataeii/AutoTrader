@@ -8,6 +8,8 @@ from typing import Any
 
 from sqlalchemy import and_, or_, select, text
 
+from autotrader.crypto_research.context import PEERS, STEP, cutoff, returns, window
+from autotrader.domain import Candle
 from autotrader.persistence.accounting import aware
 from autotrader.persistence.models import (
     ExitIntentModel,
@@ -131,9 +133,7 @@ def explain_position(p: Any, plan: Any, orders: list[Any], fills: list[Any],
 
 
 def completed_price_path(position: Any, bars: list[Any]) -> dict[str, Any]:
-    from autotrader.market_data.synchronization import cutoff
-
-    step = timedelta(minutes=5)
+    step = STEP
     opened, closed = aware(position.opened_at), aware(position.closed_at)
     start = cutoff(opened)
     if start < opened:
@@ -165,16 +165,31 @@ async def trade_reports(repo: Any) -> list[dict[str, Any]]:
         intervals = [and_(MarketCandle.symbol==p.symbol, MarketCandle.timestamp>=p.opened_at,
                           MarketCandle.timestamp<=p.closed_at)
                      for p in positions if p.closed_at and p.closed_at-p.opened_at<=timedelta(hours=48)]
+        for position in positions:
+            complete_at = cutoff(aware(position.opened_at))
+            intervals.append(and_(MarketCandle.symbol.in_(PEERS),
+                                  MarketCandle.timestamp>=complete_at-13*STEP,
+                                  MarketCandle.timestamp<complete_at))
         candles = (await session.scalars(select(MarketCandle).where(MarketCandle.timeframe=='5m', or_(*intervals))
                                         .order_by(MarketCandle.timestamp))).all() if intervals else []
         by_symbol: dict[str, list[Any]] = {}
         for bar in candles:
             by_symbol.setdefault(bar.symbol, []).append(bar)
+        benchmark_bars = {symbol:[Candle(symbol, aware(b.timestamp),b.open,b.high,b.low,b.close,
+                                      b.volume,b.timeframe,b.source)
+                                  for b in by_symbol.get(symbol,[]) if b.source.startswith('revolut-x')]
+                          for symbol in PEERS}
         reports = []
         for p in positions:
             groups = [[r for r in group if r.position_id==p.position_id] for group in (orders,fills,targets,intents,journal)]
             result = explain_position(p,plans.get(p.position_id),groups[0],groups[1],groups[2],groups[3],groups[4],contexts)
             result['completed_price_path'] = completed_price_path(p, by_symbol.get(p.symbol, []))
+            opened = aware(p.opened_at)
+            result['entry_benchmark_return_60m'] = {
+                symbol: str(returns(bars)[60]) if (bars := window(benchmark_bars[symbol],symbol,opened,13)) else None
+                for symbol in PEERS
+            }
+            result['entry_benchmark_return_scope'] = 'Completed OHLC reconstruction at entry; receipt and executable prices unverified.'
             reports.append(result)
         return reports
 

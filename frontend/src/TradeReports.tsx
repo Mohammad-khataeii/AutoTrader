@@ -31,6 +31,8 @@ export function TradeReports({rows = []}: {rows?: Row[]}) {
           <div><dt>Planned net reward / risk</dt><dd>{r.expected_net_reward_risk == null ? "Unavailable" : Number(r.expected_net_reward_risk).toFixed(2)}</dd></div>
           <div><dt>Slippage / impact in prices</dt><dd>{money(r.modeled_slippage_and_impact_eur)}</dd></div>
           <div><dt>Entry regime</dt><dd>{r.entry_regime?.trend ?? "Unavailable"} · BTC/ETH {r.entry_regime?.benchmark ?? "unavailable"}</dd></div>
+          <div><dt>BTC · ETH hourly trends at admission</dt><dd>{r.benchmark_admission?.["BTC-EUR"]?.trend ?? "Unavailable"} · {r.benchmark_admission?.["ETH-EUR"]?.trend ?? "Unavailable"}</dd></div>
+          <div title={r.entry_benchmark_return_scope}><dt>BTC · ETH 1h returns at entry</dt><dd>{percent(r.entry_benchmark_return_60m?.["BTC-EUR"])} · {percent(r.entry_benchmark_return_60m?.["ETH-EUR"])}</dd></div>
           <div><dt>Exit regime</dt><dd>{r.exit_regime?.local_trend ?? "Not recorded at exit"}</dd></div>
         </dl>
         <p className="small muted">{r.cost_note} {r.actual_cost_scope}</p>
