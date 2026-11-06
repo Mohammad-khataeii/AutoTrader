@@ -1,31 +1,44 @@
 """Optional licensed-feed adapters and conservative no-key EOD research fallback."""
+
 from __future__ import annotations
 import csv
 import io
 import math
 import os
 import re
-from datetime import datetime,timezone,date,timedelta
+from datetime import datetime, timezone, date, timedelta
 from urllib.parse import urlencode
 import httpx
 from .storage import utc
+from .sessions import NY, instant, session
 
-MAX_CSV=8_000_000
-SYMBOL_RE=re.compile(r'^[A-Z][A-Z0-9.]{0,9}$')
+MAX_CSV = 8_000_000
+SYMBOL_RE = re.compile(r"^[A-Z][A-Z0-9.]{0,9}$")
 
-def validate_bars(records):
-    out={}
-    today=date.today()
+
+def validate_bars(records, through=None):
+    out = {}
+    today = date.fromisoformat(through) if through else datetime.now(NY).date()
     for r in records:
         try:
-            dt=date.fromisoformat(str(r['day']))
-            if not date(1990,1,1)<=dt<=today:continue
-            vals=[float(r[k]) for k in ('o','h','l','c','v')]
-            o,h,l,c,v=vals
-            if not all(math.isfinite(x) for x in vals) or min(o,h,l,c)<=0 or v<0 or l>min(o,c,h) or h<max(o,c,l):continue
-            out[dt.isoformat()]={'day':dt.isoformat(),'o':o,'h':h,'l':l,'c':c,'v':v}
-        except (ValueError,TypeError,KeyError,OverflowError):continue
+            dt = date.fromisoformat(str(r["day"]))
+            if not date(1990, 1, 1) <= dt <= today:
+                continue
+            vals = [float(r[k]) for k in ("o", "h", "l", "c", "v")]
+            o, h, l, c, v = vals
+            if (
+                not all(math.isfinite(x) for x in vals)
+                or min(o, h, l, c) <= 0
+                or v <= 0
+                or l > min(o, c, h)
+                or h < max(o, c, l)
+            ):
+                continue
+            out[dt.isoformat()] = {"day": dt.isoformat(), "o": o, "h": h, "l": l, "c": c, "v": v}
+        except (ValueError, TypeError, KeyError, OverflowError):
+            continue
     return [out[k] for k in sorted(out)]
+
 
 async def stooq(client:httpx.AsyncClient,symbol:str,from_day='2000-01-01'):
     if not SYMBOL_RE.fullmatch(symbol):raise ValueError('Invalid stock ticker')
@@ -45,38 +58,131 @@ async def stooq(client:httpx.AsyncClient,symbol:str,from_day='2000-01-01'):
     if len(bars)<2:raise RuntimeError('stooq_no_valid_history')
     return bars,'stooq_unverified_eod','VENDOR_UNSPECIFIED'
 
-async def alpaca(client:httpx.AsyncClient,symbol:str,from_day='2000-01-01'):
-    key=os.getenv('STOCKSWATCH_ALPACA_KEY','')
-    secret=os.getenv('STOCKSWATCH_ALPACA_SECRET','')
-    if not (key and secret):raise RuntimeError('alpaca_credentials_not_configured')
-    if not SYMBOL_RE.fullmatch(symbol):raise ValueError('Invalid stock ticker')
+
+def alpaca_headers():
+    key = os.getenv("STOCKSWATCH_ALPACA_KEY", "")
+    secret = os.getenv("STOCKSWATCH_ALPACA_SECRET", "")
+    if not (key and secret):
+        raise RuntimeError("alpaca_credentials_not_configured")
+    return {"APCA-API-KEY-ID": key, "APCA-API-SECRET-KEY": secret}
+
+
+def alpaca_status(response):
+    if response.status_code in (401, 403):
+        raise RuntimeError("alpaca_credentials_or_feed_denied")
+    if response.status_code == 429:
+        raise RuntimeError("alpaca_rate_limited")
+    response.raise_for_status()
+
+
+async def alpaca(client: httpx.AsyncClient, symbol: str, from_day="2000-01-01", through=None):
+    if not SYMBOL_RE.fullmatch(symbol):
+        raise ValueError("Invalid stock ticker")
     # Free IEX market data can be incomplete; query RAW historical daily bars to avoid
     # retroactive split/dividend adjustments silently corrupting simulated fills.
-    host='https://data.alpaca.markets'
-    headers={'APCA-API-KEY-ID':key,'APCA-API-SECRET-KEY':secret}
-    result=[];token=None
+    host = "https://data.alpaca.markets"
+    headers = alpaca_headers()
+    result = []
+    token = None
     for _ in range(10):
-        args={'timeframe':'1Day','start':from_day+'T00:00:00Z','end':datetime.now(timezone.utc).isoformat(),
-              'adjustment':'raw','feed':'iex','limit':10000}
-        if token:args['page_token']=token
-        r=await client.get(f'{host}/v2/stocks/{symbol}/bars',params=args,headers=headers)
-        if r.status_code in (401,403):raise RuntimeError('alpaca_credentials_or_feed_denied')
-        if r.status_code==429:raise RuntimeError('alpaca_rate_limited')
-        r.raise_for_status();obj=r.json()
-        for b in obj.get('bars') or []:
-            result.append({'day':str(b['t'])[:10],'o':b['o'],'h':b['h'],'l':b['l'],'c':b['c'],'v':b['v']})
-        token=obj.get('next_page_token')
-        if not token:break
-    else:raise RuntimeError('alpaca_pagination_truncated')
-    clean=validate_bars(result)
-    if len(clean)<2:raise RuntimeError('alpaca_no_valid_bars')
-    return clean,'alpaca_iex_daily','RAW'
+        args = {
+            "timeframe": "1Day",
+            "start": from_day + "T00:00:00Z",
+            "end": datetime.now(timezone.utc).isoformat(),
+            "adjustment": "raw",
+            "feed": "iex",
+            "limit": 10000,
+        }
+        if token:
+            args["page_token"] = token
+        r = await client.get(f"{host}/v2/stocks/{symbol}/bars", params=args, headers=headers)
+        alpaca_status(r)
+        obj = r.json()
+        if obj.get("symbol") != symbol:
+            raise RuntimeError("alpaca_symbol_mismatch")
+        for b in obj.get("bars") or []:
+            day = instant(b["t"]).astimezone(NY).date().isoformat()
+            if through is None or day <= through:
+                result.append({**b, "day": day})
+        token = obj.get("next_page_token")
+        if not token:
+            break
+    else:
+        raise RuntimeError("alpaca_pagination_truncated")
+    clean = [b for b in validate_bars(result, through) if session(b["day"])]
+    if len(clean) < 2:
+        raise RuntimeError("alpaca_no_valid_bars")
+    return clean, "alpaca_iex_daily", "RAW"
 
-async def fetch_bars(client,symbol,from_day='2000-01-01'):
-    provider=os.getenv('STOCKSWATCH_PRICE_PROVIDER','stooq').lower()
-    if provider=='stooq':return await stooq(client,symbol,from_day)
-    if provider=='alpaca':return await alpaca(client,symbol,from_day)
-    raise RuntimeError('provider_not_supported')
+
+async def fetch_bars(client, symbol, from_day="2000-01-01", through=None):
+    provider = os.getenv("STOCKSWATCH_PRICE_PROVIDER", "stooq").lower()
+    if provider == "stooq":
+        return await stooq(client, symbol, from_day)
+    if provider == "alpaca":
+        return await alpaca(client, symbol, from_day, through)
+    raise RuntimeError("provider_not_supported")
+
+
+async def alpaca_execution_checks(client, symbol, day, since):
+    """Check for closing IEX activity and recent corporate-action ambiguity."""
+    _, close = session(day)
+    start = close - timedelta(minutes=15)
+    response = await client.get(
+        f"https://data.alpaca.markets/v2/stocks/{symbol}/bars",
+        headers=alpaca_headers(),
+        params={
+            "timeframe": "1Min",
+            "feed": "iex",
+            "adjustment": "raw",
+            "start": start.isoformat(),
+            "end": close.isoformat(),
+            "limit": 20,
+        },
+    )
+    alpaca_status(response)
+    payload = response.json()
+    if payload.get("symbol") != symbol or payload.get("next_page_token"):
+        raise RuntimeError("alpaca_invalid_close_check")
+    # Sparse/no closing IEX prints can mean a halt or incomplete venue coverage.
+    # IEX activity is not a consolidated halt feed.
+    closing_prints = {
+        instant(b["t"])
+        for b in payload.get("bars") or []
+        if start <= instant(b["t"]) < close
+        and 0 < float(b["c"]) < math.inf
+        and 0 < float(b["v"]) < math.inf
+    }
+    if len(closing_prints) < 3 or max(closing_prints) < close - timedelta(minutes=5):
+        raise RuntimeError("no_recent_core_session_activity")
+    response = await client.get(
+        "https://data.alpaca.markets/v1/corporate-actions",
+        headers=alpaca_headers(),
+        params={
+            "symbols": symbol,
+            "start": since,
+            "end": datetime.now(NY).date().isoformat(),
+            "data_quality": "all",
+            "region": "all",
+            "limit": 1000,
+        },
+    )
+    alpaca_status(response)
+    payload = response.json()
+    actions = payload.get("corporate_actions")
+    if not isinstance(actions, dict) or payload.get("next_page_token"):
+        raise RuntimeError("corporate_actions_incomplete")
+    # Keep only local, typed accounting evidence. Never copy provider payloads
+    # or identifiers other than the event date and action category into the ledger.
+    events = []
+    for kind, records in actions.items():
+        for record in records:
+            event_day = record.get("ex_date") or record.get("effective_date")
+            if not event_day:
+                raise RuntimeError("corporate_action_date_unknown")
+            events.append({"kind": kind, "day": date.fromisoformat(event_day).isoformat()})
+    return events
+
 
 async def sec_mapping(client,agent):
     if not agent or '@' not in agent:raise RuntimeError('sec_user_agent_missing')
@@ -84,6 +190,7 @@ async def sec_mapping(client,agent):
     r.raise_for_status()
     if len(r.content)>5_000_000:raise ValueError('ticker_map_too_large')
     return {v['ticker'].upper():int(v['cik_str']) for v in r.json().values() if isinstance(v,dict) and v.get('ticker')}
+
 
 async def sec_company(client,agent,cik):
     if not agent or '@' not in agent:raise RuntimeError('sec_user_agent_missing')
@@ -98,6 +205,7 @@ async def sec_company(client,agent,cik):
         if len(b.content)>15_000_000:raise ValueError('sec_facts_too_large')
         fact=b.json()
     return a.json(),fact
+
 
 def parse_filings(symbol,cik,submissions):
     recent=(submissions.get('filings') or {}).get('recent') or {}
@@ -124,7 +232,17 @@ def parse_filings(symbol,cik,submissions):
         except (KeyError,IndexError,TypeError,ValueError):continue
     return out
 
-CONCEPTS=('Revenues','RevenueFromContractWithCustomerExcludingAssessedTax','SalesRevenueNet','NetIncomeLoss','EarningsPerShareDiluted','Assets','StockholdersEquity')
+
+CONCEPTS = (
+    "Revenues",
+    "RevenueFromContractWithCustomerExcludingAssessedTax",
+    "SalesRevenueNet",
+    "NetIncomeLoss",
+    "EarningsPerShareDiluted",
+    "Assets",
+    "StockholdersEquity",
+)
+
 
 def parse_facts(symbol,cik,payload):
     out=[];facts=(payload.get('facts') or {}).get('us-gaap') or {}
@@ -149,6 +267,7 @@ def parse_facts(symbol,cik,payload):
                                 'source_url':f'https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010}.json','observed_at':utc()})
                 except (ValueError,TypeError,KeyError):continue
     return out
+
 
 async def fred_latest(client):
     """Fetch the latest valid observation of each series independently.

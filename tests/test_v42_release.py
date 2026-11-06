@@ -21,7 +21,10 @@ def committed_fixture(tmp_path):
              'docker-compose.yml': 'services: {}\n', 'Dockerfile.backend': 'FROM scratch\n',
              'deploy/vps.py': '# fixture\n', 'src/autotrader/__init__.py': '__version__="4.2.0"\n',
              '.env': 'PRIVATE_RUNTIME_ONLY=never-in-release\n', 'autotrader.db': 'private runtime',
-             '.env.example': 'DASHBOARD_PASSWORD=REPLACE_ME\n'}
+             '.env.example': 'DASHBOARD_PASSWORD=REPLACE_ME\n',
+             'stockswatch/ledger.py': '# isolated source\n',
+             'stockswatch/research_evidence.json': '{}\n',
+             'stockswatch/stockswatch.sqlite3': 'private stock ledger'}
     for name, content in files.items():
         p = root / name; p.parent.mkdir(parents=True, exist_ok=True); p.write_text(content)
     def git(*args):
@@ -38,6 +41,8 @@ def test_immutable_release_excludes_runtime_and_verifies_extracted_commit(tmp_pa
     with tarfile.open(result['archive']) as archive:
         names = archive.getnames()
         assert '.env' not in names and 'autotrader.db' not in names and '.env.example' in names
+        assert 'stockswatch/ledger.py' in names and 'stockswatch/research_evidence.json' in names
+        assert 'stockswatch/stockswatch.sqlite3' not in names
         archive.extractall(extracted, filter='data')
     check = module.verify_source_release(extracted, extracted / 'release-manifest.json', commit)
     assert check['commit'] == commit and check['version'] == '4.2.0'

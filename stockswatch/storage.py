@@ -86,3 +86,79 @@ def setting(key, default=None):
 
 def set_setting(key,value):
     with connect() as c:c.execute('INSERT INTO metadata(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value',(key,json.dumps(value,separators=(',',':'))))
+
+
+def mounted_directory(path):
+    # os.path.ismount() cannot see Linux bind mounts on the same filesystem.
+    import re
+
+    mountinfo = Path("/proc/self/mountinfo")
+    if not mountinfo.is_file():
+        return path.is_mount()
+    for line in mountinfo.read_text().splitlines():
+        target = re.sub(r"\\([0-7]{3})", lambda m: chr(int(m[1], 8)), line.split()[4])
+        if Path(target) == path:
+            return True
+    return False
+
+
+@contextmanager
+def worker_ownership():
+    """Own the writable ledger for the process lifetime and validate its mount."""
+    import fcntl
+
+    path = Path(DB_PATH).resolve()
+    # Allow initialization only for an explicitly provisioned disposable ledger
+    # or a first install with an intentionally mounted empty directory.
+    allow_init = os.getenv("STOCKSWATCH_ALLOW_INIT") == "1"
+    if not mounted_directory(path.parent):
+        raise RuntimeError("stockswatch_db_parent_not_mounted")
+    if not path.is_file() and not allow_init:
+        raise RuntimeError("stockswatch_existing_db_missing")
+    with (path.parent / (path.name + ".worker.lock")).open("a") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            raise RuntimeError("stockswatch_worker_already_running") from None
+        if path.exists():
+            with sqlite3.connect(path.as_uri() + "?mode=ro", uri=True) as c:
+                schema = c.execute(
+                    "SELECT value FROM metadata WHERE key='schema_version'"
+                ).fetchone()
+                account = c.execute("SELECT 1 FROM portfolio WHERE id=1").fetchone()
+                if not schema or schema[0] != "stocks-v1" or not account:
+                    raise RuntimeError("stockswatch_existing_ledger_unrecognized")
+        yield
+
+
+EXECUTION_SCHEMA = """
+CREATE TABLE IF NOT EXISTS sw_eod_observations (
+    symbol TEXT NOT NULL, day TEXT NOT NULL,
+    o REAL NOT NULL, h REAL NOT NULL, l REAL NOT NULL, c REAL NOT NULL, v REAL NOT NULL,
+    source TEXT NOT NULL, adjustment TEXT NOT NULL, observed_at TEXT NOT NULL,
+    PRIMARY KEY(symbol, day)
+);
+CREATE TABLE IF NOT EXISTS sw_price_checks (
+    symbol TEXT PRIMARY KEY, day TEXT NOT NULL, checked_at TEXT NOT NULL,
+    status TEXT NOT NULL, actions_since TEXT, actions_json TEXT
+);
+CREATE TABLE IF NOT EXISTS sw_order_evidence (
+    order_id TEXT PRIMARY KEY REFERENCES pending_orders(id),
+    policy_version TEXT NOT NULL, target_day TEXT NOT NULL, signal_source TEXT NOT NULL,
+    signal_observed_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS sw_order_outcomes (
+    order_id TEXT PRIMARY KEY REFERENCES pending_orders(id),
+    reason TEXT NOT NULL, recorded_at TEXT NOT NULL, detail_json TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS sw_trade_cycles (
+    id TEXT PRIMARY KEY, recorded_at TEXT NOT NULL, market_day TEXT NOT NULL,
+    report_json TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS sw_trade_cycles_time ON sw_trade_cycles(recorded_at);
+"""
+
+
+def init_execution():
+    with connect() as c:
+        c.executescript(EXECUTION_SCHEMA)

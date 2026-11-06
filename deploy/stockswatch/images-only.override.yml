@@ -1,0 +1,7 @@
+# For review against the existing scoped Aruba staging Compose configuration.
+# Supply approved immutable image IDs or digest references, never floating tags.
+services:
+  stockswatch:
+    image: ${STOCKSWATCH_CANDIDATE_IMAGE:?immutable StocksWatch candidate required}
+  frontend:
+    image: ${STOCKSWATCH_FRONTEND_IMAGE:?immutable frontend candidate required}

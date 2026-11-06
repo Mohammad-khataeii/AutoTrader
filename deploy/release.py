@@ -28,7 +28,9 @@ def allowed(name: str) -> bool:
     if any(p.startswith('.env') for p in path.parts) and name != '.env.example':
         return False
     return (name in ROOT_FILES or (len(path.parts) == 1 and name.startswith('Dockerfile.'))
-            or path.parts[0] in DIRECTORIES)
+            or path.parts[0] in DIRECTORIES
+            or (len(path.parts) == 2 and path.parts[0] == 'stockswatch'
+                and (path.suffix == '.py' or path.name == 'research_evidence.json')))
 
 
 def canonical(value) -> bytes:

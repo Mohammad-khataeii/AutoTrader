@@ -5,7 +5,6 @@ request bodies, raw company news, or account credentials are written to telemetr
 The pre-existing bars/decisions/orders/fills remain the accounting authorities.
 """
 from __future__ import annotations
-import hashlib
 import json
 import math
 import os
@@ -166,6 +165,7 @@ EXPORT_TABLES={
     'equity':'equity_curve','research':'research_runs','ml':'model_runs',
     'ai':'ai_insights','scanner_runs':'sw_scan_runs','scanner_events':'sw_scan_events',
     'signal_features':'sw_signal_snapshots',
+    'order_outcomes':'sw_order_outcomes','execution_cycles':'sw_trade_cycles',
 }
 
 def export_jsonl(kind):
