@@ -250,17 +250,27 @@ def reconcile(client):
     return not bool(one("SELECT 1 FROM ac_intents WHERE state IN ('PREPARED','UNCERTAIN') LIMIT 1"))
 
 
+def _canonical(symbol):
+    if not isinstance(symbol,str):
+        raise CryptoPaperError('crypto_broker_symbol_invalid')
+    normalized = symbol if '/' in symbol else (
+        symbol[:-3]+'/USD' if symbol.endswith('USD') else symbol)
+    if normalized not in ac.PAIRS:
+        raise CryptoPaperError('crypto_broker_symbol_unlisted')
+    return normalized
+
+
 def _owned(snapshot):
     owned={r["symbol"] for r in rows("""SELECT DISTINCT symbol FROM ac_intents
          WHERE side='buy' AND state='ACKNOWLEDGED'""")}
     for p in snapshot["positions"]:
-        if p["symbol"] not in owned and p["symbol"].replace("USD","/USD") not in owned:
+        if _canonical(p["symbol"]) not in owned:
             raise CryptoPaperError("crypto_unowned_broker_position")
     for o in snapshot["orders"]:
         if not any(o.get("client_order_id")==r["client_id"] for r in rows(
             "SELECT client_id FROM ac_intents WHERE state='ACKNOWLEDGED'")):
             raise CryptoPaperError("crypto_unowned_open_order")
-    return {p["symbol"].replace("USD","/USD"):p for p in snapshot["positions"]}
+    return {_canonical(p["symbol"]):p for p in snapshot["positions"]}
 
 
 def _limits(snapshot,now):
@@ -297,6 +307,9 @@ def run_paper_cycle(data,now=None):
                 if not reconcile(client):
                     return "unresolved_order_intents_block_trading"
                 pos=_owned(snapshot)
+                # Never duplicate paper submissions while any broker order is open.
+                if snapshot["orders"]:
+                    return "broker_open_order_book_not_empty"
                 equity,buying=_limits(snapshot,now)
                 managed=rows("SELECT * FROM ac_managed WHERE account_id=?",(account,))
                 # Never risk exit or sell an unowned position.
@@ -308,6 +321,11 @@ def run_paper_cycle(data,now=None):
                     bid,ask,stamp=data.latest_bid(symbol)
                     side="sell" if bid<=float(m["stop"]) or bid>=float(m["target"]) else None
                     if not side:continue
+                    # Prevent repeated exit submissions when the broker position lags.
+                    prior=one("""SELECT 1 FROM ac_intents WHERE symbol=? AND side='sell'
+                          AND state='ACKNOWLEDGED' AND created_at>=? LIMIT 1""",
+                          (symbol,m["entered_at"]))
+                    if prior:continue
                     increment=money(asset["min_trade_increment"])
                     qty=(money(position["qty"])//increment)*increment
                     if qty < money(asset["min_order_size"]):
@@ -342,9 +360,12 @@ def run_paper_cycle(data,now=None):
                             s["reason"],notional=str(budget))
                     if outcome=="paper_order_acknowledged":
                         with connect() as c:
-                            c.execute("""INSERT OR IGNORE INTO ac_managed
+                            c.execute("""INSERT INTO ac_managed
                                 (symbol,account_id,entry_client_id,stop,target,entered_at)
-                                VALUES(?,?,?,?,?,?)""",
+                                VALUES(?,?,?,?,?,?)
+                                ON CONFLICT(symbol) DO UPDATE SET account_id=excluded.account_id,
+                                  entry_client_id=excluded.entry_client_id,stop=excluded.stop,
+                                  target=excluded.target,entered_at=excluded.entered_at""",
                                 (s["symbol"],account,_order_id(account,s["symbol"],s["bar_at"],"buy"),
                                  str(s["stop"]),str(s["target"]),utc()))
                     return outcome
