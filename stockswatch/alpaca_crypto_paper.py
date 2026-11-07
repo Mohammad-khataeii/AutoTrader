@@ -256,6 +256,47 @@ def reconcile(client):
     return not bool(one("SELECT 1 FROM ac_intents WHERE state IN ('PREPARED','UNCERTAIN') LIMIT 1"))
 
 
+def refresh_known_orders(client, snapshot):
+    """Broker order states are evidence; a local ACK is not a broker fill."""
+    candidates=rows("""SELECT client_id,symbol,side,broker_status FROM ac_intents
+          WHERE state='ACKNOWLEDGED' AND (broker_status IS NULL OR
+             broker_status NOT IN ('filled','canceled','expired','rejected','replaced'))
+          ORDER BY created_at DESC LIMIT 8""")
+    for item in candidates:
+        try:
+            order=client.by_client_id(item["client_id"])
+        except CryptoPaperError:
+            continue
+        if not isinstance(order,dict) or order.get("client_order_id")!=item["client_id"] or (
+           order.get("symbol") not in (item["symbol"],item["symbol"].replace("/",""))
+           or order.get("side")!=item["side"] or not order.get("id")):
+            continue
+        status=order.get("status")
+        if status in TERMINAL|{"new","accepted","pending_new","partially_filled"}:
+            with connect() as c:
+                c.execute("""UPDATE ac_intents SET broker_status=?,last_checked=?
+                    WHERE client_id=? AND state='ACKNOWLEDGED'""",
+                    (status,utc(),item["client_id"]))
+    # Never discard a stop until a filled, owned SELL and an independently
+    # observed missing broker position agree. Canceled orders are not exits.
+    current={_canonical(p["symbol"]) for p in snapshot["positions"]}
+    for row in rows("""SELECT m.symbol,m.entry_client_id,m.entered_at FROM ac_managed m
+         WHERE m.account_id=?""",(snapshot["account"]["id"],)):
+        if row["symbol"] in current:
+            continue
+        sold=one("""SELECT 1 FROM ac_intents WHERE account_id=? AND symbol=?
+            AND side='sell' AND state='ACKNOWLEDGED' AND broker_status='filled'
+            AND created_at>=? LIMIT 1""",
+            (snapshot["account"]["id"],row["symbol"],row["entered_at"]))
+        rejected=one("""SELECT 1 FROM ac_intents WHERE client_id=?
+             AND broker_status IN ('canceled','expired','rejected') LIMIT 1""",
+            (row["entry_client_id"],))
+        if sold or rejected:
+            with connect() as c:
+                c.execute("DELETE FROM ac_managed WHERE symbol=? AND entry_client_id=?",
+                          (row["symbol"],row["entry_client_id"]))
+
+
 def _canonical(symbol):
     if not isinstance(symbol,str):
         raise CryptoPaperError('crypto_broker_symbol_invalid')
@@ -323,6 +364,7 @@ def run_paper_cycle(data,now=None):
                        (utc(),json.dumps(summary),json.dumps(positions),len(snapshot["orders"])))
                 if not enabled():
                     return "read_only_dedicated_paper_account"
+                refresh_known_orders(client,snapshot)
                 if not reconcile(client):
                     return "unresolved_order_intents_block_trading"
                 pos=_owned(snapshot)
