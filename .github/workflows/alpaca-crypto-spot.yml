@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/alpaca-crypto-spot-paper-v1
+      - feature/stockswatch-adaptive-profit-lock-oco
   workflow_dispatch:
 
 permissions:
