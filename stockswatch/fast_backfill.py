@@ -125,3 +125,42 @@ def step(data, now):
         # rate limit cannot be recorded as a completed group.
         pass
     return backfill.step(data,now)
+
+def progress_summary():
+    """Read-only progress for the authenticated frontend; never blends legacy and archive counts."""
+    from datetime import timezone
+    now = datetime.now(timezone.utc)
+    groups = storage.rows("""SELECT timeframe,feed,state,COUNT(*) AS jobs
+         FROM sw_history_jobs GROUP BY timeframe,feed,state
+         ORDER BY timeframe,feed,state""")
+    archived = storage.rows("""SELECT timeframe,feed,COUNT(*) AS bars,
+         COUNT(DISTINCT symbol) AS symbols FROM sw_historical_bars
+         GROUP BY timeframe,feed ORDER BY timeframe,feed""")
+    states = {}
+    for group in groups:
+        states[group['state']] = states.get(group['state'], 0) + group['jobs']
+    total = sum(states.values())
+    recent = storage.one("""SELECT MAX(updated_at) AS at FROM sw_history_jobs
+         WHERE updated_at IS NOT NULL""") or {}
+    errors = storage.rows("""SELECT symbol,timeframe,feed,error,attempts
+         FROM sw_history_jobs WHERE state='ERROR' ORDER BY updated_at DESC LIMIT 12""")
+    verify = storage.one("""SELECT COUNT(*) AS n FROM sw_asset_verification
+         WHERE json_extract(evidence,'$.verified')=1""") or {}
+    return {
+        'as_of': now.isoformat(),
+        'universe': 52,
+        'jobs_total': total,
+        'jobs_completed': states.get('COMPLETE',0),
+        'jobs_pending': states.get('PENDING',0),
+        'jobs_running': states.get('RUNNING',0),
+        'jobs_retry': states.get('RETRY',0),
+        'jobs_error': states.get('ERROR',0),
+        'job_breakdown': groups,
+        'historical_archive': archived,
+        'verified_assets': verify.get('n',0),
+        'last_job_activity': recent.get('at'),
+        'recent_errors': errors,
+        'worker_interval_seconds': interval_seconds(),
+        'read_only': True,
+        'note': 'New historical archive only; legacy EOD bars are tracked separately',
+    }
