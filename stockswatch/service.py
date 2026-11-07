@@ -130,12 +130,11 @@ class Service:
     async def crypto_loop(self):
         """Independent 24/7 crypto market research. Paper submission separately gated."""
         from . import alpaca_crypto as ac, alpaca_crypto_paper as ap
-        import contextlib
         next_queue = None
         next_asset_check = None
         next_signal = None
         try:
-            with contextlib.closing(ac.CryptoData()) as data:
+            with ac.CryptoData() as data:
                 while not self.broker_stop.is_set():
                     now = datetime.now(timezone.utc)
                     try:
