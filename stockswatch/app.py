@@ -16,7 +16,7 @@ from .storage import connect, init, init_execution, one, rows, setting, utc, wor
 from .ledger import EXECUTION_MODE, mark_to_market, outcome
 from .alpaca_paper import PaperError, broker_mode, broker_init, enrich_dashboard, broker_status, set_broker_paused
 from .service import Service, daily_refresh_due
-from . import intraday_store, backfill
+from . import intraday_store, backfill, alpaca_crypto
 from .observer import init_journal, scanner_snapshot, EXPORT_TABLES, export_jsonl
 
 logging.basicConfig(level=os.getenv("STOCKSWATCH_LOG_LEVEL", "INFO"))
@@ -35,6 +35,7 @@ async def lifespan(app):
             broker_init()
         intraday_store.initialize()
         backfill.initialize()
+        alpaca_crypto.initialize()
         service.start()
         try:
             yield
@@ -263,6 +264,24 @@ def universe():
 def backfill_progress():
     from .fast_backfill import progress_summary
     return progress_summary()
+
+@app.get("/api/stockswatch/alpaca-crypto", dependencies=[Depends(authenticated)])
+def alpaca_crypto_dashboard():
+    return alpaca_crypto.dashboard()
+
+
+class CryptoControl(BaseModel):
+    action: Literal["pause", "resume"]
+
+
+@app.post("/api/stockswatch/alpaca-crypto/control", dependencies=[Depends(authenticated)])
+def alpaca_crypto_control(body: CryptoControl):
+    from .alpaca_crypto_paper import set_paused, CryptoPaperError
+    try:
+        return set_paused(body.action == "pause")
+    except CryptoPaperError as exc:
+        raise HTTPException(409, detail=str(exc)) from None
+
 
 
 @app.get('/api/stockswatch/scanner', dependencies=[Depends(authenticated)])
