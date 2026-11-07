@@ -265,6 +265,11 @@ def backfill_progress():
     from .fast_backfill import progress_summary
     return progress_summary()
 
+@app.get("/api/stockswatch/profit-protection", dependencies=[Depends(authenticated)])
+def profit_protection():
+    from .profit_oco import report
+    return report()
+
 @app.get("/api/stockswatch/alpaca-crypto", dependencies=[Depends(authenticated)])
 def alpaca_crypto_dashboard():
     return alpaca_crypto.dashboard()
