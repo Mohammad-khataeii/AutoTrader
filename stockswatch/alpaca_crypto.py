@@ -169,6 +169,10 @@ class CryptoData:
             if not isinstance(bar,dict):
                 raise CryptoDataError("crypto_data_row_invalid")
             stamp=_stamp(bar.get("t"))
+            # Alpaca may publish the currently forming bar. Never ingest
+            # anything at or beyond the last completed UTC bucket.
+            if stamp >= _floor(datetime.now(UTC),job["timeframe"]):
+                continue
             if not _stamp(job["start_at"]) <= stamp <= _stamp(job["end_at"]) or (last and stamp <= last):
                 raise CryptoDataError("crypto_data_outside_window_or_order")
             last=stamp
