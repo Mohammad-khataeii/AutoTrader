@@ -124,3 +124,32 @@ def test_disarmed_by_default(monkeypatch,tmp_path):
     assert profit_oco.armed() is False
     monkeypatch.setenv("STOCKSWATCH_PROTECTION_ALLOW_PAPER_ORDERS","1")
     assert profit_oco.armed() is True
+
+
+def test_adoption_of_already_profitable_stock_starts_with_raised_stop(monkeypatch,tmp_path):
+    _setup(monkeypatch,tmp_path)
+    client=FakeClient()
+    # 40 shares at $100; ATR<1 -> initial risk $3/share and $300 TP.
+    plan=profit_lock.initial("100","40","0.48")
+    assert str((plan.target-plan.entry)*plan.qty)=="300.00"
+    bid=D("106.25")  # current open gain $250 out of $300
+    result=profit_oco._create(client,"account-1",{"symbol":"AAPL","qty":"40"},
+                            plan,"swp2-entry",datetime.now(UTC),bid)
+    assert result.startswith("oco_submitted")
+    payload=client.orders[0][2]
+    locked=D(payload["stop_loss"]["stop_price"])
+    assert (locked-plan.entry)*plan.qty>=D("150")
+    assert locked>plan.initial_stop
+    assert locked<bid
+    saved=profit_oco._saved("account-1","AAPL")
+    assert D(saved["current_stop"])==locked
+
+
+def test_near_target_is_rejected_instead_of_extending_tp(monkeypatch,tmp_path):
+    _setup(monkeypatch,tmp_path)
+    client=FakeClient()
+    plan=profit_lock.initial(100,10,2)
+    with pytest.raises(profit_oco.ProtectionError,match="near_or_beyond_tp"):
+        profit_oco._create(client,"account-1",{"symbol":"AAPL","qty":"10"},
+                           plan,"swp2-entry",datetime.now(UTC),D("112.49"))
+    assert client.orders==[]
