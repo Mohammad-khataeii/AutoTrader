@@ -801,7 +801,7 @@ def _entry_budget(snapshot, sectors, sector, active, known):
 
     reserved_symbols = set()
     from .profit_oco import recognized_order_ids
-    protection_orders=recognized_order_ids(account["id"])
+    protection_orders=recognized_order_ids(account.get("id"))
     for order in active:
         sym = order.get("symbol")
         if (
