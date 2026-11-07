@@ -63,6 +63,10 @@ CREATE TABLE IF NOT EXISTS ac_intents (
  qty TEXT, notional TEXT, reason TEXT NOT NULL, last_checked TEXT,
  CHECK(side IN ('buy','sell')));
 CREATE INDEX IF NOT EXISTS ac_intents_by_symbol ON ac_intents(symbol, created_at DESC);
+CREATE TABLE IF NOT EXISTS ac_broker_snapshot (
+ id INTEGER PRIMARY KEY CHECK(id=1), observed_at TEXT NOT NULL,
+ account_json TEXT NOT NULL, positions_json TEXT NOT NULL,
+ open_order_count INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS ac_managed (
  symbol TEXT PRIMARY KEY, account_id TEXT NOT NULL,
  entry_client_id TEXT NOT NULL, stop TEXT NOT NULL, target TEXT NOT NULL,
@@ -359,6 +363,7 @@ def dashboard():
     intents=rows("""SELECT client_id,symbol,side,created_at,state,broker_status,qty,notional,reason
         FROM ac_intents ORDER BY created_at DESC LIMIT 30""")
     managed=rows("SELECT symbol,stop,target,entered_at FROM ac_managed")
+    broker=one("SELECT * FROM ac_broker_snapshot WHERE id=1")
     return {
       "mode":"ALPACA_CRYPTO_SPOT_PAPER","short_supported":False,"margin_supported":False,
       "currency":"USD","location":LOCATION,"bars_are_quote_midpoints":True,
@@ -367,6 +372,10 @@ def dashboard():
       "broker_account_verified":bool(state.get("configured_account")),
       "last_cycle":state.get("last_cycle"),"last_error":state.get("last_error"),
       "assets":latest,"history_jobs":jobs,"history_bars":bars,
+      "broker_snapshot": {"observed_at":broker["observed_at"],
+        "account":json.loads(broker["account_json"]),
+        "positions":json.loads(broker["positions_json"]),
+        "open_order_count":broker["open_order_count"]} if broker else None,
       "signals":signals,"intents":intents,"managed":managed,
       "legacy_crypto_source_preserved":True,
       "disclaimer":"Historical bars are midpoint quotes, not executable prices. Orders use a separate Alpaca paper account; short selling is unsupported.",
