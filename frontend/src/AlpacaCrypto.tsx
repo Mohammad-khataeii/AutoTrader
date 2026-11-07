@@ -17,6 +17,9 @@ export function AlpacaCrypto(){
  const [working,setWorking]=useState(false);
  const [notice,setNotice]=useState("");
  const d:Row=response.data??{};
+ const paper:Row=d.broker_snapshot??{};
+ const account:Row=paper.account??{};
+ const holdings:Row[]=Array.isArray(paper.positions)?paper.positions:[];
  const assets:Row[]=Array.isArray(d.assets)?d.assets:[];
  const signals:Row[]=Array.isArray(d.signals)?d.signals:[];
  const managed:Row[]=Array.isArray(d.managed)?d.managed:[];
@@ -51,7 +54,7 @@ export function AlpacaCrypto(){
    <article><Database size={18}/><small>Downloaded historical bars</small><b>{fmt(historyBars.reduce((sum,r)=>sum+n(r.n),0))}</b></article>
    <article><BarChart3 size={18}/><small>Backfill jobs</small><b>{fmt(completed)} / {fmt(total)}</b></article>
    <article><ShieldCheck size={18}/><small>Eligible broker pairs</small><b>{fmt(assets.filter(a=>a.eligible===1).length)} / 10</b></article>
-   <article><Wallet size={18}/><small>Managed spot positions</small><b>{fmt(managed.length)}</b></article>
+   <article><Wallet size={18}/><small>Crypto Paper equity</small><b>{account.equity==null?"Not linked":price(account.equity)}</b></article>
   </section>
   <section className="ac-panel">
    <div className="ac-heading"><div><h3>History and execution gates</h3><p>Data collection is separate from order authorization and risk checks.</p></div><button onClick={()=>void api.refresh("/api/stockswatch/alpaca-crypto")}><RefreshCcw size={15}/> Refresh</button></div>
@@ -68,11 +71,16 @@ export function AlpacaCrypto(){
    </div>
    {d.last_error&&<p className="ac-warning">Last diagnostic: {String(d.last_error)}</p>}
    {notice&&<p role="status" className="ac-note">{notice}</p>}
+   {paper.observed_at&&<p className="ac-footnote">Separate broker account refreshed {when(paper.observed_at)} · Open broker orders: {fmt(paper.open_order_count)}</p>}
   </section>
   <section className="ac-panel">
    <div className="ac-heading"><div><h3>Spot market scanner</h3><p>Completed hourly breakout and daily regime checks. No guarantee of profit.</p></div><input aria-label="Filter crypto pairs" placeholder="Search BTC, ETH…" value={filter} onChange={e=>setFilter(e.target.value)}/></div>
    <div className="ac-table-scroll"><table><thead><tr><th>Pair</th><th>Data eligibility</th><th>Last hourly bar</th><th>Action</th><th>Latest evidence</th><th>Price (USD)</th><th>Software stop</th><th>Target</th></tr></thead>
    <tbody>{rows.map(({symbol,asset,signal,managed})=><tr key={symbol}><td><strong>{symbol}</strong>{managed&&<span className="ac-owned"> OWNED</span>}</td><td>{asset.eligible===1?"Verified":asset.reason||"Pending"}</td><td>{when(asset.latest_hour)}</td><td><span className={`ac-action ac-${String(signal.action||"WAIT").toLowerCase()}`}>{signal.action||"WAIT"}</span></td><td>{signal.reason||"Awaiting completed history"}</td><td>{price(signal.price)}</td><td>{price(managed?.stop??signal.stop)}</td><td>{price(managed?.target??signal.target)}</td></tr>)}</tbody></table></div>
+  </section>
+  <section className="ac-panel">
+   <div className="ac-heading"><div><h3>Dedicated Alpaca Paper holdings</h3><p>Broker-reported holdings and unrealized P&amp;L; not reconstructed from midpoint bars.</p></div></div>
+   <div className="ac-table-scroll"><table><thead><tr><th>Pair</th><th>Side</th><th>Quantity</th><th>Market value</th><th>Unrealized P&amp;L</th></tr></thead><tbody>{holdings.length?holdings.map((x,i)=><tr key={x.symbol??i}><td>{x.symbol}</td><td>{x.side}</td><td>{x.qty}</td><td>{price(x.market_value)}</td><td>{price(x.unrealized_pl)}</td></tr>):<tr><td colSpan={5} className="ac-empty">No verified crypto holdings in the dedicated paper account.</td></tr>}</tbody></table></div>
   </section>
   <section className="ac-panel">
    <div className="ac-heading"><div><h3>Broker order journal</h3><p>Only AlpacaCrypto-owned paper intents; never the stock or legacy crypto ledger.</p></div></div>
