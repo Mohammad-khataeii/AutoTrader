@@ -125,6 +125,7 @@ class Service:
     async def history_loop(self):
         from .alpaca_paper import PaperClient, PaperError
         from .intraday_market import IntradayData, ObservationError
+        from . import fast_backfill
         import contextlib
 
         queued=None
@@ -148,11 +149,11 @@ class Service:
                                 await asyncio.to_thread(assets)
                             except (PaperError,ObservationError) as exc:
                                 log.info("StocksWatch asset verification %s",str(exc))
-                        await asyncio.to_thread(backfill.step,data,now)
+                        await asyncio.to_thread(fast_backfill.step,data,now)
                     except Exception as exc:
                         log.warning("StocksWatch historical ingestion deferred: %s",type(exc).__name__)
                     try:
-                        await asyncio.wait_for(self.broker_stop.wait(),timeout=120)
+                        await asyncio.wait_for(self.broker_stop.wait(),timeout=fast_backfill.interval_seconds())
                     except TimeoutError:
                         pass
         except RuntimeError as exc:
