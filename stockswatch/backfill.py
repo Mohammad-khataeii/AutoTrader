@@ -214,11 +214,15 @@ def _bars(job, values, now):
 def step(data, now):
     # Alternate fresh-day partitions with daily research, while giving retries
     # time to cool off. One safe request/page per worker tick except daily actions.
+    readiness_cutoff = (date.fromisoformat(completed_day(now)) - timedelta(days=390)).isoformat()
     job = storage.one(
         """SELECT * FROM sw_history_jobs WHERE state IN ('PENDING','RUNNING','RETRY')
         AND (state!='RETRY' OR updated_at IS NULL OR updated_at<?)
-        ORDER BY CASE WHEN state='RUNNING' THEN 0 ELSE 1 END, end_at DESC,symbol LIMIT 1""",
-        ((now - timedelta(minutes=5)).isoformat(),),
+        ORDER BY CASE WHEN state='RUNNING' THEN 0
+                      WHEN timeframe='1Day' AND substr(end_at,1,10)>=? THEN 1
+                      WHEN timeframe='1Min' THEN 2 ELSE 3 END,
+                 end_at DESC,symbol LIMIT 1""",
+        ((now - timedelta(minutes=5)).isoformat(), readiness_cutoff),
     )
     if not job:
         return False
