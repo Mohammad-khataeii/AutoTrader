@@ -422,6 +422,13 @@ def cycle(client,snapshot,now=None,data=None):
 
 def recognized_order_ids(account_id):
     """Known OCO parent/child IDs, used solely for non-entry cash accounting."""
+    from . import storage
+    # Offline budget-unit tests and first-boot accounts may not yet have a
+    # protection table; never create the financial DB just to classify an order.
+    if not account_id or not os.path.isfile(storage.DB_PATH):
+        return set()
+    if not one("SELECT 1 AS ok FROM sqlite_master WHERE type='table' AND name='sw_protection'"):
+        return set()
     result=set()
     for r in rows("""SELECT root_order_id,stop_leg_id FROM sw_protection
          WHERE account_id=? AND state IN ('ACTIVE','REPLACE_PENDING')""",(account_id,)):
