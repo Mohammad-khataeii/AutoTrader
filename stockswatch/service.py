@@ -153,15 +153,25 @@ class Service:
                                 except ap.CryptoPaperError as exc:
                                     log.warning("AlpacaCrypto asset verification deferred: %s", str(exc))
                             next_asset_check = now + timedelta(hours=6)
-                        await asyncio.to_thread(ac.backfill_step, data, now)
+                        # Data backfill and quote refresh must not block broker
+                        # reconciliation or protective exits if they fail.
+                        try:
+                            await asyncio.to_thread(ac.backfill_step, data, now)
+                        except Exception as exc:
+                            log.warning("AlpacaCrypto backfill step deferred: %s",type(exc).__name__)
                         if next_refresh is None or now >= next_refresh:
-                            await asyncio.to_thread(ac.refresh_recent_hourly,data,now)
-                            next_refresh = now + timedelta(minutes=10)
+                            try:
+                                await asyncio.to_thread(ac.refresh_recent_hourly,data,now)
+                                next_refresh = now + timedelta(minutes=10)
+                            except Exception as exc:
+                                log.warning("AlpacaCrypto recent bars deferred: %s",type(exc).__name__)
                         if next_signal is None or now >= next_signal:
-                            await asyncio.to_thread(ac.scan, now)
-                            next_signal = now + timedelta(minutes=10)
-                        # Even after stopping history ingestion, account and stop
-                        # monitoring are kept independent of the equities clock.
+                            try:
+                                await asyncio.to_thread(ac.scan, now)
+                                next_signal = now + timedelta(minutes=10)
+                            except Exception as exc:
+                                log.warning("AlpacaCrypto signal scan deferred: %s",type(exc).__name__)
+                        # A fresh broker check still runs even if history fails.
                         await asyncio.to_thread(ap.run_paper_cycle, data, now)
                     except ac.CryptoDataError as exc:
                         log.warning("AlpacaCrypto data collection deferred: %s", str(exc))
