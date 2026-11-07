@@ -24,7 +24,9 @@ jobs:
       - name: Python compilation
         run: python -m compileall -q stockswatch
       - name: StocksWatch and AlpacaCrypto regression suite
-        run: pytest -q tests/stockswatch
+        env:
+          PYTHONPATH: .
+        run: python -m pytest -q tests/stockswatch
 
   frontend:
     runs-on: ubuntu-latest
