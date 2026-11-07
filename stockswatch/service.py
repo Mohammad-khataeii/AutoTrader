@@ -133,6 +133,7 @@ class Service:
         next_queue = None
         next_asset_check = None
         next_signal = None
+        next_refresh = None
         try:
             with ac.CryptoData() as data:
                 while not self.broker_stop.is_set():
@@ -153,6 +154,9 @@ class Service:
                                     log.warning("AlpacaCrypto asset verification deferred: %s", str(exc))
                             next_asset_check = now + timedelta(hours=6)
                         await asyncio.to_thread(ac.backfill_step, data, now)
+                        if next_refresh is None or now >= next_refresh:
+                            await asyncio.to_thread(ac.refresh_recent_hourly,data,now)
+                            next_refresh = now + timedelta(minutes=10)
                         if next_signal is None or now >= next_signal:
                             await asyncio.to_thread(ac.scan, now)
                             next_signal = now + timedelta(minutes=10)
