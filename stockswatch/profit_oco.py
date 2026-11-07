@@ -325,17 +325,18 @@ def cycle(client,snapshot,now=None,data=None):
     nested=None
     core=phase_at(now).name=="CORE"
     managed={r["symbol"]:r for r in rows("SELECT * FROM sw_protection WHERE account_id=?",(account,))}
-    if any(r["state"] in ("UNKNOWN","REPLACE_UNCERTAIN","UNVERIFIED") for r in managed.values()):
-        # Continue showing the last evidence, but do not submit new unrelated
-        # protection orders until the ambiguous broker situation is resolved.
+    uncertain_book=any(r["state"] in ("UNKNOWN","REPLACE_UNCERTAIN","UNVERIFIED") for r in managed.values())
+    if uncertain_book:
+        # Continue showing evidence, but do not submit new OCO orders or
+        # replacements while an ambiguous broker mutation needs review.
         enabled=False
-    if enabled and core and not paused and data is None:
+    if enabled and core and data is None:
         data=IntradayData(background=True)
         close_data=True
     else:
         close_data=False
     try:
-        if enabled and core and not paused:
+        if enabled and core:
             nested=_nested(client,account)
         for p in snapshot["positions"]:
             if p.get("side")!="long" or p.get("asset_class")!="us_equity":
@@ -345,10 +346,25 @@ def cycle(client,snapshot,now=None,data=None):
                 continue
             saved=managed.get(sym)
             try:
-                if not paper._position_owned(p,snapshot["fills"],account):
+                if saved and nested is not None:
+                    # Verify OCO parent and actual stop leg *before* treating
+                    # shares reserved by our exit orders as available.
+                    reason=_sync(client,saved,nested)
+                    saved=_saved(account,sym)
+                if saved and saved["state"]=="ACTIVE":
+                    owned_ids={saved["root_order_id"],saved["stop_leg_id"]}
+                    same=[o for o in snapshot["open_orders"] if o.get("symbol")==sym]
+                    if not same or any(o.get("id") not in owned_ids for o in same):
+                        raise ProtectionError("protection_oco_inventory_conflict")
+                    # Broker qty_available can be reduced by OUR protective OCO.
+                    # Exact fill quantities and origin remain proven separately.
+                    owner_pos={**p,"qty_available":p["qty"]}
+                else:
+                    owner_pos=p
+                    if paper.money(p.get("qty_available"))!=paper.money(p.get("qty")):
+                        raise ProtectionError("protection_position_qty_not_fully_available")
+                if not paper._position_owned(owner_pos,snapshot["fills"],account):
                     raise ProtectionError("protection_position_not_eod_owned")
-                if paper.money(p.get("qty_available"))!=paper.money(p.get("qty")):
-                    raise ProtectionError("protection_position_qty_not_fully_available")
                 entry_cid=_entry_id(account,sym)
                 if saved and saved["entry_client_id"]!=entry_cid:
                     raise ProtectionError("protection_position_entry_changed")
@@ -361,10 +377,8 @@ def cycle(client,snapshot,now=None,data=None):
                               profit_lock.decimal(p["avg_entry_price"])!=plan.entry):
                     raise ProtectionError("protection_position_reconciled_qty_or_basis_changed")
                 reason="observe_only_disabled_or_paused"
-                if enabled and core and not paused:
+                if enabled and core:
                     if saved:
-                        reason=_sync(client,saved,nested)
-                        saved=_saved(account,sym)
                         if saved["state"]=="ACTIVE":
                             bid,qt=_find_live_quote(data,sym,now)
                             root=next(x for x in nested if x.get("client_order_id")==saved["client_id"])
@@ -373,7 +387,7 @@ def cycle(client,snapshot,now=None,data=None):
                             if outcome.startswith("stop_replace_requested"):
                                 changed=True
                             reason=outcome
-                    else:
+                    elif not paused:
                         if any(o.get("symbol")==sym for o in snapshot["open_orders"]):
                             raise ProtectionError("protection_competing_open_order")
                         bid,qt=_find_live_quote(data,sym,now)
@@ -381,6 +395,8 @@ def cycle(client,snapshot,now=None,data=None):
                         if reason.startswith("oco_submitted"):
                             changed=True
                         saved=_saved(account,sym)
+                    else:
+                        reason="new_oco_paused_but_existing_stops_remain_active"
                 outcomes.append(_snapshot_position(report,saved,p,plan,reason))
             except Exception as exc:
                 label=str(exc) if isinstance(exc,(ProtectionError,ValueError)) else type(exc).__name__
@@ -397,7 +413,7 @@ def cycle(client,snapshot,now=None,data=None):
             data.close()
     output={"status":"OBSERVING" if not enabled else "PAPER_OCO_MONITORING",
             "positions":outcomes,"changed":changed,"at":utc(),
-            "paper_orders_enabled":bool(enabled and not paused),
+            "paper_orders_enabled":bool(enabled),"new_protection_paused":bool(paused),
             "broker_only":"paper-api.alpaca.markets"}
     with _lock:
         _last=output
@@ -408,7 +424,6 @@ def recognized_order_ids(account_id):
     """Known OCO parent/child IDs, used solely for non-entry cash accounting."""
     result=set()
     for r in rows("""SELECT root_order_id,stop_leg_id FROM sw_protection
-         WHERE account_id=? AND state IN ('ACKNOWLEDGED','ACTIVE','REPLACE_PENDING',
-                                            'REPLACE_UNCERTAIN','UNVERIFIED')""",(account_id,)):
+         WHERE account_id=? AND state IN ('ACTIVE','REPLACE_PENDING')""",(account_id,)):
         result.update(x for x in (r["root_order_id"],r["stop_leg_id"]) if x)
     return result
