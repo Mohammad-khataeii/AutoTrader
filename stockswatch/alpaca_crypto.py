@@ -211,21 +211,47 @@ def _floor(now,tf):
 
 
 def queue(now):
-    """Idempotent bounded history partitions; no future or unfinished UTC bars."""
+    """Stable monthly daily / weekly hourly checkpoints, with bounded new tails."""
     now=now.astimezone(UTC)
     jobs=[]
     for tf in TIMEFRAMES:
         end=_floor(now,tf)
-        first=_floor(end-BACKFILL_START[tf],tf)
-        cursor=first
-        while cursor < end:
-            next_at=min(cursor+PERIOD[tf],end)
+        oldest=end-BACKFILL_START[tf]
+        if tf=="1Day":
+            cursor=oldest.replace(day=1,hour=0,minute=0,second=0,microsecond=0)
+        else:
+            cursor=_floor(oldest,"1Day")-timedelta(days=oldest.weekday())
+        while cursor<end:
+            if tf=="1Day":
+                following=(cursor.replace(day=28)+timedelta(days=4)).replace(day=1)
+            else:
+                following=cursor+timedelta(days=7)
+            next_at=min(following,end)
             for pair in PAIRS:
                 jobs.append((pair,tf,cursor.isoformat(),next_at.isoformat()))
             cursor=next_at
     with connect() as c:
         c.executemany("""INSERT OR IGNORE INTO ac_jobs
             (symbol,timeframe,start_at,end_at,state) VALUES(?,?,?,?,'PENDING')""",jobs)
+
+
+def refresh_recent_hourly(data,now):
+    """Refresh just-completed hourly candles, independent of deep backfill progress."""
+    end=_floor(now,"1Hour")
+    start=end-timedelta(hours=5)
+    batch=[]
+    for symbol in PAIRS:
+        job={"symbol":symbol,"timeframe":"1Hour","start_at":start.isoformat(),
+             "end_at":end.isoformat(),"token":None}
+        values,token=data.bars(job)
+        if token:
+            raise CryptoDataError("crypto_recent_hourly_pagination_unverified")
+        batch.extend(values)
+    with connect() as c:
+        c.execute("BEGIN IMMEDIATE")
+        c.executemany("INSERT OR IGNORE INTO ac_bars VALUES(?,?,?,?,?,?,?,?,?,?)",batch)
+        c.commit()
+    return len(batch)
 
 
 def backfill_step(data,now):
