@@ -92,6 +92,7 @@ class Service:
         self.broker_task = None
         self.intraday_task = None
         self.history_task = None
+        self.crypto_task = None
         self.intraday = IntradayEngine()
         self.broker_stop = asyncio.Event()
         self.broker_result = {'status': 'STARTING'}
@@ -102,6 +103,8 @@ class Service:
         self.task=asyncio.create_task(self.loop(),name='stockswatch-eod-worker')
         self.broker_stop.clear()
         self.intraday_task = asyncio.create_task(self.intraday_loop(), name="stockswatch-intraday")
+        if os.getenv("ALPACA_CRYPTO_ENABLED","1")=="1":
+            self.crypto_task = asyncio.create_task(self.crypto_loop(), name="alpaca-crypto-history")
         if broker_mode():
             if os.getenv("STOCKSWATCH_HISTORY_BACKGROUND","1")=="1":
                 self.history_task=asyncio.create_task(self.history_loop(),name="stockswatch-history")
@@ -120,7 +123,53 @@ class Service:
             await self.intraday_task
         if self.history_task:
             await self.history_task
+        if self.crypto_task:
+            await self.crypto_task
         self.intraday.close()
+
+    async def crypto_loop(self):
+        """Independent 24/7 crypto market research. Paper submission separately gated."""
+        from . import alpaca_crypto as ac, alpaca_crypto_paper as ap
+        import contextlib
+        next_queue = None
+        next_asset_check = None
+        next_signal = None
+        try:
+            with contextlib.closing(ac.CryptoData()) as data:
+                while not self.broker_stop.is_set():
+                    now = datetime.now(timezone.utc)
+                    try:
+                        if next_queue is None or now >= next_queue:
+                            await asyncio.to_thread(ac.queue, now)
+                            next_queue = now + timedelta(hours=6)
+                        if next_asset_check is None or now >= next_asset_check:
+                            if os.getenv("ALPACA_CRYPTO_PAPER_KEY") and os.getenv("ALPACA_CRYPTO_PAPER_SECRET"):
+                                def verify():
+                                    with ap.CryptoPaperClient() as broker:
+                                        broker.account()
+                                        return ap.verify_assets(broker)
+                                try:
+                                    await asyncio.to_thread(verify)
+                                except ap.CryptoPaperError as exc:
+                                    log.warning("AlpacaCrypto asset verification deferred: %s", str(exc))
+                            next_asset_check = now + timedelta(hours=6)
+                        await asyncio.to_thread(ac.backfill_step, data, now)
+                        if next_signal is None or now >= next_signal:
+                            await asyncio.to_thread(ac.scan, now)
+                            next_signal = now + timedelta(minutes=10)
+                        # Even after stopping history ingestion, account and stop
+                        # monitoring are kept independent of the equities clock.
+                        await asyncio.to_thread(ap.run_paper_cycle, data, now)
+                    except ac.CryptoDataError as exc:
+                        log.warning("AlpacaCrypto data collection deferred: %s", str(exc))
+                    except Exception as exc:
+                        log.warning("AlpacaCrypto worker unexpected failure: %s", type(exc).__name__)
+                    try:
+                        await asyncio.wait_for(self.broker_stop.wait(),timeout=60)
+                    except TimeoutError:
+                        pass
+        except ac.CryptoDataError as exc:
+            log.warning("AlpacaCrypto waiting for data credentials: %s", str(exc))
 
     async def history_loop(self):
         from .alpaca_paper import PaperClient, PaperError
