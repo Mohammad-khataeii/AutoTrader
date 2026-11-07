@@ -4,6 +4,7 @@ import { Activity, ArrowDownRight, ArrowUpRight, BarChart3, BrainCircuit, Databa
 import { ResponsiveContainer, AreaChart, Area, Line, CartesianGrid, Tooltip, XAxis, YAxis, Legend } from "recharts";
 import { useApi, useResource } from "./api";
 import { ScannerMonitor } from "./ScannerMonitor";
+import { StocksWatchProtection } from "./StocksWatchProtection";
 import "./StocksWatch.css";
 
 type Row = Record<string, any>;
@@ -29,7 +30,7 @@ export function StocksWatch(){
  const api = useApi();
  const resource=useResource("/api/stockswatch/dashboard",{poll:30000});
  const health=useResource("/api/stockswatch/status",{poll:30000});
- const [tab,setTab]=useState<"Signals"|"Portfolio"|"Research"|"Catalysts">("Signals");
+ const [tab,setTab]=useState<"Signals"|"Portfolio"|"Protection"|"Research"|"Catalysts">("Signals");
  const [busy,setBusy]=useState(false);
  const [notice,setNotice]=useState("");
  const [ticker,setTicker]=useState("");
@@ -117,7 +118,7 @@ export function StocksWatch(){
    </article>
   </section>
   <section className="sw-nav" role="tablist" aria-label="StocksWatch details">
-   {(["Signals","Portfolio","Research","Catalysts"] as const).map(t=><button key={t} role="tab" aria-selected={tab===t} className={tab===t?"active":""} onClick={()=>setTab(t)}>{t}</button>)}
+   {(["Signals","Portfolio","Protection","Research","Catalysts"] as const).map(t=><button key={t} role="tab" aria-selected={tab===t} className={tab===t?"active":""} onClick={()=>setTab(t)}>{t}</button>)}
    <button className="sw-refresh" title="Refresh StocksWatch data" onClick={()=>{void api.refresh("/api/stockswatch/dashboard");void api.refresh("/api/stockswatch/status");}}><RefreshCw size={15}/></button>
   </section>
   {tab==="Signals" && <div className="sw-detail-grid"><article className="sw-panel sw-span2"><div className="sw-panel-top"><Header icon={Flame} title="Ranked market candidates" note="Deterministic multi-strategy score; only completed daily observations"/><input aria-label="Filter stocks" placeholder="Search ticker, company or sector" value={ticker} onChange={e=>setTicker(e.target.value)}/></div>
@@ -126,7 +127,8 @@ export function StocksWatch(){
      {gates.length ? gates.map(s=><div className="sw-reason" key={s.symbol}><b>{s.symbol} · {s.action}</b><p>{val(s.reason).replace(/_/g," ")} · observed {fromUTC(s.observed_at)}</p></div>)
        : <Blank text="No execution gate observations for this filter."/>}
    </details></article></div>}
-  {tab==="Portfolio" && <div className="sw-detail-grid"><article className="sw-panel"><Header icon={Wallet} title={isBroker?"Alpaca paper positions":"Open virtual positions"} note={isBroker?"Broker marks and direction · strategy-owned software exits":"Position-level P&L and EOD stop reference"}/>{positions.length ? positions.map(p=><div className="sw-position" key={p.symbol}><div><b>{p.symbol} · {p.direction ?? "LONG"}</b><small>{p.sector} · {Math.abs(n(p.qty))} shares · entry {cash(p.avg_cost)}</small></div><div><b className={n(p.unrealized)>=0?"sw-up":"sw-down"}>{p.unrealized==null?"—":cash(p.unrealized)}{isBroker&&p.unrealized_pct!=null?` · ${pct(p.unrealized_pct)}`:""}</b><small>{cash(p.mark)} · gross {cash(p.absolute_exposure ?? Math.abs(n(p.market_value)))}{p.stop!=null?` · Stop ${cash(p.stop)}`:" · No broker stop placed"}</small></div></div>):<Blank text={isBroker?"No Alpaca paper positions are currently open.":"No open stock positions. New orders require validated EOD signals and the next completed session."}/>}</article>
+  {tab==="Protection" && <StocksWatchProtection/>}
+  {tab==="Portfolio" && <div className="sw-detail-grid"><article className="sw-panel"><Header icon={Wallet} title={isBroker?"Alpaca paper positions":"Open virtual positions"} note={isBroker?"Broker positions: verify stop and TP in the Protection tab":"Position-level P&L and EOD stop reference"}/>{positions.length ? positions.map(p=><div className="sw-position" key={p.symbol}><div><b>{p.symbol} · {p.direction ?? "LONG"}</b><small>{p.sector} · {Math.abs(n(p.qty))} shares · entry {cash(p.avg_cost)}</small></div><div><b className={n(p.unrealized)>=0?"sw-up":"sw-down"}>{p.unrealized==null?"—":cash(p.unrealized)}{isBroker&&p.unrealized_pct!=null?` · ${pct(p.unrealized_pct)}`:""}</b><small>{cash(p.mark)} · gross {cash(p.absolute_exposure ?? Math.abs(n(p.market_value)))}{p.stop!=null?` · Stop ${cash(p.stop)}`:" · Verify stop in Protection tab"}</small></div></div>):<Blank text={isBroker?"No Alpaca paper positions are currently open.":"No open stock positions. New orders require validated EOD signals and the next completed session."}/>}</article>
      <article className="sw-panel"><Header icon={Activity} title="Pending paper orders" note={isBroker?"Orders returned by Alpaca Paper Trading API":"Awaiting the next eligible daily observation"}/>
        {(d.pending_orders??[]).map((o:Row)=><div className="sw-position" key={o.id}><div><b>{o.symbol} · {o.side}</b>
          <small>{isBroker?(o.managed?"StocksWatch-tagged · ":"External · "):"Queued "}{fromUTC(o.created_at)} · {elapsed(o.created_at)}{isBroker?` · Filled ${val(o.filled_qty)} / ${val(o.qty)}`:` · Target ${val(o.target_day)}`}</small>
@@ -170,6 +172,6 @@ export function StocksWatch(){
       <p>Earnings surprise study · {val(d.historical_comparison?.event_catalysts)}</p>
       </details>}<details className="sw-disclosure"><summary>Research limitations and model evidence</summary><div className="sw-notes">{(d.research?.warnings??[]).map((w:string,i:number)=><p key={i}>{w}</p>)}<p>Model Brier: {d.ml?.brier??"Not evaluated"}; null Brier: {d.ml?.no_skill_brier??"Not evaluated"}. ML trading authority: disabled.</p></div></details></article></div>}
   {tab==="Catalysts" && <div className="sw-detail-grid"><article className="sw-panel"><Header icon={Newspaper} title="SEC filings & announcements" note="Official source links; timestamps retained for time-of-knowledge controls"/>{(d.filings??[]).length ? (d.filings??[]).map((f:Row,i:number)=><div key={i} className="sw-filing"><span className="sw-mini">{f.form}</span><div><b>{f.symbol}</b><p>{f.description||"Official SEC filing"}</p><small>{fromUTC(f.accepted_at)}</small></div><a href={f.url} target="_blank" rel="noopener noreferrer" title="Open SEC filing"><ExternalLink size={15}/></a></div>):<Blank text="SEC integration requires a contact User-Agent; no filing claims are invented."/>}</article><article className="sw-panel"><Header icon={BrainCircuit} title="AI & macro research" note="AI explanations use sourced SEC evidence only; not trading instructions"/>{(d.ai_insights??[]).length?(d.ai_insights??[]).map((x:Row,i:number)=><div className="sw-ai-note" key={i}><b>{x.symbol} · {x.model}</b><p>{x.analysis?.summary}</p><small>{fromUTC(x.generated_at)} · <a href={x.source_url} target="_blank" rel="noopener noreferrer">Official filing</a></small></div>):<Blank text="AI waits for new official filings and shared Gemini quota. It does not control orders."/>}<div className="sw-macro-title">Current macro observations <small>Not backtest vintages</small></div>{(d.macro??[]).slice(0,6).map((m:Row,i:number)=><div className="sw-intel-row" key={i}><span>{m.series} · {m.observation_day}</span><strong>{m.value}</strong></div>)}<div className="sw-macro-title">Company financial facts <small>Official SEC XBRL · publication dated</small></div>{(d.fundamentals??[]).slice(0,10).map((f:Row,i:number)=><div className="sw-intel-row" key={"fund-"+i}><span>{f.symbol} · {f.tag} · {f.end_day}</span><strong>{f.unit==="USD"?cash(f.value):val(f.value)} <a href={f.source_url} target="_blank" rel="noopener noreferrer" aria-label="Open official SEC company facts"><ExternalLink size={12}/></a></strong></div>)}</article></div>}
-  <footer className="sw-footer"><ShieldAlert size={15}/> {isBroker?"Alpaca Paper Trading uses virtual funds. Software evaluates exits from certified daily prices and submits during the next opening window. Local legacy orders remain separate.":"Paper-only. No broker integration."} Free EOD data may be delayed or corporate-action incomplete. ML remains shadow-only; historical backtests have survivorship bias. <span>Updated {fromUTC(d.updated_at)}</span></footer>
+  <footer className="sw-footer"><ShieldAlert size={15}/> {isBroker?"Alpaca Paper Trading uses virtual funds. EOD signals use broker paper; any verified OCO protection is displayed separately. Profit-trigger levels do not guarantee fills. Local legacy orders remain separate.":"Paper-only. No broker integration."} Free EOD data may be delayed or corporate-action incomplete. ML remains shadow-only; historical backtests have survivorship bias. <span>Updated {fromUTC(d.updated_at)}</span></footer>
  </div>;
 }
