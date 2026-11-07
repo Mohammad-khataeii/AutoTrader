@@ -116,6 +116,8 @@ def orders_enabled():
 def broker_init():
     with connect() as c:
         c.executescript(SCHEMA)
+    from .profit_oco import initialize as init_protection
+    init_protection()
 
 
 def safe_number(value, fallback=0.0):
@@ -798,6 +800,8 @@ def _entry_budget(snapshot, sectors, sector, active, known):
             sector_used+=value
 
     reserved_symbols = set()
+    from .profit_oco import recognized_order_ids
+    protection_orders=recognized_order_ids(account["id"])
     for order in active:
         sym = order.get("symbol")
         if (
@@ -807,7 +811,9 @@ def _entry_budget(snapshot, sectors, sector, active, known):
         ):
             raise PaperError("alpaca_paper_external_or_unclassified_open_order")
         try:
-            action=intent_action(order.get("client_order_id",""),order["side"])
+            action=(Action.SELL_TO_CLOSE_LONG if order.get("id") in protection_orders
+                    and order["side"]=="sell" else
+                    intent_action(order.get("client_order_id",""),order["side"]))
         except ValueError:
             if order.get("client_order_id"):
                 raise PaperError("alpaca_paper_unknown_order_direction") from None
@@ -959,6 +965,8 @@ def _preview_and_submit(client, snapshot, signals, day, now):
             (account_id,),
         )
     }
+    from .profit_oco import recognized_order_ids
+    own_ids.update(recognized_order_ids(account_id))
     active = [{**o, "owned_intent": o.get("id") in own_ids} for o in active]
     today = {r["symbol"] for r in intents}
     buys_today = sum(r["side"] == "BUY" for r in intents)
@@ -1131,6 +1139,19 @@ def _paper_cycle(now=None):
             unresolved = _reconcile(client, account_id, snapshot["open_orders"])
             if unresolved:
                 return {**result, "status": "UNCERTAIN_BROKER_INTENT", "pending_count": unresolved}
+            # Broker-native OCO manager executes before new EOD entries under
+            # the same broker-cycle lock; no competing duplicate sell orders.
+            from . import profit_oco
+            try:
+                protected = profit_oco.cycle(client, snapshot, now)
+            except Exception as exc:
+                log.warning("StocksWatch protection monitor unavailable: %s",type(exc).__name__)
+                return {**result, "status": "PROTECTION_MONITOR_UNAVAILABLE"}
+            if protected.get("changed"):
+                # A newly accepted OCO changes broker open-order inventory.
+                # Never dispatch EOD orders against the stale snapshot.
+                snapshot=client.snapshot()
+                _publish_snapshot(snapshot)
             if real_clock:
                 now = datetime.now(UTC)
             configuration = execution_configuration_gate()
