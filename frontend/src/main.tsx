@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Activity,
@@ -32,10 +32,11 @@ const Opportunities = lazy(() => import("./Opportunities").then(m => ({ default:
 const StrategiesWorkspace = lazy(() => import("./Opportunities").then(m => ({ default: m.StrategiesWorkspace })));
 const Trades = lazy(() => import("./Trades").then(m => ({ default: m.Trades })));
 const Research = lazy(() => import("./Research").then(m => ({ default: m.Research })));
-import { advancedItems } from "./navigation";
+
 const AdvancedScreen = lazy(() => import("./advanced").then(m => ({ default: m.AdvancedScreen })));
 import { AutoGemini } from "./AutoGemini";
 const StocksWatch = lazy(() => import("./StocksWatch").then(m => ({ default: m.StocksWatch })));
+const AlpacaCrypto = lazy(() => import("./AlpacaCrypto").then(m => ({ default: m.AlpacaCrypto })));
 import "./styles.css";
 // Retained public formatter for existing callers; primary screens use localized EUR formatting.
 export function displayMoney(value: unknown): string {
@@ -45,19 +46,13 @@ export function displayMoney(value: unknown): string {
 }
 const navigation = [
   { name: "StocksWatch", icon: TrendingUp },
-  { name: "Dashboard", icon: LayoutDashboard },
-  { name: "Opportunities", icon: Activity },
-  { name: "Strategies", icon: FlaskConical },
-  { name: "Perpetuals", icon: BarChart3 },
-  { name: "Activity", icon: ArrowRightLeft },
-  { name: "Research", icon: BarChart3 },
-  { name: "Decision Insights", icon: Activity },
+  { name: "AlpacaCrypto", icon: Activity },
 ];
 function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
   const api = useApi();
-  const [active, setActive] = useState("Dashboard");
-  const [advanced, setAdvanced] = useState("Official Account Controls");
-  const menu = useRef<HTMLDetailsElement>(null);
+  const [active, setActive] = useState("StocksWatch");
+  const [advanced] = useState("Official Account Controls");
+
   const overview = useResource("/api/overview/summary");
   const system = useResource("/api/monitoring/summary", { poll: 15000 });
   const primary = useResource("/api/personal-paper", { poll: 15000 });
@@ -70,7 +65,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
     Boolean(system.error || overview.error),
   );
   const primaryStatus = primary.error ? "Unavailable" : !primary.data?.portfolio ? "Checking" : primary.data?.reconciliation?.length || primary.data?.portfolio?.risk_state !== "HEALTHY" ? "Needs attention" : primary.data?.portfolio?.control !== "RUNNING" ? "Paused" : primary.data?.state === "PAPER_EXPERIMENTAL_ACTIVE" && primary.data?.worker_health?.fresh ? "Running" : primary.data?.runtime_matches === false ? "Entry suspended" : "Data syncing";
-  const status = active === "Advanced" ? legacyStatus : active === "Perpetuals" || active === "StocksWatch" ? "Paper only" : primaryStatus;
+  const status = active === "Advanced" ? legacyStatus : active === "Perpetuals" || active === "StocksWatch" || active === "AlpacaCrypto" ? "Paper only" : primaryStatus;
   return (
     <div className="app-shell">
       <a className="skip-link" href="#workspace">
@@ -98,27 +93,6 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
           ))}
         </nav>
         <div className="sidebar-footer">
-          <details ref={menu} className="advanced-menu">
-            <summary>
-              <SlidersHorizontal size={17} />
-              <span>Settings</span>
-              <ChevronDown size={14} />
-            </summary>
-            <div className="advanced-options">
-              {advancedItems.map((name) => (
-                <button
-                  key={name}
-                  onClick={() => {
-                    setAdvanced(name);
-                    setActive("Advanced");
-                    if (menu.current) menu.current.open = false;
-                  }}
-                >
-                  {name}
-                </button>
-              ))}
-            </div>
-          </details>
           <p className="build-label" title={backendVersion.fullVersion ? `Backend build ${backendVersion.fullVersion}` : "Backend version unavailable"}>
             Backend {backendVersion.release ? `V${backendVersion.release}` : "version unavailable"} · Simulated Mode
           </p>
@@ -172,7 +146,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
             </button>
           </div>
         </header>
-        {legacyStatus !== "Running" && <details className="legacy-health"><summary>Separate official / legacy account status: {legacyStatus}</summary><p>The €7,000 primary portfolio has its own health checks. Historical shadow runtime incompatibilities suspend their entries independently. Open Settings for the full legacy account diagnostics.</p></details>}
+
         {readiness.error && (
           <ResourceState
             resource={readiness}
@@ -196,6 +170,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
         {active === "Decision Insights" && <WorkspaceVisual view="insights" legacy={<><PersonalPaper view="monitor"/><TradeGates /></>} />}
         {active === "Dashboard" && <Dashboard/>}
         {active === "StocksWatch" && <StocksWatch />}
+        {active === "AlpacaCrypto" && <AlpacaCrypto />}
         {active === "Opportunities" && <WorkspaceVisual view="opportunities" legacy={<><PersonalPaper view="opportunities"/><Opportunities /></>} />}
         {active === "Strategies" && <WorkspaceVisual view="strategies" legacy={<><PersonalPaper view="strategies"/><StrategiesWorkspace /></>} />}
         {active === "Perpetuals" && <Perpetuals />}
@@ -206,9 +181,7 @@ function Workspace({ auth, onLogout }: { auth: string; onLogout: () => void }) {
         )}
         </Suspense>
         <footer className="workspace-footer">
-          <span>
-            Official paper account and shadow experiments are separate.
-          </span>
+          <span>StocksWatch and AlpacaCrypto use separately owned paper order ledgers.</span>
           <span>
             {readiness.data?.live_trading_enabled === false
               ? "Real-money execution disabled"
