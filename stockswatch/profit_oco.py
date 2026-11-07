@@ -369,13 +369,18 @@ def cycle(client,snapshot,now=None,data=None):
                     # shares reserved by our exit orders as available.
                     reason=_sync(client,saved,nested)
                     saved=_saved(account,sym)
-                if saved and saved["state"]=="ACTIVE":
-                    owned_ids={saved["root_order_id"],saved["stop_leg_id"]}
+                if saved and saved["state"] in ("ACTIVE","REPLACE_PENDING"):
+                    roots=[x for x in (nested or []) if x.get("client_order_id")==saved["client_id"]]
+                    if len(roots)!=1:
+                        raise ProtectionError("protection_open_broker_root_unavailable")
+                    leg_id,actual=_validate_pair(roots[0],saved)
+                    if actual < profit_lock.decimal(saved["current_stop"]):
+                        raise ProtectionError("protection_broker_stop_below_saved")
+                    owned_ids={roots[0]["id"],leg_id}
                     same=[o for o in snapshot["open_orders"] if o.get("symbol")==sym]
                     if not same or any(o.get("id") not in owned_ids for o in same):
                         raise ProtectionError("protection_oco_inventory_conflict")
-                    # Broker qty_available can be reduced by OUR protective OCO.
-                    # Exact fill quantities and origin remain proven separately.
+                    # Only the verified pair may reserve these shares.
                     owner_pos={**p,"qty_available":p["qty"]}
                 else:
                     owner_pos=p
