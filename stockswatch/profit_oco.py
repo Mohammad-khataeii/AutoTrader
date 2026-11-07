@@ -325,9 +325,19 @@ def cycle(client,snapshot,now=None,data=None):
     enabled=armed()
     paused=(one("SELECT paused FROM sw_alpaca_state WHERE id=1") or {}).get("paused",1)
     if snapshot["warnings"].get("fills") or snapshot["warnings"].get("open_orders"):
-        raise ProtectionError("protection_broker_fill_or_order_data_incomplete")
+        if enabled:
+            raise ProtectionError("protection_broker_fill_or_order_data_incomplete")
+        with _lock:
+            _last={"status":"OBSERVING_WITH_INCOMPLETE_BROKER_DATA","at":utc(),
+                   "positions":[],"paper_orders_enabled":False}
+        return {**_last,"changed":False}
     if any(p.get("side")=="short" for p in snapshot["positions"]):
-        raise ProtectionError("protection_short_inventory_requires_review")
+        if enabled:
+            raise ProtectionError("protection_short_inventory_requires_review")
+        with _lock:
+            _last={"status":"OBSERVING_SHORT_ACCOUNT_UNSUPPORTED","at":utc(),
+                   "positions":[],"paper_orders_enabled":False}
+        return {**_last,"changed":False}
     outcomes=[]
     changed=False
     nested=None
