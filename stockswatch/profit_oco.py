@@ -194,7 +194,15 @@ def _create(client,account,pos,plan,entry_cid,now,bid):
     cid=PREFIX+hashlib.sha256(
         f"protection|{account}|{entry_cid}|{symbol}".encode()).hexdigest()[:40]
     if not profit_lock.feasible_oco(plan,bid):
-        raise ProtectionError("protection_oco_levels_not_away_from_market")
+        # If the position already passed the take-profit, do not quietly
+        # extend the target or place a possibly marketable TP limit.
+        raise ProtectionError("protection_existing_position_near_or_beyond_tp_manual_review")
+    # When adopting an already-profitable position, seed the broker stop at
+    # the SAME locked-profit level a continuously observed position would
+    # have received. Never reset the stop back to its original loss budget.
+    seed_stop=profit_lock.next_stop(plan,plan.initial_stop,max(plan.entry,bid),bid)
+    if seed_stop>=bid:
+        raise ProtectionError("protection_seed_stop_not_below_bid")
     with connect() as c:
         c.execute("BEGIN IMMEDIATE")
         if c.execute("SELECT 1 FROM sw_protection WHERE account_id=? AND symbol=?",
@@ -206,14 +214,14 @@ def _create(client,account,pos,plan,entry_cid,now,bid):
              current_stop,target,highwater,client_id,state,updated_at)
              VALUES(?,?,?,?,?,?,?,?,?,?,?,'PREPARED',?)""",
             (account,symbol,entry_cid,str(plan.qty),str(plan.entry),str(plan.atr),
-             str(plan.initial_stop),str(plan.initial_stop),str(plan.target),
+             str(plan.initial_stop),str(seed_stop),str(plan.target),
              str(max(plan.entry,bid)),cid,utc()))
         c.commit()
     payload={"symbol":symbol,"side":"sell","type":"limit",
         "time_in_force":"gtc","order_class":"oco","qty":str(plan.qty),
         "client_order_id":cid,
         "take_profit":{"limit_price":str(plan.target)},
-        "stop_loss":{"stop_price":str(plan.initial_stop)}}
+        "stop_loss":{"stop_price":str(seed_stop)}}
     record=_saved(account,symbol)
     try:
         # Deliberately do NOT use PaperClient.submit (its standard EOD shape
