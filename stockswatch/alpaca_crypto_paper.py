@@ -104,6 +104,11 @@ class CryptoPaperClient:
         expected=expected_account()
         if expected not in (account.get("id"),account.get("account_number")):
             raise CryptoPaperError("crypto_paper_account_mismatch")
+        if os.getenv("STOCKSWATCH_ALPACA_PAPER_ACCOUNT_ID","").strip() in (
+                account.get("id"), account.get("account_number")):
+            raise CryptoPaperError("crypto_paper_stockswatch_account_conflict")
+        if os.getenv("ALPACA_CRYPTO_PAPER_KEY","") == os.getenv("STOCKSWATCH_ALPACA_PAPER_KEY",""):
+            raise CryptoPaperError("crypto_paper_stockswatch_key_conflict")
         if account.get("currency")!="USD" or account.get("status")!="ACTIVE":
             raise CryptoPaperError("crypto_paper_account_not_active_usd")
         if account.get("account_blocked") is not False or account.get("trading_blocked") is not False:
