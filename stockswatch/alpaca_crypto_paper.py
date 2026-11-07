@@ -7,6 +7,7 @@ Default is observation-only. A pending/uncertain intent is never replayed.
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import re
 import threading
@@ -300,17 +301,29 @@ def run_paper_cycle(data,now=None):
                 account=snapshot["account"]["id"]
                 with connect() as c:
                     c.execute("UPDATE ac_state SET configured_account=? WHERE id=1",(account,))
+                    # Broker account truth is read-only and never reused as the stock ledger.
+                    summary={k:snapshot["account"].get(k) for k in
+                       ("currency","status","equity","cash","buying_power",
+                        "non_marginable_buying_power","last_equity")}
+                    positions=[{k:p.get(k) for k in
+                       ("symbol","qty","side","market_value","cost_basis","unrealized_pl")}
+                       for p in snapshot["positions"]]
+                    c.execute("""INSERT INTO ac_broker_snapshot
+                      (id,observed_at,account_json,positions_json,open_order_count)
+                      VALUES(1,?,?,?,?)
+                      ON CONFLICT(id) DO UPDATE SET observed_at=excluded.observed_at,
+                       account_json=excluded.account_json,
+                       positions_json=excluded.positions_json,
+                       open_order_count=excluded.open_order_count""",
+                       (utc(),json.dumps(summary),json.dumps(positions),len(snapshot["orders"])))
                 if not enabled():
                     return "read_only_dedicated_paper_account"
-                if bool((one("SELECT paused FROM ac_state WHERE id=1") or {}).get("paused",1)):
-                    return "crypto_paper_orders_paused"
                 if not reconcile(client):
                     return "unresolved_order_intents_block_trading"
                 pos=_owned(snapshot)
                 # Never duplicate paper submissions while any broker order is open.
                 if snapshot["orders"]:
                     return "broker_open_order_book_not_empty"
-                equity,buying=_limits(snapshot,now)
                 managed=rows("SELECT * FROM ac_managed WHERE account_id=?",(account,))
                 # Never risk exit or sell an unowned position.
                 for m in managed:
@@ -332,6 +345,11 @@ def run_paper_cycle(data,now=None):
                         continue
                     reason="software_stop_at_fresh_bid" if bid<=float(m["stop"]) else "software_target_at_fresh_bid"
                     return _submit_intent(client,account,symbol,side,stamp,reason,qty=format(qty,"f"))
+                # Pausing blocks entries but does not disable protection on
+                # existing AlpacaCrypto-owned LONG positions.
+                if bool((one("SELECT paused FROM ac_state WHERE id=1") or {}).get("paused",1)):
+                    return "crypto_new_entries_paused"
+                equity,buying=_limits(snapshot,now)
                 if any(p.get("side")!="long" for p in snapshot["positions"]):
                     raise CryptoPaperError("crypto_unrecognized_position_side")
                 if len(pos)>=MAX_OPEN_POSITIONS or snapshot["orders"]:
