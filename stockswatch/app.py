@@ -259,6 +259,12 @@ def universe():
     return _universe_snapshot(int(datetime.now(timezone.utc).timestamp())//60)
 
 
+@app.get("/api/stockswatch/backfill", dependencies=[Depends(authenticated)])
+def backfill_progress():
+    from .fast_backfill import progress_summary
+    return progress_summary()
+
+
 @app.get('/api/stockswatch/scanner', dependencies=[Depends(authenticated)])
 def scanner():
     return scanner_snapshot()
