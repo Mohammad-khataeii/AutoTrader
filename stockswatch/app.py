@@ -420,7 +420,180 @@ def alpaca_crypto_control(body: CryptoControl):
 
 @app.get('/api/stockswatch/scanner', dependencies=[Depends(authenticated)])
 def scanner():
-    return scanner_snapshot()
+    result = scanner_snapshot()
+    # Do not confuse price-refresh progress (live.completed) with paper screening.
+    broker_result = service.broker_result
+    result['paper_evaluation'] = {
+        'status': broker_result.get('status'),
+        'updated_at': broker_result.get('at'),
+        'evaluated_tickers': broker_result.get('processed', len(broker_result.get('signals', []))),
+        'orders_queued': broker_result.get('orders_queued', 0),
+        'price_refreshes_this_cycle': result.get('live', {}).get('completed', 0),
+        'note': 'Price refresh count is not the number of evaluated stocks.',
+    }
+    return result
+
+
+@app.get('/api/stockswatch/decision-audit', dependencies=[Depends(authenticated)])
+def decision_audit():
+    """Explain the paper scanner across every registered equity, without orders or writes.
+
+    This is a diagnostic, not a second trading strategy: broker admission and
+    fills remain authoritative in alpaca_paper.py. Computed scores are labelled
+    separately from actual broker evaluations and their submission gates.
+    """
+    from collections import Counter
+    from .ledger import series, SCORE_MIN, MAX_VOLATILITY
+    from .signals import evaluate
+    from .sessions import NY, completed_day, instant, next_day
+    from .universe import NEW
+    from .alpaca_paper import MIN_IEX_DOLLAR_VOLUME, broker_mode, orders_enabled
+
+    now = datetime.now(timezone.utc)
+    day = completed_day(now)
+    last = service.broker_result if broker_mode() else {}
+    actual_signals = {
+        s['symbol']: s for s in last.get('signals', [])
+        if isinstance(s, dict) and isinstance(s.get('symbol'), str)
+    }
+    actual_gates = {
+        s['symbol']: s.get('reason') for s in last.get('why_no_trade', [])
+        if isinstance(s, dict) and isinstance(s.get('symbol'), str)
+    }
+    output = []
+    counts = Counter()
+    blockers = Counter()
+    with connect() as c:
+        c.execute('PRAGMA query_only=ON')
+        c.execute('BEGIN')
+        assets = c.execute('SELECT symbol,name,sector,enabled FROM assets ORDER BY symbol').fetchall()
+        has_verification = c.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='sw_asset_verification'"
+        ).fetchone() is not None
+        checks = {r['symbol']: dict(r) for r in c.execute(
+            'SELECT symbol,day,checked_at,status FROM sw_price_checks'
+        )}
+        sources = {r['symbol']: dict(r) for r in c.execute(
+            'SELECT symbol,last_bar_day,last_success,error FROM sources'
+        )}
+        verified = {r['symbol']: dict(r) for r in c.execute(
+            'SELECT symbol,at,evidence FROM sw_asset_verification'
+        )} if has_verification else {}
+        ai = {r['symbol']: dict(r) for r in c.execute("""
+            SELECT t.symbol,t.generated_at,t.model FROM ai_insights t
+            WHERE t.rowid=(SELECT MAX(i.rowid) FROM ai_insights i WHERE i.symbol=t.symbol)
+        """)}
+        history = {r['symbol']: dict(r) for r in c.execute("""
+            SELECT symbol,COUNT(*) AS bars,MAX(day) AS latest_day FROM bars GROUP BY symbol
+        """)}
+        observations = {r['symbol']: r['latest_day'] for r in c.execute("""
+            SELECT symbol,MAX(day) AS latest_day FROM sw_eod_observations GROUP BY symbol
+        """)}
+        _, benchmark, benchmark_reason = series(c, 'SPY', day, now)
+        for a in assets:
+            symbol, sector = a['symbol'], a['sector']
+            is_benchmark = sector == 'Benchmark'
+            check = checks.get(symbol, {})
+            src = sources.get(symbol, {})
+            bar, bars, data_reason = series(c, symbol, day, now)
+            score_result = evaluate(bars, benchmark) if bars and benchmark else None
+            score = score_result.get('score') if score_result else None
+            regime = score_result.get('regime') if score_result else None
+            features = score_result.get('features', {}) if score_result else {}
+            liquidity = sum(x['c'] * x['v'] for x in bars[-20:]) / 20 if len(bars) >= 20 else None
+
+            # Match the current broker's actual admission prerequisites.
+            # A successful local calculation alone does not authorize a BUY.
+            admission = None
+            if not is_benchmark and symbol in NEW:
+                v = verified.get(symbol)
+                try:
+                    proof = json.loads(v['evidence']) if v else {}
+                    recent = v and 0 <= (now - instant(v['at'])).total_seconds() <= 3*86400
+                    checked_on_target = bool(check) and check.get('day') == day and (
+                        instant(check['checked_at']).astimezone(NY).date().isoformat() == next_day(day)
+                    )
+                    if not proof.get('verified') or not recent:
+                        admission = 'broker_asset_verification_missing_or_expired'
+                    elif not checked_on_target:
+                        admission = 'broker_execution_day_price_check_missing'
+                except (ValueError, TypeError, KeyError, OverflowError):
+                    admission = 'broker_asset_verification_invalid'
+            if is_benchmark:
+                state, reason = 'BENCHMARK', None
+            elif not a['enabled']:
+                state, reason = 'DISABLED', 'asset_disabled'
+            elif data_reason:
+                state, reason = 'DATA_BLOCKED', data_reason
+            elif not benchmark:
+                state, reason = 'DATA_BLOCKED', 'benchmark_'+str(benchmark_reason or 'unavailable')
+            elif not score_result:
+                state, reason = 'NOT_SCORED', 'technical_signal_unavailable'
+            elif admission:
+                state, reason = 'BROKER_VERIFICATION_BLOCKED', admission
+            elif score < SCORE_MIN or regime != 'RISK_ON':
+                state, reason = 'WATCH', 'score_or_regime_below_entry_gate'
+            elif features.get('volatility_annual', float('inf')) >= MAX_VOLATILITY:
+                state, reason = 'WATCH', 'volatility_cap'
+            elif liquidity is None or liquidity < MIN_IEX_DOLLAR_VOLUME:
+                state, reason = 'WATCH', 'iex_liquidity_gate'
+            else:
+                state, reason = 'TECHNICAL_CANDIDATE', 'broker_admission_pending'
+            if not is_benchmark:
+                counts[state] += 1
+                if reason and state in ('DATA_BLOCKED', 'BROKER_VERIFICATION_BLOCKED'):
+                    blockers[reason] += 1
+            output.append({
+                'symbol': symbol, 'name': a['name'], 'sector': sector,
+                'state': state, 'reason': reason,
+                'evaluated_by_live_broker': symbol in actual_signals,
+                'live_broker_gate': actual_gates.get(symbol),
+                'score': round(float(score), 4) if score is not None else None,
+                'regime': regime,
+                'signal_day': day if score_result else None,
+                'signal_flags': score_result.get('signals') if score_result else None,
+                'volatility_annual': features.get('volatility_annual'),
+                'iex_dollar_volume_20d': round(liquidity, 2) if liquidity is not None else None,
+                'data': {
+                    'price_check_day': check.get('day'),
+                    'price_check_status': check.get('status'),
+                    'source_latest_day': src.get('last_bar_day'),
+                    'stored_history_day': history.get(symbol, {}).get('latest_day'),
+                    'stored_history_bars': history.get(symbol, {}).get('bars', 0),
+                    'certified_observation_day': observations.get(symbol),
+                    'data_failure': data_reason,
+                },
+                'ai': {
+                    'available': symbol in ai,
+                    'generated_at': ai.get(symbol, {}).get('generated_at'),
+                    'coverage': 'FILING_METADATA_ONLY' if symbol in ai else 'NOT_AVAILABLE',
+                },
+            })
+        c.execute('COMMIT')
+    # Never claim AI assessed a ticker just because numerical signals exist.
+    return {
+        'as_of': now.isoformat(), 'completed_market_day': day,
+        'paper_only': True, 'read_only': True,
+        'broker_cycle_status': last.get('status'),
+        'broker_cycle_at': last.get('at'),
+        'broker_orders_enabled': orders_enabled() if broker_mode() else False,
+        'broker_evaluated': len(actual_signals),
+        'broker_reported_processed': last.get('processed'),
+        'broker_why_no_trade_available': bool(actual_gates),
+        'universe_equities': sum(a['sector'] != 'Benchmark' for a in assets),
+        'universe_benchmarks': sum(a['sector'] == 'Benchmark' for a in assets),
+        'status_counts': dict(sorted(counts.items())),
+        'data_blockers': dict(sorted(blockers.items())),
+        'ai_insight_symbols': sum(a['sector'] != 'Benchmark' and a['symbol'] in ai for a in assets),
+        'ai_status': service.last_result.get('gemini', {}).get('status'),
+        'notes': [
+            'A technical candidate is not an approved paper order.',
+            'The core scanner uses certified completed daily bars, not intraday rebound prices.',
+            'AI insights are filing-metadata research, not a full live catalyst feed.',
+        ],
+        'tickers': output,
+    }
+
 
 
 @app.get('/api/stockswatch/export/{kind}', dependencies=[Depends(authenticated)])
