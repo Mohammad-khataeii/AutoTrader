@@ -74,18 +74,28 @@ export function StocksTradingOperations({dashboard:d,health:h,isBroker,error}:{d
   let state:TradeState="unknown";
   if(error) reasons.push("Cannot verify the trading state: "+error);
   else if(!isBroker){state="blocked";reasons.push("This screen is connected to the local simulator, not the Alpaca Paper execution backend.");}
-  else if(broker.status!=="CONNECTED"){state="blocked";reasons.push("Alpaca Paper broker status: "+label(broker.status||"UNAVAILABLE")+". "+(broker.reason?readable(broker.reason):"No verified recent broker snapshot."));}
-  else if(broker.orders_enabled!==true){state="blocked";reasons.push("Server switch STOCKSWATCH_ALPACA_PAPER_ALLOW_ORDERS is OFF. Data collection can run without placing orders.");}
-  else if(broker.paused!==false){state="blocked";reasons.push("The stock paper account's persistent pause is ON. New buys are not admitted.");}
   else {
-    const phase=cycle.components?.market_session;
-    const result=evaluation.status||cycle.state;
-    if(["BROKER_CHECK_FAILED","PROTECTION_MONITOR_UNAVAILABLE","UNCERTAIN_BROKER_INTENT"].includes(result)){state="blocked";reasons.push(readable(result));}
-    else if(phase&&phase!=="CORE_OPEN"){state="waiting";reasons.push("US equity session: "+readable(phase)+". New entries require a valid strategy entry window.");}
-    else {state="armed";reasons.push("Alpaca Paper order admission is ON, the account is connected, and the stored pause is OFF.");}
-    if(result && result!=="BROKER_ACKNOWLEDGED") reasons.push("Last decision: "+readable(result)+(evaluation.reason?" — "+readable(evaluation.reason):""));
+    const blockers:string[]=[];
+    if(broker.status!=="CONNECTED")
+      blockers.push("Alpaca Paper broker status: "+label(broker.status||"UNAVAILABLE")+". "+(broker.reason?readable(broker.reason):"No verified recent broker snapshot."));
+    if(broker.orders_enabled!==true)
+      blockers.push("Server switch STOCKSWATCH_ALPACA_PAPER_ALLOW_ORDERS is OFF. Data collection can run without placing orders.");
+    if(broker.paused!==false)
+      blockers.push("The stock paper account's persistent pause is ON. New buys are not admitted.");
+    if(h.provider&&h.provider!=="alpaca")
+      blockers.push("The execution data provider is "+label(h.provider)+"; certified Alpaca observations are required.");
+    const result=String(evaluation.status||cycle.state||"");
+    if(["BROKER_CHECK_FAILED","PROTECTION_MONITOR_UNAVAILABLE","UNCERTAIN_BROKER_INTENT"].includes(result))
+      blockers.push(readable(result)+(evaluation.reason?" — "+readable(evaluation.reason):""));
+    if(broker.status==="CONNECTED"&&!fresh(broker.as_of,3))
+      blockers.push("Broker snapshot is older than 3 minutes or has no valid timestamp. Current order admission cannot be verified.");
+    if(blockers.length){state="blocked";reasons.push(...blockers);}
+    else if(cycle.components?.market_session&&cycle.components.market_session!=="CORE_OPEN"){
+      state="waiting";
+      reasons.push("US equity session: "+readable(cycle.components.market_session)+". New EOD entries require an eligible market window.");
+    } else {state="armed";reasons.push("Alpaca Paper order admission is ON, the account is connected, and the persistent pause is OFF.");}
+    if(result && result!=="BROKER_ACKNOWLEDGED") reasons.push("Latest strategy decision: "+readable(result)+(evaluation.reason?" — "+readable(evaluation.reason):""));
   }
-  if(!error&&isBroker&&broker.status==="CONNECTED"&&!fresh(broker.as_of,3)) {state="unknown";reasons.unshift("Broker snapshot is older than 3 minutes or has no valid timestamp. Order admission cannot be verified from this page.");}
   if(!error&&cycle.completed_at&&!fresh(cycle.completed_at,40)) reasons.push("The scheduled market scan appears stale; last completed at "+stamp(cycle.completed_at)+".");
   const open=list(d.pending_orders),closed=list(d.order_history),intents=list(d.broker_intents);
   const observed=new Set<string>();
