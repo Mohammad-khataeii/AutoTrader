@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Activity, BarChart3, Database, Lock, Pause, Play, RefreshCcw, ShieldCheck, TrendingUp, Wallet } from "lucide-react";
 import { useApi, useResource } from "./api";
+import { CryptoTradingOperations } from "./TradingOperations";
 import "./AlpacaCrypto.css";
 
 type Row = Record<string, any>;
@@ -43,6 +44,7 @@ export function AlpacaCrypto(){
   finally{setWorking(false);}
  }
  return <div className="ac-root">
+  <CryptoTradingOperations dashboard={d} error={response.error}/>
   <section className="ac-hero">
    <div className="ac-label"><Activity size={16}/> ALPACA CRYPTO · SPOT RESEARCH · 24/7</div>
    <h2>AlpacaCrypto</h2>
