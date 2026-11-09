@@ -48,18 +48,30 @@ def enabled():
 
 
 def _credentials():
-    key=os.getenv("ALPACA_CRYPTO_PAPER_KEY","")
-    secret=os.getenv("ALPACA_CRYPTO_PAPER_SECRET","")
+    """Reuse StocksWatch Alpaca *paper* credentials unless explicitly overridden.
+
+    Never use market-data or real-money keys. A partial crypto override is
+    configuration error, not permission to silently fall back.
+    """
+    key=os.getenv("ALPACA_CRYPTO_PAPER_KEY","").strip()
+    secret=os.getenv("ALPACA_CRYPTO_PAPER_SECRET","").strip()
+    if bool(key)!=bool(secret):
+        raise CryptoPaperError("crypto_partial_paper_credentials")
+    if not key:
+        key=os.getenv("STOCKSWATCH_ALPACA_PAPER_KEY","").strip()
+        secret=os.getenv("STOCKSWATCH_ALPACA_PAPER_SECRET","").strip()
     if not key or not secret:
-        raise CryptoPaperError("crypto_dedicated_paper_credentials_missing")
+        raise CryptoPaperError("crypto_paper_credentials_missing")
     return {"APCA-API-KEY-ID":key,"APCA-API-SECRET-KEY":secret}
 
 
 def expected_account():
-    expected=os.getenv("ALPACA_CRYPTO_PAPER_ACCOUNT_ID","").strip()
-    stocks=os.getenv("STOCKSWATCH_ALPACA_PAPER_ACCOUNT_ID","").strip()
-    if not expected or not stocks or expected==stocks:
-        raise CryptoPaperError("crypto_requires_distinct_paper_account")
+    # Alpaca supports equities and crypto in one paper account. An explicit
+    # alternate account must still match the broker; no forced second account.
+    expected=(os.getenv("ALPACA_CRYPTO_PAPER_ACCOUNT_ID","").strip()
+              or os.getenv("STOCKSWATCH_ALPACA_PAPER_ACCOUNT_ID","").strip())
+    if not expected:
+        raise CryptoPaperError("crypto_paper_expected_account_missing")
     return expected
 
 
@@ -104,11 +116,13 @@ class CryptoPaperClient:
         expected=expected_account()
         if expected not in (account.get("id"),account.get("account_number")):
             raise CryptoPaperError("crypto_paper_account_mismatch")
-        if os.getenv("STOCKSWATCH_ALPACA_PAPER_ACCOUNT_ID","").strip() in (
-                account.get("id"), account.get("account_number")):
-            raise CryptoPaperError("crypto_paper_stockswatch_account_conflict")
-        if os.getenv("ALPACA_CRYPTO_PAPER_KEY","") == os.getenv("STOCKSWATCH_ALPACA_PAPER_KEY",""):
-            raise CryptoPaperError("crypto_paper_stockswatch_key_conflict")
+        # Never silently migrate existing crypto intents to another account.
+        # Sharing the already-verified STOCK account is explicitly allowed.
+        prior=one("SELECT configured_account FROM ac_state WHERE id=1")
+        if prior and prior.get("configured_account") and prior["configured_account"]!=account["id"]:
+            raise CryptoPaperError("crypto_existing_account_conflict")
+        if one("SELECT 1 FROM ac_intents WHERE account_id!=? LIMIT 1",(account["id"],)):
+            raise CryptoPaperError("crypto_existing_intents_account_conflict")
         if account.get("currency")!="USD" or account.get("status")!="ACTIVE":
             raise CryptoPaperError("crypto_paper_account_not_active_usd")
         if account.get("account_blocked") is not False or account.get("trading_blocked") is not False:
@@ -123,16 +137,35 @@ class CryptoPaperClient:
 
     def snapshot(self):
         account=self.account()
-        positions=self.request("GET","/v2/positions")
-        orders=self.request("GET","/v2/orders",params={"status":"open","limit":500,"nested":"false"})
+        all_positions=self.request("GET","/v2/positions")
+        all_orders=self.request("GET","/v2/orders",params={"status":"open","limit":500,"nested":"false"})
         if not all(isinstance(x,list) and all(isinstance(y,dict) for y in x)
-                   for x in (positions,orders)) or len(orders)>=500:
+                   for x in (all_positions,all_orders)) or len(all_orders)>=500:
             raise CryptoPaperError("crypto_broker_book_incomplete")
+        # One Alpaca Paper account can hold stock and crypto assets. Partition
+        # the account's broker book by Alpaca-reported asset_class; never treat
+        # AAPL/ABBV or their pending SELLs as crypto inventory.
+        def asset_kind(item):
+            cls=item.get("asset_class")
+            if cls in ("crypto","us_equity"):
+                return cls
+            symbol=item.get("symbol")
+            if isinstance(symbol,str) and symbol in (
+                    {s for s in ac.PAIRS}|{s.replace("/","") for s in ac.PAIRS}):
+                return "crypto"
+            # Unknown instrument types must not be silently hidden.
+            raise CryptoPaperError("crypto_shared_account_unknown_asset_class")
+        positions=[];other_positions=[];orders=[];other_orders=[]
+        for p in all_positions:
+            (positions if asset_kind(p)=="crypto" else other_positions).append(p)
+        for o in all_orders:
+            if not o.get("id") or not o.get("symbol") or not o.get("status"):
+                raise CryptoPaperError("crypto_broker_order_incomplete")
+            (orders if asset_kind(o)=="crypto" else other_orders).append(o)
         if any(not p.get("symbol") or p.get("side")!="long" or money(p.get("qty"))<=0 for p in positions):
             raise CryptoPaperError("crypto_broker_unclassified_position")
-        if any(not o.get("id") or not o.get("symbol") or not o.get("status") for o in orders):
-            raise CryptoPaperError("crypto_broker_order_incomplete")
-        return {"account":account,"positions":positions,"orders":orders}
+        return {"account":account,"positions":positions,"orders":orders,
+                "other_positions":other_positions,"other_open_orders":other_orders}
 
     def by_client_id(self,cid):
         if not re.fullmatch(r"acp1-[a-f0-9]{40}",cid):
@@ -338,8 +371,8 @@ def _limits(snapshot,now):
 def run_paper_cycle(data,now=None):
     """Broker recon + software stop/target; no orders unless separately enabled and unpaused."""
     now=now or datetime.now(UTC)
-    if not os.getenv("ALPACA_CRYPTO_PAPER_KEY") or not os.getenv("ALPACA_CRYPTO_PAPER_SECRET"):
-        return "crypto_separate_paper_account_not_configured"
+    # The same paper account used for stocks is valid for crypto; the client
+    # resolves the credentials and verifies account identity before any action.
     with LOCK:
         try:
             with CryptoPaperClient() as client:
@@ -396,6 +429,10 @@ def run_paper_cycle(data,now=None):
                 # existing AlpacaCrypto-owned LONG positions.
                 if bool((one("SELECT paused FROM ac_state WHERE id=1") or {}).get("paused",1)):
                     return "crypto_new_entries_paused"
+                # On a shared account, avoid new crypto entries while StockWatch
+                # has outstanding stock orders reserving cash/positions.
+                if snapshot["other_open_orders"]:
+                    return "crypto_shared_account_stock_orders_pending"
                 equity,buying=_limits(snapshot,now)
                 if any(p.get("side")!="long" for p in snapshot["positions"]):
                     raise CryptoPaperError("crypto_unrecognized_position_side")
@@ -456,9 +493,6 @@ def read_only_order_journal():
     Only order IDs originating in this crypto strategy's durable intent table
     are displayed. A missing or unverifiable account is NOT a zero-order book.
     """
-    if not os.getenv("ALPACA_CRYPTO_PAPER_KEY") or not os.getenv("ALPACA_CRYPTO_PAPER_SECRET"):
-        return {"available": False, "reason": "crypto_dedicated_paper_credentials_missing",
-                "as_of": utc(), "orders": [], "open_broker_orders": None}
     try:
         with CryptoPaperClient() as client:
             snapshot = client.snapshot()
