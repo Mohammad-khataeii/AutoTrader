@@ -61,7 +61,7 @@ class OcoFixTests(unittest.TestCase):
         # under the same name as the running package. Mocking rows() was not
         # stable across that loader and incorrectly rejected valid fixtures.
         expected=self.certified_daily()
-        with tempfile.TemporaryDirectory(prefix="oco-certified-") as directory:
+        with tempfile.TemporaryDirectory(prefix="oco-certified-", dir="/dev/shm") as directory:
             db=str(Path(directory)/"offline.sqlite3")
             with sqlite3.connect(db) as c:
                 c.execute("""CREATE TABLE sw_eod_observations(
