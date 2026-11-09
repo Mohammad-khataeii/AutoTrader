@@ -404,5 +404,5 @@ def dashboard():
         "open_order_count":broker["open_order_count"]} if broker else None,
       "signals":signals,"intents":intents,"managed":managed,
       "legacy_crypto_source_preserved":True,
-      "disclaimer":"Historical bars are midpoint quotes, not executable prices. Orders use a separate Alpaca paper account; short selling is unsupported.",
+      "disclaimer":"Historical bars are midpoint quotes, not executable prices. Crypto and stocks may share the existing Alpaca Paper account, but order journals stay separate. Short selling crypto is unsupported.",
     }
