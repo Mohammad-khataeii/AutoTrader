@@ -46,3 +46,37 @@
 .to-crypto-quotes th{white-space:nowrap}
 .to-crypto-quotes .to-quote-number{white-space:nowrap;font-variant-numeric:tabular-nums}
 .to-quote-unavailable{font-size:11px;color:var(--sw-muted,var(--text-muted,#75817b))}
+
+
+/* Crypto symbols, quote values and timestamps must NEVER wrap per character.
+   The wide quote table scrolls as one surface on desktop and mobile. */
+.to-root[data-trading-observability="crypto"] .to-scroll{
+  display:block;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain;
+  scrollbar-width:thin;
+}
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes{
+  table-layout:auto;width:max-content;min-width:1480px;
+  border-collapse:separate;border-spacing:0;
+}
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes th,
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes td{
+  white-space:nowrap;overflow-wrap:normal;word-break:normal;
+  min-width:94px;vertical-align:middle;
+}
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes th:first-child,
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes td:first-child{
+  min-width:124px;max-width:none;position:sticky;left:0;z-index:1;
+  background:var(--sw-card,var(--card-bg,#f7f9f7));
+  box-shadow:1px 0 var(--sw-border,var(--border,#c9d3cd));
+}
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes td:first-child strong{
+  display:inline-block;min-width:max-content;white-space:nowrap;word-break:keep-all;
+}
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes td:last-child{
+  min-width:260px;max-width:340px;white-space:normal;overflow-wrap:break-word;
+}
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes .to-quote-number{white-space:nowrap}
+.to-root[data-trading-observability="crypto"] .to-quote-note{
+  font-size:11px;white-space:nowrap;min-width:max-content;
+}
