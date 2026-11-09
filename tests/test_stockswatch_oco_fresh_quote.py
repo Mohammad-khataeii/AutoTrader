@@ -4,8 +4,11 @@ from decimal import Decimal
 from types import SimpleNamespace
 from unittest.mock import patch, AsyncMock
 import unittest
+import sqlite3
+import tempfile
+from pathlib import Path
 
-from stockswatch import profit_oco as po, alpaca_paper as paper, profit_lock
+from stockswatch import profit_oco as po, alpaca_paper as paper, profit_lock, storage
 from stockswatch.intraday_market import ObservationError
 from stockswatch.sessions import NY
 
@@ -53,14 +56,38 @@ class OcoFixTests(unittest.TestCase):
                  "observed_at":"2026-11-08T12:00:00+00:00"} for i,d in enumerate(sessions)]
 
     def test_certified_history_archive_fallback_does_not_mutate_stock_bars(self):
+        # Exercise the real SQLite SELECT rather than mocking a module-level
+        # rows() reference: the emergency script imports the patched manager
+        # under the same name as the running package. Mocking rows() was not
+        # stable across that loader and incorrectly rejected valid fixtures.
         expected=self.certified_daily()
-        def local_rows(sql,params=()):
-            return expected if "sw_historical_bars" in sql else []
-        with patch.object(po,"rows",side_effect=local_rows) as query,\
-             patch("stockswatch.market.alpaca",side_effect=AssertionError("remote GET unexpected")):
-            result=po._candidate_bars("ABBV",NOW)
-        self.assertEqual([r["day"] for r in result],[r["day"] for r in expected])
-        self.assertTrue(all("SELECT" in c.args[0] for c in query.call_args_list))
+        with tempfile.TemporaryDirectory(prefix="oco-certified-") as directory:
+            db=str(Path(directory)/"offline.sqlite3")
+            with sqlite3.connect(db) as c:
+                c.execute("""CREATE TABLE sw_eod_observations(
+                    symbol TEXT, day TEXT, o REAL,h REAL,l REAL,c REAL,v REAL,
+                    source TEXT,adjustment TEXT,observed_at TEXT)""")
+                c.execute("""CREATE TABLE sw_historical_bars(
+                    symbol TEXT,timeframe TEXT,feed TEXT,adjustment TEXT,
+                    at TEXT,trade_date TEXT,phase TEXT,observed_at TEXT,
+                    o TEXT,h TEXT,l TEXT,c TEXT,v TEXT)""")
+                c.executemany("""INSERT INTO sw_historical_bars VALUES
+                    (?,?,?,?,?,?,?,?,?,?,?,?,?)""",[
+                    ("ABBV","1Day","iex","raw",r["day"]+"T05:00:00+00:00",
+                     r["day"],"DAILY",r["observed_at"],r["o"],r["h"],
+                     r["l"],r["c"],r["v"]) for r in expected
+                ])
+            with patch.object(storage,"DB_PATH",db),\
+                 patch("stockswatch.market.alpaca",
+                       side_effect=AssertionError("Unexpected remote call")):
+                result=po._candidate_bars("ABBV",NOW)
+            self.assertEqual([r["day"] for r in result],
+                             [r["day"] for r in expected])
+            self.assertTrue(all(r["source"]=="alpaca_iex_daily"
+                                and r["adjustment"]=="RAW" for r in result))
+            with sqlite3.connect(db) as c:
+                self.assertEqual(c.execute(
+                    "SELECT COUNT(*) FROM sw_historical_bars").fetchone()[0],15)
 
     def test_certified_remote_alpaca_daily_fallback(self):
         expected=self.certified_daily()
