@@ -49,6 +49,7 @@ _view_lock = threading.Lock()
 _last_view = None
 _sync_error = None
 _last_sync = 0.0
+_market_clock = {"verified": False, "reason": "alpaca_market_clock_not_observed"}
 TERMINAL = {"filled", "canceled", "expired", "rejected", "replaced"}
 ORDER_STATES = TERMINAL | {
     "new",
@@ -502,6 +503,48 @@ def _publish_snapshot(snapshot=None, error=None):
         }:
             _last_view = None
         _sync_error = error
+
+
+def _refresh_market_clock(client, now):
+    """Read Alpaca Paper's authoritative US equity session clock.
+
+    This is read-only and independent of trading permissions. A failure never
+    prevents broker reconciliation, position protection, or the status API.
+    """
+    global _market_clock
+    observed_at = utc()
+    try:
+        clock = client.clock()
+        if not isinstance(clock, dict) or type(clock.get("is_open")) is not bool:
+            raise PaperError("alpaca_market_clock_invalid")
+        source_time = instant(clock["timestamp"])
+        next_open = instant(clock["next_open"])
+        next_close = instant(clock["next_close"])
+        if abs((source_time - now).total_seconds()) > 180:
+            raise PaperError("alpaca_market_clock_stale")
+        if clock["is_open"] and next_close <= source_time:
+            raise PaperError("alpaca_market_clock_next_close_invalid")
+        if not clock["is_open"] and next_open <= source_time:
+            raise PaperError("alpaca_market_clock_next_open_invalid")
+        reading = {
+            "verified": True,
+            "is_open": clock["is_open"],
+            "checked_at": observed_at,
+            "broker_time": source_time.isoformat(),
+            "next_open": next_open.isoformat(),
+            "next_close": next_close.isoformat(),
+        }
+    except (PaperError, KeyError, ValueError, TypeError, OverflowError) as exc:
+        # Do not assume CLOSED when the clock cannot be verified.
+        code = str(exc) if isinstance(exc, PaperError) else "alpaca_market_clock_invalid"
+        reading = {"verified": False, "checked_at": observed_at, "reason": code}
+    with _view_lock:
+        _market_clock = reading
+
+
+def broker_market_clock():
+    with _view_lock:
+        return dict(_market_clock)
 
 
 def broker_symbols():
@@ -1145,6 +1188,7 @@ def _paper_cycle(now=None):
             account_id = snapshot["account"]["id"]
             _linked_account(account_id)
             _publish_snapshot(snapshot)
+            _refresh_market_clock(client, now)
             unresolved = _reconcile(client, account_id, snapshot["open_orders"])
             if unresolved:
                 return {**result, "status": "UNCERTAIN_BROKER_INTENT", "pending_count": unresolved}
