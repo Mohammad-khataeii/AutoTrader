@@ -49,14 +49,18 @@ const readable = (code:unknown):string => {
     crypto_paper_credentials_missing:"The StocksWatch Alpaca Paper credentials are missing or unavailable to AlpacaCrypto.",
     crypto_shared_account_unknown_asset_class:"The shared broker contains an unclassified asset; manual review required.",
     crypto_shared_account_stock_orders_pending:"StocksWatch has open orders in the shared Alpaca Paper account. Crypto buys are waiting.",
+    latest_completed_hourly_bar_missing:"The last completed hourly candle has not been published for this market.",
+    insufficient_completed_history:"At least 220 completed daily and hourly bars are required for that crypto pair.",
+    no_confirmed_spot_long_setup:"Trend, momentum or breakout / pullback confirmation did not qualify for a long entry.",
+    non_usd_quote_research_only:"Quoted in USDC, USDT or BTC; research only, not a USD-funded BUY.",
   };
   return known[raw] || raw.replace(/_/g," ").replace(/\s+/g," ") || "No detailed reason was provided by the server.";
 };
 type SessionInfo = { isOpen:boolean|null; message:string };
-function Indicator({ title, state, reasons, checked, note, compact=false, session }:{
-  title:string;state:TradeState;reasons:string[];checked?:unknown;note:string;compact?:boolean;session?:SessionInfo;
+function Indicator({ title, state, reasons, checked, note, compact=false, session, statusLabel }:{
+  title:string;state:TradeState;reasons:string[];checked?:unknown;note:string;compact?:boolean;session?:SessionInfo;statusLabel?:string;
 }){
-  const name=state==="armed"?"PAPER ORDERS ARMED":state==="waiting"?(session?.isOpen===false?"WAITING FOR MARKET OPEN":"WAITING"):state==="blocked"?"NOT TRADING":"UNVERIFIED";
+  const name=statusLabel??(state==="armed"?"PAPER ORDERS ARMED":state==="waiting"?(session?.isOpen===false?"WAITING FOR MARKET OPEN":"WAITING"):state==="blocked"?"NOT TRADING":"UNVERIFIED");
   return <section className={"to-status to-"+state} aria-label={title+" status"} role="status">
     <div className="to-status-heading"><div><p className="to-eyebrow">{title} · AUTOMATION STATUS</p>
       <h3><span className="to-dot" aria-hidden="true"/>{name}</h3></div>
@@ -240,18 +244,29 @@ export function CryptoTradingStatus({dashboard:d,error}:{dashboard:Row;error?:st
     const eligible=assets.filter(x=>x.eligible===1).length;
     const executionCount=Number(d.execution_pairs??assets.length);
     if(eligible<executionCount) reasons.push(eligible+" of "+executionCount+" USD paper-executable pairs are broker-verified. Unverified assets cannot be bought.");
-    if(Number(d.research_only_pairs)>0) reasons.push(d.research_only_pairs+" cross-quoted markets are research-only; their prices are NOT US dollars.");
-    if(total>0&&finished<total) reasons.push("Historical backfill: "+finished+"/"+total+" jobs complete. Signal readiness is checked separately per symbol.");
+    if(Number(d.research_only_pairs)>0) reasons.push(d.research_only_pairs+" cross-quoted markets are research-only; never eligible for USD paper buys.");
+    if(total>0&&finished<total) reasons.push("Historical backfill: "+finished+"/"+total+" jobs complete. Only per-pair completed data is used for signals.");
     if(!fresh(d.last_cycle,5)) reasons.push("Crypto worker cycle is stale or not yet observed.");
     if(d.last_error) reasons.push("Last worker error: "+readable(d.last_error));
-    const waits=signals.filter(x=>x.action==="WAIT");
-    if(waits.length) reasons.push(waits.length+" of "+signals.length+" latest signals say WAIT; e.g. "+label(waits[0].symbol)+": "+readable(waits[0].reason)+".");
+    const usd=signals.filter(x=>String(x.symbol).endsWith("/USD"));
+    const usdWaits=usd.filter(x=>x.action==="WAIT");
+    const usdHolds=usd.filter(x=>x.action==="HOLD");
+    const researchWaits=signals.filter(x=>!String(x.symbol).endsWith("/USD")&&x.action==="WAIT");
+    if(usdWaits.length) reasons.push(usdWaits.length+"/"+usd.length+" USD-executable markets lack complete fresh data; those pairs cannot buy.");
+    if(usdHolds.length) reasons.push(usdHolds.length+"/"+usd.length+" USD markets evaluated HOLD because their long setups did not qualify.");
+    const gates:Row=d.usd_gate_passes??{};
+    if(Object.keys(gates).length) reasons.push("USD strategy evidence: "+label(gates.hourly_uptrend)+"/"+usd.length+" hourly uptrends, "+label(gates.daily_above_ema200)+"/"+usd.length+" daily trends, "+label(gates["20_hour_breakout"])+"/"+usd.length+" 20h breakouts, "+label(gates.continuation_candidate)+"/"+usd.length+" continuation candidates.");
+    if(researchWaits.length) reasons.push(researchWaits.length+" non-USD research markets still await a completed candle; they do not block USD trades.");
+    reasons.push("Trend continuation: "+(d.continuation_enabled===true?"enabled after replay review":"not yet approved; original breakout strategy active")+".");
+    const execution=list(d.crypto_execution_outcomes)[0];
+    if(execution?.outcome) reasons.push("Last execution decision: "+readable(execution.outcome)+".");
     const blocked=!d.broker_account_verified || !paper.observed_at || !fresh(paper.observed_at,5) || d.paper_orders_enabled!==true || d.paused!==false || !!d.last_error;
     state=blocked?"blocked":(!fresh(d.last_cycle,5)?"unknown":"armed");
-    if(!blocked&&!signals.some(x=>x.action==="BUY")){state="waiting";reasons.unshift("Paper engine is authorized but no approved crypto BUY signal is present.");}
+    if(!blocked&&!usd.some(x=>x.action==="BUY")){state="waiting";reasons.unshift("Paper engine is running; no USD-quoted pair currently meets the verified entry conditions.");}
     if(!reasons.length) reasons.push("Paper order admission is enabled; individual trades still require fresh quotes and all risk gates.");
   }
   return <Indicator title="AlpacaCrypto" compact state={state} reasons={reasons} checked={d.last_cycle}
+    statusLabel={state==="waiting"?"SCANNING · NO BUY SETUP":undefined}
     note="The 24/7 crypto scanner shares the stock Alpaca Paper account, but uses independent orders and execution permission."/>;
 }
 
