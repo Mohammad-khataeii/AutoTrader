@@ -14,7 +14,7 @@ class CatalogIntelligenceTests(unittest.TestCase):
         ]
 
     def test_sufficient_history_explained(self):
-        result=score_daily(self.bars(210))
+        result=score_daily(self.bars(210),today=date(2026,11,9))
         self.assertEqual(result["state"],"RESEARCH_READY")
         self.assertGreater(result["score"],0)
         self.assertGreater(result["avg_20d_iex_dollars"],0)
@@ -32,14 +32,14 @@ class CatalogIntelligenceTests(unittest.TestCase):
         history=self.bars()
         for x in history:
             x["v"]=0
-        out=score_daily(history)
+        out=score_daily(history,today=date(2026,11,9))
         self.assertEqual(out["state"],"RESEARCH_READY")
         self.assertIn("iex_activity_low",out["reason"])
 
     def test_invalid_price_fails_closed(self):
         history=self.bars()
         history[20]["c"]=-1
-        self.assertEqual(score_daily(history)["state"],"INVALID_HISTORY")
+        self.assertEqual(score_daily(history,today=date(2026,11,9))["state"],"INVALID_HISTORY")
 
 
 if __name__=="__main__":
