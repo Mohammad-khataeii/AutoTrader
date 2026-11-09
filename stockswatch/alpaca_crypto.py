@@ -398,11 +398,12 @@ def warmup_expansion(data, now=None, *, symbols=EXPANSION_PAIRS, on_progress=Non
                         pages+=1
                         with connect() as conn:
                             conn.execute("BEGIN IMMEDIATE")
+                            before_changes=conn.total_changes
                             conn.executemany(
                                 "INSERT OR IGNORE INTO ac_bars VALUES(?,?,?,?,?,?,?,?,?,?)",
                                 raw
                             )
-                            new_rows+=conn.execute("SELECT changes()").fetchone()[0]
+                            new_rows+=conn.total_changes-before_changes
                             conn.commit()
                         if not token:
                             break
