@@ -46,3 +46,39 @@
 .to-crypto-quotes th{white-space:nowrap}
 .to-crypto-quotes .to-quote-number{white-space:nowrap;font-variant-numeric:tabular-nums}
 .to-quote-unavailable{font-size:11px;color:var(--sw-muted,var(--text-muted,#75817b))}
+
+
+/* AlpacaCrypto quote grid: do not squeeze 11 data columns into 1210px.
+   Keep the existing visual design; scroll the grid rather than wrapping
+   symbols, prices, or source timestamps character-by-character. */
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes{
+  width:max-content;
+  min-width:100%;
+  table-layout:auto;
+}
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes th,
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes td{
+  white-space:nowrap;
+  word-break:normal;
+  overflow-wrap:normal;
+  hyphens:none;
+  line-height:1.45;
+}
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes th:nth-child(1),
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes td:nth-child(1){min-width:105px}
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes th:nth-child(7),
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes td:nth-child(7){min-width:150px}
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes th:nth-child(8),
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes td:nth-child(8){min-width:155px}
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes th:nth-child(11),
+.to-root[data-trading-observability="crypto"] .to-crypto-quotes td:nth-child(11){
+  min-width:245px;
+  max-width:300px;
+  white-space:normal;
+  overflow-wrap:break-word;
+}
+.to-root[data-trading-observability="crypto"] .to-scroll:has(> .to-crypto-quotes){
+  overflow-x:auto;
+  overscroll-behavior-inline:contain;
+  scrollbar-width:thin;
+}
