@@ -332,6 +332,12 @@ def profit_protection():
 def alpaca_crypto_dashboard():
     return alpaca_crypto.dashboard()
 
+@app.get("/api/stockswatch/alpaca-crypto/quotes", dependencies=[Depends(authenticated)])
+def alpaca_crypto_quotes():
+    # Read-only quote evidence, distinct from historical signal close prices.
+    return alpaca_crypto.latest_quotes_snapshot()
+
+
 @app.get("/api/stockswatch/alpaca-crypto/orders", dependencies=[Depends(authenticated)])
 def alpaca_crypto_orders():
     from .alpaca_crypto_paper import read_only_order_journal
