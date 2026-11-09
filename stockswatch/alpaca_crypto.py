@@ -259,8 +259,13 @@ def backfill_step(data,now):
     job=one("""SELECT * FROM ac_jobs
       WHERE state IN ('PENDING','RUNNING','RETRY')
         AND (state!='RETRY' OR updated_at<?)
+      -- Hourly data is the bottleneck for 220-hour research eligibility.
+      -- Previously daily windows were exhausted first, leaving all ten pairs
+      -- in WAIT even after many thousands of daily observations arrived.
+      -- Finish an in-flight paginated job first, then work newest hourly
+      -- windows across symbols, then fill the remaining daily archive.
       ORDER BY CASE WHEN state='RUNNING' THEN 0
-                    WHEN timeframe='1Day' THEN 1 ELSE 2 END,
+                    WHEN timeframe='1Hour' THEN 1 ELSE 2 END,
         end_at DESC, symbol LIMIT 1""",(cutoff,))
     if job is None:
         return False
