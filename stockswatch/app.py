@@ -445,7 +445,8 @@ def decision_audit():
     from collections import Counter
     from .ledger import series, SCORE_MIN, MAX_VOLATILITY
     from .signals import evaluate
-    from .sessions import NY, completed_day, instant, next_day
+    from .sessions import NY, completed_day, instant, next_day, market_session_state, published_after
+    from .gap_audit import gap_snapshot
     from .universe import NEW
     from .alpaca_paper import MIN_IEX_DOLLAR_VOLUME, broker_mode, orders_enabled
 
@@ -554,6 +555,7 @@ def decision_audit():
                 'signal_flags': score_result.get('signals') if score_result else None,
                 'volatility_annual': features.get('volatility_annual'),
                 'iex_dollar_volume_20d': round(liquidity, 2) if liquidity is not None else None,
+                'historical_gap_proofs': gap_snapshot(c, symbol, day),
                 'data': {
                     'price_check_day': check.get('day'),
                     'price_check_status': check.get('status'),
@@ -573,6 +575,9 @@ def decision_audit():
     # Never claim AI assessed a ticker just because numerical signals exist.
     return {
         'as_of': now.isoformat(), 'completed_market_day': day,
+        'regular_market_session': market_session_state(now),
+        'latest_daily_publication_boundary': published_after(now.astimezone(NY).date().isoformat()).isoformat(),
+        'historical_gap_proof_mode': 'ALPACA_IEX_RAW_VS_ALL_ADJUSTED_GET_ONLY',
         'paper_only': True, 'read_only': True,
         'broker_cycle_status': last.get('status'),
         'broker_cycle_at': last.get('at'),
@@ -590,6 +595,8 @@ def decision_audit():
             'A technical candidate is not an approved paper order.',
             'The core scanner uses certified completed daily bars, not intraday rebound prices.',
             'AI insights are filing-metadata research, not a full live catalyst feed.',
+            'A closed regular session does not by itself make the latest IEX daily candle certified.',
+            'Historical gaps over 15% require raw/adjusted IEX verification; suspected splits remain blocked.',
         ],
         'tickers': output,
     }
