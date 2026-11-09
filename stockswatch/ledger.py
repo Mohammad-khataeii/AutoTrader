@@ -111,8 +111,18 @@ def series(c, symbol, day, now, since=None):
         not published_after(b["day"]) <= instant(b["observed_at"]) <= now for b in bars
     ):
         return bar, [], "invalid_or_partial_history"
-    if any(abs(b["o"] / prev["c"] - 1) > 0.15 for prev, b in zip(bars, bars[1:])):
-        return bar, [], "historical_gap_or_split"
+    # Do not confuse a genuine earnings gap with a share-unit changing split.
+    # Legacy blanket 15% rejection hid technical candidates for 201 sessions.
+    # A moderate historical shock is usable only after the same IEX bars are
+    # independently checked against Alpaca's ALL-adjusted reference; split-like
+    # or unverifiable events remain fail-closed. The current held-mark and order
+    # corporate-action guards are intentionally unchanged.
+    from .gap_audit import reason_for_gap
+    for idx in range(1, len(bars)):
+        previous, current = bars[idx - 1], bars[idx]
+        gap_reason = reason_for_gap(c, symbol, previous, current, len(bars) - idx)
+        if gap_reason:
+            return bar, [], gap_reason
     return bar, bars, None
 
 
