@@ -546,17 +546,27 @@ def _rsi(values,n=14):
     return 100 if loss==0 else 100-100/(1+gain/loss)
 
 
-def signal(symbol, now=None):
-    """Causal 1h trend + 1d regime, no strategy signal on incomplete buckets."""
-    now=now or datetime.now(UTC)
+def continuation_enabled():
+    """Persisted crypto-only control; no changes to stock order permissions."""
+    from pathlib import Path
+    from .storage import DB_PATH
+    try:
+        switch = Path(DB_PATH).parent / "alpaca-crypto-continuation-enabled"
+        return switch.read_text(encoding="utf-8").strip() == "alpaca-crypto-continuation-v1"
+    except (OSError, UnicodeError):
+        return False
+
+
+def evaluate_completed_bars(symbol, hourly, daily, now, *, allow_continuation=False):
+    """Pure candle evaluation shared by live signals and offline replay."""
     if symbol not in PAIRS:
         raise CryptoDataError("crypto_pair_not_allowed")
     bar_end=_floor(now,"1Hour").isoformat()
     day_end=_floor(now,"1Day").isoformat()
-    hourly=rows("""SELECT * FROM ac_bars WHERE symbol=? AND timeframe='1Hour'
-       AND ts<? ORDER BY ts DESC LIMIT 260""",(symbol,bar_end))[::-1]
-    daily=rows("""SELECT * FROM ac_bars WHERE symbol=? AND timeframe='1Day'
-       AND ts<? ORDER BY ts DESC LIMIT 260""",(symbol,day_end))[::-1]
+    # Never include a candle that is still forming at evaluation time.
+    if (any(row["ts"]>=bar_end for row in hourly) or
+            any(row["ts"]>=day_end for row in daily)):
+        raise CryptoDataError("crypto_incomplete_candle_refused")
     def observation(action,why,score=0,stop=None,target=None,gates=None):
         result={"symbol":symbol,"action":action,"reason":why,"score":round(score,3),
           "price":hourly[-1]["c"] if hourly else None,
@@ -594,24 +604,49 @@ def signal(symbol, now=None):
       "hourly_close":h[-1],"daily_close":d[-1],
       "daily_ema200":round(d200,9),
     }
-    # Cross-quoted BTC/USDT, ETH/BTC, etc. have market-research value,
-    # but prices are not USD notionals. Never label their setup as BUY
-    # until quote conversions, asset balances and fee currency are modeled.
+    # This is a separate research-tested path, not a weakening of breakout.
+    # The continuation control is checked per evaluation; it can be disabled
+    # without changing the shared StocksWatch container or any broker orders.
+    from .crypto_continuation import evaluate_pullback
+    continuation = evaluate_pullback(hourly, e20, atr, rsi)
+    gates["continuation_enabled"] = bool(allow_continuation)
+    gates["continuation_candidate"] = bool(continuation["passed"])
+    gates.update({"continuation_" + key: value
+                  for key, value in continuation["checks"].items()})
+    # Cross-quoted BTC/USDT, ETH/BTC, etc. are strictly research-only.
     if symbol in RESEARCH_ONLY_PAIRS:
         return observation("HOLD","non_usd_quote_research_only",score,gates=gates)
-    if not (trend and macro and healthy and breakout):
+    if not (trend and macro and healthy):
         return observation("HOLD","no_confirmed_spot_long_setup",score,gates=gates)
-    # Midpoint candles can have no actual reported trades. A zero-volume
-    # breakout is research evidence only, not an executable confirmation.
+    breakout_entry = bool(breakout)
+    continuation_entry = bool(allow_continuation and continuation["passed"])
+    if not (breakout_entry or continuation_entry):
+        return observation("HOLD","no_confirmed_spot_long_setup",score,gates=gates)
     if hourly[-1]["v"]<=0:
         return observation("HOLD","quote_only_breakout_no_trade_volume",score,gates=gates)
     stop=h[-1]-2.5*atr
     target=h[-1]+4.5*atr
     if stop<=0:
         return observation("WAIT","invalid_stop_distance")
-    return observation("BUY","daily_uptrend_hourly_breakout_healthy_volatility",score,
-                       round(stop,8),round(target,8),gates=gates)
+    reason = ("daily_uptrend_hourly_breakout_healthy_volatility" if breakout_entry
+              else "daily_uptrend_hourly_pullback_reclaim")
+    gates["entry_strategy"] = "breakout" if breakout_entry else "continuation"
+    return observation("BUY",reason,score,round(stop,8),round(target,8),gates=gates)
 
+
+def signal(symbol, now=None):
+    """Causal strategy signal using only stored completed bars."""
+    now=now or datetime.now(UTC)
+    if symbol not in PAIRS:
+        raise CryptoDataError("crypto_pair_not_allowed")
+    bar_end=_floor(now,"1Hour").isoformat()
+    day_end=_floor(now,"1Day").isoformat()
+    hourly=rows("""SELECT * FROM ac_bars WHERE symbol=? AND timeframe='1Hour'
+       AND ts<? ORDER BY ts DESC LIMIT 260""",(symbol,bar_end))[::-1]
+    daily=rows("""SELECT * FROM ac_bars WHERE symbol=? AND timeframe='1Day'
+       AND ts<? ORDER BY ts DESC LIMIT 260""",(symbol,day_end))[::-1]
+    return evaluate_completed_bars(symbol, hourly, daily, now,
+                                   allow_continuation=continuation_enabled())
 
 def scan(now):
     """Refresh-only research. Writes signal evidence, never broker orders."""
