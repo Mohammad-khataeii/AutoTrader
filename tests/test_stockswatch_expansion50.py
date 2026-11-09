@@ -46,7 +46,14 @@ class ExpansionFiftyTests(unittest.TestCase):
         self.assertGreater(len(previous_daily),100)
         self.assertEqual(len(new_minute),5)
         self.assertEqual(len(previous_minute),19)
-        self.assertTrue(all(row[0] in NEW for row in requested))
+        # The `new_only` flag restricts DAILY jobs to newly added symbols;
+        # the existing minute-history queue intentionally still includes
+        # the original legacy tickers. Never silently remove that coverage.
+        daily=[row for row in requested if row[1]=="1Day"]
+        minute=[row for row in requested if row[1]=="1Min"]
+        self.assertTrue(all(row[0] in NEW for row in daily))
+        self.assertTrue(any(row[0] not in NEW for row in minute))
+        self.assertTrue(all(row[0] in REGISTRY for row in requested))
         self.assertEqual(len(new_daily),len(set((x[3],x[4]) for x in new_daily)))
 
     def setUp(self):
