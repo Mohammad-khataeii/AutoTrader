@@ -413,6 +413,13 @@ def account_ui(snapshot):
             "qty": o.get("qty"),
             "filled_qty": o.get("filled_qty"),
             "filled_avg_price": o.get("filled_avg_price"),
+            # Prices and lifecycle details are broker-reported, never inferred
+            # from research candidates or local unacknowledged intents.
+            "type": o.get("type"),
+            "order_class": o.get("order_class"),
+            "limit_price": o.get("limit_price"),
+            "stop_price": o.get("stop_price"),
+            "take_profit_price": o.get("limit_price") if o.get("order_class") == "oco" and o.get("side") == "sell" else None,
             "created_at": o.get("created_at"),
             "submitted_at": o.get("submitted_at"),
             "filled_at": o.get("filled_at"),
@@ -554,6 +561,8 @@ def enrich_dashboard(local):
         detail = json.loads(intent.pop("detail_json"))
         intent["diagnostic"] = detail.get("reason")
         intent["limit_price"] = detail.get("limit_price")
+        intent["type"] = detail.get("type")
+        intent["time_in_force"] = detail.get("time_in_force")
     return local
 
 
