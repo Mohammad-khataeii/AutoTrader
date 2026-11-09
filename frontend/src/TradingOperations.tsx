@@ -36,14 +36,19 @@ const readable = (code:unknown):string => {
   };
   return known[raw] || raw.replace(/_/g," ").replace(/\s+/g," ") || "No detailed reason was provided by the server.";
 };
-function Indicator({ title, state, reasons, checked, note, compact=false }:{
-  title:string;state:TradeState;reasons:string[];checked?:unknown;note:string;compact?:boolean;
+type SessionInfo = { isOpen:boolean|null; message:string };
+function Indicator({ title, state, reasons, checked, note, compact=false, session }:{
+  title:string;state:TradeState;reasons:string[];checked?:unknown;note:string;compact?:boolean;session?:SessionInfo;
 }){
-  const name=state==="armed"?"PAPER ORDERS ARMED":state==="waiting"?"WAITING":state==="blocked"?"NOT TRADING":"UNVERIFIED";
+  const name=state==="armed"?"PAPER ORDERS ARMED":state==="waiting"?(session?.isOpen===false?"WAITING FOR MARKET OPEN":"WAITING"):state==="blocked"?"NOT TRADING":"UNVERIFIED";
   return <section className={"to-status to-"+state} aria-label={title+" status"} role="status">
     <div className="to-status-heading"><div><p className="to-eyebrow">{title} · AUTOMATION STATUS</p>
       <h3><span className="to-dot" aria-hidden="true"/>{name}</h3></div>
       <div className="to-checked">Last evaluation: {stamp(checked)}</div></div>
+    {session&&<div className={"to-market "+(session.isOpen===true?"to-market-open":session.isOpen===false?"to-market-closed":"to-market-unverified")}>
+      <strong>US stock market: {session.isOpen===true?"OPEN":session.isOpen===false?"CLOSED":"UNVERIFIED"}</strong>
+      <span>{session.message}</span>
+    </div>}
     <p className="to-caption">{note}</p>
     <ul className="to-reasons">{(compact?reasons.slice(0,4):reasons).map((reason,i)=><li key={i}>{reason}</li>)}</ul>
     {compact&&reasons.length>4&&<details className="to-reason-extra"><summary>Show {reasons.length-4} more diagnostics</summary>
@@ -73,6 +78,29 @@ export function StocksTradingOperations({dashboard:d,health:h,isBroker,dashboard
   const broker:Row=d.broker_account??h.broker_connection??{};
   const cycle:Row=h.cycle??d.status??{};
   const evaluation:Row=d.status?.paper??cycle.paper??{};
+  const market:Row=h.market_clock??{};
+  // Broker clock verification is separate from the application order switch.
+  // Never infer an open/closed session from the old cached dashboard or the
+  // local wall clock when the Alpaca status endpoint is unavailable.
+  const verifiedMarket=!statusError&&market.verified===true
+    &&typeof market.is_open==="boolean"&&fresh(market.checked_at,2);
+  const marketClosed=verifiedMarket&&market.is_open===false;
+  const marketOpen=verifiedMarket&&market.is_open===true;
+  const marketTime=(value:unknown):string=>{
+    if(typeof value!=="string"||!Number.isFinite(Date.parse(value))) return "not available";
+    return new Date(value).toLocaleString(undefined,{
+      weekday:"short",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",timeZoneName:"short"
+    });
+  };
+  const session:SessionInfo={
+    isOpen:verifiedMarket?market.is_open:null,
+    message:marketClosed
+      ?"Next regular US equity market open: "+marketTime(market.next_open)+"."
+      :marketOpen
+        ?"Next regular US equity market close: "+marketTime(market.next_close)+"."
+        :"Alpaca's market clock has not been verified recently."+
+          (market.reason?" ("+readable(market.reason)+")":"")
+  };
   const reasons:string[]=[];
   let state:TradeState="unknown";
   const failures=[
@@ -87,6 +115,9 @@ export function StocksTradingOperations({dashboard:d,health:h,isBroker,dashboard
   }
   else if(!isBroker){state="blocked";reasons.push("This screen is connected to the local simulator, not the Alpaca Paper execution backend.");}
   else {
+    // Show session closure even while trading is separately disabled/paused.
+    // A closed market is never presented as the ONLY blocker in that case.
+    if(marketClosed) reasons.push("The US stock market is CLOSED. Next regular session: "+marketTime(market.next_open)+".");
     const blockers:string[]=[];
     if(broker.status!=="CONNECTED")
       blockers.push("Alpaca Paper broker status: "+label(broker.status||"UNAVAILABLE")+". "+(broker.reason?readable(broker.reason):"No verified recent broker snapshot."));
@@ -102,6 +133,18 @@ export function StocksTradingOperations({dashboard:d,health:h,isBroker,dashboard
     if(broker.status==="CONNECTED"&&!fresh(broker.as_of,3))
       blockers.push("Broker snapshot is older than 3 minutes or has no valid timestamp. Current order admission cannot be verified.");
     if(blockers.length){state="blocked";reasons.push(...blockers);}
+    else if(!verifiedMarket){
+      state="unknown";
+      reasons.push("The Alpaca market clock is not verified. Paper order eligibility cannot be confirmed.");
+    }
+    else if(marketClosed){
+      state="waiting";
+      reasons.push("Paper order permissions are enabled, but new regular-session stock entries must wait for the next eligible market opening.");
+    }
+    else if(String(result)==="WAITING_FOR_NEXT_CORE_OPEN_WINDOW"){
+      state="waiting";
+      reasons.push("The US stock market is OPEN, but this strategy's first-hour EOD entry window has passed.");
+    }
     else if(cycle.components?.market_session&&cycle.components.market_session!=="CORE_OPEN"){
       state="waiting";
       reasons.push("US equity session: "+readable(cycle.components.market_session)+". New EOD entries require an eligible market window.");
@@ -134,8 +177,8 @@ export function StocksTradingOperations({dashboard:d,health:h,isBroker,dashboard
   const candidates=list(d.signals).slice(0,10);
   const rejected=list(evaluation.why_no_trade).slice(0,10);
   return <div className="to-root" data-trading-observability="stocks">
-    <Indicator title="StocksWatch" state={state} reasons={reasons} checked={broker.as_of||cycle.completed_at}
-      note="An armed strategy can be waiting without submitting any orders. A healthy scanner is not proof of an executed trade."/>
+    <Indicator title="StocksWatch" state={state} reasons={reasons} checked={broker.as_of||cycle.completed_at} session={session}
+      note="Broker order permission and the US equity market session are checked independently. A scanner signal is not an executed trade."/>
     <section className="to-panel">
       <div className="to-heading"><h3>Orders: pending, submitted, filled and canceled</h3><span>{open.length} open broker orders · {closed.length} recent broker orders · {intents.length} local intents</span></div>
       <Table kind="stocks" rows={recentFirst(orders)} empty="No broker orders or local submission attempts are available in this snapshot."/>
