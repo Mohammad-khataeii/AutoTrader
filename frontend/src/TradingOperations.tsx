@@ -8,6 +8,13 @@ type OrderRow = { key:string; symbol:string; side:string; state:string; quantity
 const list = (value:unknown):Row[] => Array.isArray(value) ? value : [];
 const label = (value:unknown) => value == null || value === "" ? "—" : String(value).replace(/_/g, " ");
 const money = (value:unknown):string => value == null || value === "" || !Number.isFinite(Number(value)) ? "—" : new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:5}).format(Number(value));
+const cryptoQuotePrice = (value:unknown, symbol:unknown):string => {
+  const amount=Number(value);
+  if(value==null || value==="" || !Number.isFinite(amount)) return "—";
+  const quote=String(symbol??"").split("/")[1] || "USD";
+  const rendered=new Intl.NumberFormat("en-US",{maximumSignificantDigits:8}).format(amount);
+  return (quote==="USD"?"$":"")+rendered+(quote==="USD"?"":" "+quote);
+};
 const stamp = (value:unknown):string => {
   if (typeof value !== "string" || !value) return "—";
   const date = new Date(value);
@@ -231,7 +238,9 @@ export function CryptoTradingStatus({dashboard:d,error}:{dashboard:Row;error?:st
     if(d.paper_orders_enabled!==true) reasons.push("Server switch ALPACA_CRYPTO_ALLOW_PAPER_ORDERS is OFF (research-only mode).");
     if(d.paused!==false) reasons.push("Crypto entry admission is persistently paused.");
     const eligible=assets.filter(x=>x.eligible===1).length;
-    if(eligible<assets.length) reasons.push(eligible+" of "+assets.length+" pairs are broker-verified as eligible. Unverified assets cannot be bought.");
+    const executionCount=Number(d.execution_pairs??assets.length);
+    if(eligible<executionCount) reasons.push(eligible+" of "+executionCount+" USD paper-executable pairs are broker-verified. Unverified assets cannot be bought.");
+    if(Number(d.research_only_pairs)>0) reasons.push(d.research_only_pairs+" cross-quoted markets are research-only; their prices are NOT US dollars.");
     if(total>0&&finished<total) reasons.push("Historical backfill: "+finished+"/"+total+" jobs complete. Signal readiness is checked separately per symbol.");
     if(!fresh(d.last_cycle,5)) reasons.push("Crypto worker cycle is stale or not yet observed.");
     if(d.last_error) reasons.push("Last worker error: "+readable(d.last_error));
@@ -312,13 +321,13 @@ export function CryptoTradingOperations({dashboard:d}:{dashboard:Row}){
           const movement=verified&&close>0&&Number.isFinite(mid)?(mid-close)/close*100:null;
           return <tr key={x.symbol}>
             <td><strong>{x.symbol}</strong></td><td>{label(x.action)}</td>
-            <td className="to-quote-number">{verified?money(q.bid):"—"}</td>
-            <td className="to-quote-number">{verified?money(q.ask):"—"}</td>
-            <td className="to-quote-number">{money(x.price)}</td>
+            <td className="to-quote-number">{verified?cryptoQuotePrice(q.bid,x.symbol):"—"}</td>
+            <td className="to-quote-number">{verified?cryptoQuotePrice(q.ask,x.symbol):"—"}</td>
+            <td className="to-quote-number">{cryptoQuotePrice(x.price,x.symbol)}</td>
             <td className="to-quote-number">{movement===null?"—":(movement>=0?"+":"")+movement.toFixed(2)+"%"}</td>
             <td>{verified?stamp(q.observed_at):<span className="to-quote-unavailable">{readable(q.reason??"Quote unavailable")}</span>}</td>
             <td>{stamp(x.bar_at)}</td>
-            <td>{money(x.stop)}</td><td>{money(x.target)}</td><td>{readable(x.reason)}</td>
+            <td>{cryptoQuotePrice(x.stop,x.symbol)}</td><td>{cryptoQuotePrice(x.target,x.symbol)}</td><td>{readable(x.reason)}</td>
           </tr>;
         }):
         <tr><td colSpan={11} className="to-empty">No crypto signals evaluated yet.</td></tr>}
