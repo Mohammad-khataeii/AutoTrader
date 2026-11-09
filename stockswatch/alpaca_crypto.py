@@ -189,17 +189,30 @@ def latest_quotes_snapshot(*, factory=None):
         result = {"available": False, "as_of": now.isoformat(), "quotes": {},
                   "source": "Alpaca US crypto latest bid/ask"}
         try:
+            quotes = {}
+            # The 70-symbol universe is fetched in bounded batches to avoid
+            # oversize query strings, oversized provider responses and bursty UI GETs.
             with (factory or CryptoData)() as data:
-                body = data.get("/v1beta3/crypto/us/latest/quotes", {"symbols": ",".join(PAIRS)})
-            quotes = body.get("quotes")
-            if not isinstance(quotes, dict) or set(quotes) - set(PAIRS):
-                raise CryptoDataError("crypto_quote_batch_invalid")
+                for start in range(0,len(PAIRS),20):
+                    symbols = PAIRS[start:start+20]
+                    body = data.get("/v1beta3/crypto/us/latest/quotes",
+                                    {"symbols": ",".join(symbols)})
+                    received = body.get("quotes")
+                    if not isinstance(received,dict) or set(received)-set(symbols):
+                        raise CryptoDataError("crypto_quote_batch_invalid")
+                    quotes.update(received)
             result["available"] = True
             for symbol in PAIRS:
                 try:
-                    result["quotes"][symbol] = {"available": True, **_checked_quote(quotes.get(symbol), now)}
+                    result["quotes"][symbol] = {
+                        "available": True, "quote_currency": symbol.split("/")[1],
+                        "paper_execution_pair": symbol in EXECUTION_PAIRS,
+                        **_checked_quote(quotes.get(symbol), now)}
                 except CryptoDataError as exc:
-                    result["quotes"][symbol] = {"available": False, "reason": str(exc)}
+                    result["quotes"][symbol] = {
+                        "available": False, "quote_currency": symbol.split("/")[1],
+                        "paper_execution_pair": symbol in EXECUTION_PAIRS,
+                        "reason": str(exc)}
         except CryptoDataError as exc:
             result["reason"] = str(exc)
         _quote_cached_result = result
