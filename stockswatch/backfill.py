@@ -15,7 +15,7 @@ from . import storage
 from .intraday_market import IntradayData, ObservationError, positive
 from .intraday_policy import phase_at
 from .sessions import NY, calendar, completed_day, history_days, instant, published_after, session
-from .universe import NEW, REGISTRY
+from .universe import NEW, REGISTRY, EXPANSION50, BENCHMARKS
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS sw_asset_verification (
@@ -114,8 +114,13 @@ def midnight(day):
 
 def jobs(now, *, new_only, feed="iex", adjustment="raw", minute_days=20, minute_feed=None):
     last = date.fromisoformat(completed_day(now))
-    first = max(date(2016, 1, 1), last - timedelta(days=3652))
     for symbol in sorted(NEW if new_only else REGISTRY):
+        # The 50 newly added liquid equities need a bounded 201+ daily
+        # readiness window, not another decade of minute/daily VPS archives.
+        # Keep the original 52-symbol history queue and its existing
+        # checkpoints unchanged.
+        span=550 if symbol in {s for s, _, _ in EXPANSION50} else 3652
+        first = max(date(2016, 1, 1), last - timedelta(days=span))
         # Calendar-year boundaries stay stable across resumed runs. The newest
         # open year is checkpointed in completed monthly partitions.
         month = first.replace(day=1)
@@ -145,12 +150,18 @@ def jobs(now, *, new_only, feed="iex", adjustment="raw", minute_days=20, minute_
                 )
             cursor = following
     labels = calendar().sessions_window(last.isoformat(), 1 - minute_days) if minute_days else ()
+    expansion_symbols = {s for s, _, _ in EXPANSION50}
+    expansion_minute_days = set(x.date() for x in labels[-5:])
     for label in reversed(labels):
         d = label.date()
         opened = datetime.combine(d, wall_time(4), NY).astimezone(UTC)
         close = session(d.isoformat())[1].astimezone(NY)
         end = datetime.combine(d, wall_time(17 if close.hour < 16 else 20), NY).astimezone(UTC)
         for symbol in REGISTRY:
+            # Five recent sessions of minute bars for new symbols save space.
+            # Historical EOD readiness uses independently stored daily bars.
+            if symbol in expansion_symbols and d not in expansion_minute_days:
+                continue
             yield symbol, "1Min", minute_feed or feed, "raw", opened.isoformat(), end.isoformat()
 
 
@@ -395,8 +406,8 @@ def report(now, db=None):
         return {
             "as_of": now.isoformat(),
             "instruments": len(result),
-            "companies": 50,
-            "benchmarks": 2,
+            "companies": len(REGISTRY) - len(BENCHMARKS),
+            "benchmarks": len(BENCHMARKS),
             "kind": "READ_ONLY_HISTORICAL_COVERAGE",
             "symbols": result,
         }
@@ -435,7 +446,7 @@ def main():
     if args.dry_run:
         print(
             json.dumps(
-                {"jobs": sum(1 for _ in jobs(now, **opts)), "instruments": 52, "writes": False}
+                {"jobs": sum(1 for _ in jobs(now, **opts)), "instruments": len(REGISTRY), "writes": False}
             )
         )
         return
