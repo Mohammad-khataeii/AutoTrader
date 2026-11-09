@@ -169,7 +169,13 @@ def _parse_bar(raw, through, observed):
             return None
         prices = [float(raw[k]) for k in ("o","h","l","c","v")]
         o,h,l,c,v = prices
-        if (not all(math.isfinite(x) for x in prices) or min(o,h,l,c)<=0 or v<=0
+        # Alpaca IEX daily bars can have a zero-volume placeholder close.
+        # It is NOT evidence of a trade; do not store it as usable history.
+        if not all(math.isfinite(x) for x in prices):
+            raise ValueError("catalog_bar_ohlcv_invalid")
+        if v == 0:
+            return None
+        if (min(o,h,l,c)<=0 or v<0
                 or l > min(o,c) or h < max(o,c)):
             raise ValueError("catalog_bar_ohlcv_invalid")
         return day, o,h,l,c,v
@@ -208,7 +214,13 @@ def fetch_daily(client, symbols, now):
             if not isinstance(bars, list):
                 raise ValueError("catalog_provider_page_invalid")
             for bar in bars:
-                parsed = _parse_bar(bar, through, now)
+                try:
+                    parsed = _parse_bar(bar, through, now)
+                except (ValueError, TypeError, KeyError, OverflowError):
+                    # A malformed candle must not discard valid candles from
+                    # other symbols in this multi-symbol, paginated response.
+                    # Never repair or fabricate a candle.
+                    continue
                 if parsed:
                     day = parsed[0]
                     if day in output[sym] and output[sym][day] != parsed:
@@ -256,6 +268,12 @@ def download(*, max_batches=3, batch_size=10, pace_seconds=2.0,
     if not 1<=max_batches<=24 or not 1<=batch_size<=10 or not 1<=pace_seconds<=30:
         raise ValueError("catalog_download_limits_invalid")
     initialize()
+    # One-time recovery of the historical batch-wide rejection. Keep every
+    # other retry or provider error on its original cooldown.
+    with connect() as db:
+        db.execute("""UPDATE sw_catalog_assets
+          SET status='PENDING', attempted_at=NULL, error=NULL
+          WHERE status='RETRY' AND error='catalog_bar_ohlcv_invalid'""")
     # Ensure that account identity is validated, even for GET-only data downloads.
     from .alpaca_paper import PaperClient
     with PaperClient(retry_reads=True) as broker:
