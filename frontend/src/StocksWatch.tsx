@@ -37,7 +37,8 @@ export function StocksWatch(){
  const [ticker,setTicker]=useState("");
  const [catalogSearch,setCatalogSearch]=useState("");
  const [catalogFilter,setCatalogFilter]=useState("");
- const catalog=useResource("/api/stockswatch/catalog?query="+encodeURIComponent(catalogFilter)+"&limit=50",{enabled:tab==="Research",poll:60000});
+ const [catalogOffset,setCatalogOffset]=useState(0);
+ const catalog=useResource("/api/stockswatch/catalog?query="+encodeURIComponent(catalogFilter)+"&limit=50&offset="+catalogOffset,{poll:60000,ttl:30000});
  const d:Row=resource.data??{};
  const h:Row=health.data??{};
  const isBroker=h.mode==="ALPACA_PAPER" || d.execution_mode==="ALPACA_PAPER";
@@ -82,6 +83,14 @@ export function StocksWatch(){
     <div className="sw-intel-row"><span>Net / total gross exposure</span><strong>{cash(a.net_exposure)} / {cash(a.exposure)}</strong></div>
     <div className="sw-intel-row"><span>Account realized / unrealized P&amp;L</span><strong>{a.realized==null?"Unavailable":cash(a.realized)} / {a.unrealized==null?"Unavailable":cash(a.unrealized)}</strong></div>
   </article>}
+  <article className="sw-panel" aria-label="Alpaca stock universe overview">
+    <Header icon={Database} title="Alpaca stock universe" note="The original 102 tracked tickers are the trading scanner; additional stocks and ETFs are research-only."/>
+    {catalog.error ? <p className="sw-warning">The full-market stock catalogue API is not available yet. The 102-ticker scanner remains unaffected.</p> :
+      <div className="sw-intel-row"><span>{catalog.data?.summary?.state==="OK"
+        ? `${n(catalog.data.summary.active).toLocaleString()} active listings · ${n(catalog.data.summary.tradable).toLocaleString()} broker-tradable · ${n(catalog.data.summary.history_ready).toLocaleString()} history-ready`
+        : "Loading the Alpaca catalogue…"} · 102 original tracked</span>
+        <button type="button" onClick={()=>setTab("Research")}>Browse all Alpaca tickers</button></div>}
+  </article>
   <IntradayMonitor eod={paper} positions={positions}/>
   <ScannerMonitor/>
   <article className="sw-panel sw-execution-summary">
@@ -185,14 +194,14 @@ export function StocksWatch(){
       <div className="sw-intel-row"><span>History downloaded / ready</span><strong>{n(catalog.data?.summary?.history_ready).toLocaleString()} new symbols</strong></div>
       <div className="sw-intel-row"><span>Daily research bars</span><strong>{n(catalog.data?.summary?.history_rows).toLocaleString()}</strong></div>
       <p>Original 102 symbols keep their existing trading gates. Additional listings are research-only until separately qualified for execution. Last inventory sync: {fromUTC(catalog.data?.summary?.last_sync)}.</p>
-      <form onSubmit={e=>{e.preventDefault();setCatalogFilter(catalogSearch.trim());}} style={{display:"flex",gap:"0.5rem",marginBottom:"0.8rem"}}>
+      <form onSubmit={e=>{e.preventDefault();setCatalogOffset(0);setCatalogFilter(catalogSearch.trim());}} style={{display:"flex",gap:"0.5rem",marginBottom:"0.8rem"}}>
         <input aria-label="Find Alpaca stock or ETF" value={catalogSearch} onChange={e=>setCatalogSearch(e.target.value)} placeholder="Find ticker or company" maxLength={40} style={{flex:1,minWidth:0}}/>
         <button type="submit">Search</button>
       </form>
       {catalog.error && <Blank text="The full-universe catalogue is temporarily unavailable."/>}
       <div className="sw-table-scroll"><table className="sw-table"><thead><tr><th>Symbol</th><th>Company / ETF</th><th>Exchange</th><th>History</th><th>Bars</th></tr></thead>
       <tbody>{(catalog.data?.results??[]).map((x:Row)=><tr key={x.symbol}><td><b>{x.symbol}</b></td><td>{x.name}</td><td>{x.exchange}</td><td>{val(x.status).replace(/_/g," ")}</td><td>{n(x.bar_count).toLocaleString()}</td></tr>)}</tbody></table></div>
-      {catalog.data?.total>50 && <p>Showing 50 of {n(catalog.data.total).toLocaleString()} matching listings. Refine the search to inspect a ticker.</p>}
+      {catalog.data?.total>50 && <div className="sw-intel-row"><span>Showing {catalogOffset+1}–{Math.min(catalogOffset+50,n(catalog.data.total))} of {n(catalog.data.total).toLocaleString()} listings</span><div style={{display:"flex",gap:"0.5rem"}}><button type="button" disabled={catalogOffset===0} onClick={()=>setCatalogOffset(Math.max(0,catalogOffset-50))}>Previous</button><button type="button" disabled={catalogOffset+50>=n(catalog.data.total)} onClick={()=>setCatalogOffset(catalogOffset+50)}>Next</button></div></div>}
       {catalog.data?.summary?.state==="NOT_INITIALIZED" && <Blank text="Full Alpaca inventory is not synced yet. Run the read-only sync and paced history downloader on the VPS."/>}
     </article>
   </div>}
