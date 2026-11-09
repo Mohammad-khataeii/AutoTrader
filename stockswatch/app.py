@@ -214,6 +214,16 @@ def catalog_evidence(symbol: str):
         return {"symbol":symbol,"state":"INITIALIZING","filings":[],"ai_notes":[]}
 
 
+@app.get("/api/stockswatch/catalog-top", dependencies=[Depends(authenticated)])
+def catalog_top(limit: int = 20):
+    """Full broker inventory rankings; no order eligibility implied."""
+    from .catalog_intelligence import top_candidates
+    try:
+        return top_candidates(limit=limit)
+    except ValueError as exc:
+        raise HTTPException(status_code=422,detail=str(exc)) from exc
+
+
 @app.get("/api/stockswatch/status", dependencies=[Depends(authenticated)])
 def status():
     counts = {
