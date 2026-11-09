@@ -31,8 +31,12 @@ const readable = (code:unknown):string => {
     UNCERTAIN_BROKER_INTENT:"An uncertain previous order must be reconciled before submitting another.",
     PROTECTION_MONITOR_UNAVAILABLE:"The protective-order monitor is unavailable; do not assume positions are protected.",
     insufficient_completed_history:"At least 220 completed daily and 220 completed hourly bars are required per crypto pair.",
-    crypto_separate_paper_account_not_configured:"Dedicated crypto Alpaca Paper credentials are missing.",
-    read_only_dedicated_paper_account:"Crypto broker observations are read-only; automatic paper orders are disabled."
+    crypto_separate_paper_account_not_configured:"Alpaca Paper credentials are unavailable.",
+    read_only_dedicated_paper_account:"Crypto broker observations are read-only; automatic paper orders are disabled.",
+    read_only_shared_paper_account:"Shared Alpaca Paper account verified; crypto paper order submission remains disabled.",
+    crypto_paper_credentials_missing:"The StocksWatch Alpaca Paper credentials are missing or unavailable to AlpacaCrypto.",
+    crypto_shared_account_unknown_asset_class:"The shared broker contains an unclassified asset; manual review required.",
+    crypto_shared_account_stock_orders_pending:"StocksWatch has open orders in the shared Alpaca Paper account. Crypto buys are waiting.",
   };
   return known[raw] || raw.replace(/_/g," ").replace(/\s+/g," ") || "No detailed reason was provided by the server.";
 };
@@ -216,8 +220,8 @@ export function CryptoTradingStatus({dashboard:d,error}:{dashboard:Row;error?:st
   let state:TradeState="unknown";
   if(error){reasons.push("Cannot verify AlpacaCrypto: "+error);}
   else{
-    if(!d.broker_account_verified) reasons.push("Dedicated AlpacaCrypto Paper account has not been verified. Check ALPACA_CRYPTO_PAPER_KEY, ALPACA_CRYPTO_PAPER_SECRET and ALPACA_CRYPTO_PAPER_ACCOUNT_ID on the server.");
-    if(!paper.observed_at) reasons.push("No verified dedicated crypto broker account snapshot is available.");
+    if(!d.broker_account_verified) reasons.push("Existing StocksWatch Alpaca Paper account is not verified for crypto. Check the stock paper credentials and broker account status; no second account is required.");
+    if(!paper.observed_at) reasons.push("No verified crypto portion of the shared Alpaca Paper account is available.");
     else if(!fresh(paper.observed_at,5)) reasons.push("The crypto broker snapshot is stale: "+stamp(paper.observed_at)+".");
     if(d.paper_orders_enabled!==true) reasons.push("Server switch ALPACA_CRYPTO_ALLOW_PAPER_ORDERS is OFF (research-only mode).");
     if(d.paused!==false) reasons.push("Crypto entry admission is persistently paused.");
@@ -234,7 +238,7 @@ export function CryptoTradingStatus({dashboard:d,error}:{dashboard:Row;error?:st
     if(!reasons.length) reasons.push("Paper order admission is enabled; individual trades still require fresh quotes and all risk gates.");
   }
   return <Indicator title="AlpacaCrypto" compact state={state} reasons={reasons} checked={d.last_cycle}
-    note="The 24/7 research scanner is separate from paper order permission. A verified dedicated Alpaca account is required for execution."/>;
+    note="The 24/7 crypto scanner shares the stock Alpaca Paper account, but uses independent orders and execution permission."/>;
 }
 
 export function CryptoTradingOperations({dashboard:d}:{dashboard:Row}){
@@ -263,7 +267,7 @@ export function CryptoTradingOperations({dashboard:d}:{dashboard:Row}){
       <Table kind="crypto" rows={recentFirst(orders)} empty="No AlpacaCrypto paper orders have been recorded. Scanner signals are not orders."/>
       <p className="to-foot">{verifiedBook.available===true
         ?"Verified paper fill price, fill quantity, and order state are read directly from Alpaca; the visible broker history is limited to recent orders."
-        :("Live broker order detail unavailable"+(verifiedBook.reason?": "+readable(verifiedBook.reason):brokerJournal.error?": "+brokerJournal.error:"; waiting for verified paper account")+". Cached intent states are not proof of a current fill.")}</p>
+        :("Crypto broker order detail unavailable"+(verifiedBook.reason?": "+readable(verifiedBook.reason):brokerJournal.error?": "+brokerJournal.error:"; waiting for verified paper account")+". Cached intent states are not proof of a current fill.")}</p>
     </section>
     <section className="to-panel">
       <div className="to-heading"><h3>Held crypto and software TP / SL</h3><span>These are monitored software thresholds, not broker-native stop orders</span></div>
@@ -271,7 +275,7 @@ export function CryptoTradingOperations({dashboard:d}:{dashboard:Row}){
         {positions.length?positions.map((x,i)=>{const symbol=String(x.symbol||"");const m=managed.find(y=>String(y.symbol).replace("/","")===symbol.replace("/",""));return <tr key={symbol+i}>
           <td><strong>{symbol}</strong></td><td>{label(x.qty)}</td><td>{money(x.market_value)}</td><td>{money(x.unrealized_pl)}</td>
           <td>{money(m?.stop)}</td><td>{money(m?.target)}</td><td>{m?"Software-managed; execution not guaranteed":"No owned protection verified"}</td></tr>}):
-        <tr><td colSpan={7} className="to-empty">No dedicated crypto broker holdings reported in the latest snapshot.</td></tr>}</tbody></table></div>
+        <tr><td colSpan={7} className="to-empty">No crypto holdings reported in the latest verified shared Alpaca Paper account snapshot.</td></tr>}</tbody></table></div>
     </section>
     <section className="to-panel">
       <div className="to-heading"><h3>Scanner opportunities — not submitted orders</h3><span>Data is research midpoints, not executable quotes</span></div>
