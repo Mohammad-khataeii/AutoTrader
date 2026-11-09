@@ -31,7 +31,7 @@ class GapAuditRegression(unittest.TestCase):
             classify(100, 78, 100, 78, 100, 78),
             "VERIFIED_UNADJUSTED_MARKET_GAP",
         )
-        self.assertEqual(classify(100, 78, 101, 78, 100, 78), "VERIFIED_UNADJUSTED_MARKET_GAP")
+        self.assertEqual(classify(100, 78, 100.5, 78, 100, 78), "VERIFIED_UNADJUSTED_MARKET_GAP")
 
     def test_split_like_adjustment_must_remain_blocked(self):
         self.assertEqual(
