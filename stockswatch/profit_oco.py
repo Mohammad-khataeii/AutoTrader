@@ -77,21 +77,75 @@ def _saved(account,symbol):
 
 
 def _candidate_bars(symbol,now):
+    """Only 15 consecutive RAW Alpaca-IEX XNYS sessions may seed an OCO.
+
+    The stock signal archive can contain Stooq observations or be incomplete
+    even for a valid filled EOD position. Do not touch or overwrite that
+    trading archive: independently read the certified history archive, then
+    GET missing bars directly from Alpaca. A remote error prevents OCO submit.
+    """
     stamp=completed_day(now)
-    bars=rows("""SELECT day,o,h,l,c,v,source,adjustment,observed_at
+    cal=__import__("stockswatch.sessions",fromlist=["calendar"]).calendar()
+    expected=[x.date().isoformat() for x in cal.sessions_window(stamp,-14)]
+
+    def verified(items):
+        if len(items)!=15 or [x["day"] for x in items]!=expected:
+            return False
+        if any(x["source"]!="alpaca_iex_daily" or x["adjustment"]!="RAW"
+               or instant(x["observed_at"])>now for x in items):
+            return False
+        # Check positivity, bar geometry and 14 true ranges prior to OCO.
+        try:
+            profit_lock.atr14(items)
+        except (ValueError,TypeError,KeyError):
+            return False
+        return True
+
+    primary=rows("""SELECT day,o,h,l,c,v,source,adjustment,observed_at
       FROM sw_eod_observations WHERE symbol=? AND day<=?
       ORDER BY day DESC LIMIT 15""",(symbol,stamp))[::-1]
-    if len(bars)!=15 or any(x["source"]!="alpaca_iex_daily" or x["adjustment"]!="RAW" for x in bars):
-        raise ProtectionError("protection_certified_atr_unavailable")
-    # Require 15 consecutive XNYS dates; prevent hiding a split or missing session.
-    calendar=__import__("stockswatch.sessions",fromlist=["calendar"]).calendar()
-    expected=[x.date().isoformat() for x in calendar.sessions_window(stamp,-14)]
-    if [x["day"] for x in bars]!=expected:
-        raise ProtectionError("protection_atr_session_gap")
-    for b in bars:
-        if not instant(b["observed_at"])<=now:
-            raise ProtectionError("protection_unpublished_daily_bar")
-    return bars
+    if verified(primary):
+        return primary
+
+    # StocksWatch's historical archive stores independently verified
+    # IEX/RAW daily observations; never use SIP/adjusted/Stooq candles.
+    archive=rows("""SELECT trade_date AS day,o,h,l,c,v,observed_at,
+          'alpaca_iex_daily' AS source,'RAW' AS adjustment
+      FROM sw_historical_bars
+      WHERE symbol=? AND timeframe='1Day' AND feed='iex'
+        AND adjustment='raw' AND trade_date<=?
+      ORDER BY trade_date DESC LIMIT 15""",(symbol,stamp))[::-1]
+    if verified(archive):
+        return archive
+
+    # Last resort is a GET-only query against the same trusted data source.
+    # This runs in the existing broker worker thread, not the event loop.
+    import asyncio
+    import httpx
+    from . import market
+    async def remote():
+        async with httpx.AsyncClient(timeout=httpx.Timeout(12,connect=5),
+             trust_env=False,follow_redirects=False) as client:
+            return await market.alpaca(client,symbol,from_day=expected[0],through=stamp)
+    try:
+        bars,source,adjustment=asyncio.run(remote())
+        if source!="alpaca_iex_daily" or adjustment!="RAW":
+            raise ProtectionError("protection_atr_provider_not_certified")
+        # Remote responses are sorted, validated, and limited to completed
+        # publication dates by the existing Alpaca adapter. Add observation
+        # evidence only in memory; do not mutate shared research tables.
+        remote_bars=[{**b,"source":source,"adjustment":adjustment,
+                       "observed_at":now.isoformat()} for b in bars if b["day"]<=stamp]
+        candidate=remote_bars[-15:]
+        if verified(candidate):
+            return candidate
+    except Exception as exc:
+        if isinstance(exc,ProtectionError):
+            raise
+        log.warning("StocksWatch OCO %s certified daily GET unavailable: %s",
+                    symbol,type(exc).__name__)
+        raise ProtectionError("protection_certified_atr_provider_unavailable") from None
+    raise ProtectionError("protection_certified_atr_15_sessions_unavailable")
 
 
 def _entry_id(account,symbol):
@@ -400,10 +454,13 @@ def cycle(client,snapshot,now=None,data=None):
                 entry_cid=_entry_id(account,sym)
                 if saved and saved["entry_client_id"]!=entry_cid:
                     raise ProtectionError("protection_position_entry_changed")
-                bars=_candidate_bars(sym,now)
+                # Once initial verified ATR is committed to the protection
+                # record, broker stop management must not depend on backfill
+                # availability or refetch daily history on every 45s poll.
                 if saved:
                     plan=profit_lock.initial(saved["entry"],saved["qty"],saved["atr"])
                 else:
+                    bars=_candidate_bars(sym,now)
                     plan=profit_lock.initial(p["avg_entry_price"],p["qty"],profit_lock.atr14(bars))
                 if saved and (profit_lock.decimal(p["qty"])>plan.qty or
                               profit_lock.decimal(p["avg_entry_price"])!=plan.entry):
