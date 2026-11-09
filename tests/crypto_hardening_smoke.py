@@ -15,7 +15,7 @@ NOW=datetime(2026,11,9,14,30,tzinfo=UTC)
 
 class CryptoHardeningTests(unittest.TestCase):
     def setUp(self):
-        self.temp=tempfile.TemporaryDirectory(prefix="ac-release-test-")
+        self.temp=tempfile.TemporaryDirectory(prefix="ac-release-test-",dir="/dev/shm")
         self.addCleanup(self.temp.cleanup)
         patcher=patch.object(storage,"DB_PATH",str(Path(self.temp.name)/"paper-test.sqlite3"))
         patcher.start()
