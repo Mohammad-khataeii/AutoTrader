@@ -151,13 +151,10 @@ export function StocksTradingOperations({dashboard:d,health:h,isBroker,error}:{d
   </div>;
 }
 
-export function CryptoTradingOperations({dashboard:d,error}:{dashboard:Row;error?:string}){
-  const brokerJournal=useResource("/api/stockswatch/alpaca-crypto/orders",{poll:20000,ttl:10000});
-  const verifiedBook:Row=brokerJournal.data??{};
-  const brokerOrders=list(verifiedBook.orders);
+/** Distinct top-of-page status: no order-journal polling or duplicated tables. */
+export function CryptoTradingStatus({dashboard:d,error}:{dashboard:Row;error?:string}){
   const paper:Row=d.broker_snapshot??{};
   const assets=list(d.assets),jobs=list(d.history_jobs),signals=list(d.signals);
-  const positions=list(paper.positions),intents=list(d.intents),managed=list(d.managed);
   const finished=jobs.filter(x=>x.state==="COMPLETE").reduce((s,x)=>s+Number(x.n||0),0);
   const total=jobs.reduce((s,x)=>s+Number(x.n||0),0);
   const reasons:string[]=[];
@@ -181,6 +178,19 @@ export function CryptoTradingOperations({dashboard:d,error}:{dashboard:Row;error
     if(!blocked&&!signals.some(x=>x.action==="BUY")){state="waiting";reasons.unshift("Paper engine is authorized but no approved crypto BUY signal is present.");}
     if(!reasons.length) reasons.push("Paper order admission is enabled; individual trades still require fresh quotes and all risk gates.");
   }
+  return <Indicator title="AlpacaCrypto" state={state} reasons={reasons} checked={d.last_cycle}
+    note="The 24/7 research scanner is separate from paper order permission. A verified dedicated Alpaca account is required for execution."/>;
+}
+
+export function CryptoTradingOperations({dashboard:d,error}:{dashboard:Row;error?:string}){
+  const brokerJournal=useResource("/api/stockswatch/alpaca-crypto/orders",{poll:20000,ttl:10000});
+  const verifiedBook:Row=brokerJournal.data??{};
+  const brokerOrders=list(verifiedBook.orders);
+  const paper:Row=d.broker_snapshot??{};
+  const assets=list(d.assets),jobs=list(d.history_jobs),signals=list(d.signals);
+  const positions=list(paper.positions),intents=list(d.intents),managed=list(d.managed);
+  const finished=jobs.filter(x=>x.state==="COMPLETE").reduce((s,x)=>s+Number(x.n||0),0);
+  const total=jobs.reduce((s,x)=>s+Number(x.n||0),0);
   const orders:OrderRow[]=intents.map((x,i)=>{
     const verified=verifiedBook.available===true?brokerOrders.find(o=>o.client_order_id===x.client_id):undefined;
     const levels=managed.find(m=>m.symbol===x.symbol);
@@ -195,8 +205,6 @@ export function CryptoTradingOperations({dashboard:d,error}:{dashboard:Row;error
     };
   });
   return <div className="to-root" data-trading-observability="crypto">
-    <Indicator title="AlpacaCrypto" state={state} reasons={reasons} checked={d.last_cycle}
-      note="24/7 scanner activity is separate from live paper order permission. Orders use a dedicated Alpaca Paper account, not the stock ledger."/>
     <section className="to-panel">
       <div className="to-heading"><h3>Crypto paper orders and execution journal</h3><span>{intents.length} recorded intents · {verifiedBook.available===true?label(verifiedBook.open_broker_orders):paper.open_order_count==null?"Unknown":label(paper.open_order_count)} open broker orders</span></div>
       <Table kind="crypto" rows={recentFirst(orders)} empty="No AlpacaCrypto paper orders have been recorded. Scanner signals are not orders."/>
