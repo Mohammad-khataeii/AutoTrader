@@ -105,7 +105,7 @@ export function AlpacaCrypto() {
       {response.error && <p role="alert" className="ac-warning">The crypto dashboard API is unavailable; no trading state is assumed.</p>}
     </section>
 
-    <CryptoTradingOperations dashboard={d} error={response.error}/>
+    <CryptoTradingOperations dashboard={d}/>
     <p className="ac-footnote">Paper trading only. Historical crypto bars are midpoint observations, not executable prices. Software exit thresholds cannot guarantee fills.</p>
   </main>;
 }
