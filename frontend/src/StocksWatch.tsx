@@ -89,7 +89,7 @@ export function StocksWatch(){
       <div className="sw-intel-row"><span>{catalog.data?.summary?.state==="OK"
         ? `${n(catalog.data.summary.active).toLocaleString()} active listings · ${n(catalog.data.summary.tradable).toLocaleString()} broker-tradable · ${n(catalog.data.summary.history_ready).toLocaleString()} history-ready`
         : "Loading the Alpaca catalogue…"} · 102 original tracked</span>
-        <button type="button" onClick={()=>setTab("Research")}>Browse all Alpaca tickers</button></div>}
+        <button type="button" onClick={()=>{setTab("Research");document.getElementById("stockswatch-detail-tabs")?.scrollIntoView({behavior:"smooth",block:"start"});}}>Browse all Alpaca tickers</button></div>}
   </article>
   <IntradayMonitor eod={paper} positions={positions}/>
   <ScannerMonitor/>
@@ -131,7 +131,7 @@ export function StocksWatch(){
       <div className="sw-actionline"><button disabled={busy||!canControl} onClick={()=>control(paused?"resume":"pause")}>{paused?<Play size={16}/>:<Pause size={16}/>} {paused?"Resume paper orders":"Pause new paper orders"}</button><span>{isBroker?"Only affects StocksWatch automated Alpaca paper orders, not orders placed manually in Alpaca.":"Trade controls affect StocksWatch only."}</span></div>
    </article>
   </section>
-  <section className="sw-nav" role="tablist" aria-label="StocksWatch details">
+  <section id="stockswatch-detail-tabs" className="sw-nav" role="tablist" aria-label="StocksWatch details">
    {(["Signals","Portfolio","Protection","Research","Catalysts"] as const).map(t=><button key={t} role="tab" aria-selected={tab===t} className={tab===t?"active":""} onClick={()=>setTab(t)}>{t}</button>)}
    <button className="sw-refresh" title="Refresh StocksWatch data" onClick={()=>{void api.refresh("/api/stockswatch/dashboard");void api.refresh("/api/stockswatch/status");}}><RefreshCw size={15}/></button>
   </section>
