@@ -498,7 +498,7 @@ class Service:
                             WHEN p.symbol IS NOT NULL OR a.symbol IN (SELECT value FROM json_each(:held)) THEN 1
                             WHEN signal_day IS NOT NULL THEN 2
                             WHEN a.symbol NOT IN (SELECT value FROM json_each(:new_symbols)) THEN 3 ELSE 4 END,
-                        COALESCE(q.checked_at,''),a.symbol LIMIT 4""",
+                        COALESCE(q.checked_at,''),a.symbol LIMIT 6""",
             {"day": day, "cutoff": cutoff, "refresh_since": refresh_since, "broker": broker, "held": held, "new_symbols":new_symbols},
         )
         out["source_state"] = "CACHED_OR_AWAITING_PUBLICATION"
@@ -645,7 +645,7 @@ class Service:
                 } or status.startswith("provider_http_"):
                     set_setting("price_cooldown_until", (now + timedelta(hours=1)).isoformat())
                     break
-            if index < 3:
+            if index < len(due)-1:
                 await asyncio.sleep(1.8)
 
     async def sec_cycle(self,client,agent,observer=None):
