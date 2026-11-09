@@ -143,15 +143,17 @@ class Service:
                             await asyncio.to_thread(ac.queue, now)
                             next_queue = now + timedelta(hours=6)
                         if next_asset_check is None or now >= next_asset_check:
-                            if os.getenv("ALPACA_CRYPTO_PAPER_KEY") and os.getenv("ALPACA_CRYPTO_PAPER_SECRET"):
-                                def verify():
-                                    with ap.CryptoPaperClient() as broker:
-                                        broker.account()
-                                        return ap.verify_assets(broker)
-                                try:
-                                    await asyncio.to_thread(verify)
-                                except ap.CryptoPaperError as exc:
-                                    log.warning("AlpacaCrypto asset verification deferred: %s", str(exc))
+                            # Reuse the existing verified STOCKSWATCH_ALPACA_PAPER_*
+                            # credential pair when crypto-specific overrides are absent.
+                            # Verification is always a GET; no order submission here.
+                            def verify():
+                                with ap.CryptoPaperClient() as broker:
+                                    broker.account()
+                                    return ap.verify_assets(broker)
+                            try:
+                                await asyncio.to_thread(verify)
+                            except ap.CryptoPaperError as exc:
+                                log.warning("AlpacaCrypto asset verification deferred: %s", str(exc))
                             next_asset_check = now + timedelta(hours=6)
                         # Data backfill and quote refresh must not block broker
                         # reconciliation or protective exits if they fail.
