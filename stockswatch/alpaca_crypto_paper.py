@@ -434,10 +434,31 @@ def run_paper_cycle(data,now=None):
                 # existing AlpacaCrypto-owned LONG positions.
                 if bool((one("SELECT paused FROM ac_state WHERE id=1") or {}).get("paused",1)):
                     return "crypto_new_entries_paused"
-                # On a shared account, avoid new crypto entries while StockWatch
-                # has outstanding stock orders reserving cash/positions.
-                if snapshot["other_open_orders"]:
-                    return "crypto_shared_account_stock_orders_pending"
+                # Pending US-equity SELL-to-close orders do not reserve cash
+                # for new crypto BUYs. Permit those existing stock exits while
+                # blocking unknown sides, pending stock BUYs and unmatched qty.
+                # Never cancel or modify the separate StocksWatch order book.
+                stock_positions={p.get("symbol"):p for p in snapshot["other_positions"]}
+                sell_qty={}
+                for order in snapshot["other_open_orders"]:
+                    symbol=order.get("symbol")
+                    if order.get("side")!="sell" or symbol not in stock_positions:
+                        return "crypto_shared_account_stock_orders_pending"
+                    position=stock_positions[symbol]
+                    if (position.get("side")!="long"
+                            or position.get("asset_class")!="us_equity"
+                            or not order.get("id") or not order.get("status")):
+                        return "crypto_shared_account_stock_orders_unverified"
+                    try:
+                        outstanding=money(order.get("qty"))-money(order.get("filled_qty"))
+                        held=money(position.get("qty"))
+                    except CryptoPaperError:
+                        return "crypto_shared_account_stock_orders_unverified"
+                    if outstanding<=0 or held<=0:
+                        return "crypto_shared_account_stock_orders_unverified"
+                    sell_qty[symbol]=sell_qty.get(symbol,Decimal(0))+outstanding
+                    if sell_qty[symbol]>held:
+                        return "crypto_shared_account_stock_sells_exceed_holdings"
                 equity,buying=_limits(snapshot,now)
                 if any(p.get("side")!="long" for p in snapshot["positions"]):
                     raise CryptoPaperError("crypto_unrecognized_position_side")
