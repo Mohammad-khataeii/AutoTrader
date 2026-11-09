@@ -275,12 +275,44 @@ class PaperClient:
         orders = {
             o["id"]: o for o in (recent or []) + open_orders if isinstance(o, dict) and o.get("id")
         }
-        open_error = "alpaca_paper_open_order_page_full" if len(open_orders) >= 500 else None
+        # Alpaca delivers stock and crypto holdings/orders from the SAME
+        # paper account. Keep StocksWatch's stock ledger distinct from crypto
+        # intents, while the shared cash/equity stays broker-authoritative.
+        from .alpaca_crypto import PAIRS
+        from .universe import ASSETS
+        crypto_symbols = set(PAIRS) | {s.replace("/", "") for s in PAIRS}
+        stock_symbols = {a[0] for a in ASSETS}
+        def is_crypto(item):
+            kind = item.get("asset_class")
+            if kind == "crypto":
+                return True
+            if kind == "us_equity":
+                return False
+            symbol = item.get("symbol")
+            if symbol in crypto_symbols:
+                return True
+            if symbol in stock_symbols:
+                return False
+            # Unknown asset classes/asset IDs are never silently excluded
+            # from the risk-relevant open order/position book.
+            raise PaperError("alpaca_shared_account_asset_class_unknown")
+        other_positions = [p for p in positions if is_crypto(p)]
+        positions = [p for p in positions if not is_crypto(p)]
+        other_open_orders = [o for o in open_orders if is_crypto(o)]
+        open_orders = [o for o in open_orders if not is_crypto(o)]
+        orders = {oid:o for oid,o in orders.items() if not is_crypto(o)}
+        if fills is not None:
+            # FILL activities may omit asset_class; use only verified known
+            # crypto symbols to prevent their fills appearing in stock history.
+            fills = [f for f in fills if f.get("symbol") not in crypto_symbols]
+        open_error = "alpaca_paper_open_order_page_full" if len(open_orders) + len(other_open_orders) >= 500 else None
         return {
             "account": account,
             "positions": positions,
+            "other_positions": other_positions,
             "orders": list(orders.values()),
             "open_orders": open_orders,
+            "other_open_orders": other_open_orders,
             "fills": fills,
             "history": history,
             "warnings": {
@@ -851,6 +883,14 @@ def _entry_budget(snapshot, sectors, sector, active, known):
         if sectors[sym]==sector:
             sector_used+=value
 
+    # Shared Alpaca Paper cash and equity also fund crypto inventory. Count
+    # crypto holdings toward the gross-exposure ceiling; never budget the
+    # same account equity independently for both strategies.
+    for crypto_position in snapshot.get("other_positions", []):
+        if crypto_position.get("side") != "long":
+            raise PaperError("alpaca_shared_account_crypto_inventory_invalid")
+        gross += abs(money(crypto_position.get("market_value")))
+
     reserved_symbols = set()
     from .profit_oco import recognized_order_ids
     protection_orders=recognized_order_ids(account.get("id"))
@@ -995,6 +1035,10 @@ def _preview_and_submit(client, snapshot, signals, day, now):
     ):
         return {**result, "status": "ALPACA_ACCOUNT_TRADING_UNAVAILABLE"}
     active = snapshot["open_orders"]
+    # Do not start new stock entries against a concurrently pending crypto
+    # order on the shared paper account.
+    if snapshot.get("other_open_orders"):
+        return {**result, "status": "SHARED_ACCOUNT_CRYPTO_ORDERS_PENDING"}
     if len(active) >= 500 or any(
         not o.get("symbol") or not o.get("id") or not o.get("status") or o.get("legs")
         for o in active
