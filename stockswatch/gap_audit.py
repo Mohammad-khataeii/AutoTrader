@@ -62,6 +62,7 @@ def _match(proof, prev, current):
         and math.isclose(float(proof["raw_prev_close"]), float(prev["c"]), rel_tol=0, abs_tol=0.00001)
         and math.isclose(float(proof["raw_next_open"]), float(current["o"]), rel_tol=0, abs_tol=0.00001)
         and proof["previous_day"] == prev["day"]
+        and proof["source"] == SOURCE
     )
 
 
@@ -89,7 +90,7 @@ def reason_for_gap(c, symbol, prev, current, sessions_since_gap):
     if sessions_since_gap < COOLING_SESSIONS:
         return "historical_recent_large_gap_cooling_period"
     row = c.execute(
-        """SELECT previous_day,raw_prev_close,raw_next_open,status
+        """SELECT previous_day,raw_prev_close,raw_next_open,status,source
            FROM sw_historical_gap_proofs WHERE symbol=? AND gap_day=?""",
         (symbol, current["day"]),
     ).fetchone()
@@ -110,7 +111,7 @@ def pending(c, symbol, bars):
         if len(bars) - idx < COOLING_SESSIONS or _known_actions(c, symbol, curr["day"]):
             continue
         proof = c.execute(
-            """SELECT previous_day,raw_prev_close,raw_next_open,status
+            """SELECT previous_day,raw_prev_close,raw_next_open,status,source
                FROM sw_historical_gap_proofs WHERE symbol=? AND gap_day=?""",
             (symbol, curr["day"]),
         ).fetchone()
