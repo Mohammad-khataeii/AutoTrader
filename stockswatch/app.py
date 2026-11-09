@@ -274,6 +274,11 @@ def profit_protection():
 def alpaca_crypto_dashboard():
     return alpaca_crypto.dashboard()
 
+@app.get("/api/stockswatch/alpaca-crypto/orders", dependencies=[Depends(authenticated)])
+def alpaca_crypto_orders():
+    from .alpaca_crypto_paper import read_only_order_journal
+    return read_only_order_journal()
+
 
 class CryptoControl(BaseModel):
     action: Literal["pause", "resume"]
