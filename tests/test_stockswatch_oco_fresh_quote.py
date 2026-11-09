@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import patch, AsyncMock
 import unittest
 
 from stockswatch import profit_oco as po, alpaca_paper as paper, profit_lock
@@ -43,6 +43,49 @@ class OcoFixTests(unittest.TestCase):
                 with self.subTest(bid=bid,ask=ask):
                     with self.assertRaises((po.ProtectionError,ObservationError)):
                         po._find_live_quote(Quotes(NOW,bid,ask),"ABBV",NOW,quote_now=NOW)
+
+    @staticmethod
+    def certified_daily():
+        cal=__import__("stockswatch.sessions",fromlist=["calendar"]).calendar()
+        sessions=[x.date().isoformat() for x in cal.sessions_window("2026-11-06",-14)]
+        return [{"day":d,"o":100+i,"h":102+i,"l":99+i,"c":101+i,
+                 "v":10000,"source":"alpaca_iex_daily","adjustment":"RAW",
+                 "observed_at":"2026-11-08T12:00:00+00:00"} for i,d in enumerate(sessions)]
+
+    def test_certified_history_archive_fallback_does_not_mutate_stock_bars(self):
+        expected=self.certified_daily()
+        def local_rows(sql,params=()):
+            return expected if "sw_historical_bars" in sql else []
+        with patch.object(po,"rows",side_effect=local_rows) as query,\\
+             patch("stockswatch.market.alpaca",side_effect=AssertionError("remote GET unexpected")):
+            result=po._candidate_bars("ABBV",NOW)
+        self.assertEqual([r["day"] for r in result],[r["day"] for r in expected])
+        self.assertTrue(all("SELECT" in c.args[0] for c in query.call_args_list))
+
+    def test_certified_remote_alpaca_daily_fallback(self):
+        expected=self.certified_daily()
+        async_provider=AsyncMock(return_value=([
+            {k:r[k] for k in ("day","o","h","l","c","v")} for r in expected
+        ],"alpaca_iex_daily","RAW"))
+        with patch.object(po,"rows",return_value=[]),\\
+             patch("stockswatch.market.alpaca",new=async_provider):
+            result=po._candidate_bars("ABBV",NOW)
+        self.assertEqual(len(result),15)
+        self.assertEqual(result[0]["day"],expected[0]["day"])
+        self.assertEqual(result[-1]["day"],expected[-1]["day"])
+        self.assertEqual(result[-1]["source"],"alpaca_iex_daily")
+        self.assertEqual(result[-1]["adjustment"],"RAW")
+
+    def test_incomplete_remote_daily_sessions_fail_closed(self):
+        expected=self.certified_daily()
+        async_provider=AsyncMock(return_value=([
+            {k:r[k] for k in ("day","o","h","l","c","v")} for r in expected[:-1]
+        ],"alpaca_iex_daily","RAW"))
+        with patch.object(po,"rows",return_value=[]),\\
+             patch("stockswatch.market.alpaca",new=async_provider):
+            with self.assertRaisesRegex(po.ProtectionError,
+                    "protection_certified_atr_15_sessions_unavailable"):
+                po._candidate_bars("ABBV",NOW)
 
     def run_cycle(self,*,paused,open_orders=(),owned=True):
         p={"symbol":"ABBV","side":"long","asset_class":"us_equity",
