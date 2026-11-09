@@ -76,7 +76,7 @@ function Table({rows, empty, kind}:{rows:OrderRow[];empty:string;kind:"stocks"|"
    <td>{label(r.filled)}</td><td>{money(r.fillPrice)}</td><td>{money(r.stopPrice)}</td><td>{money(r.targetPrice)}</td>
    <td><span className="to-source">{r.source}</span>{r.reason&&<small>{readable(r.reason)}</small>}</td>
  </tr>):<tr><td colSpan={11} className="to-empty">{empty}</td></tr>}</tbody></table>
- {kind==="crypto"&&<p className="to-foot">Crypto market orders have no pre-set limit price. The current crypto API does not expose actual execution prices; an empty fill price is unknown, not zero. Crypto TP/SL levels are software-managed and not broker-native stop orders.</p>}
+ {kind==="crypto"&&<p className="to-foot">Crypto market orders have no pre-set limit price. Actual execution prices are shown only after a broker-verified fill; an empty fill is unknown, not zero. Crypto TP/SL levels are software-managed and not broker-native stop orders.</p>}
  </div>;
 }
 const recentFirst = (rows:OrderRow[]) => rows.sort((a,b)=>String(b.at??"").localeCompare(String(a.at??""))).slice(0,50);
