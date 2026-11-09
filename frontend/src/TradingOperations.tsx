@@ -185,15 +185,13 @@ export function CryptoTradingStatus({dashboard:d,error}:{dashboard:Row;error?:st
     note="The 24/7 research scanner is separate from paper order permission. A verified dedicated Alpaca account is required for execution."/>;
 }
 
-export function CryptoTradingOperations({dashboard:d,error}:{dashboard:Row;error?:string}){
+export function CryptoTradingOperations({dashboard:d}:{dashboard:Row}){
   const brokerJournal=useResource("/api/stockswatch/alpaca-crypto/orders",{poll:20000,ttl:10000});
   const verifiedBook:Row=brokerJournal.data??{};
   const brokerOrders=list(verifiedBook.orders);
   const paper:Row=d.broker_snapshot??{};
-  const assets=list(d.assets),jobs=list(d.history_jobs),signals=list(d.signals);
+  const signals=list(d.signals);
   const positions=list(paper.positions),intents=list(d.intents),managed=list(d.managed);
-  const finished=jobs.filter(x=>x.state==="COMPLETE").reduce((s,x)=>s+Number(x.n||0),0);
-  const total=jobs.reduce((s,x)=>s+Number(x.n||0),0);
   const orders:OrderRow[]=intents.map((x,i)=>{
     const verified=verifiedBook.available===true?brokerOrders.find(o=>o.client_order_id===x.client_id):undefined;
     const levels=managed.find(m=>m.symbol===x.symbol);
