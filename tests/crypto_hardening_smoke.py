@@ -93,6 +93,7 @@ class CryptoHardeningTests(unittest.TestCase):
                          "offline-test",NOW.isoformat())],None
         data=FakeData()
         with patch.object(ac,"PAIRS",("BTC/USD","ETH/USD")),\
+             patch.object(ac,"EXECUTION_PAIRS",("BTC/USD","ETH/USD")),\
              patch.object(ac,"_recent_last_key",None),\
              patch.object(ac,"_recent_last_attempt",0.0):
             self.assertEqual(ac.ensure_latest_completed_hourly(data,NOW),"crypto_hourly_caught_up")
