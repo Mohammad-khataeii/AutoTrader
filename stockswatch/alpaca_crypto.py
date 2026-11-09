@@ -372,7 +372,18 @@ def scan(now):
                 c.execute("""INSERT INTO ac_signals
                     (symbol,bar_at,evaluated_at,action,score,price,stop,target,reason)
                     VALUES(?,?,?,?,?,?,?,?,?)
-                    ON CONFLICT(symbol,bar_at) DO NOTHING""",
+                    -- A WAIT recorded before deep history was populated must
+                    -- be revisited after backfill. Update evaluation time and
+                    -- evidence in place; do not pretend a historical signal
+                    -- existed when the data had not yet been collected.
+                    ON CONFLICT(symbol,bar_at) DO UPDATE SET
+                      evaluated_at=excluded.evaluated_at,
+                      action=excluded.action,
+                      score=excluded.score,
+                      price=excluded.price,
+                      stop=excluded.stop,
+                      target=excluded.target,
+                      reason=excluded.reason""",
                     (symbol,s["bar_at"],now.isoformat(),s["action"],s["score"],
                      s["price"],s["stop"],s["target"],s["reason"]))
     with connect() as c:
