@@ -37,3 +37,12 @@
 .to-source{font-weight:650;max-width:270px;display:inline-block}
 .to-foot{font-size:11px;line-height:1.5;color:var(--sw-muted,var(--text-muted,#8c99ad));margin:10px 0 0}
 @media(max-width:650px){.to-status,.to-panel{padding:14px}.to-status-heading{flex-direction:column}.to-checked{padding:0}}
+
+
+/* Crypto quotes are observations, not the historical strategy candle. */
+.to-quote-intro{margin:0 0 13px;max-width:1000px}
+.to-quote-error{border:1px solid #e9b56f;border-radius:8px;background:rgba(190,124,26,.08);padding:10px 12px;font-size:12px;line-height:1.5;margin:8px 0 13px}
+.to-crypto-quotes{min-width:1210px}
+.to-crypto-quotes th{white-space:nowrap}
+.to-crypto-quotes .to-quote-number{white-space:nowrap;font-variant-numeric:tabular-nums}
+.to-quote-unavailable{font-size:11px;color:var(--sw-muted,var(--text-muted,#75817b))}
