@@ -18,7 +18,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from .storage import connect, init, init_execution, one, rows, setting, utc, worker_ownership
 from .ledger import EXECUTION_MODE, mark_to_market, outcome
-from .alpaca_paper import PaperError, broker_mode, broker_init, enrich_dashboard, broker_status, set_broker_paused
+from .alpaca_paper import PaperError, broker_mode, broker_init, enrich_dashboard, broker_status, broker_market_clock, set_broker_paused
 from .service import Service, daily_refresh_due
 from . import intraday_store, backfill, alpaca_crypto
 from .observer import init_journal, scanner_snapshot, EXPORT_TABLES, export_jsonl
@@ -175,6 +175,7 @@ def status():
     return {
         "mode": "ALPACA_PAPER" if broker_mode() else "PAPER_ONLY",
         "broker_connection": broker,
+        "market_clock": broker_market_clock() if broker else None,
         "live_trading_enabled": False,
         "version": "stocks-v1",
         "provider": os.getenv("STOCKSWATCH_PRICE_PROVIDER", "stooq"),
