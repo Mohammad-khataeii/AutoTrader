@@ -1,93 +1,111 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Activity, BarChart3, Database, Lock, Pause, Play, RefreshCcw, ShieldCheck, TrendingUp, Wallet } from "lucide-react";
 import { useApi, useResource } from "./api";
-import { CryptoTradingOperations } from "./TradingOperations";
+import { CryptoTradingOperations, CryptoTradingStatus } from "./TradingOperations";
 import "./AlpacaCrypto.css";
 
 type Row = Record<string, any>;
-function n(x: unknown):number{return Number.isFinite(Number(x))?Number(x):0;}
-function fmt(x:unknown):string{return n(x).toLocaleString("en-US");}
-function price(x:unknown):string{return x==null?"—":new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:5}).format(n(x));}
-function when(s:unknown):string{if(typeof s!=="string")return "—";const d=new Date(s);return Number.isFinite(d.getTime())?d.toLocaleString():"—";}
-const order=["BTC/USD","ETH/USD","SOL/USD","AVAX/USD","LINK/USD","LTC/USD","BCH/USD","DOGE/USD","UNI/USD","AAVE/USD"];
+const num = (value: unknown): number => Number.isFinite(Number(value)) ? Number(value) : 0;
+const integer = (value: unknown): string => num(value).toLocaleString("en-US");
+const usd = (value: unknown): string => value == null || value === "" ? "—" :
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(num(value));
+const when = (value: unknown): string => {
+  if (typeof value !== "string" || !value) return "—";
+  const parsed = new Date(value);
+  return Number.isFinite(parsed.getTime()) ? parsed.toLocaleString() : "—";
+};
 
-export function AlpacaCrypto(){
- const api=useApi();
- const response=useResource("/api/stockswatch/alpaca-crypto",{poll:15000,ttl:7000});
- const [filter,setFilter]=useState("");
- const [working,setWorking]=useState(false);
- const [notice,setNotice]=useState("");
- const d:Row=response.data??{};
- const paper:Row=d.broker_snapshot??{};
- const account:Row=paper.account??{};
- const holdings:Row[]=Array.isArray(paper.positions)?paper.positions:[];
- const assets:Row[]=Array.isArray(d.assets)?d.assets:[];
- const signals:Row[]=Array.isArray(d.signals)?d.signals:[];
- const managed:Row[]=Array.isArray(d.managed)?d.managed:[];
- const intents:Row[]=Array.isArray(d.intents)?d.intents:[];
- const historyJobs:Row[]=Array.isArray(d.history_jobs)?d.history_jobs:[];
- const historyBars:Row[]=Array.isArray(d.history_bars)?d.history_bars:[];
- const completed=historyJobs.filter(j=>j.state==="COMPLETE").reduce((s,j)=>s+n(j.n),0);
- const total=historyJobs.reduce((s,j)=>s+n(j.n),0);
- const pct=total?Math.min(100,100*completed/total):0;
- const rows=useMemo(()=>order.filter(symbol=>symbol.toLowerCase().includes(filter.trim().toLowerCase())).map(symbol=>({
-  symbol,asset:assets.find(a=>a.symbol===symbol)??{},signal:signals.find(s=>s.symbol===symbol)??{},
-  managed:managed.find(m=>m.symbol===symbol),
- })),[assets,signals,managed,filter]);
- async function control(action:"pause"|"resume"){
-  if(working)return;setWorking(true);setNotice("");
-  try{
-   await api.request("/api/stockswatch/alpaca-crypto/control","POST",{action});
-   await api.refresh("/api/stockswatch/alpaca-crypto");
-   setNotice(action==="pause"?"Crypto paper order admission paused. Existing broker orders are not canceled.":"Crypto paper order admission resumed.");
-  }catch(e){setNotice("Control action was not confirmed. Crypto paper orders remain guarded by server settings.");}
-  finally{setWorking(false);}
- }
- return <div className="ac-root">
-  <CryptoTradingOperations dashboard={d} error={response.error}/>
-  <section className="ac-hero">
-   <div className="ac-label"><Activity size={16}/> ALPACA CRYPTO · SPOT RESEARCH · 24/7</div>
-   <h2>AlpacaCrypto</h2>
-   <p>Independent crypto research and long-only Alpaca Paper execution. Historical market bars are quote midpoints, not executable prices. This dashboard does not operate the legacy crypto engine.</p>
-   <div className="ac-flags"><span><ShieldCheck size={14}/> Paper only</span><span><Lock size={14}/> No leverage</span><span><TrendingUp size={14}/> LONG / FLAT only</span><span>SHORT unsupported by Alpaca</span></div>
-  </section>
-  {response.error&&<div className="ac-warning" role="alert">AlpacaCrypto API unavailable. No trading state is assumed.</div>}
-  <section className="ac-stats">
-   <article><Database size={18}/><small>Downloaded historical bars</small><b>{fmt(historyBars.reduce((sum,r)=>sum+n(r.n),0))}</b></article>
-   <article><BarChart3 size={18}/><small>Backfill jobs</small><b>{fmt(completed)} / {fmt(total)}</b></article>
-   <article><ShieldCheck size={18}/><small>Eligible broker pairs</small><b>{fmt(assets.filter(a=>a.eligible===1).length)} / 10</b></article>
-   <article><Wallet size={18}/><small>Crypto Paper equity</small><b>{account.equity==null?"Not linked":price(account.equity)}</b></article>
-  </section>
-  <section className="ac-panel">
-   <div className="ac-heading"><div><h3>History and execution gates</h3><p>Data collection is separate from order authorization and risk checks.</p></div><button onClick={()=>void api.refresh("/api/stockswatch/alpaca-crypto")}><RefreshCcw size={15}/> Refresh</button></div>
-   <div className="ac-progress"><div style={{width:`${pct}%`}}/></div>
-   <div className="ac-grid">
-    <div><small>Job completion</small><b>{pct.toFixed(1)}%</b></div>
-    <div><small>Daily bars</small><b>{fmt(historyBars.find(x=>x.timeframe==="1Day")?.n)}</b></div>
-    <div><small>Hourly bars</small><b>{fmt(historyBars.find(x=>x.timeframe==="1Hour")?.n)}</b></div>
-    <div><small>Signal update</small><b>{when(d.last_cycle)}</b></div>
-   </div>
-   <div className="ac-control">
-    <div><strong>{d.paper_orders_enabled?(d.paused?"Paper orders paused":"Paper orders enabled"):"Research only · crypto orders disabled"}</strong><small>Separate Alpaca Paper account required for order submission. Legacy stock account and ledger are not shared.</small></div>
-    <div className="ac-buttons"><button disabled={working||d.paused!==false} onClick={()=>void control("pause")}><Pause size={14}/> Pause</button><button disabled={working||!d.paper_orders_enabled||!d.paused} onClick={()=>void control("resume")}><Play size={14}/> Resume</button></div>
-   </div>
-   {d.last_error&&<p className="ac-warning">Last diagnostic: {String(d.last_error)}</p>}
-   {notice&&<p role="status" className="ac-note">{notice}</p>}
-   {paper.observed_at&&<p className="ac-footnote">Separate broker account refreshed {when(paper.observed_at)} · Open broker orders: {fmt(paper.open_order_count)}</p>}
-  </section>
-  <section className="ac-panel">
-   <div className="ac-heading"><div><h3>Spot market scanner</h3><p>Completed hourly breakout and daily regime checks. No guarantee of profit.</p></div><input aria-label="Filter crypto pairs" placeholder="Search BTC, ETH…" value={filter} onChange={e=>setFilter(e.target.value)}/></div>
-   <div className="ac-table-scroll"><table><thead><tr><th>Pair</th><th>Data eligibility</th><th>Last hourly bar</th><th>Action</th><th>Latest evidence</th><th>Price (USD)</th><th>Software stop</th><th>Target</th></tr></thead>
-   <tbody>{rows.map(({symbol,asset,signal,managed})=><tr key={symbol}><td><strong>{symbol}</strong>{managed&&<span className="ac-owned"> OWNED</span>}</td><td>{asset.eligible===1?"Verified":asset.reason||"Pending"}</td><td>{when(asset.latest_hour)}</td><td><span className={`ac-action ac-${String(signal.action||"WAIT").toLowerCase()}`}>{signal.action||"WAIT"}</span></td><td>{signal.reason||"Awaiting completed history"}</td><td>{price(signal.price)}</td><td>{price(managed?.stop??signal.stop)}</td><td>{price(managed?.target??signal.target)}</td></tr>)}</tbody></table></div>
-  </section>
-  <section className="ac-panel">
-   <div className="ac-heading"><div><h3>Dedicated Alpaca Paper holdings</h3><p>Broker-reported holdings and unrealized P&amp;L; not reconstructed from midpoint bars.</p></div></div>
-   <div className="ac-table-scroll"><table><thead><tr><th>Pair</th><th>Side</th><th>Quantity</th><th>Market value</th><th>Unrealized P&amp;L</th></tr></thead><tbody>{holdings.length?holdings.map((x,i)=><tr key={x.symbol??i}><td>{x.symbol}</td><td>{x.side}</td><td>{x.qty}</td><td>{price(x.market_value)}</td><td>{price(x.unrealized_pl)}</td></tr>):<tr><td colSpan={5} className="ac-empty">No verified crypto holdings in the dedicated paper account.</td></tr>}</tbody></table></div>
-  </section>
-  <section className="ac-panel">
-   <div className="ac-heading"><div><h3>Broker order journal</h3><p>Only AlpacaCrypto-owned paper intents; never the stock or legacy crypto ledger.</p></div></div>
-   <div className="ac-table-scroll"><table><thead><tr><th>Created</th><th>Pair</th><th>Side</th><th>State</th><th>Broker status</th><th>Notional / quantity</th></tr></thead><tbody>{intents.length?intents.map(x=><tr key={x.client_id}><td>{when(x.created_at)}</td><td>{x.symbol}</td><td>{String(x.side).toUpperCase()}</td><td>{x.state}</td><td>{x.broker_status||"—"}</td><td>{x.notional?price(x.notional):x.qty||"—"}</td></tr>):<tr><td colSpan={6} className="ac-empty">No submitted AlpacaCrypto orders yet.</td></tr>}</tbody></table></div>
-   <p className="ac-footnote">Alpaca crypto does not offer short selling. Stops and targets here are software-managed checks using fresh quotes, not guaranteed broker stop executions. Paper fills can differ from live trading.</p>
-  </section>
- </div>;
+export function AlpacaCrypto() {
+  const api = useApi();
+  const response = useResource("/api/stockswatch/alpaca-crypto", { poll: 15000, ttl: 7000 });
+  const [working, setWorking] = useState(false);
+  const [notice, setNotice] = useState("");
+  const d: Row = response.data ?? {};
+  const account: Row = d.broker_snapshot?.account ?? {};
+  const assets: Row[] = Array.isArray(d.assets) ? d.assets : [];
+  const jobs: Row[] = Array.isArray(d.history_jobs) ? d.history_jobs : [];
+  const bars: Row[] = Array.isArray(d.history_bars) ? d.history_bars : [];
+  const complete = jobs.filter(job => job.state === "COMPLETE").reduce((sum, job) => sum + num(job.n), 0);
+  const total = jobs.reduce((sum, job) => sum + num(job.n), 0);
+  const progress = total ? Math.min(100, 100 * complete / total) : 0;
+  const eligible = assets.filter(asset => asset.eligible === 1).length;
+  const barCount = (timeframe: string): number => bars.filter(bar => bar.timeframe === timeframe)
+    .reduce((sum, bar) => sum + num(bar.n), 0);
+
+  async function control(action: "pause" | "resume") {
+    if (working) return;
+    setWorking(true);
+    setNotice("");
+    try {
+      await api.request("/api/stockswatch/alpaca-crypto/control", "POST", { action });
+      await api.refresh("/api/stockswatch/alpaca-crypto");
+      setNotice(action === "pause"
+        ? "New paper orders paused; existing broker orders were not canceled."
+        : "Resume request confirmed. Broker credentials, data quality and risk gates still apply.");
+    } catch {
+      setNotice("The change could not be confirmed. Check the broker status and server settings.");
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  return <main className="ac-root">
+    <header className="ac-hero">
+      <div className="ac-hero-copy">
+        <div className="ac-label"><Activity size={16} /> 24/7 SPOT MARKET RESEARCH</div>
+        <h2>AlpacaCrypto <span>Paper trading</span></h2>
+        <p>Independent crypto strategy with its own Alpaca Paper account. Research continues even when order submission is disabled.</p>
+      </div>
+      <div className="ac-flags" aria-label="Trading limitations">
+        <span><ShieldCheck size={14}/> Paper only</span>
+        <span><Lock size={14}/> No leverage</span>
+        <span><TrendingUp size={14}/> Long only</span>
+      </div>
+    </header>
+
+    <CryptoTradingStatus dashboard={d} error={response.error}/>
+
+    <section className="ac-stats" aria-label="Crypto data and account overview">
+      <article><Database size={18}/><small>Historical observations</small><b>{integer(bars.reduce((sum, bar) => sum + num(bar.n), 0))}</b></article>
+      <article><BarChart3 size={18}/><small>Backfill jobs complete</small><b>{integer(complete)} / {integer(total)}</b></article>
+      <article><ShieldCheck size={18}/><small>Verified trading pairs</small><b>{integer(eligible)} / {assets.length || 10}</b></article>
+      <article><Wallet size={18}/><small>Dedicated Paper equity</small><b>{account.equity == null ? "Not linked" : usd(account.equity)}</b></article>
+    </section>
+
+    <section className="ac-panel ac-data-panel" aria-label="Market data readiness and controls">
+      <div className="ac-heading">
+        <div><h3>Market data &amp; execution readiness</h3><p>Historical downloads do not mean orders are permitted.</p></div>
+        <button type="button" onClick={() => void api.refresh("/api/stockswatch/alpaca-crypto")}>
+          <RefreshCcw size={15}/> Refresh data
+        </button>
+      </div>
+      <div className="ac-progress" role="progressbar" aria-valuemin={0} aria-valuemax={100}
+        aria-valuenow={Math.round(progress)} aria-label="Historical backfill progress">
+        <div style={{width:`${progress}%`}}/>
+      </div>
+      <div className="ac-grid">
+        <div><small>Backfill completion</small><b>{progress.toFixed(1)}%</b></div>
+        <div><small>Daily observations</small><b>{integer(barCount("1Day"))}</b></div>
+        <div><small>Hourly observations</small><b>{integer(barCount("1Hour"))}</b></div>
+        <div><small>Last strategy cycle</small><b>{when(d.last_cycle)}</b></div>
+      </div>
+      <div className="ac-control">
+        <div>
+          <strong>{!d.paper_orders_enabled ? "Research only — crypto paper orders disabled"
+            : d.paused ? "Paper orders paused" : "Paper order admission enabled"}</strong>
+          <small>A separate verified Alpaca Paper account is required. Resuming does not bypass risk checks.</small>
+        </div>
+        <div className="ac-buttons">
+          <button type="button" disabled={working || d.paused !== false} onClick={() => void control("pause")}><Pause size={14}/> Pause</button>
+          <button type="button" disabled={working || !d.paper_orders_enabled || !d.paused} onClick={() => void control("resume")}><Play size={14}/> Resume</button>
+        </div>
+      </div>
+      {d.last_error && <p className="ac-warning">Worker diagnostic: {String(d.last_error)}</p>}
+      {notice && <p role="status" className="ac-note">{notice}</p>}
+      {response.error && <p role="alert" className="ac-warning">The crypto dashboard API is unavailable; no trading state is assumed.</p>}
+    </section>
+
+    <CryptoTradingOperations dashboard={d} error={response.error}/>
+    <p className="ac-footnote">Paper trading only. Historical crypto bars are midpoint observations, not executable prices. Software exit thresholds cannot guarantee fills.</p>
+  </main>;
 }
