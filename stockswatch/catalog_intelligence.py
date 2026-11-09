@@ -68,6 +68,11 @@ def initialize():
         db.executescript(DDL)
         db.execute("""INSERT OR IGNORE INTO sw_catalog_intelligence(symbol)
             SELECT symbol FROM sw_catalog_assets WHERE active=1""")
+        db.execute("""UPDATE sw_catalog_intelligence
+            SET history_state='LEGACY_102_SCANNER',sec_state='LEGACY_SEC_PIPELINE',
+                ai_state='LEGACY_AI_PIPELINE'
+            WHERE history_state='AWAITING_HISTORY' AND symbol IN
+                 (SELECT symbol FROM sw_catalog_assets WHERE original=1)""")
 
 
 def score_daily(bars, today=None):
@@ -190,9 +195,9 @@ def sec_cycle(max_symbols=2):
                 JOIN sw_catalog_assets a ON a.symbol=i.symbol
                 LEFT JOIN sw_catalog_sec_tickers m ON m.symbol=i.symbol
                 WHERE a.active=1 AND a.tradable=1 AND a.original=0
-                  AND i.history_state='RESEARCH_READY'
                   AND (i.sec_checked_at IS NULL OR i.sec_checked_at<?)
-                ORDER BY i.price_score DESC, i.avg_20d_iex_dollars DESC
+                ORDER BY CASE WHEN i.history_state='RESEARCH_READY' THEN 0 ELSE 1 END,
+                         i.price_score DESC, i.avg_20d_iex_dollars DESC, a.symbol
                 LIMIT ?""",((now-timedelta(days=7)).isoformat(),max_symbols)))
         for r in targets:
             sym,cik=r["symbol"],r["cik"]
