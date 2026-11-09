@@ -332,6 +332,31 @@ def report():
             "ai_note":"No additional model inference has been run. Gemini quota and sourced evidence must be available."}
 
 
+def top_candidates(limit=20):
+    """Read-only full-universe research rankings, never paper BUY approval."""
+    if type(limit) is not int or not 1<=limit<=50:
+        raise ValueError("catalog_top_limit_invalid")
+    if not cat.CATALOG_PATH.exists():
+        return {"state":"NOT_INITIALIZED","results":[]}
+    with cat.connect(readonly=True) as db:
+        try:
+            results=[dict(x) for x in db.execute("""
+                SELECT a.symbol,a.name,a.exchange,i.price_score,
+                       i.price_reason,i.change_20d_pct,i.avg_20d_iex_dollars,
+                       i.last_day,i.sec_state,i.ai_state
+                FROM sw_catalog_intelligence i JOIN sw_catalog_assets a
+                  ON a.symbol=i.symbol
+                WHERE a.active=1 AND a.tradable=1 AND a.original=0
+                  AND i.history_state='RESEARCH_READY'
+                ORDER BY i.price_score DESC,
+                         i.avg_20d_iex_dollars DESC,a.symbol
+                LIMIT ?""",(limit,))]
+        except sqlite3.OperationalError:
+            return {"state":"INITIALIZING","results":[]}
+    return {"state":"OK","results":results,"scope":"RESEARCH_ONLY",
+            "note":"Scores based on IEX observed daily bars; never broker order approval."}
+
+
 def browse(query="",limit=50,offset=0):
     if not isinstance(query,str) or len(query)>40 or not 1<=limit<=100 or not 0<=offset<=100000:
         raise ValueError("catalog_intelligence_query_invalid")
