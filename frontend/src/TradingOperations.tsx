@@ -50,7 +50,6 @@ const readable = (code:unknown):string => {
     crypto_shared_account_unknown_asset_class:"The shared broker contains an unclassified asset; manual review required.",
     crypto_shared_account_stock_orders_pending:"StocksWatch has open orders in the shared Alpaca Paper account. Crypto buys are waiting.",
     latest_completed_hourly_bar_missing:"The last completed hourly candle has not been published for this market.",
-    insufficient_completed_history:"At least 220 completed daily and hourly bars are required for that crypto pair.",
     no_confirmed_spot_long_setup:"Trend, momentum or breakout / pullback confirmation did not qualify for a long entry.",
     non_usd_quote_research_only:"Quoted in USDC, USDT or BTC; research only, not a USD-funded BUY.",
   };
