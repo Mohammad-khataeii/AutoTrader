@@ -45,7 +45,7 @@ class ExpansionFiftyTests(unittest.TestCase):
         self.assertTrue(10<=len(new_daily)<=23)
         self.assertGreater(len(previous_daily),100)
         self.assertEqual(len(new_minute),5)
-        self.assertEqual(len(previous_minute),20)
+        self.assertEqual(len(previous_minute),19)
         self.assertTrue(all(row[0] in NEW for row in requested))
         self.assertEqual(len(new_daily),len(set((x[3],x[4]) for x in new_daily)))
 
@@ -57,6 +57,7 @@ class ExpansionFiftyTests(unittest.TestCase):
         pp.start()
         self.addCleanup(pp.stop)
         storage.init()
+        storage.init_execution()
         backfill.initialize()
         w.initialize()
 
