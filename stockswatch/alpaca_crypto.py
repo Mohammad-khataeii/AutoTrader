@@ -379,16 +379,17 @@ def warmup_expansion(data, now=None, *, symbols=EXPANSION_PAIRS, on_progress=Non
         for tf, delta in (("1Hour",timedelta(hours=300)),
                           ("1Day",timedelta(days=300))):
             end=_floor(now,tf)
+            start=end-delta
             initial_count=one(
-                "SELECT COUNT(*) AS n FROM ac_bars WHERE symbol=? AND timeframe=? AND ts<?",
-                (symbol,tf,end.isoformat())
+                "SELECT COUNT(*) AS n FROM ac_bars WHERE symbol=? AND timeframe=? AND ts>=? AND ts<?",
+                (symbol,tf,start.isoformat(),end.isoformat())
             )["n"]
             if initial_count>=260:
                 record={"symbol":symbol,"timeframe":tf,"status":"already_ready",
                         "count":initial_count,"new_rows":0}
             else:
                 job={"symbol":symbol,"timeframe":tf,
-                     "start_at":(end-delta).isoformat(),
+                     "start_at":start.isoformat(),
                      "end_at":end.isoformat(),"token":None}
                 new_rows=0
                 pages=0
@@ -410,8 +411,8 @@ def warmup_expansion(data, now=None, *, symbols=EXPANSION_PAIRS, on_progress=Non
                         job["token"]=token
                     # Never claim sufficient history on a truncated feed.
                     fresh_count=one(
-                        "SELECT COUNT(*) AS n FROM ac_bars WHERE symbol=? AND timeframe=? AND ts<?",
-                        (symbol,tf,end.isoformat())
+                        "SELECT COUNT(*) AS n FROM ac_bars WHERE symbol=? AND timeframe=? AND ts>=? AND ts<?",
+                        (symbol,tf,start.isoformat(),end.isoformat())
                     )["n"]
                     record={"symbol":symbol,"timeframe":tf,
                             "status":"ready" if fresh_count>=220 else "insufficient_history",
