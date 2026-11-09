@@ -152,6 +152,18 @@ CREATE TABLE IF NOT EXISTS sw_trade_cycles (
     report_json TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS sw_trade_cycles_time ON sw_trade_cycles(recorded_at);
+-- Ancillary certification only: never holds positions, balances or order intents.
+CREATE TABLE IF NOT EXISTS sw_historical_gap_proofs (
+    symbol TEXT NOT NULL,
+    gap_day TEXT NOT NULL,
+    previous_day TEXT NOT NULL,
+    raw_prev_close REAL NOT NULL,
+    raw_next_open REAL NOT NULL,
+    status TEXT NOT NULL,
+    verified_at TEXT NOT NULL,
+    source TEXT NOT NULL,
+    PRIMARY KEY(symbol,gap_day)
+);
 """
 
 
