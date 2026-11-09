@@ -30,7 +30,26 @@ EXPANSION_PAIRS = (
     "XRP/USD", "ADA/USD", "DOT/USD", "SHIB/USD", "ARB/USD",
     "RENDER/USD", "ONDO/USD", "FIL/USD", "GRT/USD", "PEPE/USD",
 )
-PAIRS = BASE_PAIRS + EXPANSION_PAIRS
+# 50 active broker-listed crypto markets (Alpaca asset catalog verified
+# 2026-11-09). Non-USD-quoted markets are research-only until the engine
+# supports quote-currency-aware sizing, conversion, and settlement.
+EXPANSION50_PAIRS = (
+    "AAVE/USDC", "AAVE/USDT", "AVAX/USDC", "AVAX/USDT", "BAT/USD",
+    "BAT/USDC", "BCH/BTC", "BCH/USDC", "BCH/USDT", "BONK/USD",
+    "BTC/USDC", "BTC/USDT", "CRV/USD", "CRV/USDC", "DOGE/USDC",
+    "DOGE/USDT", "DOT/USDC", "ETH/BTC", "ETH/USDC", "ETH/USDT",
+    "GRT/USDC", "HYPE/USD", "LDO/USD", "LINK/BTC", "LINK/USDC",
+    "LINK/USDT", "LTC/BTC", "LTC/USDC", "LTC/USDT", "PAXG/USD",
+    "POL/USD", "SHIB/USDC", "SHIB/USDT", "SKY/USD", "SOL/USDC",
+    "SOL/USDT", "SUSHI/USD", "SUSHI/USDC", "SUSHI/USDT", "TRUMP/USD",
+    "UNI/BTC", "UNI/USDC", "UNI/USDT", "USDT/USDC", "WIF/USD",
+    "XTZ/USD", "XTZ/USDC", "YFI/USD", "YFI/USDC", "YFI/USDT",
+)
+PAIRS = BASE_PAIRS + EXPANSION_PAIRS + EXPANSION50_PAIRS
+EXECUTION_PAIRS = tuple(p for p in PAIRS if p.endswith("/USD"))
+RESEARCH_ONLY_PAIRS = tuple(p for p in PAIRS if p not in EXECUTION_PAIRS)
+assert len(PAIRS) == 70 and len(set(PAIRS)) == 70
+assert len(EXPANSION50_PAIRS) == 50
 DATA_ORIGIN = "https://data.alpaca.markets"
 LOCATION = "us"
 TIMEFRAMES = ("1Day", "1Hour")
@@ -268,8 +287,8 @@ class CryptoData:
     def latest_bid(self, symbol):
         # Execution always performs its OWN fresh quote read. Never use the
         # UI's cached snapshot for sizing, entry, or protective exits.
-        if symbol not in PAIRS:
-            raise CryptoDataError("crypto_pair_not_allowed")
+        if symbol not in EXECUTION_PAIRS:
+            raise CryptoDataError("crypto_execution_pair_not_usd_or_unlisted")
         body = self.get("/v1beta3/crypto/us/latest/quotes", {"symbols":symbol})
         quote = _checked_quote(body.get("quotes", {}).get(symbol), datetime.now(UTC))
         return quote["bid"], quote["ask"], quote["observed_at"]
@@ -307,7 +326,7 @@ def queue(now):
 
 def refresh_recent_hourly(data,now,*,symbols=None):
     """Refresh completed hourly bars for all or selected verified USD pairs."""
-    symbols=tuple(PAIRS if symbols is None else symbols)
+    symbols=tuple(EXECUTION_PAIRS if symbols is None else symbols)
     if not symbols or len(set(symbols))!=len(symbols) or any(sym not in PAIRS for sym in symbols):
         raise CryptoDataError("crypto_recent_hourly_symbols_invalid")
     end=_floor(now,"1Hour")
@@ -341,7 +360,7 @@ def ensure_latest_completed_hourly(data,now):
     # Historical bars are immutable once complete; never fake a missing bar.
     observed={r["symbol"]:r["stamp"] for r in rows(
         "SELECT symbol,MAX(ts) stamp FROM ac_bars WHERE timeframe='1Hour' GROUP BY symbol")}
-    missing=tuple(sym for sym in PAIRS if observed.get(sym)!=expected)
+    missing=tuple(sym for sym in EXECUTION_PAIRS if observed.get(sym)!=expected)
     if not missing:
         return "crypto_hourly_current"
     if now-_floor(now,"1Hour")<timedelta(seconds=30):
@@ -356,7 +375,7 @@ def ensure_latest_completed_hourly(data,now):
         refresh_recent_hourly(data,now,symbols=missing)
     observed_after={r["symbol"]:r["stamp"] for r in rows(
         "SELECT symbol,MAX(ts) stamp FROM ac_bars WHERE timeframe='1Hour' GROUP BY symbol")}
-    return ("crypto_hourly_caught_up" if all(observed_after.get(sym)==expected for sym in PAIRS)
+    return ("crypto_hourly_caught_up" if all(observed_after.get(sym)==expected for sym in EXECUTION_PAIRS)
             else "crypto_latest_completed_hourly_not_published")
 
 
@@ -417,7 +436,7 @@ def warmup_expansion(data, now=None, *, symbols=EXPANSION_PAIRS, on_progress=Non
     synthetic candles or guessed prices are ever created.
     """
     now=now or datetime.now(UTC)
-    if any(pair not in EXPANSION_PAIRS for pair in symbols):
+    if any(pair not in (*EXPANSION_PAIRS, *EXPANSION50_PAIRS) for pair in symbols):
         raise CryptoDataError("crypto_warmup_requires_expansion_pair")
     output=[]
     for symbol in symbols:
@@ -562,6 +581,11 @@ def signal(symbol, now=None):
       "hourly_close":h[-1],"daily_close":d[-1],
       "daily_ema200":round(d200,9),
     }
+    # Cross-quoted BTC/USDT, ETH/BTC, etc. have market-research value,
+    # but prices are not USD notionals. Never label their setup as BUY
+    # until quote conversions, asset balances and fee currency are modeled.
+    if symbol in RESEARCH_ONLY_PAIRS:
+        return observation("HOLD","non_usd_quote_research_only",score,gates=gates)
     if not (trend and macro and healthy and breakout):
         return observation("HOLD","no_confirmed_spot_long_setup",score,gates=gates)
     # Midpoint candles can have no actual reported trades. A zero-volume
@@ -655,6 +679,10 @@ def dashboard():
         "positions":json.loads(broker["positions_json"]),
         "open_order_count":broker["open_order_count"]} if broker else None,
       "signals":signals,"intents":intents,"managed":managed,
+      "universe_pairs":len(PAIRS),
+      "execution_pairs":len(EXECUTION_PAIRS),
+      "research_only_pairs":len(RESEARCH_ONLY_PAIRS),
+      "quote_currencies":sorted({p.split("/")[1] for p in PAIRS}),
       "signal_gate_evidence":[{"symbol":r["symbol"],"evaluated_at":r["evaluated_at"],
         "gates":json.loads(r["gates_json"])} for r in gates],
       "crypto_execution_outcomes":outcomes,
