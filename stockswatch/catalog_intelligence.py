@@ -6,6 +6,8 @@ never called AI-analyzed without an actual attributed model result.
 """
 from __future__ import annotations
 
+import asyncio
+import hashlib
 import json
 import math
 import os
@@ -53,6 +55,10 @@ CREATE INDEX IF NOT EXISTS sw_catalog_filings_recent
 CREATE TABLE IF NOT EXISTS sw_catalog_ci_meta(
     key TEXT PRIMARY KEY,value TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS sw_catalog_ai_insights(
+    filing_id TEXT PRIMARY KEY,symbol TEXT NOT NULL,model TEXT NOT NULL,
+    analysis_json TEXT NOT NULL,generated_at TEXT NOT NULL,source_url TEXT NOT NULL
+);
 """
 
 
@@ -67,8 +73,8 @@ def initialize():
 def score_daily(bars, today=None):
     """Explainable, strictly historical score; IEX volume is not SIP liquidity."""
     today = today or datetime.now(UTC).date()
-    if len(bars) < 200:
-        return {"state":"INSUFFICIENT_HISTORY","reason":"needs_200_completed_daily_bars"}
+    if len(bars) < 201:
+        return {"state":"INSUFFICIENT_HISTORY","reason":"needs_201_completed_daily_bars"}
     v = [float(x["c"]) for x in bars]
     vols = [float(x["v"]) for x in bars]
     if any(not math.isfinite(x) or x <= 0 for x in v) or any(
@@ -108,7 +114,7 @@ def price_cycle(max_symbols=120):
             SELECT c.symbol FROM sw_catalog_assets c
             JOIN sw_catalog_intelligence i ON i.symbol=c.symbol
             WHERE c.active=1 AND c.tradable=1 AND c.original=0
-              AND c.bar_count>=200
+              AND c.bar_count>=201
               AND (i.analyzed_at IS NULL OR i.analyzed_at<? OR i.last_day!=c.latest_day)
             ORDER BY CASE WHEN i.analyzed_at IS NULL THEN 0 ELSE 1 END,
                      c.latest_day DESC, c.symbol
@@ -221,10 +227,92 @@ def sec_cycle(max_symbols=2):
     return {"state":"OK","checked":checked}
 
 
+
+async def ai_cycle():
+    """One bounded filing-metadata-only AI memo/day, using shared Redis quota.
+
+    This deliberately does not pretend to analyze every ticker or alter BUY
+    eligibility. The first day's run may be skipped if no verified SEC filing
+    evidence exists, and no quota token is consumed in that case.
+    """
+    if os.getenv("STOCKSWATCH_GEMINI_ENABLED","true")!="true":
+        return {"state":"DISABLED"}
+    key=os.getenv("GEMINI_API_KEY","")
+    model=os.getenv("GEMINI_MODEL","gemini-2.5-flash-lite")
+    if len(key)<20:
+        return {"state":"NO_KEY"}
+    if model not in {"gemini-2.5-flash-lite","gemini-3.1-flash-lite","gemini-3.5-flash-lite"}:
+        return {"state":"MODEL_UNAPPROVED"}
+    today=datetime.now(UTC).date().isoformat()
+    with cat.connect(readonly=True) as db:
+        stamp=db.execute("SELECT value FROM sw_catalog_ci_meta WHERE key='ai_day'").fetchone()
+        if stamp and stamp["value"]==today:
+            return {"state":"DAILY_CAP"}
+        filing=db.execute("""SELECT f.id,f.symbol,f.form,f.accepted_at,f.url,f.description
+            FROM sw_catalog_filings f
+            LEFT JOIN sw_catalog_ai_insights a ON a.filing_id=f.id
+            WHERE a.filing_id IS NULL AND f.accepted_at>=?
+            ORDER BY f.accepted_at DESC LIMIT 1""",
+            ((datetime.now(UTC)-timedelta(days=30)).isoformat(),)).fetchone()
+    if not filing:
+        return {"state":"NO_VERIFIED_NEW_FILING"}
+    try:
+        from autotrader.api.gemini_advisory import reserve
+        redis_url=os.getenv("REDIS_URL","")
+        if not redis_url or not await reserve(redis_url):
+            return {"state":"SHARED_GEMINI_QUOTA_LIMIT"}
+    except Exception:
+        return {"state":"SHARED_QUOTA_UNAVAILABLE"}
+    # Reserve the catalogue's one daily attempt even if Google's API fails.
+    with cat.connect() as db:
+        db.execute("""INSERT INTO sw_catalog_ci_meta(key,value) VALUES('ai_day',?)
+           ON CONFLICT(key) DO UPDATE SET value=excluded.value""",(today,))
+    evidence=dict(filing)
+    prompt={
+        "role":"cautious SEC filing metadata researcher",
+        "instruction":"Only the supplied public SEC metadata is verified. Do not infer financial results, stock performance, earnings surprises, sentiment or predictions. Explicitly state what cannot be known without filing text. Never recommend trading actions.",
+        "evidence":evidence,
+        "output_keys":["summary","known","unknown","risks"]
+    }
+    request={"contents":[{"role":"user","parts":[{"text":json.dumps(prompt)}]}],
+        "generationConfig":{"temperature":0.1,"maxOutputTokens":500,
+                            "responseMimeType":"application/json"}}
+    async with httpx.AsyncClient(timeout=httpx.Timeout(20,connect=7),
+                  trust_env=False,follow_redirects=False) as client:
+        try:
+            resp=await client.post(
+                f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+                headers={"x-goog-api-key":key,"Content-Type":"application/json"},
+                json=request)
+            if resp.status_code!=200:
+                return {"state":"PROVIDER_HTTP_"+str(resp.status_code)}
+            raw=resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+            data=json.loads(raw)
+            if (not isinstance(data,dict) or
+                not isinstance(data.get("summary"),str) or
+                any(not isinstance(data.get(k),list) for k in ("known","unknown","risks"))):
+                return {"state":"MODEL_OUTPUT_UNVERIFIED"}
+            clean={k:data[k][:480] if k=="summary" else
+                [x[:250] for x in data[k][:5] if isinstance(x,str)]
+                for k in ("summary","known","unknown","risks")}
+            clean.update({"source_url":filing["url"],"source_at":filing["accepted_at"],
+                          "execution_authority":False})
+            with cat.connect() as db:
+                db.execute("""INSERT OR IGNORE INTO sw_catalog_ai_insights
+                    (filing_id,symbol,model,analysis_json,generated_at,source_url)
+                    VALUES(?,?,?,?,?,?)""",
+                    (filing["id"],filing["symbol"],model,json.dumps(clean),
+                     datetime.now(UTC).isoformat(),filing["url"]))
+                db.execute("""UPDATE sw_catalog_intelligence SET ai_state='ATTRIBUTED_AI_NOTE'
+                    WHERE symbol=?""",(filing["symbol"],))
+            return {"state":"STORED","symbol":filing["symbol"]}
+        except (httpx.HTTPError,ValueError,KeyError,IndexError,TypeError):
+            return {"state":"PROVIDER_OR_OUTPUT_FAILURE"}
+
+
 def report():
     if not cat.CATALOG_PATH.exists():
         return {"state":"NOT_INITIALIZED"}
-    initialize()
     with cat.connect(readonly=True) as db:
         counts={r["history_state"]:r["n"] for r in db.execute(
             "SELECT history_state,COUNT(*) n FROM sw_catalog_intelligence GROUP BY history_state")}
@@ -233,8 +321,9 @@ def report():
         ai={r["ai_state"]:r["n"] for r in db.execute(
             "SELECT ai_state,COUNT(*) n FROM sw_catalog_intelligence GROUP BY ai_state")}
         filings=db.execute("SELECT COUNT(*) n FROM sw_catalog_filings").fetchone()["n"]
+        ai_notes=db.execute("SELECT COUNT(*) n FROM sw_catalog_ai_insights").fetchone()["n"]
     return {"state":"OK","price_states":counts,"sec_states":sec,
-            "ai_states":ai,"sourced_filings":filings,
+            "ai_states":ai,"sourced_filings":filings,"attributed_ai_notes":ai_notes,
             "ai_note":"No additional model inference has been run. Gemini quota and sourced evidence must be available."}
 
 
@@ -243,7 +332,6 @@ def browse(query="",limit=50,offset=0):
         raise ValueError("catalog_intelligence_query_invalid")
     if not cat.CATALOG_PATH.exists():
         return {"summary":{"state":"NOT_INITIALIZED"},"results":[],"total":0}
-    initialize()
     term="%"+query.strip().upper().replace("%","\\%").replace("_","\\_")+"%"
     with cat.connect(readonly=True) as db:
         where="""FROM sw_catalog_assets a
@@ -268,7 +356,11 @@ def cycle():
         sec=sec_cycle()
     except (httpx.HTTPError,ValueError,RuntimeError,sqlite3.Error) as exc:
         sec={"state":"DEFERRED_"+type(exc).__name__,"checked":0}
-    return {"price":px,"sec":sec,"summary":report()}
+    try:
+        ai=asyncio.run(ai_cycle())
+    except Exception as exc:
+        ai={"state":"DEFERRED_"+type(exc).__name__}
+    return {"price":px,"sec":sec,"ai":ai,"summary":report()}
 
 
 if __name__=="__main__":
