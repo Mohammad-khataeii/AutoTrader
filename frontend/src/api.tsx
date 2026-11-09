@@ -101,10 +101,34 @@ export class ApiClient {
           "Your sign-in was not accepted. Sign out and sign in again.",
         );
       }
-      if (response.status >= 500)
+      if (response.status >= 500) {
+        // StocksWatch is an independent backend. Preserve its explicit, safe
+        // FastAPI detail (or upstream HTTP status) instead of replacing every
+        // actionable 500/503 failure with the same generic message.
+        if (path.startsWith("/api/stockswatch/")) {
+          let reason = "";
+          if (typeof detail === "string") {
+            reason = detail.slice(0, 280);
+          } else if (detail && typeof detail === "object") {
+            const diagnostic = detail as Record<string, unknown>;
+            const category = typeof diagnostic.code === "string" ? diagnostic.code : "";
+            const cause = typeof diagnostic.cause === "string" ? diagnostic.cause : "";
+            const ref = typeof diagnostic.reference === "string" ? diagnostic.reference : "";
+            reason = [category, cause, ref ? "log reference "+ref : ""].filter(Boolean).join(" — ").slice(0, 380);
+          }
+          if (!reason) {
+            reason = response.status === 502 || response.status === 504
+              ? "Reverse proxy cannot reach the StocksWatch upstream service."
+              : response.status === 503
+                ? "StocksWatch service unavailable; the server supplied no further diagnostic."
+                : "Unexpected StocksWatch server error; the response did not include a diagnostic. Inspect the service journal.";
+          }
+          throw new Error(`${method} ${path} — HTTP ${response.status}: ${personalText(reason)}`);
+        }
         throw new Error(
           "The server is temporarily unavailable. Your last successful data is still shown.",
         );
+      }
       const reason =
         typeof detail === "string"
           ? personalText(detail.replace(/_/g, " "))
