@@ -41,6 +41,7 @@ export function StocksWatch(){
  const [catalogDetail,setCatalogDetail]=useState("");
  const evidence=useResource("/api/stockswatch/catalog-evidence/"+encodeURIComponent(catalogDetail),{enabled:tab==="Research"&&Boolean(catalogDetail),poll:120000});
  const catalog=useResource("/api/stockswatch/catalog?query="+encodeURIComponent(catalogFilter)+"&limit=50&offset="+catalogOffset,{poll:60000,ttl:30000});
+ const fullResearch=useResource("/api/stockswatch/catalog-top?limit=20",{enabled:tab==="Signals",poll:60000,ttl:30000});
  const d:Row=resource.data??{};
  const h:Row=health.data??{};
  const isBroker=h.mode==="ALPACA_PAPER" || d.execution_mode==="ALPACA_PAPER";
@@ -143,6 +144,15 @@ export function StocksWatch(){
      {gates.length ? gates.map(s=><div className="sw-reason" key={s.symbol}><b>{s.symbol} · {s.action}</b><p>{val(s.reason).replace(/_/g," ")} · observed {fromUTC(s.observed_at)}</p></div>)
        : <Blank text="No execution gate observations for this filter."/>}
    </details></article></div>}
+  {tab==="Signals" && <article className="sw-panel" aria-label="Full Alpaca stock universe research">
+    <Header icon={Database} title="Full Alpaca universe · ranked research" note="All downloaded ticker histories are queued for evidence-based analysis. Research scores are NOT executable stock signals."/>
+    <div className="sw-intel-row"><span>Research-only universe: {n(catalog.data?.summary?.active).toLocaleString()} Alpaca listings · {n(catalog.data?.intelligence?.price_states?.RESEARCH_READY).toLocaleString()} priced and scored</span><button type="button" onClick={()=>setTab("Research")}>Browse all</button></div>
+    {fullResearch.error&&<p className="sw-warning">Full-market research scores are unavailable; original 102-symbol broker scanner is unaffected.</p>}
+    <div className="sw-table-scroll"><table className="sw-table"><thead><tr><th>Ticker</th><th>Company / ETF</th><th>Research score</th><th>20-day return</th><th>SEC status</th><th>AI evidence</th><th>Details</th></tr></thead><tbody>
+    {(fullResearch.data?.results??[]).map((x:Row)=><tr key={x.symbol}><td><b>{x.symbol}</b></td><td>{x.name}</td><td>{n(x.price_score).toFixed(2)}</td><td>{x.change_20d_pct==null?"—":pct(x.change_20d_pct)}</td><td>{val(x.sec_state).replace(/_/g," ")}</td><td>{val(x.ai_state).replace(/_/g," ")}</td><td><button type="button" onClick={()=>{setCatalogOffset(0);setCatalogSearch(x.symbol);setCatalogFilter(x.symbol);setCatalogDetail(x.symbol);setTab("Research");}}>Inspect</button></td></tr>)}
+    </tbody></table></div>
+    {!(fullResearch.data?.results??[]).length&&<Blank text="Historical stock downloads are ongoing. Candidates appear only after 201 completed daily candles are available and validated."/>}
+  </article>}
   {tab==="Protection" && <StocksWatchProtection/>}
   {tab==="Portfolio" && <div className="sw-detail-grid"><article className="sw-panel"><Header icon={Wallet} title={isBroker?"Alpaca paper positions":"Open virtual positions"} note={isBroker?"Broker positions: verify stop and TP in the Protection tab":"Position-level P&L and EOD stop reference"}/>{positions.length ? positions.map(p=><div className="sw-position" key={p.symbol}><div><b>{p.symbol} · {p.direction ?? "LONG"}</b><small>{p.sector} · {Math.abs(n(p.qty))} shares · entry {cash(p.avg_cost)}</small></div><div><b className={n(p.unrealized)>=0?"sw-up":"sw-down"}>{p.unrealized==null?"—":cash(p.unrealized)}{isBroker&&p.unrealized_pct!=null?` · ${pct(p.unrealized_pct)}`:""}</b><small>{cash(p.mark)} · gross {cash(p.absolute_exposure ?? Math.abs(n(p.market_value)))}{p.stop!=null?` · Stop ${cash(p.stop)}`:" · Verify stop in Protection tab"}</small></div></div>):<Blank text={isBroker?"No Alpaca paper positions are currently open.":"No open stock positions. New orders require validated EOD signals and the next completed session."}/>}</article>
      <article className="sw-panel"><Header icon={Activity} title="Pending paper orders" note={isBroker?"Orders returned by Alpaca Paper Trading API":"Awaiting the next eligible daily observation"}/>
