@@ -145,14 +145,18 @@ class CryptoPaperClient:
         # One Alpaca Paper account can hold stock and crypto assets. Partition
         # the account's broker book by Alpaca-reported asset_class; never treat
         # AAPL/ABBV or their pending SELLs as crypto inventory.
+        from .universe import ASSETS
+        stock_symbols={a[0] for a in ASSETS}
+        crypto_symbols=set(ac.PAIRS)|{s.replace("/","") for s in ac.PAIRS}
         def asset_kind(item):
             cls=item.get("asset_class")
             if cls in ("crypto","us_equity"):
                 return cls
             symbol=item.get("symbol")
-            if isinstance(symbol,str) and symbol in (
-                    {s for s in ac.PAIRS}|{s.replace("/","") for s in ac.PAIRS}):
+            if symbol in crypto_symbols:
                 return "crypto"
+            if symbol in stock_symbols:
+                return "us_equity"
             # Unknown instrument types must not be silently hidden.
             raise CryptoPaperError("crypto_shared_account_unknown_asset_class")
         positions=[];other_positions=[];orders=[];other_orders=[]
