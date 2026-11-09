@@ -52,7 +52,7 @@ export function AlpacaCrypto() {
   return <div className="ac-root">
     <header className="ac-hero">
       <div className="ac-hero-copy">
-        <div className="ac-label"><Activity size={16} /> 24/7 SPOT MARKET RESEARCH</div>
+        <div className="ac-label"><Activity size={16} /> 24/7 SPOT MARKET RESEARCH · {integer(d.universe_pairs ?? 20)} PAIRS</div>
         <h2>AlpacaCrypto <span>Paper trading</span></h2>
         <p>Crypto strategy using the existing Alpaca Paper account with an independent crypto order journal. Research continues even when paper order submission is disabled.</p>
       </div>
@@ -68,7 +68,7 @@ export function AlpacaCrypto() {
     <section className="ac-stats" aria-label="Crypto data and account overview">
       <article><Database size={18}/><small>Historical observations</small><b>{integer(bars.reduce((sum, bar) => sum + num(bar.n), 0))}</b></article>
       <article><BarChart3 size={18}/><small>Backfill jobs complete</small><b>{integer(complete)} / {integer(total)}</b></article>
-      <article><ShieldCheck size={18}/><small>Verified trading pairs</small><b>{integer(eligible)} / {assets.length || 10}</b></article>
+      <article><ShieldCheck size={18}/><small>Verified USD paper-trading pairs · {integer(d.research_only_pairs ?? 0)} research-only markets</small><b>{integer(eligible)} / {integer(d.execution_pairs ?? 20)}</b></article>
       <article><Wallet size={18}/><small>Shared Alpaca Paper equity</small><b>{account.equity == null ? "Not linked" : usd(account.equity)}</b></article>
     </section>
 
