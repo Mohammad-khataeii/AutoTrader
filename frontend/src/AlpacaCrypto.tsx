@@ -54,7 +54,7 @@ export function AlpacaCrypto() {
       <div className="ac-hero-copy">
         <div className="ac-label"><Activity size={16} /> 24/7 SPOT MARKET RESEARCH</div>
         <h2>AlpacaCrypto <span>Paper trading</span></h2>
-        <p>Independent crypto strategy with its own Alpaca Paper account. Research continues even when order submission is disabled.</p>
+        <p>Crypto strategy using the existing Alpaca Paper account with an independent crypto order journal. Research continues even when paper order submission is disabled.</p>
       </div>
       <div className="ac-flags" aria-label="Trading limitations">
         <span><ShieldCheck size={14}/> Paper only</span>
@@ -69,7 +69,7 @@ export function AlpacaCrypto() {
       <article><Database size={18}/><small>Historical observations</small><b>{integer(bars.reduce((sum, bar) => sum + num(bar.n), 0))}</b></article>
       <article><BarChart3 size={18}/><small>Backfill jobs complete</small><b>{integer(complete)} / {integer(total)}</b></article>
       <article><ShieldCheck size={18}/><small>Verified trading pairs</small><b>{integer(eligible)} / {assets.length || 10}</b></article>
-      <article><Wallet size={18}/><small>Dedicated Paper equity</small><b>{account.equity == null ? "Not linked" : usd(account.equity)}</b></article>
+      <article><Wallet size={18}/><small>Shared Alpaca Paper equity</small><b>{account.equity == null ? "Not linked" : usd(account.equity)}</b></article>
     </section>
 
     <section className="ac-panel ac-data-panel" aria-label="Market data readiness and controls">
@@ -93,7 +93,7 @@ export function AlpacaCrypto() {
         <div>
           <strong>{!d.paper_orders_enabled ? "Research only — crypto paper orders disabled"
             : d.paused ? "Paper orders paused" : "Paper order admission enabled"}</strong>
-          <small>A separate verified Alpaca Paper account is required. Resuming does not bypass risk checks.</small>
+          <small>Uses the existing StocksWatch Alpaca Paper connection. This control never bypasses risk checks.</small>
         </div>
         <div className="ac-buttons">
           <button type="button" disabled={working || d.paused !== false} onClick={() => void control("pause")}><Pause size={14}/> Pause</button>
