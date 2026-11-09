@@ -292,7 +292,28 @@ def backfill_step(data,now):
                 WHERE symbol=? AND timeframe=? AND start_at=? AND end_at=?""",
                 (attempts,"ERROR" if attempts>=5 else "RETRY",str(exc),utc(),
                  *(job[k] for k in ("symbol","timeframe","start_at","end_at"))))
+        # Rate limits, entitlement failures and provider outages must stop
+        # the current burst rather than causing repeated immediate requests.
+        return False
     return True
+
+
+def backfill_burst(data,now,max_jobs=6):
+    """Bounded paper-research GET burst; never places orders.
+
+    Reconciles the most recent hourly buckets first, processes only a small
+    number of pages per iteration, and yields if a provider request fails.
+    Returns attempts rather than inventing data coverage.
+    """
+    max_jobs=max(0,min(int(max_jobs),8))
+    done=0
+    for index in range(max_jobs):
+        if not backfill_step(data,now):
+            break
+        done+=1
+        if index+1<max_jobs:
+            time.sleep(0.65)
+    return done
 
 
 def _ema(values,n):
