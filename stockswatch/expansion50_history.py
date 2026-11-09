@@ -83,7 +83,9 @@ def _store(symbol,bars,now,day):
     observed=now.isoformat()
     local=[(symbol,b["day"],b["o"],b["h"],b["l"],b["c"],b["v"],
             "alpaca_iex_daily","RAW",observed) for b in bars]
-    archive=[(symbol,"1Day","iex","raw",b["t"],b["day"],"DAILY",
+    archive=[(symbol,"1Day","iex","raw",
+              backfill.midnight(__import__("datetime").date.fromisoformat(b["day"])).isoformat(),
+              b["day"],"DAILY",
               observed,*(str(b[k]) for k in ("o","h","l","c","v")))
              for b in bars]
     with storage.connect() as conn:
