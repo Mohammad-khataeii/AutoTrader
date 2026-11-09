@@ -55,6 +55,13 @@ CREATE TABLE IF NOT EXISTS ac_bars (
  source TEXT NOT NULL, ingested_at TEXT NOT NULL,
  PRIMARY KEY(symbol,timeframe,ts));
 CREATE INDEX IF NOT EXISTS ac_bars_latest ON ac_bars(symbol,timeframe,ts DESC);
+CREATE TABLE IF NOT EXISTS ac_signal_gates (
+ symbol TEXT NOT NULL, bar_at TEXT NOT NULL, evaluated_at TEXT NOT NULL,
+ gates_json TEXT NOT NULL, PRIMARY KEY(symbol,bar_at));
+CREATE TABLE IF NOT EXISTS ac_execution_cycles (
+ id INTEGER PRIMARY KEY AUTOINCREMENT, evaluated_at TEXT NOT NULL,
+ outcome TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS ac_execution_cycles_time ON ac_execution_cycles(evaluated_at);
 CREATE TABLE IF NOT EXISTS ac_signals (
  symbol TEXT NOT NULL, bar_at TEXT NOT NULL, evaluated_at TEXT NOT NULL,
  action TEXT NOT NULL, score REAL NOT NULL, price REAL NOT NULL,
@@ -135,7 +142,9 @@ def _checked_quote(raw, now):
     if not isinstance(raw, dict):
         raise CryptoDataError("crypto_quote_missing")
     at = _stamp(raw.get("t"))
-    if not timedelta(0) <= now - at <= timedelta(minutes=3):
+    # Alpaca timestamps may be slightly ahead of the Python clock captured
+    # before the GET. Allow <=5s positive provider skew, never stale quotes.
+    if not timedelta(seconds=-5) <= now - at <= timedelta(minutes=3):
         raise CryptoDataError("crypto_quote_stale")
     bid = _number(raw.get("bp"))
     ask = _number(raw.get("ap"))
@@ -296,12 +305,15 @@ def queue(now):
             (symbol,timeframe,start_at,end_at,state) VALUES(?,?,?,?,'PENDING')""",jobs)
 
 
-def refresh_recent_hourly(data,now):
-    """Refresh just-completed hourly candles, independent of deep backfill progress."""
+def refresh_recent_hourly(data,now,*,symbols=None):
+    """Refresh completed hourly bars for all or selected verified USD pairs."""
+    symbols=tuple(PAIRS if symbols is None else symbols)
+    if not symbols or len(set(symbols))!=len(symbols) or any(sym not in PAIRS for sym in symbols):
+        raise CryptoDataError("crypto_recent_hourly_symbols_invalid")
     end=_floor(now,"1Hour")
     start=end-timedelta(hours=5)
     batch=[]
-    for symbol in PAIRS:
+    for symbol in symbols:
         job={"symbol":symbol,"timeframe":"1Hour","start_at":start.isoformat(),
              "end_at":end.isoformat(),"token":None}
         values,token=data.bars(job)
@@ -313,6 +325,39 @@ def refresh_recent_hourly(data,now):
         c.executemany("INSERT OR IGNORE INTO ac_bars VALUES(?,?,?,?,?,?,?,?,?,?)",batch)
         c.commit()
     return len(batch)
+
+
+# At each UTC hour boundary the old 10-minute refresh can lag a full hour.
+# The paper engine can catch up only the missing symbols, rate-limited to
+# one attempt per 90 seconds; no direct order follows missing history.
+_recent_lock=threading.Lock()
+_recent_last_key=None
+_recent_last_attempt=0.0
+
+def ensure_latest_completed_hourly(data,now):
+    """GET-only freshness catch-up; returns a stable status for the journal."""
+    global _recent_last_key,_recent_last_attempt
+    expected=(_floor(now,"1Hour")-timedelta(hours=1)).isoformat()
+    # Historical bars are immutable once complete; never fake a missing bar.
+    observed={r["symbol"]:r["stamp"] for r in rows(
+        "SELECT symbol,MAX(ts) stamp FROM ac_bars WHERE timeframe='1Hour' GROUP BY symbol")}
+    missing=tuple(sym for sym in PAIRS if observed.get(sym)!=expected)
+    if not missing:
+        return "crypto_hourly_current"
+    if now-_floor(now,"1Hour")<timedelta(seconds=30):
+        return "crypto_waiting_for_completed_hour_finalization"
+    with _recent_lock:
+        tick=time.monotonic()
+        if _recent_last_key==expected and tick-_recent_last_attempt<90:
+            return "crypto_latest_hourly_retry_cooldown"
+        _recent_last_key=expected
+        _recent_last_attempt=tick
+        # Exactly the missing markets are fetched, not the whole archive.
+        refresh_recent_hourly(data,now,symbols=missing)
+    observed_after={r["symbol"]:r["stamp"] for r in rows(
+        "SELECT symbol,MAX(ts) stamp FROM ac_bars WHERE timeframe='1Hour' GROUP BY symbol")}
+    return ("crypto_hourly_caught_up" if all(observed_after.get(sym)==expected for sym in PAIRS)
+            else "crypto_latest_completed_hourly_not_published")
 
 
 def backfill_step(data,now):
@@ -480,16 +525,22 @@ def signal(symbol, now=None):
        AND ts<? ORDER BY ts DESC LIMIT 260""",(symbol,bar_end))[::-1]
     daily=rows("""SELECT * FROM ac_bars WHERE symbol=? AND timeframe='1Day'
        AND ts<? ORDER BY ts DESC LIMIT 260""",(symbol,day_end))[::-1]
-    def observation(action,why,score=0,stop=None,target=None):
-        return {"symbol":symbol,"action":action,"reason":why,"score":round(score,3),
+    def observation(action,why,score=0,stop=None,target=None,gates=None):
+        result={"symbol":symbol,"action":action,"reason":why,"score":round(score,3),
           "price":hourly[-1]["c"] if hourly else None,
           "stop":stop,"target":target,
           "bar_at":hourly[-1]["ts"] if hourly else None,"as_of":now.isoformat()}
+        if gates is not None:
+            result["gates"]=gates
+        return result
     if len(hourly)<220 or len(daily)<220:
         return observation("WAIT","insufficient_completed_history")
     last=_stamp(hourly[-1]["ts"])
-    if now-last>timedelta(hours=3):
-        return observation("WAIT","stale_completed_hourly_bar")
+    # Require the most recently completed UTC hour; the old three-hour
+    # tolerance could evaluate outdated candles as fresh BUY evidence.
+    expected=_floor(now,"1Hour")-timedelta(hours=1)
+    if last != expected:
+        return observation("WAIT","latest_completed_hourly_bar_missing")
     h=[b["c"] for b in hourly];d=[b["c"] for b in daily]
     e20=_ema(h,20);e50=_ema(h,50);e200=_ema(h,200)
     d200=_ema(d,200)
@@ -502,14 +553,27 @@ def signal(symbol, now=None):
     breakout=h[-1]>max(b["h"] for b in hourly[-21:-1])
     healthy=45<=rsi<=72 and 0.001<volatility<0.06
     score=sum((trend,macro,breakout,healthy))/4
+    gates={
+      "hourly_uptrend":bool(trend),"daily_above_ema200":bool(macro),
+      "20_hour_breakout":bool(breakout),"rsi_volatility_healthy":bool(healthy),
+      "rsi14":round(rsi,3),"atr_pct":round(volatility*100,4),
+      "breakout_reference_high":max(b["h"] for b in hourly[-21:-1]),
+      "completed_hour_volume":hourly[-1]["v"],
+      "hourly_close":h[-1],"daily_close":d[-1],
+      "daily_ema200":round(d200,9),
+    }
     if not (trend and macro and healthy and breakout):
-        return observation("HOLD","no_confirmed_spot_long_setup",score)
+        return observation("HOLD","no_confirmed_spot_long_setup",score,gates=gates)
+    # Midpoint candles can have no actual reported trades. A zero-volume
+    # breakout is research evidence only, not an executable confirmation.
+    if hourly[-1]["v"]<=0:
+        return observation("HOLD","quote_only_breakout_no_trade_volume",score,gates=gates)
     stop=h[-1]-2.5*atr
     target=h[-1]+4.5*atr
     if stop<=0:
         return observation("WAIT","invalid_stop_distance")
     return observation("BUY","daily_uptrend_hourly_breakout_healthy_volatility",score,
-                       round(stop,8),round(target,8))
+                       round(stop,8),round(target,8),gates=gates)
 
 
 def scan(now):
@@ -537,9 +601,26 @@ def scan(now):
                       reason=excluded.reason""",
                     (symbol,s["bar_at"],now.isoformat(),s["action"],s["score"],
                      s["price"],s["stop"],s["target"],s["reason"]))
+                c.execute("""INSERT INTO ac_signal_gates(symbol,bar_at,evaluated_at,gates_json)
+                    VALUES(?,?,?,?)
+                    ON CONFLICT(symbol,bar_at) DO UPDATE SET
+                     evaluated_at=excluded.evaluated_at,gates_json=excluded.gates_json""",
+                    (symbol,s["bar_at"],now.isoformat(),json.dumps(s.get("gates") or {},sort_keys=True)))
     with connect() as c:
         c.execute("UPDATE ac_state SET last_cycle=?,last_error=NULL WHERE id=1",(now.isoformat(),))
     return evaluated
+
+
+def record_execution_outcome(outcome, now=None):
+    """Durable, bounded order-admission outcome, only for AlpacaCrypto."""
+    now=now or datetime.now(UTC)
+    if not isinstance(outcome,str) or not outcome or len(outcome)>150:
+        raise CryptoDataError("crypto_execution_outcome_invalid")
+    with connect() as c:
+        c.execute("INSERT INTO ac_execution_cycles(evaluated_at,outcome) VALUES(?,?)",
+                  (now.isoformat(),outcome))
+        c.execute("DELETE FROM ac_execution_cycles WHERE evaluated_at<?",
+                  ((now-timedelta(days=7)).isoformat(),))
 
 
 def dashboard():
@@ -556,6 +637,10 @@ def dashboard():
     intents=rows("""SELECT client_id,symbol,side,created_at,state,broker_status,qty,notional,reason
         FROM ac_intents ORDER BY created_at DESC LIMIT 30""")
     managed=rows("SELECT symbol,stop,target,entered_at FROM ac_managed")
+    gates=rows("""SELECT s.symbol,g.gates_json,g.evaluated_at FROM ac_signal_gates g
+      JOIN (SELECT symbol,MAX(bar_at) bar_at FROM ac_signal_gates GROUP BY symbol) s
+        ON g.symbol=s.symbol AND g.bar_at=s.bar_at ORDER BY s.symbol""")
+    outcomes=rows("SELECT evaluated_at,outcome FROM ac_execution_cycles ORDER BY id DESC LIMIT 30")
     broker=one("SELECT * FROM ac_broker_snapshot WHERE id=1")
     return {
       "mode":"ALPACA_CRYPTO_SPOT_PAPER","short_supported":False,"margin_supported":False,
@@ -570,6 +655,9 @@ def dashboard():
         "positions":json.loads(broker["positions_json"]),
         "open_order_count":broker["open_order_count"]} if broker else None,
       "signals":signals,"intents":intents,"managed":managed,
+      "signal_gate_evidence":[{"symbol":r["symbol"],"evaluated_at":r["evaluated_at"],
+        "gates":json.loads(r["gates_json"])} for r in gates],
+      "crypto_execution_outcomes":outcomes,
       "legacy_crypto_source_preserved":True,
       "disclaimer":"Historical bars are midpoint quotes, not executable prices. Crypto and stocks may share the existing Alpaca Paper account, but order journals stay separate. Short selling crypto is unsupported.",
     }
