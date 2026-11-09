@@ -92,6 +92,7 @@ class Service:
         self.broker_task = None
         self.intraday_task = None
         self.history_task = None
+        self.catalog_task = None
         self.crypto_task = None
         self.intraday = IntradayEngine()
         self.broker_stop = asyncio.Event()
@@ -105,6 +106,8 @@ class Service:
         self.intraday_task = asyncio.create_task(self.intraday_loop(), name="stockswatch-intraday")
         if os.getenv("ALPACA_CRYPTO_ENABLED","1")=="1":
             self.crypto_task = asyncio.create_task(self.crypto_loop(), name="alpaca-crypto-history")
+        if broker_mode() and os.getenv("STOCKSWATCH_CATALOG_BACKGROUND","0")=="1":
+            self.catalog_task=asyncio.create_task(self.catalog_loop(),name="alpaca-stock-catalogue")
         if broker_mode():
             if os.getenv("STOCKSWATCH_HISTORY_BACKGROUND","1")=="1":
                 self.history_task=asyncio.create_task(self.history_loop(),name="stockswatch-history")
@@ -125,7 +128,35 @@ class Service:
             await self.history_task
         if self.crypto_task:
             await self.crypto_task
+        if self.catalog_task:
+            await self.catalog_task
         self.intraday.close()
+
+    async def catalog_loop(self):
+        """Opt-in, GET-only catalogue sync + paced daily history ingestion.
+
+        Separate SQLite file and disk limits: no financial ledger, order
+        intent, OCO, crypto or existing 102-symbol scanner mutation.
+        """
+        from . import asset_catalog
+        next_sync = None
+        while not self.broker_stop.is_set():
+            now = datetime.now(timezone.utc)
+            try:
+                if next_sync is None or now>=next_sync:
+                    await asyncio.to_thread(asset_catalog.sync)
+                    next_sync=now+timedelta(hours=24)
+                result=await asyncio.to_thread(asset_catalog.download,
+                                               max_batches=3,batch_size=10,pace_seconds=2.0)
+                if result["state"] in ("DB_CAP_REACHED","LOW_DISK_FREE"):
+                    log.warning("Alpaca stock catalog stopped safely: %s",result["state"])
+            except Exception as exc:
+                # The catalogue is noncritical. Never interrupt the trading loop.
+                log.warning("Alpaca stock catalog retry scheduled: %s",type(exc).__name__)
+            try:
+                await asyncio.wait_for(self.broker_stop.wait(),timeout=300)
+            except asyncio.TimeoutError:
+                pass
 
     async def crypto_loop(self):
         """Independent 24/7 crypto market research. Paper submission separately gated."""
