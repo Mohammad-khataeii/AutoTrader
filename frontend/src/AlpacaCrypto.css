@@ -1,40 +1,147 @@
-.ac-root{display:grid;gap:20px;color:var(--text,#e5e7eb)}
-.ac-hero{padding:30px;border:1px solid var(--border,rgba(128,128,128,.25));border-radius:20px;background:linear-gradient(110deg,rgba(22,78,120,.19),rgba(10,28,45,.02))}
-.ac-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.14em;opacity:.77}
-.ac-hero h2{font-size:clamp(28px,4vw,42px);margin:12px 0 8px;letter-spacing:-.04em}
-.ac-hero p{line-height:1.65;max-width:830px;opacity:.75;margin:0}
-.ac-flags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
-.ac-flags span{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;border:1px solid var(--border,rgba(128,128,128,.28));font-size:12px}
-.ac-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.ac-stats article,.ac-panel{border:1px solid var(--border,rgba(128,128,128,.26));border-radius:16px;background:var(--card-bg,rgba(125,125,125,.035));padding:20px}
-.ac-stats article{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
-.ac-stats small,.ac-grid small{font-size:12px;opacity:.67}
-.ac-stats b{font-size:25px;font-variant-numeric:tabular-nums}
-.ac-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:20px}
-.ac-heading h3{margin:0 0 6px;font-size:18px}
-.ac-heading p{margin:0;font-size:12px;opacity:.65}
-.ac-heading button,.ac-buttons button{display:flex;align-items:center;gap:7px;border:1px solid var(--border,rgba(128,128,128,.3));border-radius:10px;padding:9px 12px;background:transparent;color:inherit;cursor:pointer}
-.ac-buttons button:disabled{opacity:.4;cursor:not-allowed}
-.ac-heading input{border:1px solid var(--border,rgba(128,128,128,.3));background:transparent;color:inherit;padding:10px;border-radius:10px;min-width:180px}
-.ac-progress{height:8px;border-radius:10px;background:rgba(128,128,128,.17);overflow:hidden}
-.ac-progress div{height:100%;background:#3b82f6}
-.ac-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0 24px}
-.ac-grid>div{display:flex;flex-direction:column;gap:6px}
-.ac-grid b{font-size:15px;font-variant-numeric:tabular-nums}
-.ac-control{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px;border:1px solid var(--border,rgba(128,128,128,.26));border-radius:12px}
-.ac-control div:first-child{display:flex;flex-direction:column;gap:6px}
-.ac-control small,.ac-footnote{font-size:12px;opacity:.7;line-height:1.5}
-.ac-buttons{display:flex;gap:8px}
-.ac-table-scroll{overflow-x:auto;max-width:100%}
-.ac-table-scroll table{width:100%;border-collapse:collapse;font-size:12px;text-align:left;white-space:nowrap}
-.ac-table-scroll th{font-weight:600;opacity:.66}
-.ac-table-scroll th,.ac-table-scroll td{padding:12px 10px;border-bottom:1px solid var(--border,rgba(128,128,128,.15));vertical-align:middle}
-.ac-action{padding:5px 8px;border-radius:7px;font-weight:600;background:rgba(128,128,128,.13)}
-.ac-buy{background:rgba(16,185,129,.15);color:#10b981}
-.ac-owned{font-size:9px;font-weight:700;color:#10b981}
-.ac-warning{padding:12px 14px;background:rgba(245,158,11,.11);border:1px solid rgba(245,158,11,.3);border-radius:10px}
-.ac-note{font-size:12px}
-.ac-empty{text-align:center;opacity:.6}
-.ac-footnote{margin-top:18px}
-@media(max-width:850px){.ac-stats,.ac-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ac-control{flex-direction:column;align-items:flex-start}}
-@media(max-width:520px){.ac-stats,.ac-grid{grid-template-columns:1fr 1fr}.ac-hero{padding:20px}.ac-heading{flex-wrap:wrap}.ac-stats article,.ac-panel{padding:14px}}
+/* AlpacaCrypto uses a deliberate high-contrast palette independent of legacy
+   AutoTrader --text / --card-bg variables (those variables are not defined in
+   the default light theme). Do not leak these styles into StocksWatch. */
+.ac-root {
+  --ac-ink:#1f3328;
+  --ac-muted:#53665c;
+  --ac-border:#dbe5dd;
+  --ac-surface:#ffffff;
+  --ac-soft:#f5f9f6;
+  --ac-green:#277c52;
+  --sw-ink:var(--ac-ink);
+  --sw-muted:var(--ac-muted);
+  --sw-border:var(--ac-border);
+  --sw-card:var(--ac-surface);
+  color:var(--ac-ink);
+  display:grid;
+  gap:18px;
+  padding-bottom:25px;
+  line-height:1.45;
+  font-size:14px;
+  min-width:0;
+}
+.ac-root *, .ac-root *::before, .ac-root *::after {box-sizing:border-box}
+.ac-root .ac-hero {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:16px;
+  border:1px solid var(--ac-border);
+  border-radius:18px;
+  background:linear-gradient(110deg,#f0f7f1,#fff 76%);
+  padding:23px 25px;
+}
+.ac-root .ac-label {
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:750;letter-spacing:.11em;color:#2d7050
+}
+.ac-root .ac-hero-copy {max-width:710px}
+.ac-root .ac-hero h2 {margin:8px 0 8px;letter-spacing:-.035em;line-height:1.18;font-size:clamp(24px,3vw,31px);color:var(--ac-ink)}
+.ac-root .ac-hero h2 span {font-size:.53em;font-weight:600;color:var(--ac-green);letter-spacing:0;white-space:nowrap}
+.ac-root .ac-hero p {margin:0;color:var(--ac-muted);max-width:660px;font-size:13px;line-height:1.6}
+.ac-root .ac-flags {display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.ac-root .ac-flags span {
+  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+  padding:6px 10px;border-radius:999px;background:#fff;
+  border:1px solid var(--ac-border);font-size:11px;color:#375343;font-weight:650
+}
+.ac-root .ac-stats {
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px
+}
+.ac-root .ac-stats article, .ac-root .ac-panel {
+  border:1px solid var(--ac-border);border-radius:14px;
+  background:var(--ac-surface);padding:19px;min-width:0;
+}
+.ac-root .ac-stats article {display:flex;flex-direction:column;align-items:flex-start;gap:7px}
+.ac-root .ac-stats article svg {color:var(--ac-green)}
+.ac-root .ac-stats small,.ac-root .ac-grid small {
+  color:var(--ac-muted);font-size:12px;font-weight:550
+}
+.ac-root .ac-stats b {font-size:clamp(17px,2vw,23px);color:var(--ac-ink);font-variant-numeric:tabular-nums}
+.ac-root .ac-heading {display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:17px}
+.ac-root .ac-heading h3 {margin:0 0 4px;font-size:17px;font-weight:750;color:var(--ac-ink)}
+.ac-root .ac-heading p {margin:0;color:var(--ac-muted);font-size:12px;line-height:1.5}
+.ac-root .ac-heading button,.ac-root .ac-buttons button {
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  color:var(--ac-ink);background:var(--ac-surface);
+  border:1px solid #c5d4ca;border-radius:9px;min-height:35px;
+  padding:8px 12px;cursor:pointer;font:inherit;font-size:12px;font-weight:650
+}
+.ac-root button:focus-visible {outline:3px solid #78b59a;outline-offset:2px}
+.ac-root .ac-heading button:hover,.ac-root .ac-buttons button:hover:not(:disabled){background:#eef7f0}
+.ac-root .ac-buttons button:disabled {opacity:.5;cursor:not-allowed}
+.ac-root .ac-progress {height:10px;background:#e5ede7;overflow:hidden;border-radius:99px}
+.ac-root .ac-progress>div {height:100%;background:linear-gradient(90deg,#25835b,#4a9a73);border-radius:99px;transition:width .3s ease}
+.ac-root .ac-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:17px 0 19px}
+.ac-root .ac-grid>div {display:grid;gap:5px;min-width:0}
+.ac-root .ac-grid b {color:var(--ac-ink);font-size:14px;font-weight:700;word-break:break-word;font-variant-numeric:tabular-nums}
+.ac-root .ac-control {
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:14px 16px;background:var(--ac-soft);border:1px solid var(--ac-border);
+  border-radius:12px
+}
+.ac-root .ac-control>div:first-child {display:grid;gap:5px;min-width:0}
+.ac-root .ac-control strong {font-size:13px;color:var(--ac-ink)}
+.ac-root .ac-control small {font-size:12px;color:var(--ac-muted);line-height:1.5}
+.ac-root .ac-buttons {display:flex;flex-shrink:0;gap:7px}
+.ac-root .ac-warning {
+  margin:11px 0 0;padding:11px 13px;background:#fff5e8;
+  color:#74471d;border:1px solid #ead0af;border-radius:9px;font-size:12px
+}
+.ac-root .ac-note {color:var(--ac-green);font-size:12px;margin:11px 0 0}
+.ac-root .ac-footnote {color:var(--ac-muted);font-size:12px;line-height:1.55;margin:0}
+
+/* The order/status table is shared with StocksWatch, but crypto needs explicit
+   locally scoped text/background variables. Without this, light-mode text
+   falls back to #e5e7eb on white and becomes unreadable. */
+.ac-root .to-root {color:var(--ac-ink);font-size:13px;margin:0;gap:13px;min-width:0}
+.ac-root .to-status,.ac-root .to-panel {
+  background:var(--ac-surface);color:var(--ac-ink);
+  border-color:var(--ac-border);border-radius:14px;padding:19px;
+}
+.ac-root .to-status {border-left:4px solid #8993a5}
+.ac-root .to-status.to-blocked {background:#fffafa;border-left-color:#c65a51}
+.ac-root .to-status.to-waiting {background:#fffcf4;border-left-color:#be8d30}
+.ac-root .to-status.to-armed {background:#f5fcf7;border-left-color:#238458}
+.ac-root .to-status.to-unknown {background:#f6f9fb;border-left-color:#6f8093}
+.ac-root .to-status h3 {font-size:21px;color:var(--ac-ink)}
+.ac-root .to-eyebrow {color:var(--ac-muted);opacity:1;font-size:11px}
+.ac-root .to-caption {color:var(--ac-muted);font-size:12px;margin:10px 0}
+.ac-root .to-checked {color:var(--ac-muted);font-size:12px}
+.ac-root .to-reasons {color:#344c3d;line-height:1.5;padding-left:21px;font-size:13px}
+.ac-root .to-reasons li {padding-bottom:2px}
+.ac-root .to-reason-extra {margin-top:8px;color:var(--ac-green)}
+.ac-root .to-reason-extra summary {cursor:pointer;font-weight:700;font-size:12px}
+.ac-root .to-reason-extra ul {margin:8px 0 0;padding-left:21px;color:#344c3d}
+.ac-root .to-heading {margin-bottom:13px;align-items:baseline}
+.ac-root .to-heading h3 {color:var(--ac-ink);font-size:17px}
+.ac-root .to-heading span {font-size:12px;color:var(--ac-muted)}
+.ac-root .to-scroll {overflow-x:auto;border:1px solid var(--ac-border);border-radius:9px}
+.ac-root .to-table {color:var(--ac-ink);font-size:12px;min-width:860px}
+.ac-root .to-table th {
+  color:#4e6457;background:#f2f7f3;white-space:nowrap;
+  border-bottom:1px solid var(--ac-border);font-size:11px;font-weight:750
+}
+.ac-root .to-table td {color:#253c2d;border-bottom:1px solid #e7eee8;line-height:1.45}
+.ac-root .to-table tbody tr:nth-child(even) {background:#fbfdfb}
+.ac-root .to-table td strong {color:#152b1c}
+.ac-root .to-table td small {color:var(--ac-muted);opacity:1}
+.ac-root .to-table .to-empty {color:var(--ac-muted);padding:22px}
+.ac-root .to-order-state {color:var(--ac-ink);border-color:var(--ac-border)}
+.ac-root .to-order-active {color:#216b47;background:#eaf7ee}
+.ac-root .to-source {font-weight:700;color:#33523c}
+.ac-root .to-foot {color:var(--ac-muted);font-size:12px;line-height:1.55}
+@media(max-width:950px){
+  .ac-root .ac-stats {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ac-root .ac-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+  .ac-root {gap:12px}
+  .ac-root .ac-hero {padding:18px}
+  .ac-root .ac-stats {gap:8px}
+  .ac-root .ac-stats article,.ac-root .ac-panel,.ac-root .to-status,.ac-root .to-panel {padding:14px}
+  .ac-root .ac-control {flex-direction:column;align-items:stretch}
+  .ac-root .ac-buttons {justify-content:flex-end}
+  .ac-root .to-checked {font-size:11px}
+}
