@@ -36,8 +36,8 @@ const readable = (code:unknown):string => {
   };
   return known[raw] || raw.replace(/_/g," ").replace(/\s+/g," ") || "No detailed reason was provided by the server.";
 };
-function Indicator({ title, state, reasons, checked, note }:{
-  title:string;state:TradeState;reasons:string[];checked?:unknown;note:string;
+function Indicator({ title, state, reasons, checked, note, compact=false }:{
+  title:string;state:TradeState;reasons:string[];checked?:unknown;note:string;compact?:boolean;
 }){
   const name=state==="armed"?"PAPER ORDERS ARMED":state==="waiting"?"WAITING":state==="blocked"?"NOT TRADING":"UNVERIFIED";
   return <section className={"to-status to-"+state} aria-label={title+" status"} role="status">
@@ -45,7 +45,10 @@ function Indicator({ title, state, reasons, checked, note }:{
       <h3><span className="to-dot" aria-hidden="true"/>{name}</h3></div>
       <div className="to-checked">Last evaluation: {stamp(checked)}</div></div>
     <p className="to-caption">{note}</p>
-    <ul className="to-reasons">{reasons.map((reason,i)=><li key={i}>{reason}</li>)}</ul>
+    <ul className="to-reasons">{(compact?reasons.slice(0,4):reasons).map((reason,i)=><li key={i}>{reason}</li>)}</ul>
+    {compact&&reasons.length>4&&<details className="to-reason-extra"><summary>Show {reasons.length-4} more diagnostics</summary>
+      <ul>{reasons.slice(4).map((reason,i)=><li key={i}>{reason}</li>)}</ul>
+    </details>}
   </section>;
 }
 function Table({rows, empty, kind}:{rows:OrderRow[];empty:string;kind:"stocks"|"crypto"}){
@@ -178,7 +181,7 @@ export function CryptoTradingStatus({dashboard:d,error}:{dashboard:Row;error?:st
     if(!blocked&&!signals.some(x=>x.action==="BUY")){state="waiting";reasons.unshift("Paper engine is authorized but no approved crypto BUY signal is present.");}
     if(!reasons.length) reasons.push("Paper order admission is enabled; individual trades still require fresh quotes and all risk gates.");
   }
-  return <Indicator title="AlpacaCrypto" state={state} reasons={reasons} checked={d.last_cycle}
+  return <Indicator title="AlpacaCrypto" compact state={state} reasons={reasons} checked={d.last_cycle}
     note="The 24/7 research scanner is separate from paper order permission. A verified dedicated Alpaca account is required for execution."/>;
 }
 
