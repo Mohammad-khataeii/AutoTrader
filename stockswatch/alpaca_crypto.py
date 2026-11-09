@@ -10,6 +10,7 @@ import json
 import math
 import os
 import time
+import threading
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 
@@ -114,6 +115,62 @@ def _headers():
     return {"APCA-API-KEY-ID": key, "APCA-API-SECRET-KEY": secret}
 
 
+# The scanner's close is a completed hourly bar. Only the independent
+# latest-quote endpoint can provide a recent bid/ask snapshot for the UI.
+QUOTE_TTL_SECONDS = 15
+_quote_lock = threading.Lock()
+_quote_cached_at = 0.0
+_quote_cached_result = None
+
+
+def _checked_quote(raw, now):
+    if not isinstance(raw, dict):
+        raise CryptoDataError("crypto_quote_missing")
+    at = _stamp(raw.get("t"))
+    if not timedelta(0) <= now - at <= timedelta(minutes=3):
+        raise CryptoDataError("crypto_quote_stale")
+    bid = _number(raw.get("bp"))
+    ask = _number(raw.get("ap"))
+    if bid >= ask:
+        raise CryptoDataError("crypto_quote_crossed")
+    return {"bid": bid, "ask": ask, "midpoint": (bid + ask) / 2,
+            "observed_at": at.isoformat()}
+
+
+def latest_quotes_snapshot(*, factory=None):
+    """GET-only, bounded quote snapshot. No synthetic mark or trading action.
+
+    One Alpaca US latest-quotes request obtains up to ten pairs. Only validated
+    prices younger than three minutes are shown as available. A short cache
+    prevents UI polling from exhausting market-data quotas.
+    """
+    global _quote_cached_at, _quote_cached_result
+    with _quote_lock:
+        checked_at = time.monotonic()
+        if _quote_cached_result is not None and checked_at - _quote_cached_at < QUOTE_TTL_SECONDS:
+            return dict(_quote_cached_result)
+        now = datetime.now(UTC)
+        result = {"available": False, "as_of": now.isoformat(), "quotes": {},
+                  "source": "Alpaca US crypto latest bid/ask"}
+        try:
+            with (factory or CryptoData)() as data:
+                body = data.get("/v1beta3/crypto/us/latest/quotes", {"symbols": ",".join(PAIRS)})
+            quotes = body.get("quotes")
+            if not isinstance(quotes, dict) or set(quotes) - set(PAIRS):
+                raise CryptoDataError("crypto_quote_batch_invalid")
+            result["available"] = True
+            for symbol in PAIRS:
+                try:
+                    result["quotes"][symbol] = {"available": True, **_checked_quote(quotes.get(symbol), now)}
+                except CryptoDataError as exc:
+                    result["quotes"][symbol] = {"available": False, "reason": str(exc)}
+        except CryptoDataError as exc:
+            result["reason"] = str(exc)
+        _quote_cached_result = result
+        _quote_cached_at = time.monotonic()
+        return dict(result)
+
+
 class CryptoData:
     def __init__(self, transport=None):
         self.http = httpx.Client(
@@ -192,17 +249,13 @@ class CryptoData:
         return output, token
 
     def latest_bid(self, symbol):
+        # Execution always performs its OWN fresh quote read. Never use the
+        # UI's cached snapshot for sizing, entry, or protective exits.
+        if symbol not in PAIRS:
+            raise CryptoDataError("crypto_pair_not_allowed")
         body = self.get("/v1beta3/crypto/us/latest/quotes", {"symbols":symbol})
-        q=body.get("quotes",{}).get(symbol)
-        if not isinstance(q,dict):
-            raise CryptoDataError("crypto_quote_missing")
-        ts=_stamp(q.get("t"))
-        if not timedelta(0)<=datetime.now(UTC)-ts<=timedelta(minutes=3):
-            raise CryptoDataError("crypto_quote_stale")
-        bid=_number(q.get("bp")); ask=_number(q.get("ap"))
-        if bid>=ask:
-            raise CryptoDataError("crypto_quote_crossed")
-        return bid, ask, ts.isoformat()
+        quote = _checked_quote(body.get("quotes", {}).get(symbol), datetime.now(UTC))
+        return quote["bid"], quote["ask"], quote["observed_at"]
 
 
 def _floor(now,tf):
