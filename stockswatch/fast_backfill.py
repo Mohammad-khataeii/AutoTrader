@@ -10,6 +10,7 @@ import os
 from datetime import date, datetime, timedelta
 
 from . import backfill, storage
+from .universe import REGISTRY
 from .intraday_market import ObservationError
 from .sessions import completed_day
 
@@ -148,7 +149,7 @@ def progress_summary():
          WHERE json_extract(evidence,'$.verified')=1""") or {}
     return {
         'as_of': now.isoformat(),
-        'universe': 52,
+        'universe': len(REGISTRY),
         'jobs_total': total,
         'jobs_completed': states.get('COMPLETE',0),
         'jobs_pending': states.get('PENDING',0),
