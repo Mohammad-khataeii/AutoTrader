@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import re
 import threading
@@ -23,6 +24,7 @@ from .storage import connect, one, rows, utc
 UTC=timezone.utc
 ORIGIN="https://paper-api.alpaca.markets"
 LOCK=threading.Lock()
+log=logging.getLogger(__name__)
 TERMINAL={"filled","canceled","expired","rejected","replaced"}
 CAP_PER_SYMBOL=Decimal("0.04")
 CAP_CRYPTO_TOTAL=Decimal("0.12")
@@ -373,7 +375,7 @@ def _limits(snapshot,now):
     return equity,buying
 
 
-def run_paper_cycle(data,now=None):
+def _run_paper_cycle_once(data,now=None):
     """Broker recon + software stop/target; no orders unless separately enabled and unpaused."""
     now=now or datetime.now(UTC)
     # The same paper account used for stocks is valid for crypto; the client
@@ -467,6 +469,15 @@ def run_paper_cycle(data,now=None):
                 crypto_exposure=sum(abs(money(p.get("market_value"))) for p in pos.values())
                 if crypto_exposure>=equity*CAP_CRYPTO_TOTAL:
                     return "crypto_total_exposure_cap"
+                # A new hour must not be traded using the previous hour as
+                # though it were the latest completed candle. Catch up only
+                # missing crypto bars, at most once per 90 seconds.
+                try:
+                    refresh=ac.ensure_latest_completed_hourly(data,now)
+                except ac.CryptoDataError as exc:
+                    return "crypto_hourly_refresh_"+str(exc)
+                if refresh not in ("crypto_hourly_current","crypto_hourly_caught_up"):
+                    return refresh
                 signals=ac.scan(now)
                 for s in sorted(signals,key=lambda x:x["symbol"]):
                     if s["action"]!="BUY" or s["symbol"] in pos:continue
@@ -502,6 +513,28 @@ def run_paper_cycle(data,now=None):
             with connect() as c:
                 c.execute("UPDATE ac_state SET last_error=? WHERE id=1",(str(exc),))
             return str(exc)
+
+
+def run_paper_cycle(data,now=None):
+    """Record every crypto paper-cycle outcome without affecting stock cycles.
+
+    Journal failures are non-fatal after a broker mutation; re-running a
+    broker action to retry audit logging would risk duplicate orders.
+    """
+    now=now or datetime.now(UTC)
+    try:
+        outcome=_run_paper_cycle_once(data,now)
+    except Exception as exc:
+        try:
+            ac.record_execution_outcome("crypto_cycle_exception_"+type(exc).__name__,now)
+        except Exception:
+            log.warning("AlpacaCrypto execution audit write failed after worker error")
+        raise
+    try:
+        ac.record_execution_outcome(outcome,now)
+    except Exception:
+        log.warning("AlpacaCrypto execution audit write failed after broker cycle")
+    return outcome
 
 
 def set_paused(pause):
