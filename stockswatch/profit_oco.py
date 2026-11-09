@@ -170,23 +170,44 @@ def _find_live_quote(data,symbol,now,*,quote_now=None):
     result=data.snapshots([symbol],"iex")
     row=result.get(symbol) or {}
     quote=row.get("latestQuote") or {}
+    trade=row.get("latestTrade") or {}
+    # The previous implementation compared a just-fetched quote against
+    # "now" captured BEFORE several broker account/order/fill API calls.
+    # Validate against the clock AFTER the quote GET, not that old cycle time.
+    checked_at=quote_now or datetime.now(timezone.utc)
     try:
-        # The previous implementation compared a just-fetched quote against
-        # "now" captured BEFORE several Alpaca account/order/fill API calls.
-        # A fresh quote was therefore incorrectly labeled future-dated,
-        # leaving owned positions without any protective OCO.
-        checked_at=quote_now or datetime.now(timezone.utc)
         quote_at=instant(quote["t"])
-        age=checked_at-quote_at
         bid,ask=positive(quote["bp"]),positive(quote["ap"])
-        if not -timedelta(seconds=5)<=age<=timedelta(seconds=20):
-            raise ValueError("quote_outside_freshness_window")
-        if bid>=ask:
-            raise ValueError("crossed_quote")
-        if (ask-bid)/bid>D(".0075"):
-            raise ValueError("spread_too_wide")
     except (KeyError,ValueError,TypeError,ObservationError):
-        raise ProtectionError("protection_quote_stale_or_wide") from None
+        raise ProtectionError("protection_quote_missing_or_invalid") from None
+    if not -timedelta(seconds=5)<=checked_at-quote_at<=timedelta(seconds=20):
+        raise ProtectionError("protection_quote_timestamp_stale")
+    if bid>=ask:
+        raise ProtectionError("protection_quote_crossed")
+    if (ask-bid)/bid>D(".0075"):
+        # Alpaca's free IEX feed represents ONE venue, not the NBBO.
+        # In live ABBV evidence IEX quoted 291.07 bid / 306.59 ask
+        # while a contemporaneous IEX trade printed at 291.18.
+        # Do not treat that anomalously high ask as an executable market
+        # spread or silently widen the general spread limit.
+        # For an EXISTING long's SELL protection only, a fresh IEX bid
+        # confirmed by a separate fresh IEX trade may establish the
+        # conservative exit reference price. There are no BUYs here.
+        try:
+            trade_at=instant(trade["t"])
+            traded=positive(trade["p"])
+            size=positive(trade["s"])
+        except (KeyError,ValueError,TypeError,ObservationError):
+            raise ProtectionError("protection_wide_quote_trade_confirmation_missing") from None
+        if not -timedelta(seconds=5)<=checked_at-trade_at<=timedelta(seconds=20):
+            raise ProtectionError("protection_wide_quote_trade_stale")
+        # Reject stale / outlying bids or unrelated prints. This is a
+        # conservative 0.25% proximity bound, not permission to place a
+        # wide-spread BUY or assume all exchanges offer this price.
+        if abs(traded-bid)/bid>D(".0025"):
+            raise ProtectionError("protection_wide_quote_bid_trade_divergence")
+        log.info("StocksWatch OCO %s: fresh IEX bid validated against fresh "
+                 "IEX trade despite wide single-venue ask",symbol)
     return bid,quote_at.isoformat()
 
 
