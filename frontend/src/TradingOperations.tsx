@@ -34,6 +34,11 @@ const readable = (code:unknown):string => {
     crypto_separate_paper_account_not_configured:"Alpaca Paper credentials are unavailable.",
     read_only_dedicated_paper_account:"Crypto broker observations are read-only; automatic paper orders are disabled.",
     read_only_shared_paper_account:"Shared Alpaca Paper account verified; crypto paper order submission remains disabled.",
+    crypto_quote_stale:"The most recent broker quote is too old to present as a current price.",
+    crypto_quote_missing:"No current bid/ask was returned for this pair.",
+    crypto_quote_crossed:"The quote is crossed or inconsistent.",
+    crypto_data_rate_limit:"Alpaca's crypto market-data request limit was reached.",
+    crypto_data_entitlement_denied:"The Alpaca account cannot access this market-data feed.",
     crypto_paper_credentials_missing:"The StocksWatch Alpaca Paper credentials are missing or unavailable to AlpacaCrypto.",
     crypto_shared_account_unknown_asset_class:"The shared broker contains an unclassified asset; manual review required.",
     crypto_shared_account_stock_orders_pending:"StocksWatch has open orders in the shared Alpaca Paper account. Crypto buys are waiting.",
@@ -243,6 +248,14 @@ export function CryptoTradingStatus({dashboard:d,error}:{dashboard:Row;error?:st
 
 export function CryptoTradingOperations({dashboard:d}:{dashboard:Row}){
   const brokerJournal=useResource("/api/stockswatch/alpaca-crypto/orders",{poll:20000,ttl:10000});
+  // Market quotes are distinct from the completed-hour research candles.
+  const quoteResource=useResource("/api/stockswatch/alpaca-crypto/quotes",{poll:15000,ttl:7000});
+  const quoteSnapshot:Row=quoteResource.data??{};
+  const usableSnapshot=!quoteResource.error&&quoteSnapshot.available===true&&fresh(quoteSnapshot.as_of,1);
+  const quotes:Row=usableSnapshot?quoteSnapshot.quotes??{}:{};
+  const quoteProblem=quoteResource.error||(
+    quoteSnapshot.available===false?readable(quoteSnapshot.reason):!usableSnapshot?"Waiting for a verified fresh quote snapshot.":""
+  );
   const verifiedBook:Row=brokerJournal.data??{};
   const brokerOrders=list(verifiedBook.orders);
   const paper:Row=d.broker_snapshot??{};
@@ -278,11 +291,39 @@ export function CryptoTradingOperations({dashboard:d}:{dashboard:Row}){
         <tr><td colSpan={7} className="to-empty">No crypto holdings reported in the latest verified shared Alpaca Paper account snapshot.</td></tr>}</tbody></table></div>
     </section>
     <section className="to-panel">
-      <div className="to-heading"><h3>Scanner opportunities — not submitted orders</h3><span>Data is research midpoints, not executable quotes</span></div>
-      <div className="to-scroll"><table className="to-table"><thead><tr><th>Pair</th><th>Signal</th><th>Research price</th><th>Proposed SL</th><th>Proposed TP</th><th>Last evaluation</th><th>Exact reason</th></tr></thead><tbody>
-        {signals.length?signals.map(x=><tr key={x.symbol}><td><strong>{x.symbol}</strong></td><td>{label(x.action)}</td><td>{money(x.price)}</td>
-        <td>{money(x.stop)}</td><td>{money(x.target)}</td><td>{stamp(x.as_of||x.evaluated_at)}</td><td>{readable(x.reason)}</td></tr>):
-        <tr><td colSpan={7} className="to-empty">No crypto signals evaluated yet.</td></tr>}</tbody></table></div>
+      <div className="to-heading">
+        <h3>Crypto scanner and latest Alpaca bid / ask</h3>
+        <span>{usableSnapshot?"Latest US quotes checked "+stamp(quoteSnapshot.as_of):"Current market quote unavailable"}</span>
+      </div>
+      <p className="to-foot to-quote-intro">
+        Current bid/ask is fetched separately from Alpaca's latest quotes API. The completed 1-hour close is
+        historical research evidence, <strong>not</strong> the current market price or a promised execution price.
+      </p>
+      {quoteProblem&&<p className="to-quote-error" role="status">{quoteProblem} Historical candles remain visible but are not live prices.</p>}
+      <div className="to-scroll"><table className="to-table to-crypto-quotes"><thead><tr>
+        <th>Pair</th><th>Signal</th><th>Latest bid</th><th>Latest ask</th>
+        <th>Completed 1h close</th><th>Mid vs close</th><th>Quote observed</th>
+        <th>Bar starting</th><th>Proposed SL</th><th>Proposed TP</th><th>Exact signal reason</th>
+      </tr></thead><tbody>
+        {signals.length?signals.map(x=>{
+          const q:Row=quotes[String(x.symbol)]??{};
+          const verified=usableSnapshot&&q.available===true&&fresh(q.observed_at,3);
+          const close=Number(x.price),mid=Number(q.midpoint);
+          const movement=verified&&close>0&&Number.isFinite(mid)?(mid-close)/close*100:null;
+          return <tr key={x.symbol}>
+            <td><strong>{x.symbol}</strong></td><td>{label(x.action)}</td>
+            <td className="to-quote-number">{verified?money(q.bid):"—"}</td>
+            <td className="to-quote-number">{verified?money(q.ask):"—"}</td>
+            <td className="to-quote-number">{money(x.price)}</td>
+            <td className="to-quote-number">{movement===null?"—":(movement>=0?"+":"")+movement.toFixed(2)+"%"}</td>
+            <td>{verified?stamp(q.observed_at):<span className="to-quote-unavailable">{readable(q.reason??"Quote unavailable")}</span>}</td>
+            <td>{stamp(x.bar_at)}</td>
+            <td>{money(x.stop)}</td><td>{money(x.target)}</td><td>{readable(x.reason)}</td>
+          </tr>;
+        }):
+        <tr><td colSpan={11} className="to-empty">No crypto signals evaluated yet.</td></tr>}
+      </tbody></table></div>
+      <p className="to-foot">Signals are evaluated on completed candles. Before an actual paper BUY or software-managed SELL, execution independently requests a new broker bid/ask, validates quote freshness and spread, and applies risk checks. Quote midpoints are not guaranteed fills.</p>
     </section>
   </div>;
 }
