@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useResource } from "./api";
 import "./TradingOperations.css";
 
@@ -143,6 +142,9 @@ export function StocksTradingOperations({dashboard:d,health:h,isBroker,error}:{d
 }
 
 export function CryptoTradingOperations({dashboard:d,error}:{dashboard:Row;error?:string}){
+  const brokerJournal=useResource("/api/stockswatch/alpaca-crypto/orders",{poll:20000,ttl:10000});
+  const verifiedBook:Row=brokerJournal.data??{};
+  const brokerOrders=list(verifiedBook.orders);
   const paper:Row=d.broker_snapshot??{};
   const assets=list(d.assets),jobs=list(d.history_jobs),signals=list(d.signals);
   const positions=list(paper.positions),intents=list(d.intents),managed=list(d.managed);
@@ -169,17 +171,28 @@ export function CryptoTradingOperations({dashboard:d,error}:{dashboard:Row;error
     if(!blocked&&!signals.some(x=>x.action==="BUY")){state="waiting";reasons.unshift("Paper engine is authorized but no approved crypto BUY signal is present.");}
     if(!reasons.length) reasons.push("Paper order admission is enabled; individual trades still require fresh quotes and all risk gates.");
   }
-  const orders:OrderRow[]=intents.map((x,i)=>({key:String(x.client_id??i),symbol:label(x.symbol),side:label(x.side),state:label(x.broker_status||x.state),
-    quantity:x.notional!=null?money(x.notional)+" notional":label(x.qty),filled:null,type:"market",requestPrice:null,fillPrice:null,
-    stopPrice:managed.find(m=>m.symbol===x.symbol)?.stop,targetPrice:managed.find(m=>m.symbol===x.symbol)?.target,
-    at:x.created_at,source:x.broker_status?"Broker-reported state via local intent":"Local intent · broker status not verified",reason:x.reason}));
+  const orders:OrderRow[]=intents.map((x,i)=>{
+    const verified=verifiedBook.available===true?brokerOrders.find(o=>o.client_order_id===x.client_id):undefined;
+    const levels=managed.find(m=>m.symbol===x.symbol);
+    return {key:String(x.client_id??i),symbol:label(x.symbol),side:label(x.side),
+      state:verified?label(verified.state):label(x.broker_status||x.state),
+      quantity:verified?.notional!=null?money(verified.notional)+" notional":verified?.qty??(x.notional!=null?money(x.notional)+" notional":label(x.qty)),
+      filled:verified?.filled_qty??null,type:String(verified?.type||"market").toLowerCase(),
+      requestPrice:verified?.limit_price??null,fillPrice:verified?.filled_avg_price??null,
+      stopPrice:levels?.stop,targetPrice:levels?.target,
+      at:verified?.filled_at||verified?.submitted_at||verified?.created_at||x.created_at,
+      source:verified?"Alpaca Paper · broker-verified":x.broker_status?"Local intent · cached broker status":"Local intent · broker not verified",reason:x.reason
+    };
+  });
   return <div className="to-root" data-trading-observability="crypto">
     <Indicator title="AlpacaCrypto" state={state} reasons={reasons} checked={d.last_cycle}
       note="24/7 scanner activity is separate from live paper order permission. Orders use a dedicated Alpaca Paper account, not the stock ledger."/>
     <section className="to-panel">
-      <div className="to-heading"><h3>Crypto paper orders and execution journal</h3><span>{intents.length} recorded intents · {paper.open_order_count==null?"Unknown":label(paper.open_order_count)} open broker orders</span></div>
+      <div className="to-heading"><h3>Crypto paper orders and execution journal</h3><span>{intents.length} recorded intents · {verifiedBook.available===true?label(verifiedBook.open_broker_orders):paper.open_order_count==null?"Unknown":label(paper.open_order_count)} open broker orders</span></div>
       <Table kind="crypto" rows={recentFirst(orders)} empty="No AlpacaCrypto paper orders have been recorded. Scanner signals are not orders."/>
-      <p className="to-foot">The crypto API currently exposes intent state, quantity/notional, and broker status, but not a complete broker order book or execution-price ledger. Unavailable prices and fill quantities are shown as unknown.</p>
+      <p className="to-foot">{verifiedBook.available===true
+        ?"Verified paper fill price, fill quantity, and order state are read directly from Alpaca; the visible broker history is limited to recent orders."
+        :("Live broker order detail unavailable"+(verifiedBook.reason?": "+readable(verifiedBook.reason):brokerJournal.error?": "+brokerJournal.error:"; waiting for verified paper account")+". Cached intent states are not proof of a current fill.")}</p>
     </section>
     <section className="to-panel">
       <div className="to-heading"><h3>Held crypto and software TP / SL</h3><span>These are monitored software thresholds, not broker-native stop orders</span></div>
