@@ -177,7 +177,7 @@ export function StocksTradingOperations({dashboard:d,health:h,isBroker,dashboard
   const candidates=list(d.signals).slice(0,10);
   const rejected=list(evaluation.why_no_trade).slice(0,10);
   return <div className="to-root" data-trading-observability="stocks">
-    <Indicator title="StocksWatch" state={state} reasons={reasons} checked={broker.as_of||cycle.completed_at} session={session}
+    <Indicator title="StocksWatch" state={state} reasons={reasons} checked={broker.as_of||cycle.completed_at} session={isBroker?session:undefined}
       note="Broker order permission and the US equity market session are checked independently. A scanner signal is not an executed trade."/>
     <section className="to-panel">
       <div className="to-heading"><h3>Orders: pending, submitted, filled and canceled</h3><span>{open.length} open broker orders · {closed.length} recent broker orders · {intents.length} local intents</span></div>
