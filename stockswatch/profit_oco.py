@@ -28,6 +28,7 @@ _STATES = {"new","accepted","pending_new","partially_filled"}
 _END = {"filled","canceled","expired","rejected","replaced"}
 _lock = threading.Lock()
 _last = {"status":"STARTING","positions":[],"paper_orders_enabled":False}
+_last_logged_error = {}
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS sw_protection (
  account_id TEXT NOT NULL, symbol TEXT NOT NULL,
@@ -105,8 +106,8 @@ def _entry_id(account,symbol):
     return row["client_id"]
 
 
-def _find_live_quote(data,symbol,now):
-    from .intraday_market import positive
+def _find_live_quote(data,symbol,now,*,quote_now=None):
+    from .intraday_market import ObservationError,positive
     if not session(now.astimezone(NY).date().isoformat()):
         raise ProtectionError("protection_market_closed")
     bounds=session(now.astimezone(NY).date().isoformat())
@@ -116,15 +117,23 @@ def _find_live_quote(data,symbol,now):
     row=result.get(symbol) or {}
     quote=row.get("latestQuote") or {}
     try:
-        age=now-instant(quote["t"])
+        # The previous implementation compared a just-fetched quote against
+        # "now" captured BEFORE several Alpaca account/order/fill API calls.
+        # A fresh quote was therefore incorrectly labeled future-dated,
+        # leaving owned positions without any protective OCO.
+        checked_at=quote_now or datetime.now(timezone.utc)
+        quote_at=instant(quote["t"])
+        age=checked_at-quote_at
         bid,ask=positive(quote["bp"]),positive(quote["ap"])
-        if not timedelta(0)<=age<=timedelta(seconds=20) or bid>=ask:
-            raise ValueError("stale_or_crossed")
+        if not -timedelta(seconds=5)<=age<=timedelta(seconds=20):
+            raise ValueError("quote_outside_freshness_window")
+        if bid>=ask:
+            raise ValueError("crossed_quote")
         if (ask-bid)/bid>D(".0075"):
             raise ValueError("spread_too_wide")
-    except (KeyError,ValueError,TypeError):
+    except (KeyError,ValueError,TypeError,ObservationError):
         raise ProtectionError("protection_quote_stale_or_wide") from None
-    return bid,instant(quote["t"]).isoformat()
+    return bid,quote_at.isoformat()
 
 
 def _nested(client,account):
@@ -410,7 +419,11 @@ def cycle(client,snapshot,now=None,data=None):
                             if outcome.startswith("stop_replace_requested"):
                                 changed=True
                             reason=outcome
-                    elif not paused:
+                    else:
+                        # A stock entry pause must not strand an already-filled,
+                        # broker-owned long without its protective exit. OCOs are
+                        # exits, not new purchases; all ownership, order-conflict
+                        # and paper-account checks still apply.
                         if any(o.get("symbol")==sym for o in snapshot["open_orders"]):
                             raise ProtectionError("protection_competing_open_order")
                         bid,qt=_find_live_quote(data,sym,now)
@@ -418,11 +431,15 @@ def cycle(client,snapshot,now=None,data=None):
                         if reason.startswith("oco_submitted"):
                             changed=True
                         saved=_saved(account,sym)
-                    else:
-                        reason="new_oco_paused_but_existing_stops_remain_active"
                 outcomes.append(_snapshot_position(report,saved,p,plan,reason))
+                if sym in _last_logged_error:
+                    log.info("StocksWatch OCO %s: %s",sym,reason)
+                    _last_logged_error.pop(sym,None)
             except Exception as exc:
                 label=str(exc) if isinstance(exc,(ProtectionError,ValueError)) else type(exc).__name__
+                if enabled and core and _last_logged_error.get(sym)!=label:
+                    log.warning("StocksWatch OCO %s UNPROTECTED: %s",sym,label)
+                    _last_logged_error[sym]=label
                 outcomes.append({"symbol":sym,"broker_state":saved["state"] if saved else "UNPROTECTED",
                                  "reason":label,"paper":True})
         # Preserve unresolved records for positions no longer in broker snapshots
@@ -436,7 +453,8 @@ def cycle(client,snapshot,now=None,data=None):
             data.close()
     output={"status":"OBSERVING" if not enabled else "PAPER_OCO_MONITORING",
             "positions":outcomes,"changed":changed,"at":utc(),
-            "paper_orders_enabled":bool(enabled),"new_protection_paused":bool(paused),
+            "paper_orders_enabled":bool(enabled),"new_protection_paused":not bool(enabled),
+            "stock_new_entries_paused":bool(paused),
             "broker_only":"paper-api.alpaca.markets"}
     with _lock:
         _last=output
