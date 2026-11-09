@@ -4,6 +4,9 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
+import sqlite3
+import uuid
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -11,6 +14,7 @@ from functools import lru_cache
 from typing import Literal
 import httpx
 from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from .storage import connect, init, init_execution, one, rows, setting, utc, worker_ownership
 from .ledger import EXECUTION_MODE, mark_to_market, outcome
@@ -44,6 +48,59 @@ async def lifespan(app):
 
 
 app = FastAPI(title="StocksWatch isolated USD simulator", version="stocks-v1", lifespan=lifespan)
+
+def _public_stockswatch_cause(exc: Exception) -> tuple[str, str]:
+    """Return a precise but safe diagnostic, never raw secrets or URLs.
+
+    Full tracebacks are kept in the service journal under the event reference.
+    Only allowlisted error shapes are included in authenticated API responses.
+    """
+    if isinstance(exc, sqlite3.Error):
+        reason = str(exc).lower()
+        if "database is locked" in reason or "database table is locked" in reason:
+            return "sqlite_database_locked", "The StocksWatch SQLite database is locked by another transaction."
+        if "disk i/o error" in reason:
+            return "sqlite_disk_io_error", "SQLite reported a disk I/O error."
+        if "database or disk is full" in reason:
+            return "sqlite_disk_full", "SQLite cannot complete the request because the disk/database is full."
+        if "readonly database" in reason:
+            return "sqlite_readonly_database", "SQLite rejected a write because the database is read-only."
+        m = re.fullmatch(r"no such (table|column): ([A-Za-z_][A-Za-z0-9_.]{0,79})", str(exc))
+        if m:
+            return "sqlite_missing_" + m.group(1), "The database query references missing " + m.group(1) + " " + m.group(2) + "."
+        return "sqlite_query_error", "A StocksWatch SQLite query failed; inspect the server journal for its specific SQL error."
+    if isinstance(exc, KeyError):
+        key = str(exc.args[0]) if exc.args else ""
+        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,63}", key):
+            return "backend_missing_field", "The StocksWatch response is missing the required field '" + key + "'."
+        return "backend_missing_field", "A required StocksWatch response field is missing."
+    if isinstance(exc, TypeError):
+        return "backend_type_error", "StocksWatch produced incompatible data types while constructing the response."
+    if isinstance(exc, AttributeError):
+        return "backend_attribute_error", "StocksWatch attempted to read an unavailable object attribute."
+    if isinstance(exc, (ValueError, RuntimeError)):
+        value = str(exc)
+        if re.fullmatch(r"[a-z][a-z0-9_]{2,89}", value):
+            return value, value.replace("_", " ") + "."
+    return "backend_" + type(exc).__name__.lower(), "Unhandled " + type(exc).__name__ + " in the StocksWatch backend."
+
+
+@app.exception_handler(Exception)
+async def stockswatch_uncaught_error(request: Request, exc: Exception):
+    # Uncaught internal errors should preserve actionable reason codes; do not
+    # return exception repr/traceback or broker account/credential material.
+    reference = uuid.uuid4().hex[:12]
+    logging.getLogger(__name__).error(
+        "StocksWatch API failure [%s] %s %s (%s)",
+        reference, request.method, request.url.path, type(exc).__name__,
+        exc_info=(type(exc), exc, exc.__traceback__),
+    )
+    code, cause = _public_stockswatch_cause(exc)
+    return JSONResponse(
+        status_code=500,
+        headers={"Cache-Control": "no-store"},
+        content={"detail": {"code": code, "cause": cause, "reference": reference}},
+    )
 
 
 @app.get("/healthz")
