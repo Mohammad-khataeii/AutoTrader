@@ -20,6 +20,7 @@ jobs:
       - name: Python syntax and offline tests
         run: |
           python -m compileall -q stockswatch
+          python -m py_compile deploy/mac/deploy_stockswatch_crypto_sync_SPARSE_20261109.py
           python -m unittest discover -s tests -p test_catalog_intelligence.py -v
           python -m unittest discover -s tests -p test_crypto_continuation_replay.py -v
       - uses: actions/setup-node@v4
