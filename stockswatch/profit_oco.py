@@ -86,7 +86,7 @@ def _candidate_bars(symbol,now):
     """
     stamp=completed_day(now)
     cal=__import__("stockswatch.sessions",fromlist=["calendar"]).calendar()
-    expected=[x.date().isoformat() for x in cal.sessions_window(stamp,-14)]
+    expected=[x.date().isoformat() for x in cal.sessions_window(stamp,-15)]
 
     def verified(items):
         if len(items)!=15 or [x["day"] for x in items]!=expected:
