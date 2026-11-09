@@ -45,6 +45,13 @@ def connect():
     c=sqlite3.connect(str(path),timeout=15,isolation_level=None)
     c.row_factory=sqlite3.Row
     c.execute('PRAGMA busy_timeout=10000')
+    # The service runs with a read-only container root filesystem. Queries
+    # such as /api/stockswatch/status GROUP BY source need a temporary B-tree;
+    # SQLite's default file-backed temp store raises SQLITE_IOERR_GETTEMPPATH
+    # when /tmp and /var/tmp are not writable. Keep *only* ephemeral sort/temp
+    # structures in process memory; the financial ledger and WAL remain on disk.
+    # This PRAGMA is connection-local and does not migrate or modify the ledger.
+    c.execute('PRAGMA temp_store=MEMORY')
     c.execute('PRAGMA foreign_keys=ON')
     try:
         yield c
