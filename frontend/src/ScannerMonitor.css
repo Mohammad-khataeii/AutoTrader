@@ -3,3 +3,22 @@
 @media(max-width:1100px){.sw-scanner-phases{grid-template-columns:repeat(3,minmax(0,1fr))}.sw-scanner-totals{grid-template-columns:repeat(3,minmax(0,1fr))}.sw-scanner-lower{grid-template-columns:1fr}}
 @media(max-width:650px){.sw-scanner{padding:14px}.sw-scanner-top,.sw-scanner-now{align-items:flex-start;flex-direction:column}.sw-scanner-progress{width:100%}.sw-scanner-phases{grid-template-columns:repeat(2,minmax(0,1fr))}.sw-scanner-totals{grid-template-columns:repeat(2,minmax(0,1fr))}.sw-scanner-id{display:none}.sw-scanner-event{grid-template-columns:19px minmax(0,1fr)}.sw-scanner-event time{grid-column:2}}
 @media(prefers-reduced-motion:reduce){.sw-scanner-scanning .sw-scanner-dot{animation:none}.sw-scanner-meter div{transition:none}}
+
+/* Scanner inherits the same forest/sage UI tokens as AlpacaCrypto. */
+.sw-root .sw-scanner {background:var(--sw-card);border-color:var(--sw-border);color:var(--sw-ink);border-radius:14px;box-shadow:none}
+.sw-root .sw-scanner-icon {background:#eef7f0;color:#277c52}
+.sw-root .sw-scanner-kicker,.sw-root .sw-scanner-eyebrow {color:#277c52}
+.sw-root .sw-scanner-export,.sw-root .sw-scanner-downloads a,
+.sw-root .sw-scanner-disclosure a {color:#277c52}
+.sw-root .sw-scanner-export:hover,.sw-root .sw-scanner-downloads a:hover {background:#eef7f0}
+.sw-root .sw-scanner-now {background:#f5f9f6;border-color:#dbe5dd}
+.sw-root .sw-scanner-meter {background:#e5ede7}
+.sw-root .sw-scanner-meter div {background:linear-gradient(90deg,#25835b,#4a9a73)}
+.sw-root .sw-scanner-phase.current {background:#eef7f0;border-color:#96c0a7}
+.sw-root .sw-scanner-phase.current>span {background:#277c52}
+.sw-root .sw-scanner-phase.done svg {color:#277c52}
+.sw-root .sw-scanner-totals svg {color:#277c52}
+.sw-root .sw-scanner-event-marker {color:#58896b}
+.sw-root .sw-scanner-event-marker.ok {color:#277c52}
+.sw-root .sw-scanner-symbol {color:#277c52;background:#edf6ef}
+.sw-root .sw-scanner-scanning .sw-scanner-dot {background:#277c52}
