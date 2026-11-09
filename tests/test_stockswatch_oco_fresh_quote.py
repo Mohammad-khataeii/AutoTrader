@@ -56,7 +56,7 @@ class OcoFixTests(unittest.TestCase):
         expected=self.certified_daily()
         def local_rows(sql,params=()):
             return expected if "sw_historical_bars" in sql else []
-        with patch.object(po,"rows",side_effect=local_rows) as query,\\
+        with patch.object(po,"rows",side_effect=local_rows) as query,\
              patch("stockswatch.market.alpaca",side_effect=AssertionError("remote GET unexpected")):
             result=po._candidate_bars("ABBV",NOW)
         self.assertEqual([r["day"] for r in result],[r["day"] for r in expected])
@@ -67,7 +67,7 @@ class OcoFixTests(unittest.TestCase):
         async_provider=AsyncMock(return_value=([
             {k:r[k] for k in ("day","o","h","l","c","v")} for r in expected
         ],"alpaca_iex_daily","RAW"))
-        with patch.object(po,"rows",return_value=[]),\\
+        with patch.object(po,"rows",return_value=[]),\
              patch("stockswatch.market.alpaca",new=async_provider):
             result=po._candidate_bars("ABBV",NOW)
         self.assertEqual(len(result),15)
@@ -81,7 +81,7 @@ class OcoFixTests(unittest.TestCase):
         async_provider=AsyncMock(return_value=([
             {k:r[k] for k in ("day","o","h","l","c","v")} for r in expected[:-1]
         ],"alpaca_iex_daily","RAW"))
-        with patch.object(po,"rows",return_value=[]),\\
+        with patch.object(po,"rows",return_value=[]),\
              patch("stockswatch.market.alpaca",new=async_provider):
             with self.assertRaisesRegex(po.ProtectionError,
                     "protection_certified_atr_15_sessions_unavailable"):
