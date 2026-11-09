@@ -17,7 +17,7 @@ from stockswatch.crypto_strategy_replay import _trade, replay
 class ContinuationUnitTests(unittest.TestCase):
     def setUp(self):
         self.candles = [
-            {"o": 100.2, "h": 100.8, "l": 100.2, "c": 100.5, "v": 5}
+            {"o": 100.2, "h": 101.15, "l": 100.2, "c": 100.5, "v": 5}
             for _ in range(40)
         ]
         self.candles[-1] = {"o": 100.6, "h": 101.1, "l": 100.5,
