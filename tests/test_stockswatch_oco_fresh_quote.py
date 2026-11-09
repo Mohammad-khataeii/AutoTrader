@@ -16,12 +16,15 @@ UTC=timezone.utc
 NOW=datetime(2026,11,9,15,30,tzinfo=UTC)
 
 class Quotes:
-    def __init__(self,stamp,bid="290",ask="290.10"):
+    def __init__(self,stamp,bid="290",ask="290.10",trade=None):
         self.row={"t":stamp.isoformat(),"bp":bid,"ap":ask}
+        self.trade=trade
     def snapshots(self,symbols,feed):
         if symbols!=["ABBV"] or feed!="iex":
             raise AssertionError("unexpected market feed")
-        return {"ABBV":{"latestQuote":self.row}}
+        snapshot={"latestQuote":self.row}
+        if self.trade is not None: snapshot["latestTrade"]=self.trade
+        return {"ABBV":snapshot}
 
 class OcoFixTests(unittest.TestCase):
     def quote(self,at,checked):
@@ -46,6 +49,41 @@ class OcoFixTests(unittest.TestCase):
                 with self.subTest(bid=bid,ask=ask):
                     with self.assertRaises((po.ProtectionError,ObservationError)):
                         po._find_live_quote(Quotes(NOW,bid,ask),"ABBV",NOW,quote_now=NOW)
+
+    def test_abnormal_iex_ask_uses_independently_confirmed_sell_bid(self):
+        # Historical ABBV example: a stale/irrelevant ask at 306.59 despite
+        # a fresh 291.18 trade. Protection sells use conservative 291.07 bid,
+        # not the inflated ask or midpoint; only after verified trade.
+        quote=Quotes(NOW, bid="291.07",ask="306.59",
+            trade={"t":NOW.isoformat(),"p":"291.18","s":40})
+        with patch.object(po,"session",return_value=(NOW-timedelta(hours=2),NOW+timedelta(hours=2))):
+            bid,stamp=po._find_live_quote(quote,"ABBV",NOW,quote_now=NOW)
+        self.assertEqual(bid,Decimal("291.07"))
+        self.assertEqual(stamp,NOW.isoformat())
+    def test_wide_iex_ask_without_trade_confirmation_is_rejected(self):
+        quote=Quotes(NOW,bid="291.07",ask="306.59")
+        with patch.object(po,"session",return_value=(NOW-timedelta(hours=2),NOW+timedelta(hours=2))):
+            with self.assertRaisesRegex(po.ProtectionError,"trade_confirmation_missing"):
+                po._find_live_quote(quote,"ABBV",NOW,quote_now=NOW)
+    def test_wide_iex_ask_stale_traded_price_is_rejected(self):
+        quote=Quotes(NOW,bid="291.07",ask="306.59",
+            trade={"t":(NOW-timedelta(seconds=21)).isoformat(),
+                   "p":"291.18","s":40})
+        with patch.object(po,"session",return_value=(NOW-timedelta(hours=2),NOW+timedelta(hours=2))):
+            with self.assertRaisesRegex(po.ProtectionError,"trade_stale"):
+                po._find_live_quote(quote,"ABBV",NOW,quote_now=NOW)
+    def test_wide_iex_ask_trade_bid_divergence_is_rejected(self):
+        quote=Quotes(NOW,bid="280.00",ask="306.59",
+            trade={"t":NOW.isoformat(),"p":"291.18","s":40})
+        with patch.object(po,"session",return_value=(NOW-timedelta(hours=2),NOW+timedelta(hours=2))):
+            with self.assertRaisesRegex(po.ProtectionError,"bid_trade_divergence"):
+                po._find_live_quote(quote,"ABBV",NOW,quote_now=NOW)
+    def test_wide_iex_ask_stale_bid_quote_is_rejected(self):
+        quote=Quotes(NOW-timedelta(seconds=21),bid="291.07",ask="306.59",
+            trade={"t":NOW.isoformat(),"p":"291.18","s":40})
+        with patch.object(po,"session",return_value=(NOW-timedelta(hours=2),NOW+timedelta(hours=2))):
+            with self.assertRaisesRegex(po.ProtectionError,"quote_timestamp_stale"):
+                po._find_live_quote(quote,"ABBV",NOW,quote_now=NOW)
 
     @staticmethod
     def certified_daily():
