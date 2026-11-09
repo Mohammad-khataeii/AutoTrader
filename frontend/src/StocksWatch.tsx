@@ -38,6 +38,8 @@ export function StocksWatch(){
  const [catalogSearch,setCatalogSearch]=useState("");
  const [catalogFilter,setCatalogFilter]=useState("");
  const [catalogOffset,setCatalogOffset]=useState(0);
+ const [catalogDetail,setCatalogDetail]=useState("");
+ const evidence=useResource("/api/stockswatch/catalog-evidence/"+encodeURIComponent(catalogDetail),{enabled:tab==="Research"&&Boolean(catalogDetail),poll:120000});
  const catalog=useResource("/api/stockswatch/catalog?query="+encodeURIComponent(catalogFilter)+"&limit=50&offset="+catalogOffset,{poll:60000,ttl:30000});
  const d:Row=resource.data??{};
  const h:Row=health.data??{};
@@ -192,6 +194,9 @@ export function StocksWatch(){
       <div className="sw-intel-row"><span>Alpaca active listings</span><strong>{n(catalog.data?.summary?.active).toLocaleString()}</strong></div>
       <div className="sw-intel-row"><span>Tradable at broker (catalogue)</span><strong>{n(catalog.data?.summary?.tradable).toLocaleString()}</strong></div>
       <div className="sw-intel-row"><span>History downloaded / ready</span><strong>{n(catalog.data?.summary?.history_ready).toLocaleString()} new symbols</strong></div>
+      <div className="sw-intel-row"><span>Quantitative research</span><strong>{n(catalog.data?.intelligence?.price_states?.RESEARCH_READY).toLocaleString()} symbols scored</strong></div>
+      <div className="sw-intel-row"><span>Official SEC catalysts</span><strong>{n(catalog.data?.intelligence?.sourced_filings).toLocaleString()} sourced filings</strong></div>
+      <div className="sw-intel-row"><span>Attributed AI research</span><strong>{n(catalog.data?.intelligence?.attributed_ai_notes).toLocaleString()} memos</strong></div>
       <div className="sw-intel-row"><span>Daily research bars</span><strong>{n(catalog.data?.summary?.history_rows).toLocaleString()}</strong></div>
       <p>Original 102 symbols keep their existing trading gates. Additional listings are research-only until separately qualified for execution. Last inventory sync: {fromUTC(catalog.data?.summary?.last_sync)}.</p>
       <form onSubmit={e=>{e.preventDefault();setCatalogOffset(0);setCatalogFilter(catalogSearch.trim());}} style={{display:"flex",gap:"0.5rem",marginBottom:"0.8rem"}}>
@@ -199,8 +204,27 @@ export function StocksWatch(){
         <button type="submit">Search</button>
       </form>
       {catalog.error && <Blank text="The full-universe catalogue is temporarily unavailable."/>}
-      <div className="sw-table-scroll"><table className="sw-table"><thead><tr><th>Symbol</th><th>Company / ETF</th><th>Exchange</th><th>History</th><th>Bars</th></tr></thead>
-      <tbody>{(catalog.data?.results??[]).map((x:Row)=><tr key={x.symbol}><td><b>{x.symbol}</b></td><td>{x.name}</td><td>{x.exchange}</td><td>{val(x.status).replace(/_/g," ")}</td><td>{n(x.bar_count).toLocaleString()}</td></tr>)}</tbody></table></div>
+      <p>Quantitative research and SEC checks run gradually as historical bars arrive. <strong>AI counts are only attributed model results</strong>; missing evidence and quota limits are shown as pending, not as completed analysis.</p>
+      <div className="sw-table-scroll"><table className="sw-table" style={{minWidth:1080}}><thead><tr><th>Symbol</th><th>Company / ETF</th><th>History</th><th>Bars</th><th>Research score</th><th>20-day return</th><th>SEC catalysts</th><th>AI</th><th>Evidence</th></tr></thead>
+      <tbody>{(catalog.data?.results??[]).map((x:Row)=><tr key={x.symbol}>
+        <td style={{whiteSpace:"nowrap"}}><b>{x.symbol}</b></td><td>{x.name}</td>
+        <td style={{whiteSpace:"nowrap"}}>{val(x.history_state??x.status).replace(/_/g," ")}</td>
+        <td>{n(x.bar_count).toLocaleString()}</td>
+        <td>{x.price_score==null?"Not scored":n(x.price_score).toFixed(2)}</td>
+        <td>{x.change_20d_pct==null?"—":pct(x.change_20d_pct)}</td>
+        <td>{val(x.sec_state??"Pending").replace(/_/g," ")} · {n(x.sourced_filings)} filings</td>
+        <td>{val(x.ai_state??"Pending").replace(/_/g," ")}</td>
+        <td><button type="button" onClick={()=>setCatalogDetail(x.symbol)}>Inspect</button></td>
+      </tr>)}</tbody></table></div>
+      {catalogDetail&&<div style={{marginTop:"1rem",padding:"0.8rem",border:"1px solid var(--sw-border)",borderRadius:10}}>
+        <div className="sw-intel-row"><strong>{catalogDetail} · Verified research evidence</strong><button type="button" onClick={()=>setCatalogDetail("")}>Close</button></div>
+        {evidence.error&&<p className="sw-warning">The evidence API is temporarily unavailable.</p>}
+        <p>SEC filings ({n(evidence.data?.filings?.length)}): Only official filing metadata is displayed. No event is inferred from a missing source.</p>
+        {(evidence.data?.filings??[]).map((row:Row,i:number)=><div className="sw-intel-row" key={i}><span>{row.form} · {fromUTC(row.accepted_at)}</span><a href={row.url} rel="noreferrer noopener" target="_blank">Official SEC filing</a></div>)}
+        <p>AI research ({n(evidence.data?.ai_notes?.length)}): Only provider-attributed, source-linked notes.</p>
+        {(evidence.data?.ai_notes??[]).map((row:Row,i:number)=><div key={i}><strong>{row.model} · {fromUTC(row.generated_at)}</strong><p>{row.analysis?.summary}</p><a href={row.source_url} target="_blank" rel="noreferrer noopener">Evidence source</a></div>)}
+        {!(evidence.data?.filings??[]).length&&!(evidence.data?.ai_notes??[]).length&&<Blank text="No verified source or attributed AI analysis yet. The staged research worker will continue processing this symbol."/>}
+      </div>}
       {catalog.data?.total>50 && <div className="sw-intel-row"><span>Showing {catalogOffset+1}–{Math.min(catalogOffset+50,n(catalog.data.total))} of {n(catalog.data.total).toLocaleString()} listings</span><div style={{display:"flex",gap:"0.5rem"}}><button type="button" disabled={catalogOffset===0} onClick={()=>setCatalogOffset(Math.max(0,catalogOffset-50))}>Previous</button><button type="button" disabled={catalogOffset+50>=n(catalog.data.total)} onClick={()=>setCatalogOffset(catalogOffset+50)}>Next</button></div></div>}
       {catalog.data?.summary?.state==="NOT_INITIALIZED" && <Blank text="Full Alpaca inventory is not synced yet. Run the read-only sync and paced history downloader on the VPS."/>}
     </article>
