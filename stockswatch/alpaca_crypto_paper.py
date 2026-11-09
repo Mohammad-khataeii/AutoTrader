@@ -1,7 +1,8 @@
 """Strict Alpaca PAPER-ONLY crypto spot execution. No crypto shorts or leverage.
 
-Separate Alpaca paper account is mandatory for any crypto order submission:
-StocksWatch's existing stock account must remain completely untouched.
+Shares the existing verified Alpaca stock PAPER account by default, while
+maintaining an independent crypto order journal and strict asset-class
+isolation. Only paper credentials are accepted; live trading is never used.
 Default is observation-only. A pending/uncertain intent is never replayed.
 """
 from __future__ import annotations
@@ -400,7 +401,7 @@ def run_paper_cycle(data,now=None):
                        open_order_count=excluded.open_order_count""",
                        (utc(),json.dumps(summary),json.dumps(positions),len(snapshot["orders"])))
                 if not enabled():
-                    return "read_only_dedicated_paper_account"
+                    return "read_only_shared_paper_account"
                 refresh_known_orders(client,snapshot)
                 if not reconcile(client):
                     return "unresolved_order_intents_block_trading"
@@ -491,11 +492,11 @@ def set_paused(pause):
 
 
 def read_only_order_journal():
-    """Authenticated UI evidence from the dedicated Alpaca PAPER order book.
+    """Authenticated UI evidence from crypto-owned orders in Alpaca PAPER.
 
     Never submits, cancels or changes an order; never returns credentials.
     Only order IDs originating in this crypto strategy's durable intent table
-    are displayed. A missing or unverifiable account is NOT a zero-order book.
+    are displayed, even when the Alpaca account also holds stocks. A missing or unverifiable account is NOT a zero-order book.
     """
     try:
         with CryptoPaperClient() as client:
