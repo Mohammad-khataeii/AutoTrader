@@ -476,7 +476,13 @@ def _run_paper_cycle_once(data,now=None):
                     refresh=ac.ensure_latest_completed_hourly(data,now)
                 except ac.CryptoDataError as exc:
                     return "crypto_hourly_refresh_"+str(exc)
-                if refresh not in ("crypto_hourly_current","crypto_hourly_caught_up"):
+                # Missing data in a different USD pair must not veto a
+                # fresh, independently verified candidate. signal() rejects
+                # each incomplete or stale pair before producing BUY.
+                if refresh not in (
+                        "crypto_hourly_current", "crypto_hourly_caught_up",
+                        "crypto_latest_completed_hourly_not_published",
+                        "crypto_latest_hourly_retry_cooldown"):
                     return refresh
                 signals=ac.scan(now)
                 for s in sorted(signals,key=lambda x:x["symbol"]):
