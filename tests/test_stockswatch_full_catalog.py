@@ -79,7 +79,11 @@ class FullCatalogTests(unittest.TestCase):
             def get(self,url,**kwargs):
                 self.calls.append(kwargs["params"].copy())
                 if len(self.calls)==1:
-                    return Response({"bars":{"ZZ0001":[sample]},"next_page_token":"second"})
+                    # Provider can include no-trade and malformed candles.
+                    # Neither should wipe valid observations for other symbols.
+                    no_trade={**sample,"v":0}
+                    broken={**sample,"h":99}
+                    return Response({"bars":{"ZZ0001":[no_trade,broken,sample]},"next_page_token":"second"})
                 return Response({"bars":{"ZZ0002":[sample]},"next_page_token":None})
         client=Client()
         with patch.object(catalog.market,"alpaca_headers",return_value={}):
@@ -89,6 +93,7 @@ class FullCatalogTests(unittest.TestCase):
         self.assertEqual(set(bars),{"ZZ0001","ZZ0002"})
         self.assertEqual(len(bars["ZZ0001"]),1)
         self.assertEqual(len(bars["ZZ0002"]),1)
+        self.assertIsNone(catalog._parse_bar({**sample,"v":0},"2026-11-06",now))
         with self.assertRaises(ValueError):
             catalog._parse_bar({**sample,"h":99},"2026-11-06",now)
 
