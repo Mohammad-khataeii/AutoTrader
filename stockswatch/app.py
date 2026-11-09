@@ -169,9 +169,49 @@ def catalog(query: str = "", limit: int = 50, offset: int = 0):
     """Paginated, isolated research catalogue; never a broker order allowlist."""
     from . import asset_catalog
     try:
-        return asset_catalog.browse(query=query, limit=limit, offset=offset)
+        result = asset_catalog.browse(query=query, limit=limit, offset=offset)
+        from . import catalog_intelligence as ci
+        try:
+            extra = ci.browse(query=query, limit=limit, offset=offset)
+            per_symbol={r["symbol"]:r for r in extra["results"]}
+            for row in result["results"]:
+                evidence=per_symbol.get(row["symbol"],{})
+                for k in ("history_state","price_score","price_reason","change_20d_pct",
+                          "avg_20d_iex_dollars","sec_state","ai_state","sourced_filings"):
+                    row[k]=evidence.get(k)
+            result["intelligence"]=extra.get("summary",{})
+        except sqlite3.OperationalError:
+            # The dedicated intelligence worker may not have initialized yet.
+            result["intelligence"]={"state":"INITIALIZING"}
+        return result
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.get("/api/stockswatch/catalog-evidence/{symbol}", dependencies=[Depends(authenticated)])
+def catalog_evidence(symbol: str):
+    """Read-only sourced SEC + AI evidence for one catalogue symbol."""
+    from . import asset_catalog as ac
+    if not ac.SYMBOL.fullmatch(symbol) or len(symbol)>15:
+        raise HTTPException(status_code=422,detail="catalog_symbol_invalid")
+    from . import catalog_intelligence as ci
+    try:
+        with ac.connect(readonly=True) as db:
+            row=db.execute("SELECT symbol,name FROM sw_catalog_assets WHERE symbol=? AND active=1",(symbol,)).fetchone()
+            if not row:
+                raise HTTPException(status_code=404,detail="catalog_symbol_not_found")
+            filings=[dict(x) for x in db.execute("""SELECT form,accepted_at,description,url
+                FROM sw_catalog_filings WHERE symbol=?
+                ORDER BY accepted_at DESC LIMIT 20""",(symbol,))]
+            ai=[dict(x) for x in db.execute("""SELECT model,analysis_json,generated_at,source_url
+                FROM sw_catalog_ai_insights WHERE symbol=?
+                ORDER BY generated_at DESC LIMIT 5""",(symbol,))]
+        return {"symbol":symbol,"filings":filings,
+                "ai_notes":[{"model":x["model"],"generated_at":x["generated_at"],
+                   "source_url":x["source_url"],"analysis":json.loads(x["analysis_json"])} for x in ai],
+                "note":"Only verified SEC sources; source absence is not a claim of no events."}
+    except sqlite3.OperationalError:
+        return {"symbol":symbol,"state":"INITIALIZING","filings":[],"ai_notes":[]}
 
 
 @app.get("/api/stockswatch/status", dependencies=[Depends(authenticated)])
