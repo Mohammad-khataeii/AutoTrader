@@ -164,6 +164,16 @@ def cycle_status():
     return last
 
 
+@app.get("/api/stockswatch/catalog", dependencies=[Depends(authenticated)])
+def catalog(query: str = "", limit: int = 50, offset: int = 0):
+    """Paginated, isolated research catalogue; never a broker order allowlist."""
+    from . import asset_catalog
+    try:
+        return asset_catalog.browse(query=query, limit=limit, offset=offset)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
 @app.get("/api/stockswatch/status", dependencies=[Depends(authenticated)])
 def status():
     counts = {
