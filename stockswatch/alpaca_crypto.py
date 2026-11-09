@@ -714,6 +714,14 @@ def dashboard():
         ON g.symbol=s.symbol AND g.bar_at=s.bar_at ORDER BY s.symbol""")
     outcomes=rows("SELECT evaluated_at,outcome FROM ac_execution_cycles ORDER BY id DESC LIMIT 30")
     broker=one("SELECT * FROM ac_broker_snapshot WHERE id=1")
+    usd_signals=[x for x in signals if x["symbol"] in EXECUTION_PAIRS]
+    nonusd_signals=[x for x in signals if x["symbol"] in RESEARCH_ONLY_PAIRS]
+    gate_map={x["symbol"]:json.loads(x["gates_json"]) for x in gates}
+    gate_keys=("hourly_uptrend","daily_above_ema200",
+               "20_hour_breakout","rsi_volatility_healthy",
+               "continuation_candidate")
+    usd_gate_passes={name:sum(bool(gate_map.get(x["symbol"],{}).get(name))
+                               for x in usd_signals) for name in gate_keys}
     return {
       "mode":"ALPACA_CRYPTO_SPOT_PAPER","short_supported":False,"margin_supported":False,
       "currency":"USD","location":LOCATION,"bars_are_quote_midpoints":True,
@@ -730,6 +738,11 @@ def dashboard():
       "universe_pairs":len(PAIRS),
       "execution_pairs":len(EXECUTION_PAIRS),
       "research_only_pairs":len(RESEARCH_ONLY_PAIRS),
+      "continuation_enabled":continuation_enabled(),
+      "usd_signal_actions":{name:sum(x["action"]==name for x in usd_signals)
+                             for name in ("BUY","HOLD","WAIT")},
+      "research_only_wait_count":sum(x["action"]=="WAIT" for x in nonusd_signals),
+      "usd_gate_passes":usd_gate_passes,
       "quote_currencies":sorted({p.split("/")[1] for p in PAIRS}),
       "signal_gate_evidence":[{"symbol":r["symbol"],"evaluated_at":r["evaluated_at"],
         "gates":json.loads(r["gates_json"])} for r in gates],
