@@ -185,7 +185,7 @@ class CryptoPaperClient:
         if (not isinstance(order,dict) or
              set(order) not in ({"symbol","side","type","time_in_force","notional","client_order_id"},
                                 {"symbol","side","type","time_in_force","qty","client_order_id"}) or
-             order.get("symbol") not in ac.PAIRS or order.get("type")!="market" or
+             order.get("symbol") not in ac.EXECUTION_PAIRS or order.get("type")!="market" or
              order.get("time_in_force")!="gtc" or
              order.get("side") not in ("buy","sell") or
              not re.fullmatch(r"acp1-[a-f0-9]{40}",str(order.get("client_order_id") or ""))):
@@ -204,7 +204,7 @@ def verify_assets(client):
     results=[]
     for symbol in ac.PAIRS:
         a=by_symbol.get(symbol,{})
-        eligible=(a.get("class")=="crypto" and a.get("tradable") is True
+        eligible=(symbol in ac.EXECUTION_PAIRS and a.get("class")=="crypto" and a.get("tradable") is True
              and a.get("status")=="active" and a.get("fractionable") is True
              and a.get("shortable") is False and a.get("marginable") is False)
         try:
@@ -216,7 +216,7 @@ def verify_assets(client):
             minimum=increment=tick=None
             eligible=False
         results.append((int(eligible),now,
-            "verified_spot_only" if eligible else "not_verified_as_eligible_spot",
+            "verified_spot_only" if eligible else ("research_only_non_usd_quote" if symbol in ac.RESEARCH_ONLY_PAIRS else "not_verified_as_eligible_spot"),
             str(minimum) if minimum else None,str(increment) if increment else None,
             str(tick) if tick else None,symbol))
     with connect() as c:
@@ -342,7 +342,7 @@ def _canonical(symbol):
         raise CryptoPaperError('crypto_broker_symbol_invalid')
     normalized = symbol if '/' in symbol else (
         symbol[:-3]+'/USD' if symbol.endswith('USD') else symbol)
-    if normalized not in ac.PAIRS:
+    if normalized not in ac.EXECUTION_PAIRS:
         raise CryptoPaperError('crypto_broker_symbol_unlisted')
     return normalized
 
