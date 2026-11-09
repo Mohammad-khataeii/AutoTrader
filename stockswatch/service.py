@@ -158,7 +158,10 @@ class Service:
                         # Data backfill and quote refresh must not block broker
                         # reconciliation or protective exits if they fail.
                         try:
-                            await asyncio.to_thread(ac.backfill_step, data, now)
+                            # Six paced historical GETs per minute is bounded
+                            # and prioritizes the currently missing hourly bars.
+                            # Broker checks and protection still run every loop.
+                            await asyncio.to_thread(ac.backfill_burst, data, now, 6)
                         except Exception as exc:
                             log.warning("AlpacaCrypto backfill step deferred: %s",type(exc).__name__)
                         if next_refresh is None or now >= next_refresh:
