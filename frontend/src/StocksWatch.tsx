@@ -5,6 +5,7 @@ import { ResponsiveContainer, AreaChart, Area, Line, CartesianGrid, Tooltip, XAx
 import { useApi, useResource } from "./api";
 import { ScannerMonitor } from "./ScannerMonitor";
 import { StocksWatchProtection } from "./StocksWatchProtection";
+import { StocksTradingOperations } from "./TradingOperations";
 import "./StocksWatch.css";
 
 type Row = Record<string, any>;
@@ -62,6 +63,7 @@ export function StocksWatch(){
    finally {setBusy(false);}
  }
  return <div className="sw-root" data-swatch="stockswatch-v1">
+   <StocksTradingOperations dashboard={d} health={h} isBroker={isBroker} error={resource.error||health.error}/>
   <section className="sw-hero">
    <div className="sw-hero-main"><div className="sw-eyebrow"><span className="sw-led"/> US EQUITIES LAB <span className="sw-hero-sep">/</span> AUTONOMOUS PAPER RESEARCH</div>
      <h2>Invest with evidence.<br/><span>Learn from every market cycle.</span></h2>
