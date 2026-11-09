@@ -1026,6 +1026,21 @@ def _preview_and_submit(client, snapshot, signals, day, now):
     if not signals or day != completed_day(now):
         return {**result, "status": "NO_CERTIFIED_CURRENT_SIGNALS"}
     if not _open_window(client, day, now):
+        # The regular session or limited opening admission window is closed.
+        # Preserve ticker-level technical reasons without pretending the
+        # broker's remaining order gates ran (no order calls happen here).
+        def closing_reason(signal):
+            if signal["score"] < SCORE_MIN or signal["regime"] != "RISK_ON":
+                return "technical_score_or_regime_below_gate"
+            if signal["features"]["volatility_annual"] >= MAX_VOLATILITY:
+                return "technical_volatility_cap"
+            if signal["iex_dollar_volume_20d"] < MIN_IEX_DOLLAR_VOLUME:
+                return "technical_iex_liquidity_cap"
+            return "entry_window_closed_remaining_broker_gates_not_evaluated"
+        result["why_no_trade"] = [
+            {"symbol": signal["symbol"], "action": "WATCH",
+             "reason": closing_reason(signal)} for signal in signals
+        ]
         return {**result, "status": "WAITING_FOR_NEXT_CORE_OPEN_WINDOW"}
     account = snapshot["account"]
     if (
