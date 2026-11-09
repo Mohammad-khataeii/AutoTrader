@@ -35,6 +35,9 @@ export function StocksWatch(){
  const [busy,setBusy]=useState(false);
  const [notice,setNotice]=useState("");
  const [ticker,setTicker]=useState("");
+ const [catalogSearch,setCatalogSearch]=useState("");
+ const [catalogFilter,setCatalogFilter]=useState("");
+ const catalog=useResource("/api/stockswatch/catalog?query="+encodeURIComponent(catalogFilter)+"&limit=50",{enabled:tab==="Research",poll:60000});
  const d:Row=resource.data??{};
  const h:Row=health.data??{};
  const isBroker=h.mode==="ALPACA_PAPER" || d.execution_mode==="ALPACA_PAPER";
@@ -174,6 +177,25 @@ export function StocksWatch(){
       <p>Earnings surprise study · {val(d.historical_comparison?.event_catalysts)}</p>
       </details>}<details className="sw-disclosure"><summary>Research limitations and model evidence</summary><div className="sw-notes">{(d.research?.warnings??[]).map((w:string,i:number)=><p key={i}>{w}</p>)}<p>Model Brier: {d.ml?.brier??"Not evaluated"}; null Brier: {d.ml?.no_skill_brier??"Not evaluated"}. ML trading authority: disabled.</p></div></details></article></div>}
   {tab==="Catalysts" && <div className="sw-detail-grid"><article className="sw-panel"><Header icon={Newspaper} title="SEC filings & announcements" note="Official source links; timestamps retained for time-of-knowledge controls"/>{(d.filings??[]).length ? (d.filings??[]).map((f:Row,i:number)=><div key={i} className="sw-filing"><span className="sw-mini">{f.form}</span><div><b>{f.symbol}</b><p>{f.description||"Official SEC filing"}</p><small>{fromUTC(f.accepted_at)}</small></div><a href={f.url} target="_blank" rel="noopener noreferrer" title="Open SEC filing"><ExternalLink size={15}/></a></div>):<Blank text="SEC integration requires a contact User-Agent; no filing claims are invented."/>}</article><article className="sw-panel"><Header icon={BrainCircuit} title="AI & macro research" note="AI explanations use sourced SEC evidence only; not trading instructions"/>{(d.ai_insights??[]).length?(d.ai_insights??[]).map((x:Row,i:number)=><div className="sw-ai-note" key={i}><b>{x.symbol} · {x.model}</b><p>{x.analysis?.summary}</p><small>{fromUTC(x.generated_at)} · <a href={x.source_url} target="_blank" rel="noopener noreferrer">Official filing</a></small></div>):<Blank text="AI waits for new official filings and shared Gemini quota. It does not control orders."/>}<div className="sw-macro-title">Current macro observations <small>Not backtest vintages</small></div>{(d.macro??[]).slice(0,6).map((m:Row,i:number)=><div className="sw-intel-row" key={i}><span>{m.series} · {m.observation_day}</span><strong>{m.value}</strong></div>)}<div className="sw-macro-title">Company financial facts <small>Official SEC XBRL · publication dated</small></div>{(d.fundamentals??[]).slice(0,10).map((f:Row,i:number)=><div className="sw-intel-row" key={"fund-"+i}><span>{f.symbol} · {f.tag} · {f.end_day}</span><strong>{f.unit==="USD"?cash(f.value):val(f.value)} <a href={f.source_url} target="_blank" rel="noopener noreferrer" aria-label="Open official SEC company facts"><ExternalLink size={12}/></a></strong></div>)}</article></div>}
+  {tab==="Research" && <div className="sw-detail-grid">
+    <article className="sw-panel">
+      <Header icon={Database} title="Alpaca full-market catalogue" note="Active US equities and ETFs · separate historical research · not an order allowlist"/>
+      <div className="sw-intel-row"><span>Alpaca active listings</span><strong>{n(catalog.data?.summary?.active).toLocaleString()}</strong></div>
+      <div className="sw-intel-row"><span>Tradable at broker (catalogue)</span><strong>{n(catalog.data?.summary?.tradable).toLocaleString()}</strong></div>
+      <div className="sw-intel-row"><span>History downloaded / ready</span><strong>{n(catalog.data?.summary?.history_ready).toLocaleString()} new symbols</strong></div>
+      <div className="sw-intel-row"><span>Daily research bars</span><strong>{n(catalog.data?.summary?.history_rows).toLocaleString()}</strong></div>
+      <p>Original 102 symbols keep their existing trading gates. Additional listings are research-only until separately qualified for execution. Last inventory sync: {fromUTC(catalog.data?.summary?.last_sync)}.</p>
+      <form onSubmit={e=>{e.preventDefault();setCatalogFilter(catalogSearch.trim());}} style={{display:"flex",gap:"0.5rem",marginBottom:"0.8rem"}}>
+        <input aria-label="Find Alpaca stock or ETF" value={catalogSearch} onChange={e=>setCatalogSearch(e.target.value)} placeholder="Find ticker or company" maxLength={40} style={{flex:1,minWidth:0}}/>
+        <button type="submit">Search</button>
+      </form>
+      {catalog.error && <Blank text="The full-universe catalogue is temporarily unavailable."/>}
+      <div className="sw-table-scroll"><table className="sw-table"><thead><tr><th>Symbol</th><th>Company / ETF</th><th>Exchange</th><th>History</th><th>Bars</th></tr></thead>
+      <tbody>{(catalog.data?.results??[]).map((x:Row)=><tr key={x.symbol}><td><b>{x.symbol}</b></td><td>{x.name}</td><td>{x.exchange}</td><td>{val(x.status).replace(/_/g," ")}</td><td>{n(x.bar_count).toLocaleString()}</td></tr>)}</tbody></table></div>
+      {catalog.data?.total>50 && <p>Showing 50 of {n(catalog.data.total).toLocaleString()} matching listings. Refine the search to inspect a ticker.</p>}
+      {catalog.data?.summary?.state==="NOT_INITIALIZED" && <Blank text="Full Alpaca inventory is not synced yet. Run the read-only sync and paced history downloader on the VPS."/>}
+    </article>
+  </div>}
   <footer className="sw-footer"><ShieldAlert size={15}/> {isBroker?"Alpaca Paper Trading uses virtual funds. EOD signals use broker paper; any verified OCO protection is displayed separately. Profit-trigger levels do not guarantee fills. Local legacy orders remain separate.":"Paper-only. No broker integration."} Free EOD data may be delayed or corporate-action incomplete. ML remains shadow-only; historical backtests have survivorship bias. <span>Updated {fromUTC(d.updated_at)}</span></footer>
  </div>;
 }
