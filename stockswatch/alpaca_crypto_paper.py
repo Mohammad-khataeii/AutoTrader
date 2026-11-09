@@ -447,3 +447,67 @@ def set_paused(pause):
     with connect() as c:
         c.execute("UPDATE ac_state SET paused=? WHERE id=1",(int(pause),))
     return {"paused":pause,"mode":"ALPACA_CRYPTO_SPOT_PAPER"}
+
+
+def read_only_order_journal():
+    """Authenticated UI evidence from the dedicated Alpaca PAPER order book.
+
+    Never submits, cancels or changes an order; never returns credentials.
+    Only order IDs originating in this crypto strategy's durable intent table
+    are displayed. A missing or unverifiable account is NOT a zero-order book.
+    """
+    if not os.getenv("ALPACA_CRYPTO_PAPER_KEY") or not os.getenv("ALPACA_CRYPTO_PAPER_SECRET"):
+        return {"available": False, "reason": "crypto_dedicated_paper_credentials_missing",
+                "as_of": utc(), "orders": [], "open_broker_orders": None}
+    try:
+        with CryptoPaperClient() as client:
+            snapshot = client.snapshot()
+            account_id = snapshot["account"]["id"]
+            known = {
+                row["client_id"]: row for row in rows(
+                    """SELECT client_id,account_id,symbol,side FROM ac_intents
+                       WHERE account_id=? ORDER BY created_at DESC LIMIT 200""",
+                    (account_id,),
+                )
+            }
+            closed = client.request("GET", "/v2/orders", params={
+                "status": "closed", "limit": 100, "direction": "desc",
+                "nested": "false",
+            })
+            if not isinstance(closed,list) or any(not isinstance(o,dict) for o in closed):
+                raise CryptoPaperError("crypto_closed_order_book_invalid")
+            order_rows = []
+            seen = set()
+            for order in list(snapshot["orders"]) + closed:
+                cid = order.get("client_order_id")
+                intent = known.get(cid)
+                if not intent or cid in seen:
+                    continue
+                symbol = order.get("symbol")
+                if (symbol not in (intent["symbol"], intent["symbol"].replace("/", ""))
+                        or order.get("side") != intent["side"] or not order.get("id")):
+                    continue
+                seen.add(cid)
+                order_rows.append({
+                    "client_order_id": cid,
+                    "symbol": intent["symbol"],
+                    "side": order.get("side"),
+                    "state": order.get("status"),
+                    "type": order.get("type"),
+                    "qty": order.get("qty"),
+                    "notional": order.get("notional"),
+                    "filled_qty": order.get("filled_qty"),
+                    "filled_avg_price": order.get("filled_avg_price"),
+                    "limit_price": order.get("limit_price"),
+                    "stop_price": order.get("stop_price"),
+                    "submitted_at": order.get("submitted_at"),
+                    "filled_at": order.get("filled_at"),
+                    "created_at": order.get("created_at"),
+                    "id": order.get("id"),
+                })
+            return {"available": True, "reason": None, "as_of": utc(),
+                    "orders": order_rows, "open_broker_orders": len(snapshot["orders"]),
+                    "owned_orders_in_window": len(order_rows)}
+    except CryptoPaperError as exc:
+        return {"available": False, "reason": str(exc), "as_of": utc(),
+                "orders": [], "open_broker_orders": None}
