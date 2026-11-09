@@ -19,10 +19,18 @@ import httpx
 from .storage import connect, rows, one, utc
 
 UTC = timezone.utc
-PAIRS = (
+# Preserve the original ten markets and their existing persisted history.
+BASE_PAIRS = (
     "BTC/USD", "ETH/USD", "SOL/USD", "AVAX/USD", "LINK/USD",
     "LTC/USD", "BCH/USD", "DOGE/USD", "UNI/USD", "AAVE/USD",
 )
+# Additional Alpaca-supported USD markets. Availability is *also* verified
+# against the connected paper account before a pair may receive any order.
+EXPANSION_PAIRS = (
+    "XRP/USD", "ADA/USD", "DOT/USD", "SHIB/USD", "ARB/USD",
+    "RENDER/USD", "ONDO/USD", "FIL/USD", "GRT/USD", "PEPE/USD",
+)
+PAIRS = BASE_PAIRS + EXPANSION_PAIRS
 DATA_ORIGIN = "https://data.alpaca.markets"
 LOCATION = "us"
 TIMEFRAMES = ("1Day", "1Hour")
@@ -140,7 +148,7 @@ def _checked_quote(raw, now):
 def latest_quotes_snapshot(*, factory=None):
     """GET-only, bounded quote snapshot. No synthetic mark or trading action.
 
-    One Alpaca US latest-quotes request obtains up to ten pairs. Only validated
+    One Alpaca US latest-quotes request obtains the configured USD pairs. Only validated
     prices younger than three minutes are shown as available. A short cache
     prevents UI polling from exhausting market-data quotas.
     """
@@ -313,7 +321,7 @@ def backfill_step(data,now):
       WHERE state IN ('PENDING','RUNNING','RETRY')
         AND (state!='RETRY' OR updated_at<?)
       -- Hourly data is the bottleneck for 220-hour research eligibility.
-      -- Previously daily windows were exhausted first, leaving all ten pairs
+      -- Previously daily windows were exhausted first, leaving all configured pairs
       -- in WAIT even after many thousands of daily observations arrived.
       -- Finish an in-flight paginated job first, then work newest hourly
       -- windows across symbols, then fill the remaining daily archive.
@@ -349,6 +357,73 @@ def backfill_step(data,now):
         # the current burst rather than causing repeated immediate requests.
         return False
     return True
+
+
+def warmup_expansion(data, now=None, *, symbols=EXPANSION_PAIRS, on_progress=None):
+    """Download 300 completed daily + 300 completed hourly candles for new pairs.
+
+    This is a deliberately explicit, one-off readiness accelerator, not a
+    trading action. It writes only validated Alpaca historical OHLCV rows using
+    INSERT OR IGNORE. The existing durable ac_jobs archive is NOT cleared or
+    marked complete: the normal worker completes the full 735d/35d range.
+
+    A per-pair/timeframe read checks existing coverage, so a rerun is
+    idempotent. The caller must handle CryptoDataError/transport failures; no
+    synthetic candles or guessed prices are ever created.
+    """
+    now=now or datetime.now(UTC)
+    if any(pair not in EXPANSION_PAIRS for pair in symbols):
+        raise CryptoDataError("crypto_warmup_requires_expansion_pair")
+    output=[]
+    for symbol in symbols:
+        for tf, delta in (("1Hour",timedelta(hours=300)),
+                          ("1Day",timedelta(days=300))):
+            end=_floor(now,tf)
+            initial_count=one(
+                "SELECT COUNT(*) AS n FROM ac_bars WHERE symbol=? AND timeframe=? AND ts<?",
+                (symbol,tf,end.isoformat())
+            )["n"]
+            if initial_count>=260:
+                record={"symbol":symbol,"timeframe":tf,"status":"already_ready",
+                        "count":initial_count,"new_rows":0}
+            else:
+                job={"symbol":symbol,"timeframe":tf,
+                     "start_at":(end-delta).isoformat(),
+                     "end_at":end.isoformat(),"token":None}
+                new_rows=0
+                pages=0
+                try:
+                    while pages<4:
+                        raw,token=data.bars(job)
+                        pages+=1
+                        with connect() as conn:
+                            conn.execute("BEGIN IMMEDIATE")
+                            conn.executemany(
+                                "INSERT OR IGNORE INTO ac_bars VALUES(?,?,?,?,?,?,?,?,?,?)",
+                                raw
+                            )
+                            new_rows+=conn.execute("SELECT changes()").fetchone()[0]
+                            conn.commit()
+                        if not token:
+                            break
+                        job["token"]=token
+                    # Never claim sufficient history on a truncated feed.
+                    fresh_count=one(
+                        "SELECT COUNT(*) AS n FROM ac_bars WHERE symbol=? AND timeframe=? AND ts<?",
+                        (symbol,tf,end.isoformat())
+                    )["n"]
+                    record={"symbol":symbol,"timeframe":tf,
+                            "status":"ready" if fresh_count>=220 else "insufficient_history",
+                            "count":fresh_count,"new_rows":new_rows,
+                            "pagination_complete":token is None}
+                except CryptoDataError as exc:
+                    record={"symbol":symbol,"timeframe":tf,"status":"data_error",
+                            "reason":str(exc),"count":initial_count,"new_rows":new_rows}
+            output.append(record)
+            if on_progress is not None:
+                on_progress(record)
+            time.sleep(0.6)
+    return output
 
 
 def backfill_burst(data,now,max_jobs=6):
