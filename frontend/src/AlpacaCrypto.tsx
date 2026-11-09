@@ -49,7 +49,7 @@ export function AlpacaCrypto() {
     }
   }
 
-  return <main className="ac-root">
+  return <div className="ac-root">
     <header className="ac-hero">
       <div className="ac-hero-copy">
         <div className="ac-label"><Activity size={16} /> 24/7 SPOT MARKET RESEARCH</div>
@@ -107,5 +107,5 @@ export function AlpacaCrypto() {
 
     <CryptoTradingOperations dashboard={d}/>
     <p className="ac-footnote">Paper trading only. Historical crypto bars are midpoint observations, not executable prices. Software exit thresholds cannot guarantee fills.</p>
-  </main>;
+  </div>;
 }
