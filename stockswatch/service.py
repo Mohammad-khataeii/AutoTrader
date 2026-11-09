@@ -340,6 +340,24 @@ class Service:
             timeout=timeout, follow_redirects=False, trust_env=False
         ) as client:
             await self.price_cycle(client, observer, out, now)
+            # Bounded GET-only verification of historical >15% gaps. It may
+            # release a genuine shock for technical scoring, but never changes
+            # historical OHLCV, broker ownership or protective order rules.
+            try:
+                from .gap_audit import refresh_proofs
+                out["historical_gap_verification"] = await refresh_proofs(client, now, limit=6)
+                if out["historical_gap_verification"]["checked"]:
+                    observer.event(
+                        "HISTORICAL_GAP_CHECK", "INFO",
+                        "Independently compared raw and adjusted IEX observations",
+                        **out["historical_gap_verification"],
+                    )
+            except Exception as exc:
+                observer.event(
+                    "HISTORICAL_GAP_DEFERRED", "WARNING",
+                    "Gap verification unavailable; unverified assets remain blocked",
+                    error_type=type(exc).__name__,
+                )
             try:
                 observer.event(
                     "PAPER_EVALUATION", "RUNNING", "Evaluating price signals and paper risk gates"
