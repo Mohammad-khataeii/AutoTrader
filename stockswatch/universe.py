@@ -1,4 +1,4 @@
-"""Authoritative 50-equity and two benchmark StocksWatch registry."""
+"""Authoritative 100-equity and two benchmark StocksWatch registry."""
 
 LEGACY = (
     ("AAPL", "Apple Inc.", "Technology"),
@@ -58,7 +58,60 @@ ADDITIONS = (
     ("MCD", "McDonald's Corporation", "Consumer Discretionary"),
 )
 
-ASSETS = (*LEGACY, *ADDITIONS)
+EXPANSION50 = (
+    ("IBM","International Business Machines Corporation","Technology"),
+    ("INTC","Intel Corporation","Technology"),
+    ("TXN","Texas Instruments Incorporated","Technology"),
+    ("KLAC","KLA Corporation","Technology"),
+    ("LRCX","Lam Research Corporation","Technology"),
+    ("SNPS","Synopsys, Inc.","Technology"),
+    ("CDNS","Cadence Design Systems, Inc.","Technology"),
+    ("ANET","Arista Networks, Inc.","Technology"),
+    ("MRVL","Marvell Technology, Inc.","Technology"),
+    ("ARM","Arm Holdings plc ADR","Technology"),
+    ("CSCO","Cisco Systems, Inc.","Technology"),
+    ("ACN","Accenture plc","Technology"),
+    ("INTU","Intuit Inc.","Technology"),
+    ("ADI","Analog Devices, Inc.","Technology"),
+    ("C","Citigroup Inc.","Financials"),
+    ("WFC","Wells Fargo & Company","Financials"),
+    ("MS","Morgan Stanley","Financials"),
+    ("BLK","BlackRock, Inc.","Financials"),
+    ("AXP","American Express Company","Financials"),
+    ("BX","Blackstone Inc.","Financials"),
+    ("KKR","KKR & Co. Inc.","Financials"),
+    ("PNC","The PNC Financial Services Group, Inc.","Financials"),
+    ("COF","Capital One Financial Corporation","Financials"),
+    ("HOOD","Robinhood Markets, Inc.","Financials"),
+    ("SOFI","SoFi Technologies, Inc.","Financials"),
+    ("PYPL","PayPal Holdings, Inc.","Financials"),
+    ("AMGN","Amgen Inc.","Healthcare"),
+    ("GILD","Gilead Sciences, Inc.","Healthcare"),
+    ("TMO","Thermo Fisher Scientific Inc.","Healthcare"),
+    ("DHR","Danaher Corporation","Healthcare"),
+    ("ISRG","Intuitive Surgical, Inc.","Healthcare"),
+    ("REGN","Regeneron Pharmaceuticals, Inc.","Healthcare"),
+    ("BMY","Bristol-Myers Squibb Company","Healthcare"),
+    ("CVS","CVS Health Corporation","Healthcare"),
+    ("MDT","Medtronic plc","Healthcare"),
+    ("HON","Honeywell International Inc.","Industrials"),
+    ("ETN","Eaton Corporation plc","Industrials"),
+    ("RTX","RTX Corporation","Industrials"),
+    ("LMT","Lockheed Martin Corporation","Industrials"),
+    ("FDX","FedEx Corporation","Industrials"),
+    ("UPS","United Parcel Service, Inc.","Industrials"),
+    ("BA","The Boeing Company","Industrials"),
+    ("EMR","Emerson Electric Co.","Industrials"),
+    ("NKE","NIKE, Inc.","Consumer Discretionary"),
+    ("SBUX","Starbucks Corporation","Consumer Discretionary"),
+    ("TGT","Target Corporation","Consumer Staples"),
+    ("TJX","The TJX Companies, Inc.","Consumer Discretionary"),
+    ("BKNG","Booking Holdings Inc.","Consumer Discretionary"),
+    ("COP","ConocoPhillips","Energy"),
+    ("SLB","SLB N.V.","Energy"),
+)
+
+ASSETS = (*LEGACY, *ADDITIONS, *EXPANSION50)
 REGISTRY = {
     s: {
         "symbol": s,
@@ -69,5 +122,9 @@ REGISTRY = {
     }
     for s, name, sector in ASSETS
 }
-NEW = frozenset(s for s, _, _ in ADDITIONS)
+NEW = frozenset(s for s, _, _ in (*ADDITIONS, *EXPANSION50))
 BENCHMARKS = frozenset(s for s, v in REGISTRY.items() if v["instrument_type"] == "BENCHMARK_ETF")
+
+assert len(EXPANSION50) == 50
+assert len(ASSETS) == 102 and len(REGISTRY) == 102
+assert len({s for s, _, _ in ASSETS}) == len(ASSETS), "Duplicate ticker"
