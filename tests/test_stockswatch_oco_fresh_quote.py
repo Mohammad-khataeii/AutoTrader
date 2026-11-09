@@ -47,7 +47,7 @@ class OcoFixTests(unittest.TestCase):
     @staticmethod
     def certified_daily():
         cal=__import__("stockswatch.sessions",fromlist=["calendar"]).calendar()
-        sessions=[x.date().isoformat() for x in cal.sessions_window("2026-11-06",-14)]
+        sessions=[x.date().isoformat() for x in cal.sessions_window("2026-11-06",-15)]
         return [{"day":d,"o":100+i,"h":102+i,"l":99+i,"c":101+i,
                  "v":10000,"source":"alpaca_iex_daily","adjustment":"RAW",
                  "observed_at":"2026-11-08T12:00:00+00:00"} for i,d in enumerate(sessions)]
