@@ -41,10 +41,16 @@ class CryptoHardeningTests(unittest.TestCase):
             for r in hourly:
                 r["ts"]=(datetime.fromisoformat(r["ts"])-timedelta(hours=1)).isoformat()
         def fake_rows(query,params=()):
+            # signal() SELECTs with ORDER BY ts DESC LIMIT 260 then [::-1]
+            # to restore chronology. Feed this mock the actual SQL ordering:
+            # the previous ASC-ordered mock became oldest-first after [::-1],
+            # making the signal appear stale even with a complete latest hour.
+            if "ORDER BY ts DESC" not in query:
+                raise AssertionError("unexpected candle order")
             if "timeframe='1Hour'" in query:
-                return hourly
+                return list(reversed(hourly))
             if "timeframe='1Day'" in query:
-                return daily
+                return list(reversed(daily))
             raise AssertionError("unexpected SQL")
         fake_ema=lambda values,n: 1.4 if n==20 else 1.1 if n==50 else 0.9
         with patch.object(ac,"rows",side_effect=fake_rows),\
