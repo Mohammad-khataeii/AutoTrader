@@ -67,7 +67,7 @@ function Table({rows, empty, kind}:{rows:OrderRow[];empty:string;kind:"stocks"|"
 }
 const recentFirst = (rows:OrderRow[]) => rows.sort((a,b)=>String(b.at??"").localeCompare(String(a.at??""))).slice(0,50);
 
-export function StocksTradingOperations({dashboard:d,health:h,isBroker,error}:{dashboard:Row;health:Row;isBroker:boolean;error?:string}){
+export function StocksTradingOperations({dashboard:d,health:h,isBroker,dashboardError,statusError}:{dashboard:Row;health:Row;isBroker:boolean;dashboardError?:string;statusError?:string}){
   const protection=useResource("/api/stockswatch/profit-protection",{enabled:isBroker,poll:30000,ttl:12000});
   const p:Row=protection.data??{};
   const broker:Row=d.broker_account??h.broker_connection??{};
@@ -75,7 +75,16 @@ export function StocksTradingOperations({dashboard:d,health:h,isBroker,error}:{d
   const evaluation:Row=d.status?.paper??cycle.paper??{};
   const reasons:string[]=[];
   let state:TradeState="unknown";
-  if(error) reasons.push("Cannot verify the trading state: "+error);
+  const failures=[
+    ...(dashboardError?["Dashboard request failed: "+dashboardError]:[]),
+    ...(statusError?["Status request failed: "+statusError]:[])
+  ];
+  if(failures.length){
+    reasons.push(...failures);
+    reasons.push("Status is UNVERIFIED until the failed API request succeeds. No cached snapshot is treated as proof that paper orders are running.");
+    if(isBroker && broker.orders_enabled===false) reasons.push("Last known configuration: stock paper order submission is OFF.");
+    if(isBroker && broker.paused===true) reasons.push("Last known configuration: stock order admission is paused.");
+  }
   else if(!isBroker){state="blocked";reasons.push("This screen is connected to the local simulator, not the Alpaca Paper execution backend.");}
   else {
     const blockers:string[]=[];
@@ -99,7 +108,7 @@ export function StocksTradingOperations({dashboard:d,health:h,isBroker,error}:{d
     } else {state="armed";reasons.push("Alpaca Paper order admission is ON, the account is connected, and the persistent pause is OFF.");}
     if(result && result!=="BROKER_ACKNOWLEDGED") reasons.push("Latest strategy decision: "+readable(result)+(evaluation.reason?" — "+readable(evaluation.reason):""));
   }
-  if(!error&&cycle.completed_at&&!fresh(cycle.completed_at,40)) reasons.push("The scheduled market scan appears stale; last completed at "+stamp(cycle.completed_at)+".");
+  if(!failures.length&&cycle.completed_at&&!fresh(cycle.completed_at,40)) reasons.push("The scheduled market scan appears stale; last completed at "+stamp(cycle.completed_at)+".");
   const open=list(d.pending_orders),closed=list(d.order_history),intents=list(d.broker_intents);
   const observed=new Set<string>();
   const orders:OrderRow[]=[];
