@@ -89,9 +89,14 @@ class CryptoSafetyTests(unittest.TestCase):
         self.assertEqual(patched.count(NEW), 1)
         original=patched.replace(NEW, OLD, 1)
         self.assertEqual(patch_source(original), patched)
+        # Unrelated live hotfixes must survive, not be rejected.
+        unrelated=original.replace("crypto_new_entries_paused", "another_pause_policy")
+        self.assertEqual(patch_source(unrelated),
+                         patched.replace("crypto_new_entries_paused", "another_pause_policy"))
+        # Divergence INSIDE the reviewed BUY hunk must be rejected.
         with self.assertRaises(ValueError):
-            patch_source(original.replace("crypto_new_entries_paused",
-                                          "another_pause_policy"))
+            patch_source(original.replace("signals=ac.scan(now)",
+                                          "signals=ac.scan_later(now)"))
 
     def test_broker_original_protection_untouched(self):
         a=CRYPTO.read_text()
