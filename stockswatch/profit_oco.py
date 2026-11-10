@@ -462,6 +462,25 @@ def request_strategy_exit(client,snapshot,signal,account_id,now):
         return "oco_exit_technical_evidence_missing"
     if not triggered:
         return "oco_protected_no_strategy_exit"
+    # Same-day corporate-action and tradability checks used by the standard
+    # broker SELL must also precede the OCO retarget mutation.
+    from .sessions import next_day
+    check=one("SELECT * FROM sw_price_checks WHERE symbol=? AND day=?",
+              (sym,signal["day"]))
+    try:
+        target=next_day(signal["day"])
+        if (not check or instant(check["checked_at"]).astimezone(NY).date().isoformat()!=target
+                or any(x["day"]==target for x in json.loads(check["actions_json"]))
+                or not check["actions_since"]):
+            return "oco_exit_corporate_action_check_unavailable"
+        asset=client.asset(sym)
+        if (not isinstance(asset,dict) or asset.get("symbol")!=sym
+                or asset.get("class")!="us_equity" or
+                asset.get("status")!="active" or asset.get("tradable") is not True
+                or not asset.get("id") or position.get("asset_id")!=asset["id"]):
+            return "oco_exit_asset_or_position_unverified"
+    except (KeyError,TypeError,ValueError):
+        return "oco_exit_asset_or_action_evidence_invalid"
     record=_saved(account_id,sym)
     if not record or record["state"]!="ACTIVE" or not armed():
         return "oco_exit_management_unavailable_or_paused"
