@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS ac_managed (
 CREATE TABLE IF NOT EXISTS ac_signal_audit (
  symbol TEXT NOT NULL, bar_at TEXT NOT NULL, first_evaluated_at TEXT NOT NULL,
  action TEXT NOT NULL, reason TEXT NOT NULL, score REAL NOT NULL,
- price REAL NOT NULL, gates_json TEXT NOT NULL,
+ price REAL NOT NULL, stop REAL, target REAL, gates_json TEXT NOT NULL,
  PRIMARY KEY(symbol,bar_at,action,reason));
 CREATE INDEX IF NOT EXISTS ac_signal_audit_at ON ac_signal_audit(first_evaluated_at);
 -- Only crypto BUY candidates are stored. No credentials or broker account IDs.
@@ -721,10 +721,11 @@ def scan(now):
                     (symbol,s["bar_at"],now.isoformat(),json.dumps(s.get("gates") or {},sort_keys=True)))
                 if symbol in EXECUTION_PAIRS:
                     c.execute("""INSERT OR IGNORE INTO ac_signal_audit
-                        (symbol,bar_at,first_evaluated_at,action,reason,score,price,gates_json)
-                        VALUES(?,?,?,?,?,?,?,?)""",
+                        (symbol,bar_at,first_evaluated_at,action,reason,score,price,stop,target,gates_json)
+                        VALUES(?,?,?,?,?,?,?,?,?,?)""",
                         (symbol,s["bar_at"],now.isoformat(),s["action"],s["reason"],
-                         s["score"],s["price"],json.dumps(s.get("gates") or {},sort_keys=True)))
+                         s["score"],s["price"],s["stop"],s["target"],
+                         json.dumps(s.get("gates") or {},sort_keys=True)))
     with connect() as c:
         c.execute("UPDATE ac_state SET last_cycle=?,last_error=NULL WHERE id=1",(now.isoformat(),))
     return evaluated
@@ -774,7 +775,7 @@ def dashboard():
       JOIN (SELECT symbol,MAX(bar_at) bar_at FROM ac_signal_gates GROUP BY symbol) s
         ON g.symbol=s.symbol AND g.bar_at=s.bar_at ORDER BY s.symbol""")
     outcomes=rows("SELECT evaluated_at,outcome FROM ac_execution_cycles ORDER BY id DESC LIMIT 30")
-    signal_audit=rows("""SELECT symbol,bar_at,first_evaluated_at,action,reason,score,price,gates_json
+    signal_audit=rows("""SELECT symbol,bar_at,first_evaluated_at,action,reason,score,price,stop,target,gates_json
          FROM ac_signal_audit ORDER BY first_evaluated_at DESC LIMIT 80""")
     admission_audit=rows("""SELECT symbol,bar_at,first_checked_at,outcome,details_json
          FROM ac_admission_audit ORDER BY first_checked_at DESC LIMIT 80""")
