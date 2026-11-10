@@ -485,14 +485,30 @@ def _run_paper_cycle_once(data,now=None):
                         "crypto_latest_hourly_retry_cooldown"):
                     return refresh
                 signals=ac.scan(now)
+                from .crypto_trade_safety import depth_limited_notional
+                last_blocked = None
                 for s in sorted(signals,key=lambda x:x["symbol"]):
                     if s["action"]!="BUY" or s["symbol"] in pos:continue
                     asset=_fresh_asset(s["symbol"],now)
-                    bid,ask,stamp=data.latest_bid(s["symbol"])
+                    try:
+                        quote=data.latest_entry_quote(s["symbol"])
+                    except ac.CryptoDataError as exc:
+                        last_blocked = "crypto_entry_quote_missing_or_invalid"
+                        ac.record_admission(s["symbol"],s["bar_at"],last_blocked,
+                                            {"quote_status":str(exc)},now)
+                        continue
+                    bid,ask,stamp=quote["bid"],quote["ask"],quote["observed_at"]
+                    quote_stats={"bid":bid,"ask":ask,
+                                 "bid_size":quote["bid_size"],"ask_size":quote["ask_size"],
+                                 "spread_pct":round(100*(ask-bid)/ask,4)}
                     if ask > float(s["price"])*1.02 or (ask-bid)/ask>0.015:
+                        last_blocked="crypto_entry_spread_or_stale_signal"
+                        ac.record_admission(s["symbol"],s["bar_at"],last_blocked,quote_stats,now)
                         continue
                     loss_per_unit=money(ask)-money(s["stop"])
                     if loss_per_unit<=0:
+                        last_blocked="crypto_entry_stop_above_market"
+                        ac.record_admission(s["symbol"],s["bar_at"],last_blocked,quote_stats,now)
                         continue
                     stop_fraction=loss_per_unit/money(ask)
                     budget=min(equity*CAP_PER_SYMBOL,
@@ -500,9 +516,29 @@ def _run_paper_cycle_once(data,now=None):
                                buying*Decimal(".75"),
                                equity*RISK_PER_TRADE/stop_fraction)
                     budget=budget.quantize(Decimal(".01"),rounding=ROUND_DOWN)
-                    if budget<MIN_TRADE_USD:continue
+                    if budget<MIN_TRADE_USD:
+                        last_blocked="crypto_entry_portfolio_budget_below_minimum"
+                        ac.record_admission(s["symbol"],s["bar_at"],last_blocked,quote_stats,now)
+                        continue
+                    # Prevent a paper market order larger than 20% of either
+                    # currently displayed quote side. No synthetic order depth.
+                    budget,depth_status=depth_limited_notional(
+                        budget,ask,bid,quote["ask_size"],quote["bid_size"],
+                        min_usd=str(MIN_TRADE_USD))
+                    if budget is None:
+                        last_blocked=depth_status
+                        ac.record_admission(s["symbol"],s["bar_at"],last_blocked,quote_stats,now)
+                        continue
+                    quote_stats["approved_notional_usd"]=str(budget)
+                    quote_stats["depth_decision"]=depth_status
+                    ac.record_admission(s["symbol"],s["bar_at"],
+                                        "crypto_entry_admitted",quote_stats,now)
                     outcome=_submit_intent(client,account,s["symbol"],"buy",s["bar_at"],
                             s["reason"],notional=str(budget))
+                    try:
+                        ac.record_admission(s["symbol"],s["bar_at"],outcome,quote_stats,now)
+                    except ac.CryptoDataError:
+                        log.warning("Crypto paper admission outcome not journaled")
                     if outcome=="paper_order_acknowledged":
                         with connect() as c:
                             c.execute("""INSERT INTO ac_managed
@@ -514,7 +550,7 @@ def _run_paper_cycle_once(data,now=None):
                                 (s["symbol"],account,_order_id(account,s["symbol"],s["bar_at"],"buy"),
                                  str(s["stop"]),str(s["target"]),utc()))
                     return outcome
-                return "no_approved_spot_long_signal"
+                return (last_blocked or "no_approved_spot_long_signal")
         except CryptoPaperError as exc:
             with connect() as c:
                 c.execute("UPDATE ac_state SET last_error=? WHERE id=1",(str(exc),))
