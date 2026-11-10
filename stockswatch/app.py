@@ -434,6 +434,13 @@ def scanner():
     return result
 
 
+@app.get('/api/stockswatch/trading-readiness', dependencies=[Depends(authenticated)])
+def trading_readiness():
+    """Explicit operational readiness; /healthz remains process liveness only."""
+    from .readiness import snapshot
+    return snapshot(service)
+
+
 @app.get('/api/stockswatch/decision-audit', dependencies=[Depends(authenticated)])
 def decision_audit():
     """Explain the paper scanner across every registered equity, without orders or writes.
