@@ -88,6 +88,12 @@ CREATE TABLE IF NOT EXISTS sw_alpaca_state (
     linked_account TEXT, linked_at TEXT
 );
 INSERT OR IGNORE INTO sw_alpaca_state(id,paused) VALUES (1,1);
+-- Highest broker-verified equity mark, scoped to one linked paper account.
+-- Only updated after a valid Alpaca portfolio-history observation.
+CREATE TABLE IF NOT EXISTS sw_paper_risk_peaks (
+ account_id TEXT PRIMARY KEY,
+ high_water TEXT NOT NULL,
+ verified_at TEXT NOT NULL);
 """
 
 
@@ -856,10 +862,32 @@ def _entry_budget(snapshot, sectors, sector, active, known):
     if min(eq, last) <= 0 or cash < 0:
         raise PaperError("alpaca_paper_invalid_account_balance")
     history = snapshot.get("history") or {}
-    marks = [money(x, Decimal(0)) for x in history.get("equity", []) or [] if x is not None]
-    if not any(x > 0 for x in marks):
-        raise PaperError("alpaca_paper_drawdown_history_unavailable")
-    peak = max(marks + [eq])
+    values = history.get("equity", [])
+    if not isinstance(values, list):
+        values = []
+    marks = [money(x, Decimal(0)) for x in values if x is not None]
+    verified = [x for x in marks if x > 0]
+    recorded = one("SELECT * FROM sw_paper_risk_peaks WHERE account_id=?",
+                   (account["id"],))
+    prior_peak = money(recorded["high_water"]) if recorded else Decimal(0)
+    if verified:
+        # Do not erase a previously observed peak when Alpaca returns a
+        # rolling one-month window. Persist only independently verified truth.
+        peak = max([eq,prior_peak]+verified)
+        with connect() as c:
+            c.execute("""INSERT INTO sw_paper_risk_peaks(account_id,high_water,verified_at)
+                VALUES(?,?,?) ON CONFLICT(account_id) DO UPDATE SET
+                high_water=excluded.high_water,verified_at=excluded.verified_at""",
+                (account["id"],str(peak),utc()))
+    elif recorded:
+        # A recent, previously broker-verified high-water can bridge a brief
+        # history API outage, but never invent one from current account equity.
+        age=datetime.now(UTC)-instant(recorded["verified_at"])
+        if not timedelta(0)<=age<=timedelta(days=3) or prior_peak<=0:
+            raise PaperError("alpaca_paper_risk_history_missing_or_stale")
+        peak=max(eq,prior_peak)
+    else:
+        raise PaperError("alpaca_paper_risk_history_never_verified")
     if 1 - eq / peak >= money(MAX_DRAWDOWN) or 1 - eq / last >= money(MAX_ONE_DAY_LOSS):
         raise PaperError("alpaca_paper_drawdown_or_daily_loss_pause")
     gross = sector_used = reserved = cash_reserved = short_proceeds = Decimal(0)
