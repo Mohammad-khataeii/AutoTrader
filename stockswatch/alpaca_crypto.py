@@ -328,7 +328,10 @@ class CryptoData:
         if symbol not in EXECUTION_PAIRS:
             raise CryptoDataError("crypto_execution_pair_not_usd_or_unlisted")
         body = self.get("/v1beta3/crypto/us/latest/quotes", {"symbols": symbol})
-        raw = body.get("quotes", {}).get(symbol)
+        received = body.get("quotes")
+        if not isinstance(received, dict):
+            raise CryptoDataError("crypto_quote_missing")
+        raw = received.get(symbol)
         quote = _checked_quote(raw, datetime.now(UTC))
         try:
             quote["bid_size"] = _number(raw.get("bs"))
