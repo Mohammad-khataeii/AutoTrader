@@ -158,6 +158,24 @@ class ReadinessRiskRegressions(unittest.TestCase):
         self.assertIn("independent_intraday_order_gate",READY)
         self.assertIn("FIRST_60_MINUTES_CORE_ONLY",READY)
 
+    def test_schema_additions_are_idempotent_on_existing_sqlite(self):
+        import sqlite3
+        def schema(source):
+            module=ast.parse(source)
+            for n in module.body:
+                if isinstance(n,ast.Assign) and any(
+                        isinstance(t,ast.Name) and t.id=="SCHEMA" for t in n.targets):
+                    return n.value.value
+            raise AssertionError("schema_missing")
+        db=sqlite3.connect(":memory:")
+        for _ in range(2):
+            db.executescript(schema(PAPER))
+            db.executescript(schema(OCO))
+        tables={r[0] for r in db.execute("SELECT name FROM sqlite_master")}
+        self.assertIn("sw_paper_risk_peaks",tables)
+        self.assertIn("sw_oco_exit_requests",tables)
+        db.close()
+
     def test_missing_broker_history_requires_verified_recent_highwater(self):
         self.assertIn("CREATE TABLE IF NOT EXISTS sw_paper_risk_peaks",PAPER)
         self.assertIn("timedelta(days=3)",PAPER)
