@@ -1131,6 +1131,9 @@ def _preview_and_submit(client, snapshot, signals, day, now):
         if symbol not in known and not signal.get("ranking_complete", False):
             item["reason"] = "awaiting_completed_universe_scan"
             continue
+        if symbol not in known and (one("SELECT paused FROM sw_alpaca_state WHERE id=1") or {}).get("paused",1):
+            item["reason"]="new_stock_entry_paused_exit_protection_continues"
+            continue
         if symbol not in known and snapshot.get("other_open_orders"):
             item["reason"] = "new_stock_buy_blocked_by_shared_crypto_orders"
             continue
@@ -1176,8 +1179,8 @@ def _preview_and_submit(client, snapshot, signals, day, now):
             }
         )
         with _admission:
-            if (one("SELECT paused FROM sw_alpaca_state WHERE id=1") or {}).get("paused", 1):
-                return {**result, "status": "BROKER_PAUSED"}
+            if action == "BUY" and (one("SELECT paused FROM sw_alpaca_state WHERE id=1") or {}).get("paused", 1):
+                return {**result, "status": "BROKER_NEW_ENTRIES_PAUSED"}
             if client.by_client_id(cid):
                 item["reason"] = "broker_order_already_exists"
                 # A broker order without a durable local intent needs operator review.
@@ -1331,8 +1334,8 @@ def _paper_cycle(now=None):
             }
             if not orders_enabled():
                 return {**result, **preview, "status": "BROKER_READ_ONLY"}
-            if (one("SELECT paused FROM sw_alpaca_state WHERE id=1") or {}).get("paused", 1):
-                return {**result, **preview, "status": "BROKER_PAUSED"}
+            # The stock pause controls NEW entries, not independently verified
+            # exits for owned shares or existing broker-native OCO protection.
             if configuration or day is None:
                 return {**result, "status": "NO_CERTIFIED_BENCHMARK", "reason": configuration}
             return _preview_and_submit(client, snapshot, signals, day, now)
