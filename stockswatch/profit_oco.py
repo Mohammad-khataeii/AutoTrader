@@ -41,6 +41,15 @@ CREATE TABLE IF NOT EXISTS sw_protection (
  last_quote_at TEXT, updated_at TEXT NOT NULL, last_error TEXT,
  PRIMARY KEY(account_id,symbol));
 CREATE INDEX IF NOT EXISTS sw_protection_state ON sw_protection(state);
+-- Broker-native OCO exit requests: durable before any PATCH, never retried.
+-- Exit replaces the existing OCO take-profit limit; it never creates a second SELL.
+CREATE TABLE IF NOT EXISTS sw_oco_exit_requests (
+ account_id TEXT NOT NULL, symbol TEXT NOT NULL,
+ entry_client_id TEXT NOT NULL, root_order_id TEXT NOT NULL,
+ requested_limit TEXT NOT NULL, state TEXT NOT NULL, requested_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL, note TEXT,
+ PRIMARY KEY(account_id,symbol));
+CREATE INDEX IF NOT EXISTS sw_oco_exit_requests_state ON sw_oco_exit_requests(state);
 """
 
 
@@ -448,6 +457,23 @@ def cycle(client,snapshot,now=None,data=None):
                 continue
             saved=managed.get(sym)
             try:
+                # A closed market or disabled monitoring is NOT evidence that
+                # an OCO disappeared. Never mark a broker stop UNVERIFIED merely
+                # because nested orders were intentionally not fetched.
+                if saved and nested is None:
+                    outcomes.append({"symbol":sym,"broker_state":saved["state"],
+                        "reason":"oco_broker_verification_deferred_off_session",
+                        "verified_broker_stop":None,"paper":True})
+                    continue
+                exit_request = (one("""SELECT * FROM sw_oco_exit_requests
+                    WHERE account_id=? AND symbol=?""",(account,sym)) if saved else None)
+                if exit_request is not None:
+                    status = _verify_strategy_exit(nested, saved, exit_request)
+                    outcomes.append({"symbol":sym,"broker_state":exit_request["state"],
+                         "reason":status,"verified_broker_stop":
+                         saved["broker_stop"] if status=="oco_exit_limit_verified" else None,
+                         "paper":True})
+                    continue
                 if saved and nested is not None:
                     # Verify OCO parent and actual stop leg *before* treating
                     # shares reserved by our exit orders as available.
