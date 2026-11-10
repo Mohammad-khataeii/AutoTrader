@@ -631,7 +631,8 @@ def cycle(client,snapshot,now=None,data=None):
                 if exit_request is not None:
                     status = _verify_strategy_exit(nested, saved, exit_request)
                     outcomes.append({"symbol":sym,"broker_state":exit_request["state"],
-                         "reason":status,"verified_broker_stop":
+                         "reason":status,"requested_exit_limit":exit_request["requested_limit"],
+                         "verified_broker_stop":
                          saved["broker_stop"] if status=="oco_exit_limit_verified" else None,
                          "paper":True})
                     continue
