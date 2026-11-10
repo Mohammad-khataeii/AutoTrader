@@ -1050,10 +1050,9 @@ def _preview_and_submit(client, snapshot, signals, day, now):
     ):
         return {**result, "status": "ALPACA_ACCOUNT_TRADING_UNAVAILABLE"}
     active = snapshot["open_orders"]
-    # Do not start new stock entries against a concurrently pending crypto
-    # order on the shared paper account.
-    if snapshot.get("other_open_orders"):
-        return {**result, "status": "SHARED_ACCOUNT_CRYPTO_ORDERS_PENDING"}
+    # Pending crypto orders reserve shared buying power but cannot preempt
+    # an independently owned stock exit. Block only new stock BUY admissions.
+    # Final account/positions/order checks still include BOTH asset classes.
     if len(active) >= 500 or any(
         not o.get("symbol") or not o.get("id") or not o.get("status") or o.get("legs")
         for o in active
@@ -1068,7 +1067,10 @@ def _preview_and_submit(client, snapshot, signals, day, now):
     intents = rows(
         "SELECT * FROM sw_alpaca_intents WHERE account_id=? AND signal_day=?", (account_id, day)
     )
-    active_ids = {o.get("id") for o in active}
+    all_active = snapshot["open_orders"] + snapshot.get("other_open_orders", [])
+    active_ids = {o.get("id") for o in all_active}
+    if (len(active_ids)!=len(all_active) or None in active_ids):
+        return {**result, "status": "SHARED_BROKER_ORDER_BOOK_UNVERIFIABLE"}
     own_ids = {
         r["broker_order_id"]
         for r in rows(
@@ -1100,6 +1102,33 @@ def _preview_and_submit(client, snapshot, signals, day, now):
             continue
         if symbol not in known and not signal.get("ranking_complete", False):
             item["reason"] = "awaiting_completed_universe_scan"
+            continue
+        if symbol not in known and snapshot.get("other_open_orders"):
+            item["reason"] = "new_stock_buy_blocked_by_shared_crypto_orders"
+            continue
+        # A long with an active, verified broker-native OCO must not receive
+        # a second SELL. Request a one-shot reduction of its existing OCO TP
+        # limit; its stop remains at the broker throughout the handoff.
+        if symbol in known and any(o.get("symbol")==symbol for o in active):
+            from .profit_oco import request_strategy_exit
+            try:
+                handoff=request_strategy_exit(client,snapshot,signal,account_id,now)
+            except Exception as exc:
+                log.warning("StocksWatch OCO exit handoff failed for %s: %s",
+                            symbol,type(exc).__name__)
+                handoff="oco_exit_handoff_unavailable_do_not_double_sell"
+            item["reason"]=handoff
+            if handoff=="oco_exit_replace_requested_keep_existing_stop":
+                return {**result, "status": "OCO_EXIT_REPLACE_REQUESTED",
+                        "broker_orders_submitted": 0}
+            continue
+        # A missing OCO in the open book is not proof that it was cancelled
+        # or filled. Until independently reconciled, no duplicate stock SELL.
+        if symbol in known and one("""SELECT 1 FROM sw_protection WHERE
+              account_id=? AND symbol=? AND state IN
+              ('ACTIVE','REPLACE_PENDING','REPLACE_UNCERTAIN','UNVERIFIED')""",
+              (account_id,symbol)):
+            item["reason"]="oco_exit_open_order_missing_requires_reconciliation"
             continue
         try:
             payload, reason = _payload_for(
@@ -1158,9 +1187,11 @@ def _preview_and_submit(client, snapshot, signals, day, now):
                 )
                 or not isinstance(fresh_positions, list)
                 or not isinstance(fresh_orders, list)
-                or positions_key(fresh_positions) != positions_key(snapshot["positions"])
+                or positions_key(fresh_positions) != positions_key(
+                    snapshot["positions"]+snapshot.get("other_positions", []))
                 or {o.get("id") for o in fresh_orders} != active_ids
-                or fresh_orders != snapshot["open_orders"]
+                or {o.get("id"):o for o in fresh_orders}
+                   != {o.get("id"):o for o in all_active}
             ):
                 return {**result, "status": "BROKER_STATE_CHANGED_RECHECK_NEXT_CYCLE"}
             if action == "BUY":
