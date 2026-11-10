@@ -8,20 +8,23 @@ import math
 from decimal import Decimal, InvalidOperation, ROUND_DOWN
 
 
-def untraded_quote_outlier(hourly, lookback=21):
-    """Identify a large zero-trade quote excursion contaminating entry indicators.
+def untraded_quote_outlier(hourly, lookback=220):
+    """Block untraded fake closes while their EMA effect remains, wicks for 21h.
 
-    Zero volume alone does NOT invalidate Alpaca midpoint bars; a large
-    untraded excursion does. Inspect only finalized candles already supplied.
+    An abnormal close contaminates the 200-hour EMA. A wick-only outlier
+    contaminates the 20-hour breakout high and 14-hour ATR, not the EMA.
+    All supplied candles are already finalized; no future bars are considered.
     """
-    for bar in hourly[-lookback:]:
+    sample = hourly[-lookback:]
+    for index, bar in enumerate(sample):
         try:
             o, h, l, c, v = (float(bar[key]) for key in ("o", "h", "l", "c", "v"))
             if not all(math.isfinite(x) for x in (o, h, l, c, v)):
                 return {"reason": "nonfinite_candle", "bar_at": bar.get("ts")}
             if min(o, h, l, c) <= 0 or h < max(o, c, l) or l > min(o, c, h) or v < 0:
                 return {"reason": "invalid_candle", "bar_at": bar.get("ts")}
-            if v == 0 and (h / l - 1 > 0.12 or abs(c / o - 1) > 0.08):
+            if v == 0 and (abs(c / o - 1) > 0.08 or
+                           (index >= len(sample) - 21 and h / l - 1 > 0.12)):
                 return {"reason": "untraded_quote_outlier", "bar_at": bar.get("ts")}
         except (KeyError, ValueError, TypeError, ZeroDivisionError, OverflowError):
             return {"reason": "invalid_candle", "bar_at": bar.get("ts")}
