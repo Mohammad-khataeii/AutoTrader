@@ -616,8 +616,8 @@ def evaluate_completed_bars(symbol, hourly, daily, now, *, allow_continuation=Fa
         return observation("WAIT","latest_completed_hourly_bar_missing")
     # Alpaca may emit midpoint-only candles with no trades. A zero-volume
     # >12% excursion is not executable price confirmation (TRUMP-like spike).
-    # Keep raw evidence intact; fail closed until the bad bar leaves the
-    # 20-hour breakout and 14-hour ATR windows.
+    # Keep raw evidence intact. Block a fake close while it could distort
+    # the 200h EMA; block a fake wick while it distorts 20h breakout/14h ATR.
     from .crypto_trade_safety import untraded_quote_outlier
     bad = untraded_quote_outlier(hourly)
     if bad:
