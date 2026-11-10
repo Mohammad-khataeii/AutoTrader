@@ -842,6 +842,35 @@ def _open_window(client, day, now):
         return False
 
 
+def _record_verified_account_peak(snapshot):
+    """Remember a genuine Alpaca portfolio-history peak on routine broker GETs.
+
+    Without this, the fail-closed fallback would have no evidence unless a
+    stock BUY happened to reach the allocation stage before the outage.
+    No invented values, no orders, and no change to drawdown thresholds.
+    """
+    account=snapshot.get("account") or {}
+    identifier=account.get("id")
+    history=snapshot.get("history") or {}
+    values=history.get("equity",[])
+    if not identifier or not isinstance(values,list):
+        return False
+    marks=[money(x,Decimal(0)) for x in values if x is not None]
+    verified=[x for x in marks if x>0]
+    eq=money(account.get("equity"),Decimal(0))
+    if not verified or eq<=0:
+        return False
+    saved=one("SELECT high_water FROM sw_paper_risk_peaks WHERE account_id=?",
+              (identifier,))
+    high=max(verified+[eq,money(saved["high_water"]) if saved else Decimal(0)])
+    with connect() as c:
+        c.execute("""INSERT INTO sw_paper_risk_peaks(account_id,high_water,verified_at)
+          VALUES(?,?,?) ON CONFLICT(account_id) DO UPDATE SET
+          high_water=excluded.high_water,verified_at=excluded.verified_at""",
+          (identifier,str(high),utc()))
+    return True
+
+
 def _entry_budget(snapshot, sectors, sector, active, known):
     account = snapshot["account"]
     eq, cash, last, cash_buying_power = (
@@ -1291,6 +1320,13 @@ def _paper_cycle(now=None):
             snapshot = client.snapshot()
             account_id = snapshot["account"]["id"]
             _linked_account(account_id)
+            # Populate verified risk evidence every broker cycle, not only
+            # when a rare new stock BUY reaches its budget calculation.
+            try:
+                _record_verified_account_peak(snapshot)
+            except Exception as exc:
+                log.warning("StocksWatch broker high-water observation unavailable: %s",
+                            type(exc).__name__)
             _publish_snapshot(snapshot)
             _refresh_market_clock(client, now)
             unresolved = _reconcile(client, account_id, snapshot["open_orders"])
