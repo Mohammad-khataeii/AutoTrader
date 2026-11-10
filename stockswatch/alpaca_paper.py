@@ -1189,18 +1189,7 @@ def _preview_and_submit(client, snapshot, signals, day, now):
                 "/v2/orders", {"status": "open", "limit": 500, "nested": "false"}
             )
 
-            def positions_key(items):
-                return {
-                    p.get("symbol"): (
-                        p.get("asset_id"),
-                        p.get("qty"),
-                        p.get("qty_available"),
-                        p.get("side"),
-                        p.get("avg_entry_price"),
-                    )
-                    for p in items
-                }
-
+            from .broker_shared_state import shared_state_matches
             if (
                 any(
                     fresh_account.get(k) != account.get(k)
@@ -1213,13 +1202,7 @@ def _preview_and_submit(client, snapshot, signals, day, now):
                         "trading_blocked",
                     )
                 )
-                or not isinstance(fresh_positions, list)
-                or not isinstance(fresh_orders, list)
-                or positions_key(fresh_positions) != positions_key(
-                    snapshot["positions"]+snapshot.get("other_positions", []))
-                or {o.get("id") for o in fresh_orders} != active_ids
-                or {o.get("id"):o for o in fresh_orders}
-                   != {o.get("id"):o for o in all_active}
+                or not shared_state_matches(snapshot,fresh_positions,fresh_orders)
             ):
                 return {**result, "status": "BROKER_STATE_CHANGED_RECHECK_NEXT_CYCLE"}
             if action == "BUY":
