@@ -26,8 +26,14 @@ def _fresh(value,now,seconds):
 def snapshot(service,now=None):
     now=now or datetime.now(UTC)
     day=completed_day(now)
-    opened,_=session(next_day(day))
+    target=next_day(day)
+    opened,_=session(target)
     eod_open=opened<=now<opened+OPEN_WINDOW
+    # Once today's opening admission expires, show the following session
+    # rather than an already-past "next" opening time.
+    next_open=opened
+    if now>=opened+OPEN_WINDOW:
+        next_open=session(next_day(target))[0]
     phase=phase_at(now)
     # Read-only means not even refreshing the account through Alpaca here.
     with connect() as c:
@@ -85,7 +91,7 @@ def snapshot(service,now=None):
         "session_routes":{
             "eod_admission":"FIRST_60_MINUTES_CORE_ONLY",
             "eod_window_open":eod_open,
-            "next_eod_window":opened.isoformat(),
+            "next_eod_window":next_open.isoformat(),
             "intraday_phase":phase.name,
             "independent_intraday_order_gate":order_gate(),
             "late_session_eod_entries":False,
