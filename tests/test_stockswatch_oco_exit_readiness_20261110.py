@@ -178,6 +178,8 @@ class ReadinessRiskRegressions(unittest.TestCase):
 
     def test_missing_broker_history_requires_verified_recent_highwater(self):
         self.assertIn("CREATE TABLE IF NOT EXISTS sw_paper_risk_peaks",PAPER)
+        self.assertIn("def _record_verified_account_peak(snapshot):",PAPER)
+        self.assertIn("_record_verified_account_peak(snapshot)",PAPER)
         self.assertIn("timedelta(days=3)",PAPER)
         self.assertIn("alpaca_paper_risk_history_never_verified",PAPER)
         self.assertIn("alpaca_paper_risk_history_missing_or_stale",PAPER)
