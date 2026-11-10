@@ -33,6 +33,16 @@ class CryptoSafetyTests(unittest.TestCase):
                  "c": 100.1, "v": 0} for i in range(25)]
         self.assertIsNone(untraded_quote_outlier(bars))
 
+    def test_fake_close_stays_blocked_while_ema200_uses_it(self):
+        bars=[{"ts":str(i),"o":100,"h":101,"l":99,"c":100,"v":0}
+              for i in range(220)]
+        bars[100]={"ts":"fake-close","o":100,"h":133,"l":99,"c":132,"v":0}
+        self.assertEqual(untraded_quote_outlier(bars)["bar_at"],"fake-close")
+        # The same old wick, with a normal close, no longer affects ATR14
+        # or the 20h breakout; it should not suppress trading for 200h.
+        bars[100]["c"]=100
+        self.assertIsNone(untraded_quote_outlier(bars))
+
     def test_positive_volume_market_jump_not_blindly_quarantined(self):
         bars = [{"ts": "02", "o": 100, "h": 135, "l": 100,
                  "c": 130, "v": 200}]
