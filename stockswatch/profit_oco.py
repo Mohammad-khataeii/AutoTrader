@@ -489,7 +489,8 @@ def request_strategy_exit(client,snapshot,signal,account_id,now):
     bounds=session(now.astimezone(NY).date().isoformat())
     if not bounds[0]<=now<bounds[1]:
         return "oco_exit_market_closed"
-    with IntradayData(background=True) as market:
+    from contextlib import closing
+    with closing(IntradayData(background=True)) as market:
         bid,_ = _find_live_quote(market,sym,now)
     try:
         # A sell LIMIT below a fresh bid is intended to execute promptly;
