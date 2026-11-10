@@ -106,6 +106,20 @@ CREATE TABLE IF NOT EXISTS ac_managed (
  symbol TEXT PRIMARY KEY, account_id TEXT NOT NULL,
  entry_client_id TEXT NOT NULL, stop TEXT NOT NULL, target TEXT NOT NULL,
  entered_at TEXT NOT NULL);
+-- First-seen decision for each completed pair/hour and distinct reason.
+-- Existing ac_signals remains a mutable UI snapshot; this is append-only.
+CREATE TABLE IF NOT EXISTS ac_signal_audit (
+ symbol TEXT NOT NULL, bar_at TEXT NOT NULL, first_evaluated_at TEXT NOT NULL,
+ action TEXT NOT NULL, reason TEXT NOT NULL, score REAL NOT NULL,
+ price REAL NOT NULL, gates_json TEXT NOT NULL,
+ PRIMARY KEY(symbol,bar_at,action,reason));
+CREATE INDEX IF NOT EXISTS ac_signal_audit_at ON ac_signal_audit(first_evaluated_at);
+-- Only crypto BUY candidates are stored. No credentials or broker account IDs.
+CREATE TABLE IF NOT EXISTS ac_admission_audit (
+ symbol TEXT NOT NULL, bar_at TEXT NOT NULL, first_checked_at TEXT NOT NULL,
+ outcome TEXT NOT NULL, details_json TEXT NOT NULL,
+ PRIMARY KEY(symbol,bar_at,outcome));
+CREATE INDEX IF NOT EXISTS ac_admission_audit_at ON ac_admission_audit(first_checked_at);
 """
 
 class CryptoDataError(RuntimeError):
@@ -298,13 +312,30 @@ class CryptoData:
         return output, token
 
     def latest_bid(self, symbol):
-        # Execution always performs its OWN fresh quote read. Never use the
-        # UI's cached snapshot for sizing, entry, or protective exits.
+        # Protective exits continue to use independently refreshed bid/ask.
         if symbol not in EXECUTION_PAIRS:
             raise CryptoDataError("crypto_execution_pair_not_usd_or_unlisted")
         body = self.get("/v1beta3/crypto/us/latest/quotes", {"symbols":symbol})
         quote = _checked_quote(body.get("quotes", {}).get(symbol), datetime.now(UTC))
         return quote["bid"], quote["ask"], quote["observed_at"]
+
+    def latest_entry_quote(self, symbol):
+        """Independent, uncached bid/ask with *positive* visible top-of-book sizes.
+
+        Bid/ask sizes are mandatory for NEW paper BUYs only, never for existing
+        position stop/target exits. Unknown depth blocks new entries.
+        """
+        if symbol not in EXECUTION_PAIRS:
+            raise CryptoDataError("crypto_execution_pair_not_usd_or_unlisted")
+        body = self.get("/v1beta3/crypto/us/latest/quotes", {"symbols": symbol})
+        raw = body.get("quotes", {}).get(symbol)
+        quote = _checked_quote(raw, datetime.now(UTC))
+        try:
+            quote["bid_size"] = _number(raw.get("bs"))
+            quote["ask_size"] = _number(raw.get("as"))
+        except (AttributeError, CryptoDataError):
+            raise CryptoDataError("crypto_entry_depth_missing_or_invalid") from None
+        return quote
 
 
 def _floor(now,tf):
@@ -583,6 +614,16 @@ def evaluate_completed_bars(symbol, hourly, daily, now, *, allow_continuation=Fa
     expected=_floor(now,"1Hour")-timedelta(hours=1)
     if last != expected:
         return observation("WAIT","latest_completed_hourly_bar_missing")
+    # Alpaca may emit midpoint-only candles with no trades. A zero-volume
+    # >12% excursion is not executable price confirmation (TRUMP-like spike).
+    # Keep raw evidence intact; fail closed until the bad bar leaves the
+    # 20-hour breakout and 14-hour ATR windows.
+    from .crypto_trade_safety import untraded_quote_outlier
+    bad = untraded_quote_outlier(hourly)
+    if bad:
+        return observation("WAIT", "crypto_" + bad["reason"], gates={
+            "market_data_quality": "BLOCKED", "outlier_bar_at": bad["bar_at"],
+        })
     h=[b["c"] for b in hourly];d=[b["c"] for b in daily]
     e20=_ema(h,20);e50=_ema(h,50);e200=_ema(h,200)
     d200=_ema(d,200)
@@ -678,9 +719,29 @@ def scan(now):
                     ON CONFLICT(symbol,bar_at) DO UPDATE SET
                      evaluated_at=excluded.evaluated_at,gates_json=excluded.gates_json""",
                     (symbol,s["bar_at"],now.isoformat(),json.dumps(s.get("gates") or {},sort_keys=True)))
+                if symbol in EXECUTION_PAIRS:
+                    c.execute("""INSERT OR IGNORE INTO ac_signal_audit
+                        (symbol,bar_at,first_evaluated_at,action,reason,score,price,gates_json)
+                        VALUES(?,?,?,?,?,?,?,?)""",
+                        (symbol,s["bar_at"],now.isoformat(),s["action"],s["reason"],
+                         s["score"],s["price"],json.dumps(s.get("gates") or {},sort_keys=True)))
     with connect() as c:
         c.execute("UPDATE ac_state SET last_cycle=?,last_error=NULL WHERE id=1",(now.isoformat(),))
     return evaluated
+
+
+def record_admission(symbol,bar_at,outcome,details=None,now=None):
+    """Append first occurrence of each candidate rejection/approval per hour."""
+    now=now or datetime.now(UTC)
+    if (symbol not in EXECUTION_PAIRS or not bar_at or not isinstance(outcome,str)
+            or not outcome or len(outcome)>100):
+        raise CryptoDataError("crypto_admission_audit_invalid")
+    with connect() as c:
+        c.execute("""INSERT OR IGNORE INTO ac_admission_audit
+          (symbol,bar_at,first_checked_at,outcome,details_json)
+          VALUES(?,?,?,?,?)""",
+          (symbol,bar_at,now.isoformat(),outcome,
+           json.dumps(details or {},sort_keys=True,separators=(",",":"))))
 
 
 def record_execution_outcome(outcome, now=None):
@@ -713,6 +774,10 @@ def dashboard():
       JOIN (SELECT symbol,MAX(bar_at) bar_at FROM ac_signal_gates GROUP BY symbol) s
         ON g.symbol=s.symbol AND g.bar_at=s.bar_at ORDER BY s.symbol""")
     outcomes=rows("SELECT evaluated_at,outcome FROM ac_execution_cycles ORDER BY id DESC LIMIT 30")
+    signal_audit=rows("""SELECT symbol,bar_at,first_evaluated_at,action,reason,score,price,gates_json
+         FROM ac_signal_audit ORDER BY first_evaluated_at DESC LIMIT 80""")
+    admission_audit=rows("""SELECT symbol,bar_at,first_checked_at,outcome,details_json
+         FROM ac_admission_audit ORDER BY first_checked_at DESC LIMIT 80""")
     broker=one("SELECT * FROM ac_broker_snapshot WHERE id=1")
     usd_signals=[x for x in signals if x["symbol"] in EXECUTION_PAIRS]
     nonusd_signals=[x for x in signals if x["symbol"] in RESEARCH_ONLY_PAIRS]
@@ -747,6 +812,8 @@ def dashboard():
       "signal_gate_evidence":[{"symbol":r["symbol"],"evaluated_at":r["evaluated_at"],
         "gates":json.loads(r["gates_json"])} for r in gates],
       "crypto_execution_outcomes":outcomes,
+      "immutable_signal_audit":signal_audit,
+      "immutable_admission_audit":admission_audit,
       "legacy_crypto_source_preserved":True,
       "disclaimer":"Historical bars are midpoint quotes, not executable prices. Crypto and stocks may share the existing Alpaca Paper account, but order journals stay separate. Short selling crypto is unsupported.",
     }
