@@ -83,6 +83,16 @@ class CryptoSafetyTests(unittest.TestCase):
                       {row[0] for row in db.execute("SELECT name FROM sqlite_master")})
         db.close()
 
+    def test_live_broker_patcher_changes_only_reviewed_buy_block(self):
+        from deploy.stockswatch.patch_live_crypto_paper import OLD, NEW, patch_source
+        patched=BROKER.read_text()
+        self.assertEqual(patched.count(NEW), 1)
+        original=patched.replace(NEW, OLD, 1)
+        self.assertEqual(patch_source(original), patched)
+        with self.assertRaises(ValueError):
+            patch_source(original.replace("crypto_new_entries_paused",
+                                          "another_pause_policy"))
+
     def test_broker_original_protection_untouched(self):
         a=CRYPTO.read_text()
         b=BROKER.read_text()
