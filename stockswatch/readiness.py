@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from .alpaca_paper import OPEN_WINDOW, broker_mode, orders_enabled
+from .alpaca_paper import broker_mode, orders_enabled
 from .intraday_policy import order_gate, phase_at
 from .sessions import completed_day, next_day, session
 from .storage import connect
@@ -28,11 +28,15 @@ def snapshot(service,now=None):
     day=completed_day(now)
     target=next_day(day)
     opened,_=session(target)
-    eod_open=opened<=now<opened+OPEN_WINDOW
+    # Readiness is DISPLAY ONLY. Use the reviewed 60-minute EOD policy as
+    # a label; never import a private broker constant from a hotfixed runtime.
+    # Actual order admission remains exclusively inside alpaca_paper._open_window.
+    eod_window=timedelta(hours=1)
+    eod_open=opened<=now<opened+eod_window
     # Once today's opening admission expires, show the following session
     # rather than an already-past "next" opening time.
     next_open=opened
-    if now>=opened+OPEN_WINDOW:
+    if now>=opened+eod_window:
         next_open=session(next_day(target))[0]
     phase=phase_at(now)
     # Read-only means not even refreshing the account through Alpaca here.
