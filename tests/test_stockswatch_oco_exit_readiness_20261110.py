@@ -152,6 +152,18 @@ class ReadinessRiskRegressions(unittest.TestCase):
         self.assertIn("@app.get('/api/stockswatch/trading-readiness', dependencies=[Depends(authenticated)])",API)
         self.assertIn("return snapshot(service)",API)
 
+    def test_readiness_does_not_import_missing_live_broker_window_constant(self):
+        # The deployed custom Alpaca broker can omit OPEN_WINDOW entirely.
+        # Importing it in the read-only UI module caused Docker smoke failure.
+        module=ast.parse(READY)
+        broker_imports=[n for n in module.body if isinstance(n,ast.ImportFrom)
+                        and n.module=="alpaca_paper"]
+        self.assertEqual(len(broker_imports),1)
+        self.assertNotIn("OPEN_WINDOW",
+                         [n.name for n in broker_imports[0].names])
+        self.assertIn("eod_window=timedelta(hours=1)",READY)
+        self.assertIn("alpaca_paper._open_window",READY)
+
     def test_process_health_not_used_as_trading_authorization(self):
         self.assertIn("health_semantics",READY)
         self.assertIn("broker_cycle_not_recent",READY)
