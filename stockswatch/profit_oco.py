@@ -389,6 +389,147 @@ def _sync(client,record,group):
     return "active_oco_verified"
 
 
+def _verify_strategy_exit(nested,record,request):
+    """Prove replacement of the SAME existing OCO, never authorize a new SELL.
+
+    No status/identity certainty means no retry and no silent release of shares.
+    This is intentionally independent of the original target-price validator:
+    that target has been deliberately reduced for a confirmed strategy exit.
+    """
+    matches=[x for x in (nested or []) if
+             x.get("client_order_id")==record["client_id"]]
+    if len(matches)!=1:
+        return "oco_exit_broker_order_unverified_no_repeat"
+    root=matches[0]
+    if (root.get("symbol")!=record["symbol"] or root.get("side")!="sell"
+            or root.get("order_class")!="oco" or root.get("type")!="limit"
+            or root.get("time_in_force")!="gtc"
+            or root.get("status") not in _STATES
+            or (root.get("id")!=request["root_order_id"]
+                and root.get("replaces")!=request["root_order_id"])):
+        return "oco_exit_replacement_identity_unverified"
+    legs=root.get("legs")
+    if not isinstance(legs,list):
+        return "oco_exit_stop_leg_unavailable"
+    stops=[x for x in legs if isinstance(x,dict)
+           and x.get("side")=="sell" and x.get("type")=="stop"
+           and x.get("status") in _STATES]
+    if len(stops)!=1 or stops[0].get("id")!=record["stop_leg_id"]:
+        return "oco_exit_stop_leg_changed"
+    try:
+        stop=profit_lock.decimal(stops[0]["stop_price"])
+        target=profit_lock.decimal(root["limit_price"])
+        qty=profit_lock.decimal(root["qty"])
+        requested=profit_lock.decimal(request["requested_limit"])
+        original=profit_lock.decimal(record["target"])
+        if (stop<profit_lock.decimal(record["current_stop"])
+                or not stop<target<=requested<=original
+                or qty>profit_lock.decimal(record["qty"])):
+            return "oco_exit_stop_target_or_quantity_invalid"
+    except (KeyError,TypeError,ValueError):
+        return "oco_exit_levels_unverifiable"
+    if request["state"]!="VERIFIED_ACTIVE":
+        with connect() as c:
+            c.execute("""UPDATE sw_oco_exit_requests SET state='VERIFIED_ACTIVE',
+                  updated_at=?,note='broker_oco_target_and_stop_verified'
+                  WHERE account_id=? AND symbol=? AND entry_client_id=?""",
+                  (utc(),record["account_id"],record["symbol"],record["entry_client_id"]))
+    return "oco_exit_limit_verified"
+
+
+def request_strategy_exit(client,snapshot,signal,account_id,now):
+    """Retarget an OWNED paper OCO TP limit for an EOD exit, keeping its stop.
+
+    Never cancel the OCO and never place a competing SELL. Persist intent BEFORE
+    the one allowed PATCH, then verify against the broker on later cycles.
+    Unknown PATCH outcomes must not be blindly retried.
+    """
+    from . import alpaca_paper as paper
+    from .intraday_market import IntradayData
+    sym=signal["symbol"]
+    position=next((p for p in snapshot["positions"] if p.get("symbol")==sym),None)
+    if not position or position.get("side")!="long":
+        return "oco_exit_position_unavailable"
+    features=signal.get("features") or {}
+    try:
+        close=profit_lock.decimal(features["close"])
+        avg=profit_lock.decimal(position["avg_entry_price"])
+        sma50=profit_lock.decimal(features["sma50"])
+        triggered=(close<=avg*D(".92") or
+                   close<sma50*D(".96") or
+                   float(signal["score"])<0.8)
+    except (KeyError,ValueError,TypeError,OverflowError):
+        return "oco_exit_technical_evidence_missing"
+    if not triggered:
+        return "oco_protected_no_strategy_exit"
+    record=_saved(account_id,sym)
+    if not record or record["state"]!="ACTIVE" or not armed():
+        return "oco_exit_management_unavailable_or_paused"
+    existing=one("""SELECT state FROM sw_oco_exit_requests
+                    WHERE account_id=? AND symbol=?""",(account_id,sym))
+    if existing:
+        return "oco_exit_prior_request_"+existing["state"].lower()+"_no_repeat"
+    nested=_nested(client,account_id)
+    roots=[x for x in nested if x.get("client_order_id")==record["client_id"]]
+    if len(roots)!=1:
+        return "oco_exit_protection_root_unverified"
+    root=roots[0]
+    try:
+        leg,stop=_validate_pair(root,record)
+    except (ProtectionError,ValueError):
+        return "oco_exit_protection_unverified"
+    own_orders=[o for o in snapshot["open_orders"] if o.get("symbol")==sym]
+    if not own_orders or any(o.get("id") not in {root["id"],leg} for o in own_orders):
+        return "oco_exit_competing_or_unknown_stock_order"
+    if not paper._position_owned({**position,"qty_available":position["qty"]},
+                                 snapshot["fills"],account_id):
+        return "oco_exit_stock_ownership_unverified"
+    if not session(now.astimezone(NY).date().isoformat()):
+        return "oco_exit_market_closed"
+    bounds=session(now.astimezone(NY).date().isoformat())
+    if not bounds[0]<=now<bounds[1]:
+        return "oco_exit_market_closed"
+    with IntradayData(background=True) as market:
+        bid,_ = _find_live_quote(market,sym,now)
+    try:
+        # A sell LIMIT below a fresh bid is intended to execute promptly;
+        # broker OCO still owns both mutually exclusive exits until fill.
+        # The revised TP MUST stay strictly above the existing broker stop.
+        price=profit_lock.floor_cent(bid*D(".9975"))
+        if not stop+D(".02")<price<profit_lock.decimal(record["target"]):
+            return "oco_exit_not_repriceable_without_crossing_protective_stop"
+    except (ValueError,TypeError):
+        return "oco_exit_invalid_live_limit"
+    stamp=utc()
+    with connect() as c:
+        c.execute("BEGIN IMMEDIATE")
+        updated=c.execute("""INSERT OR IGNORE INTO sw_oco_exit_requests
+          (account_id,symbol,entry_client_id,root_order_id,requested_limit,state,
+           requested_at,updated_at,note)
+          VALUES(?,?,?,?,?,'PREPARED',?,?,'paper_oco_exit_replace_prepared')""",
+          (account_id,sym,record["entry_client_id"],root["id"],str(price),stamp,stamp))
+        c.commit()
+    if updated.rowcount!=1:
+        return "oco_exit_prior_request_no_repeat"
+    try:
+        response=client._request("PATCH","/v2/orders/"+str(root["id"]),
+                                 json={"limit_price":str(price)})
+        if (not isinstance(response,dict) or response.get("symbol")!=sym
+                or response.get("side")!="sell"):
+            raise ProtectionError("oco_exit_replace_response_unverified")
+    except Exception:
+        with connect() as c:
+            c.execute("""UPDATE sw_oco_exit_requests
+                  SET state='UNCERTAIN',updated_at=?,note='patch_outcome_uncertain_no_retry'
+                  WHERE account_id=? AND symbol=?""",(utc(),account_id,sym))
+        return "oco_exit_replace_uncertain_do_not_repeat"
+    with connect() as c:
+        c.execute("""UPDATE sw_oco_exit_requests
+              SET state='ACKNOWLEDGED_PENDING_PROOF',updated_at=?,note='await_broker_nested_confirmation'
+              WHERE account_id=? AND symbol=?""",(utc(),account_id,sym))
+    return "oco_exit_replace_requested_keep_existing_stop"
+
+
 def _snapshot_position(report,record,pos,plan,reason):
     current_stop=record["broker_stop"] if record and record.get("state")=="ACTIVE" else None
     show_stop=record["current_stop"] if record else str(plan.initial_stop)
