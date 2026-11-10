@@ -170,6 +170,11 @@ class ReadinessRiskRegressions(unittest.TestCase):
         self.assertIn("request_strategy_exit(client,snapshot,signal,account_id,now)",PAPER)
         self.assertNotIn('if snapshot.get("other_open_orders"):\n        return',PAPER)
 
+    def test_pausing_new_stock_entries_does_not_disable_verified_exits(self):
+        self.assertIn("new_stock_entry_paused_exit_protection_continues",PAPER)
+        self.assertIn('if action == "BUY" and (one("SELECT paused',PAPER)
+        self.assertNotIn('return {**result, **preview, "status": "BROKER_PAUSED"}',PAPER)
+
     def test_late_eod_entry_policy_remains_separate_from_sip_intraday(self):
         self.assertIn('"late_session_eod_entries":False',READY)
         self.assertIn('"independent_intraday_order_gate":order_gate()',READY)
