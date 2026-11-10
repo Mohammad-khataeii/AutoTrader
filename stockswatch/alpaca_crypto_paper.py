@@ -537,7 +537,9 @@ def _run_paper_cycle_once(data,now=None):
                             s["reason"],notional=str(budget))
                     try:
                         ac.record_admission(s["symbol"],s["bar_at"],outcome,quote_stats,now)
-                    except ac.CryptoDataError:
+                    except Exception:
+                        # An audit write after submission must never re-submit
+                        # an otherwise acknowledged paper order.
                         log.warning("Crypto paper admission outcome not journaled")
                     if outcome=="paper_order_acknowledged":
                         with connect() as c:
