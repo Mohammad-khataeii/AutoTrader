@@ -37,6 +37,7 @@ class CashTests(unittest.TestCase):
                      order_class="oco",type="limit")
         stop=order(id="sl",side="sell",qty="10",price=None,
                    order_class="oco",type="stop",stop_price="90")
+        stop["status"]="held"  # Alpaca's normal contingent OCO stop-leg state
         self.assertEqual(reserve([parent,stop],[holding()],"10000","10000")["available_cash_usd"],Decimal("10000"))
     def test_two_unverified_sells_exceeding_inventory_block(self):
         a=order(id="a",side="sell",qty="10")

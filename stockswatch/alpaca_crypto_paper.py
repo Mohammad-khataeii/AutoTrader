@@ -13,6 +13,7 @@ import logging
 import os
 import re
 import threading
+import time
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal, ROUND_DOWN, InvalidOperation
 
@@ -97,10 +98,35 @@ class CryptoPaperClient:
             raise CryptoPaperError("crypto_paper_route_denied")
         if method=="POST" and path!="/v2/orders":
             raise CryptoPaperError("crypto_paper_post_denied")
-        try:r=self.http.request(method,path,**kwargs)
-        except httpx.TransportError:
-            raise CryptoPaperError("crypto_paper_transport_uncertain" if method=="POST"
-                                   else "crypto_paper_transport_unavailable") from None
+        # A GET has no broker side effects, so two bounded retries are safe.
+        # Never retry a POST: its outcome may already be accepted by Alpaca.
+        attempts=3 if method=="GET" else 1
+        r=None
+        for attempt in range(attempts):
+            try:
+                r=self.http.request(method,path,**kwargs)
+            except httpx.TransportError:
+                if method=="POST":
+                    raise CryptoPaperError("crypto_paper_transport_uncertain") from None
+                if attempt+1==attempts:
+                    raise CryptoPaperError("crypto_paper_transport_unavailable") from None
+                time.sleep(0.2*(attempt+1))
+                continue
+            if method=="GET" and r.status_code in (429,500,502,503,504) and attempt+1<attempts:
+                if r.status_code==429:
+                    try:
+                        delay=float(r.headers.get("Retry-After","0.4"))
+                        if not 0<=delay<=1:
+                            break
+                    except ValueError:
+                        break
+                else:
+                    delay=0.2*(attempt+1)
+                time.sleep(delay)
+                continue
+            break
+        if r is None:
+            raise CryptoPaperError("crypto_paper_transport_unavailable")
         if r.status_code==404 and path=="/v2/orders:by_client_order_id" and method=="GET":
             return None
         if not r.is_success:
