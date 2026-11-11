@@ -358,6 +358,15 @@ def dashboard():
     return enrich_dashboard(payload) if broker else payload
 
 
+@app.get("/api/stockswatch/session-audit", dependencies=[Depends(authenticated)])
+def session_audit(day: str, offset: int = 0, limit: int = 100):
+    from .session_audit import snapshot
+    try:
+        return snapshot(day, offset=offset, limit=limit)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from None
+
+
 @app.get("/api/stockswatch/intraday", dependencies=[Depends(authenticated)])
 def intraday():
     result = intraday_store.status()

@@ -94,6 +94,11 @@ CREATE TABLE IF NOT EXISTS sw_paper_risk_peaks (
  account_id TEXT PRIMARY KEY,
  high_water TEXT NOT NULL,
  verified_at TEXT NOT NULL);
+-- Decision evidence is advisory and cannot authorize or execute orders.
+CREATE TABLE IF NOT EXISTS sw_broker_decision_cycles (
+ at TEXT PRIMARY KEY, session_day TEXT NOT NULL,
+ status TEXT NOT NULL, reason TEXT, result_json TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS sw_broker_cycle_day ON sw_broker_decision_cycles(session_day,at);
 """
 
 
@@ -989,7 +994,7 @@ def _entry_budget(snapshot, sectors, sector, active, known):
     )
 
 
-def _payload_for(client, snapshot, signal, target, active, known, sectors, account_id):
+def _payload_for(client, snapshot, signal, target, active, known, sectors, account_id, *, entry_limit=None):
     symbol = signal["symbol"]
     if any(o.get("symbol") == symbol for o in active):
         raise PaperError("alpaca_paper_symbol_has_open_order")
@@ -1052,7 +1057,10 @@ def _payload_for(client, snapshot, signal, target, active, known, sectors, accou
     if not sector or sector == "Benchmark":
         raise PaperError("alpaca_paper_unknown_sector")
     budget = _entry_budget(snapshot, sectors, sector, active, known)
-    limit = (px * Decimal("1.005")).quantize(Decimal("0.01"), rounding=ROUND_DOWN)
+    ceiling = (px * Decimal("1.005")).quantize(Decimal("0.01"), rounding=ROUND_DOWN)
+    limit = money(entry_limit) if entry_limit is not None else ceiling
+    if limit < Decimal("0.01") or limit > ceiling or limit != limit.quantize(Decimal("0.01")):
+        raise PaperError("adaptive_limit_outside_certified_price_cap")
     qty = int(max(Decimal(0), budget) / limit / Decimal("1.01")) if limit >= 1 else 0
     if qty < 1:
         raise PaperError("alpaca_paper_cash_or_exposure_cap")
@@ -1064,7 +1072,7 @@ def _payload_for(client, snapshot, signal, target, active, known, sectors, accou
     }, "certified_eod_signal"
 
 
-def _preview_and_submit(client, snapshot, signals, day, now):
+def _preview_and_submit(client, snapshot, signals, day, now, *, protection=None):
     result = {
         "status": "NO_APPROVED_BROKER_SIGNAL",
         "processed": len(signals),
@@ -1141,6 +1149,25 @@ def _preview_and_submit(client, snapshot, signals, day, now):
     today = {r["symbol"] for r in intents}
     buys_today = sum(r["side"] == "BUY" for r in intents)
     sectors = {r["symbol"]: r["sector"] for r in rows("SELECT symbol,sector FROM assets")}
+    # Live-account protection must be verified before any additional BUY.
+    # Existing stock/crypto exits are never blocked by this entry-only rule.
+    uncovered = []
+    protection_missing = False
+    if protection is not None:
+        from .profit_oco import armed as protection_armed
+        proof = {p["symbol"]: p for p in protection.get("positions", [])}
+        owned = {r["symbol"] for r in rows("""SELECT DISTINCT symbol FROM sw_alpaca_intents
+          WHERE account_id=? AND side='BUY' AND broker_order_id IS NOT NULL
+            AND client_id LIKE 'swp2-%'""", (account_id,))}
+        uncovered = sorted(
+            symbol for symbol in owned & known.keys()
+            if proof.get(symbol, {}).get("broker_state") != "ACTIVE"
+            or not proof.get(symbol, {}).get("verified_broker_stop")
+        )
+        protection_missing = (
+            not protection_armed() or not protection.get("paper_orders_enabled")
+            or protection.get("status") != "PAPER_OCO_MONITORING"
+        )
     target = next_day(day)
     for signal in sorted(
         signals, key=lambda s: (s["symbol"] not in known, -s["score"], s["symbol"])
@@ -1166,6 +1193,11 @@ def _preview_and_submit(client, snapshot, signals, day, now):
         if symbol not in known and snapshot.get("other_open_orders"):
             item["reason"] = "new_stock_buy_blocked_by_shared_crypto_orders"
             continue
+        if symbol not in known and protection is not None and (protection_missing or uncovered):
+            item["reason"] = ("stock_protection_not_armed_blocks_new_entry"
+                              if protection_missing else "existing_eod_long_unprotected_blocks_new_entry")
+            item["unprotected_owned_symbols"] = uncovered
+            continue
         # A long with an active, verified broker-native OCO must not receive
         # a second SELL. Request a one-shot reduction of its existing OCO TP
         # limit; its stop remains at the broker throughout the handoff.
@@ -1190,9 +1222,24 @@ def _preview_and_submit(client, snapshot, signals, day, now):
               (account_id,symbol)):
             item["reason"]="oco_exit_open_order_missing_requires_reconciliation"
             continue
+        entry_limit = None
+        if symbol not in known and signal["score"] >= SCORE_MIN and signal["regime"] == "RISK_ON":
+            from .entry_execution import mode as entry_mode, observe as observe_entry
+            try:
+                if entry_mode() == "adaptive":
+                    timing = observe_entry(signal, now)
+                    item["entry_timing"] = timing
+                    if timing["status"] != "READY":
+                        item["reason"] = timing["reason"]
+                        continue
+                    entry_limit = timing["limit_price"]
+            except ValueError:
+                item["reason"] = "adaptive_entry_configuration_invalid"
+                continue
         try:
             payload, reason = _payload_for(
-                client, snapshot, signal, target, active, known, sectors, account_id
+                client, snapshot, signal, target, active, known, sectors, account_id,
+                entry_limit=entry_limit,
             )
         except PaperError as exc:
             item["reason"] = str(exc)
@@ -1301,9 +1348,26 @@ def _preview_and_submit(client, snapshot, signals, day, now):
     return result
 
 
+def _record_broker_cycle(result, now):
+    # Broker GET failures and rejected decisions are valuable audit evidence.
+    # This write never changes brokerage intent, quantities or account P&L.
+    try:
+        observed = now or datetime.now(UTC)
+        record = json.dumps(result, default=str, separators=(",", ":"))
+        with connect() as c:
+            c.execute("""INSERT OR REPLACE INTO sw_broker_decision_cycles
+              (at,session_day,status,reason,result_json) VALUES(?,?,?,?,?)""",
+              (observed.isoformat(),observed.astimezone(NY).date().isoformat(),
+               result.get("status","UNKNOWN"),result.get("reason"),record))
+    except Exception as exc:
+        log.warning("StocksWatch decision audit write unavailable: %s",type(exc).__name__)
+
+
 def paper_cycle(now=None):
     with broker_cycle_lock:
-        return _paper_cycle(now)
+        result = _paper_cycle(now)
+        _record_broker_cycle(result,now)
+        return result
 
 
 def _paper_cycle(now=None):
@@ -1316,7 +1380,7 @@ def _paper_cycle(now=None):
         "at": utc(),
     }
     try:
-        with PaperClient() as client:
+        with PaperClient(retry_reads=True) as client:
             snapshot = client.snapshot()
             account_id = snapshot["account"]["id"]
             _linked_account(account_id)
@@ -1374,7 +1438,7 @@ def _paper_cycle(now=None):
             # exits for owned shares or existing broker-native OCO protection.
             if configuration or day is None:
                 return {**result, "status": "NO_CERTIFIED_BENCHMARK", "reason": configuration}
-            return _preview_and_submit(client, snapshot, signals, day, now)
+            return _preview_and_submit(client, snapshot, signals, day, now, protection=protected)
     except PaperError as exc:
         if str(exc).startswith("alpaca_paper_http_") or str(exc) in {
             "alpaca_paper_credentials_missing",
