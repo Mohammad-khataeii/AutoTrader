@@ -19,4 +19,5 @@ jobs:
       - run: python -m compileall -q stockswatch
       - run: python -m pytest -q --confcutdir=tests/stockswatch tests/stockswatch/test_nov10_entry_execution.py
       - run: PYTHONPATH=. python tests/test_stockswatch_oco_exit_readiness_20261110.py
+      - run: sudo install -d -o "$USER" -g "$USER" /stockswatch-data
       - run: python -m pytest -q --confcutdir=tests/stockswatch tests/stockswatch/test_broker_lifecycle.py tests/stockswatch/test_profit_oco.py

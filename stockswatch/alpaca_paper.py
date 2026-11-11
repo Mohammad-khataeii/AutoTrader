@@ -1380,7 +1380,10 @@ def _paper_cycle(now=None):
         "at": utc(),
     }
     try:
-        with PaperClient(retry_reads=True) as client:
+        with PaperClient() as client:
+            # Safe GET retries only. Keep constructor ABI for injected broker fakes.
+            if hasattr(client, 'retry_reads'):
+                client.retry_reads = True
             snapshot = client.snapshot()
             account_id = snapshot["account"]["id"]
             _linked_account(account_id)
