@@ -59,7 +59,7 @@ def snapshot(service,now=None):
     status=broker.get("status","UNKNOWN")
     healthy_broker=service.broker_task is not None and not service.broker_task.done()
     recent_broker=_fresh(broker.get("at"),now,150)
-    bad_statuses={"BROKER_CYCLE_ERROR","BROKER_CHECK_FAILED",
+    bad_statuses={"BLOCKED_BY_PROTECTION","BROKER_CYCLE_ERROR","BROKER_CHECK_FAILED",
        "UNCERTAIN_BROKER_INTENT","BROKER_ORDER_UNCERTAIN",
        "BROKER_ORDER_WITHOUT_LOCAL_INTENT","BROKER_STATE_CHANGED_RECHECK_NEXT_CYCLE",
        "PROTECTION_MONITOR_UNAVAILABLE"}

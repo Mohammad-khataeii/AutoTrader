@@ -1345,6 +1345,19 @@ def _preview_and_submit(client, snapshot, signals, day, now, *, protection=None)
                 "status": "BROKER_REJECTED" if status == "rejected" else "BROKER_ACKNOWLEDGED",
                 "broker_orders_submitted": 1,
             }
+    # Do not report a safety veto as "NO_APPROVED_BROKER_SIGNAL".
+    # There may be valid candidates, but existing broker protection must
+    # first be proven. This is an advisory result, never an order bypass.
+    protection_vetoes={
+        "stock_protection_not_armed_blocks_new_entry",
+        "existing_eod_long_unprotected_blocks_new_entry",
+    }
+    blocked=[item["symbol"] for item in result["why_no_trade"]
+             if item.get("reason") in protection_vetoes]
+    if blocked:
+        result.update(status="BLOCKED_BY_PROTECTION",
+                      reason="existing_stock_oco_protection_requires_broker_verification",
+                      affected_candidate_symbols=sorted(set(blocked)))
     return result
 
 
