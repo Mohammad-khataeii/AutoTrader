@@ -108,6 +108,11 @@ class OCOExitRegressions(unittest.TestCase):
         record,req,root=self._data()
         self.assertEqual(self._verify()([root],record,req),"oco_exit_limit_verified")
 
+    def test_held_stop_leg_stays_verified_during_strategy_exit(self):
+        record,req,root=self._data()
+        root["legs"][0]["status"]="held"
+        self.assertEqual(self._verify()([root],record,req),"oco_exit_limit_verified")
+
     def test_missing_parent_never_authorizes_another_sell(self):
         record,req,root=self._data()
         self.assertIn("unverified",self._verify()([],record,req))
