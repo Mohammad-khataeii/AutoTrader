@@ -245,8 +245,12 @@ def _validate_pair(root,record):
     children=root.get("legs")
     if not isinstance(children,list):
         raise ProtectionError("protection_oco_legs_unavailable")
+    # Alpaca exposes the contingent stop-loss leg of an active OCO as
+    # status='held'. That is broker-side protection, not a missing stop.
+    # Do NOT accept 'held' for the active take-profit parent above.
     stops=[x for x in children if (isinstance(x,dict) and x.get("side")=="sell"
-           and x.get("type")=="stop" and x.get("status") in _STATES)]
+           and x.get("type")=="stop"
+           and x.get("status") in (_STATES | {"held"}))]
     if len(stops)!=1:
         raise ProtectionError("protection_oco_stop_missing")
     child=stops[0]
@@ -254,6 +258,11 @@ def _validate_pair(root,record):
         raise ProtectionError("protection_oco_stop_id_invalid")
     stop=profit_lock.decimal(child.get("stop_price"))
     qty=profit_lock.decimal(root["qty"])
+    child_qty=profit_lock.decimal(child.get("qty"))
+    # A held leg is useful only if it protects the SAME shares. Never
+    # interpret an unrelated/partial child as a fully protected position.
+    if child.get("symbol")!=record["symbol"] or child_qty!=qty:
+        raise ProtectionError("protection_oco_stop_quantity_or_symbol_mismatch")
     # Partial TP fills adjust remaining qty, which must never exceed entry qty.
     if qty>profit_lock.decimal(record["qty"]) or stop>=tp:
         raise ProtectionError("protection_oco_quantity_or_levels_invalid")
@@ -608,7 +617,11 @@ def cycle(client,snapshot,now=None,data=None):
     else:
         close_data=False
     try:
-        if enabled and core:
+        # Read-only reconciliation MUST continue even while UNKNOWN/UNVERIFIED
+        # records disable OCO mutations. Otherwise a valid broker-held stop
+        # is never rechecked and the account remains entry-blocked.
+        # Off-session reconciliation is deferred, not proof of a missing stop.
+        if core and (enabled or managed):
             nested=_nested(client,account)
         for p in snapshot["positions"]:
             if p.get("side")!="long" or p.get("asset_class")!="us_equity":
