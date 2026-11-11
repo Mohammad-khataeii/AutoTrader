@@ -1,0 +1,24 @@
+name: StocksWatch held-OCO recovery regression
+on:
+  push:
+    branches: [fix/stockswatch-oco-held-leg-recovery-20261111]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  held-stop-and-protection-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Offline dependencies
+        run: python -m pip install 'pytest>=8,<10' 'httpx>=0.27,<1' 'exchange-calendars>=4,<5'
+      - name: Compile changed modules
+        run: python -m compileall -q stockswatch tests/stockswatch/test_profit_oco.py tests/test_stockswatch_oco_exit_readiness_20261110.py
+      - name: Mock-only OCO broker verification and recovery
+        run: PYTHONPATH=. python -m pytest -q --confcutdir=tests/stockswatch tests/stockswatch/test_profit_oco.py
+      - name: Shared account and strategy exit readiness regressions
+        run: PYTHONPATH=. python tests/test_stockswatch_oco_exit_readiness_20261110.py
