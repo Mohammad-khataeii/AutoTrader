@@ -1,5 +1,7 @@
 """Pure regression checks for crypto order cash reservation and clean candles."""
 import unittest
+import httpx
+from unittest.mock import patch
 from decimal import Decimal
 from stockswatch.crypto_shared_orders import reserve, StockReservationError
 from stockswatch.crypto_data_quality import quarantine_untraded_spikes
@@ -47,6 +49,36 @@ class CashTests(unittest.TestCase):
     def test_no_credit_from_stock_sell(self):
         r=reserve([order(side="sell")],[holding()],"10000","20000")
         self.assertEqual(r["available_cash_usd"],Decimal("10000"))
+
+class BrokerReadTests(unittest.TestCase):
+    def test_broker_get_transport_recovers_without_post(self):
+        from stockswatch.alpaca_crypto_paper import CryptoPaperClient
+        calls=[]
+        def service(req):
+            calls.append(req.method)
+            if len(calls)==1:
+                raise httpx.ConnectError("mock-disconnect",request=req)
+            return httpx.Response(200,json=[])
+        with patch.dict("os.environ",{"STOCKSWATCH_ALPACA_PAPER_KEY":"mock-key",
+                                     "STOCKSWATCH_ALPACA_PAPER_SECRET":"mock-secret"}):
+            with CryptoPaperClient(transport=httpx.MockTransport(service)) as client:
+                value=client.request("GET","/v2/orders")
+        self.assertEqual(value,[])
+        self.assertEqual(calls,["GET","GET"])
+
+    def test_broker_post_network_uncertain_not_retried(self):
+        from stockswatch.alpaca_crypto_paper import CryptoPaperClient, CryptoPaperError
+        calls=[]
+        def service(req):
+            calls.append(req.method)
+            raise httpx.ConnectError("mock-disconnect",request=req)
+        with patch.dict("os.environ",{"STOCKSWATCH_ALPACA_PAPER_KEY":"mock-key",
+                                     "STOCKSWATCH_ALPACA_PAPER_SECRET":"mock-secret"}):
+            with CryptoPaperClient(transport=httpx.MockTransport(service)) as client:
+                with self.assertRaisesRegex(CryptoPaperError,"crypto_paper_transport_uncertain"):
+                    client.request("POST","/v2/orders",json={"symbol":"BTC/USD"})
+        self.assertEqual(calls,["POST"])
+
 
 class QualityTests(unittest.TestCase):
     def test_old_fake_close_quarantined_without_220_hour_freeze(self):
