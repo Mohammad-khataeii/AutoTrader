@@ -3,7 +3,7 @@ import unittest
 from decimal import Decimal
 from stockswatch.crypto_shared_orders import reserve, StockReservationError
 from stockswatch.crypto_data_quality import quarantine_untraded_spikes
-from stockswatch.crypto_recovery import assess
+from stockswatch.crypto_recovery import assess, benchmark_stabilized
 
 def order(symbol="AAPL",side="buy",qty="10",price="100",**kw):
     return dict(id=kw.pop("id","order1"),symbol=symbol,side=side,
@@ -67,6 +67,13 @@ class QualityTests(unittest.TestCase):
                          "insufficient_clean_hourly_bars")
 
 class RecoveryTests(unittest.TestCase):
+    def test_benchmark_requires_correct_hour_and_real_volume(self):
+        prices=[100,99.7,99.8,100]
+        bars=[{"ts":str(i),"c":v,"v":20} for i,v in enumerate(prices)]
+        self.assertTrue(benchmark_stabilized(bars,"3"))
+        self.assertFalse(benchmark_stabilized(bars,"4"))
+        bars[-1]["v"]=0
+        self.assertFalse(benchmark_stabilized(bars,"3"))
     def test_candidate_requires_causal_volume_and_reversal(self):
         rows=[bar(i) for i in range(25)]
         self.assertFalse(assess(rows,atr=0.5,rsi=50)["passed"])

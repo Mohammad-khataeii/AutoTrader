@@ -477,6 +477,17 @@ def _run_paper_cycle_once(data,now=None):
                 last_blocked = None
                 for s in sorted(signals,key=lambda x:x["symbol"]):
                     if s["action"]!="BUY" or s["symbol"] in pos:continue
+                    if s["reason"]=="post_selloff_recovery_confirmed" and s["symbol"]!="BTC/USD":
+                        from .crypto_recovery import benchmark_stabilized
+                        anchor=ac._floor(now,"1Hour").isoformat()
+                        btc=rows("""SELECT ts,c,v FROM ac_bars WHERE symbol='BTC/USD'
+                             AND timeframe='1Hour' AND ts<?
+                             ORDER BY ts DESC LIMIT 4""",(anchor,))[::-1]
+                        if not benchmark_stabilized(btc,s["bar_at"]):
+                            last_blocked="crypto_recovery_btc_not_stabilized"
+                            ac.record_admission(s["symbol"],s["bar_at"],last_blocked,
+                                                {"benchmark":"BTC/USD"},now)
+                            continue
                     asset=_fresh_asset(s["symbol"],now)
                     try:
                         quote=data.latest_entry_quote(s["symbol"])
