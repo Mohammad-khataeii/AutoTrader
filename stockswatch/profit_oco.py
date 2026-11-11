@@ -25,6 +25,9 @@ from .storage import connect, one, rows, utc
 log = logging.getLogger(__name__)
 PREFIX = "swg1-"
 _STATES = {"new","accepted","pending_new","partially_filled"}
+# Alpaca's OCO stop child is normally HELD while its take-profit is NEW.
+# HELD is not a terminal failure: accept it for STOP CHILDREN only.
+_STOP_STATES = _STATES | {"held"}
 _END = {"filled","canceled","expired","rejected","replaced"}
 _lock = threading.Lock()
 _last = {"status":"STARTING","positions":[],"paper_orders_enabled":False}
@@ -246,10 +249,14 @@ def _validate_pair(root,record):
     if not isinstance(children,list):
         raise ProtectionError("protection_oco_legs_unavailable")
     stops=[x for x in children if (isinstance(x,dict) and x.get("side")=="sell"
-           and x.get("type")=="stop" and x.get("status") in _STATES)]
+           and x.get("type")=="stop" and x.get("status") in _STOP_STATES)]
     if len(stops)!=1:
         raise ProtectionError("protection_oco_stop_missing")
     child=stops[0]
+    # The sibling must cover exactly the same still-open shares; accepting
+    # a smaller/unknown stop leg would misreport partially unprotected stock.
+    if profit_lock.decimal(child.get("qty"))!=profit_lock.decimal(root["qty"]):
+        raise ProtectionError("protection_oco_stop_quantity_mismatch")
     if not re.fullmatch(r"[0-9A-Za-z-]{8,100}",str(child.get("id",""))):
         raise ProtectionError("protection_oco_stop_id_invalid")
     stop=profit_lock.decimal(child.get("stop_price"))
@@ -413,7 +420,7 @@ def _verify_strategy_exit(nested,record,request):
         return "oco_exit_stop_leg_unavailable"
     stops=[x for x in legs if isinstance(x,dict)
            and x.get("side")=="sell" and x.get("type")=="stop"
-           and x.get("status") in _STATES]
+           and x.get("status") in _STOP_STATES]
     if len(stops)!=1 or stops[0].get("id")!=record["stop_leg_id"]:
         return "oco_exit_stop_leg_changed"
     try:
@@ -597,18 +604,22 @@ def cycle(client,snapshot,now=None,data=None):
     nested=None
     core=phase_at(now).name=="CORE"
     managed={r["symbol"]:r for r in rows("SELECT * FROM sw_protection WHERE account_id=?",(account,))}
-    uncertain_book=any(r["state"] in ("UNKNOWN","REPLACE_UNCERTAIN","UNVERIFIED") for r in managed.values())
-    if uncertain_book:
-        # Continue showing evidence, but do not submit new OCO orders or
-        # replacements while an ambiguous broker mutation needs review.
-        enabled=False
+    uncertain_book=any(r["state"] in ("UNKNOWN","REPLACE_UNCERTAIN","UNVERIFIED",
+                                      "PREPARED","ACKNOWLEDGED") for r in managed.values())
+    # Keep all mutations disabled while ANY unverified protection exists.
+    # Crucially, do not disable GET reconciliation: otherwise the manager
+    # traps itself in UNVERIFIED forever, even after Alpaca exposes a healthy
+    # broker-native OCO. A verified leg restores ACTIVE via _sync; purchases
+    # and stop changes can resume only on a subsequent independently clean cycle.
+    enabled=enabled and not uncertain_book
+    read_only_verify=armed() and core
     if enabled and core and data is None:
         data=IntradayData(background=True)
         close_data=True
     else:
         close_data=False
     try:
-        if enabled and core:
+        if read_only_verify:
             nested=_nested(client,account)
         for p in snapshot["positions"]:
             if p.get("side")!="long" or p.get("asset_class")!="us_equity":
