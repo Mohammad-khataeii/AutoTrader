@@ -6,8 +6,7 @@ set -Eeuo pipefail
 
 COMMIT="fcf1698edd49c33e2d733b4c8de7af4480e41955"
 REPO="Mohammad-khataeii/AutoTrader"
-SSH_HOST="$STOCKSWATCH_SSH_ALIAS"
-if [ -z "$SSH_HOST" ]; then SSH_HOST="aruba-vps"; fi
+SSH_HOST="${STOCKSWATCH_SSH_ALIAS:-aruba-vps}"
 PROJECT="autotrader-aruba-stockswatch"
 WORK="$(mktemp -d)"
 REMOTE=""
@@ -265,8 +264,7 @@ try:
         or env.get("STOCKSWATCH_PROTECTION_ALLOW_PAPER_ORDERS")!="1"):
         raise RuntimeError("paper_only_oco_permission_preflight_failed")
     run("docker","exec",old_container,python,"-c",
-        "import stockswatch.profit_oco, stocksWatchFix" if False
-        else "from stockswatch import profit_oco, alpaca_paper; assert profit_oco and alpaca_paper")
+        "from stockswatch import profit_oco, alpaca_paper; assert profit_oco and alpaca_paper")
     peer_ids=peer_snapshot()
     database=host_db(old)
     sqlite_preflight(database)
