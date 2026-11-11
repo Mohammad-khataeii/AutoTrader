@@ -581,7 +581,9 @@ def _rsi(values,n=14):
 
 
 def continuation_enabled():
-    """Persisted crypto-only control; no changes to stock order permissions."""
+    """Explicit paper-scoped switch; retain the historic persisted control."""
+    if os.getenv("ALPACA_CRYPTO_CONTINUATION_ENABLED","0")=="1":
+        return True
     from pathlib import Path
     from .storage import DB_PATH
     try:
@@ -591,7 +593,14 @@ def continuation_enabled():
         return False
 
 
-def evaluate_completed_bars(symbol, hourly, daily, now, *, allow_continuation=False):
+def recovery_mode():
+    """Default to research evidence, never silently activate recovery BUYs."""
+    mode=os.getenv("ALPACA_CRYPTO_RECOVERY_MODE","research").lower().strip()
+    return mode if mode in ("research","paper") else "research"
+
+
+def evaluate_completed_bars(symbol, hourly, daily, now, *,
+                            allow_continuation=False, allow_recovery=False):
     """Pure candle evaluation shared by live signals and offline replay."""
     if symbol not in PAIRS:
         raise CryptoDataError("crypto_pair_not_allowed")
@@ -621,12 +630,17 @@ def evaluate_completed_bars(symbol, hourly, daily, now, *, allow_continuation=Fa
     # >12% excursion is not executable price confirmation (TRUMP-like spike).
     # Keep raw evidence intact. Block a fake close while it could distort
     # the 200h EMA; block a fake wick while it distorts 20h breakout/14h ATR.
-    from .crypto_trade_safety import untraded_quote_outlier
-    bad = untraded_quote_outlier(hourly)
-    if bad:
-        return observation("WAIT", "crypto_" + bad["reason"], gates={
-            "market_data_quality": "BLOCKED", "outlier_bar_at": bad["bar_at"],
+    from .crypto_data_quality import quarantine_untraded_spikes
+    cleaned,quality=quarantine_untraded_spikes(hourly)
+    if quality["reason"]!="OK":
+        return observation("WAIT", "crypto_" + quality["reason"], gates={
+            "market_data_quality": "BLOCKED",
+            "outlier_bar_at": quality.get("bar_at"),
+            "quarantined": quality.get("quarantined",0),
         })
+    # The raw historical DB stays untouched. EMA and ATR cannot be inflated
+    # by a zero-volume, unexecuted 30% quote-only close from days earlier.
+    hourly=cleaned
     h=[b["c"] for b in hourly];d=[b["c"] for b in daily]
     e20=_ema(h,20);e50=_ema(h,50);e200=_ema(h,200)
     d200=_ema(d,200)
@@ -647,7 +661,13 @@ def evaluate_completed_bars(symbol, hourly, daily, now, *, allow_continuation=Fa
       "completed_hour_volume":hourly[-1]["v"],
       "hourly_close":h[-1],"daily_close":d[-1],
       "daily_ema200":round(d200,9),
+      "quality_quarantined_old_closes":quality["quarantined"],
     }
+    from .crypto_recovery import assess as recovery_assess
+    recovery=recovery_assess(hourly,atr,rsi)
+    gates["recovery_candidate"]=bool(recovery["passed"])
+    gates["recovery_paper_enabled"]=bool(allow_recovery)
+    gates.update({"recovery_"+key:value for key,value in recovery["checks"].items()})
     # This is a separate research-tested path, not a weakening of breakout.
     # The continuation control is checked per evaluation; it can be disabled
     # without changing the shared StocksWatch container or any broker orders.
@@ -660,6 +680,16 @@ def evaluate_completed_bars(symbol, hourly, daily, now, *, allow_continuation=Fa
     # Cross-quoted BTC/USDT, ETH/BTC, etc. are strictly research-only.
     if symbol in RESEARCH_ONLY_PAIRS:
         return observation("HOLD","non_usd_quote_research_only",score,gates=gates)
+    if allow_recovery and recovery["passed"] and hourly[-1]["v"]>0:
+        # Independent recovery policy, not a weakened EOD uptrend/EMA gate.
+        # Paper-only opt-in. Conservative 1.25 ATR stop, 2 ATR target;
+        # live quote and capital/depth checks remain with execution adapter.
+        stop=h[-1]-1.25*atr
+        target=h[-1]+2.0*atr
+        if stop>0 and target>h[-1]:
+            gates["entry_strategy"]="recovery_paper"
+            return observation("BUY","post_selloff_recovery_confirmed",score,
+                               round(stop,8),round(target,8),gates=gates)
     if not (trend and macro and healthy):
         return observation("HOLD","no_confirmed_spot_long_setup",score,gates=gates)
     breakout_entry = bool(breakout)
@@ -690,7 +720,8 @@ def signal(symbol, now=None):
     daily=rows("""SELECT * FROM ac_bars WHERE symbol=? AND timeframe='1Day'
        AND ts<? ORDER BY ts DESC LIMIT 260""",(symbol,day_end))[::-1]
     return evaluate_completed_bars(symbol, hourly, daily, now,
-                                   allow_continuation=continuation_enabled())
+                                   allow_continuation=continuation_enabled(),
+                                   allow_recovery=recovery_mode()=="paper")
 
 def scan(now):
     """Refresh-only research. Writes signal evidence, never broker orders."""
@@ -808,6 +839,7 @@ def dashboard():
       "execution_pairs":len(EXECUTION_PAIRS),
       "research_only_pairs":len(RESEARCH_ONLY_PAIRS),
       "continuation_enabled":continuation_enabled(),
+      "recovery_mode":recovery_mode(),
       "usd_signal_actions":{name:sum(x["action"]==name for x in usd_signals)
                              for name in ("BUY","HOLD","WAIT")},
       "research_only_wait_count":sum(x["action"]=="WAIT" for x in nonusd_signals),
