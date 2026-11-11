@@ -116,6 +116,82 @@ def test_invalid_oco_sibling_is_refused(monkeypatch,tmp_path):
     assert profit_oco._saved("account-1","AAPL")["state"]=="UNVERIFIED"
 
 
+
+def test_alpaca_held_stop_reconciles_unverified_without_duplicate_order(monkeypatch,tmp_path):
+    """Nov 11 real broker shape: OCO parent=new, contingent stop=held."""
+    _setup(monkeypatch,tmp_path)
+    monkeypatch.setenv("STOCKSWATCH_EXECUTION_BACKEND","alpaca_paper")
+    monkeypatch.setenv("STOCKSWATCH_ALPACA_PAPER_ALLOW_ORDERS","1")
+    monkeypatch.setenv("STOCKSWATCH_PROTECTION_ALLOW_PAPER_ORDERS","1")
+    client=FakeClient()
+    plan=profit_lock.initial("100","10","2")
+    profit_oco._create(client,"account-1",{"symbol":"AAPL","qty":"10"},
+                       plan,"swp2-entry",datetime.now(UTC),D("100"))
+    original=profit_oco._saved("account-1","AAPL")
+    with storage.connect() as c:
+        c.execute("UPDATE sw_protection SET state='UNVERIFIED',"
+                  "broker_stop=NULL,last_error='protection_oco_stop_missing' "
+                  "WHERE account_id=? AND symbol=?",("account-1","AAPL"))
+    root=_root(original,plan.initial_stop)
+    root["legs"][0]["status"]="held"
+    client.get=lambda path,args: [root]
+    monkeypatch.setattr(profit_oco,"_entry_id",lambda account,symbol:"swp2-entry")
+    from stockswatch import alpaca_paper as paper
+    monkeypatch.setattr(paper,"_position_owned",lambda *args:True)
+    snapshot={
+        "account":{"id":"account-1"},
+        "warnings":{"fills":False,"open_orders":False},
+        "positions":[{"symbol":"AAPL","asset_class":"us_equity","side":"long",
+                      "qty":"10","qty_available":"0","avg_entry_price":"100"}],
+        "open_orders":[{"id":root["id"],"symbol":"AAPL"}],
+        "fills":[]
+    }
+    # Wednesday 10am New York: market CORE, reconciliation allowed.
+    from datetime import datetime as dt
+    outcome=profit_oco.cycle(client,snapshot,now=dt(2026,11,11,15,tzinfo=UTC))
+    saved=profit_oco._saved("account-1","AAPL")
+    assert saved["state"]=="ACTIVE" and saved["last_error"] is None
+    assert D(saved["broker_stop"])==plan.initial_stop
+    assert outcome["positions"][0]["verified_broker_stop"]==str(plan.initial_stop)
+    assert len(client.orders)==1 # only the original mocked OCO POST
+
+
+def test_held_stop_must_cover_identical_shares_and_symbol(monkeypatch,tmp_path):
+    _setup(monkeypatch,tmp_path)
+    client=FakeClient()
+    plan=profit_lock.initial("100","10","2")
+    profit_oco._create(client,"account-1",{"symbol":"AAPL","qty":"10"},
+                       plan,"swp2-entry",datetime.now(UTC),D("100"))
+    record=profit_oco._saved("account-1","AAPL")
+    root=_root(record,plan.initial_stop)
+    root["legs"][0]["status"]="held"
+    assert profit_oco._sync(client,record,[root])=="active_oco_verified"
+    root["legs"][0]["qty"]="9"
+    with pytest.raises(profit_oco.ProtectionError,match="quantity_or_symbol_mismatch"):
+        profit_oco._validate_pair(root,profit_oco._saved("account-1","AAPL"))
+    root["legs"][0]["qty"]="10"
+    root["legs"][0]["symbol"]="MSFT"
+    with pytest.raises(profit_oco.ProtectionError,match="quantity_or_symbol_mismatch"):
+        profit_oco._validate_pair(root,profit_oco._saved("account-1","AAPL"))
+    root["legs"][0]["symbol"]="AAPL"
+    root["legs"][0]["status"]="canceled"
+    with pytest.raises(profit_oco.ProtectionError,match="protection_oco_stop_missing"):
+        profit_oco._validate_pair(root,profit_oco._saved("account-1","AAPL"))
+
+
+def test_parent_held_does_not_count_as_active_oco(monkeypatch,tmp_path):
+    _setup(monkeypatch,tmp_path)
+    client=FakeClient()
+    plan=profit_lock.initial("100","10","2")
+    profit_oco._create(client,"account-1",{"symbol":"AAPL","qty":"10"},
+                       plan,"swp2-entry",datetime.now(UTC),D("100"))
+    record=profit_oco._saved("account-1","AAPL")
+    root=_root(record,plan.initial_stop)
+    root["status"]="held"
+    root["legs"][0]["status"]="held"
+    with pytest.raises(profit_oco.ProtectionError,match="protection_oco_parent_invalid"):
+        profit_oco._validate_pair(root,record)
+
 def test_disarmed_by_default(monkeypatch,tmp_path):
     _setup(monkeypatch,tmp_path)
     monkeypatch.setenv("STOCKSWATCH_EXECUTION_BACKEND","alpaca_paper")

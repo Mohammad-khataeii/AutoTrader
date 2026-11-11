@@ -100,11 +100,17 @@ class OCOExitRegressions(unittest.TestCase):
               "side":"sell","order_class":"oco","type":"limit",
               "time_in_force":"gtc","status":"new","limit_price":"202.50",
               "qty":"4","legs":[{"id":"leg1","side":"sell","type":"stop",
-                                  "status":"new","stop_price":"190"}]}
+                                  "status":"new","stop_price":"190",
+                                  "symbol":"AAPL","qty":"4"}]}
         return record,request,root
 
     def test_verified_same_oco_lower_target_preserves_stop(self):
         record,req,root=self._data()
+        self.assertEqual(self._verify()([root],record,req),"oco_exit_limit_verified")
+
+    def test_held_contingent_stop_is_verified_during_exit_handoff(self):
+        record,req,root=self._data()
+        root["legs"][0]["status"]="held"
         self.assertEqual(self._verify()([root],record,req),"oco_exit_limit_verified")
 
     def test_missing_parent_never_authorizes_another_sell(self):
