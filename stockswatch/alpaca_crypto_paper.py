@@ -436,31 +436,19 @@ def _run_paper_cycle_once(data,now=None):
                 # existing AlpacaCrypto-owned LONG positions.
                 if bool((one("SELECT paused FROM ac_state WHERE id=1") or {}).get("paused",1)):
                     return "crypto_new_entries_paused"
-                # Pending US-equity SELL-to-close orders do not reserve cash
-                # for new crypto BUYs. Permit those existing stock exits while
-                # blocking unknown sides, pending stock BUYs and unmatched qty.
-                # Never cancel or modify the separate StocksWatch order book.
-                stock_positions={p.get("symbol"):p for p in snapshot["other_positions"]}
-                sell_qty={}
-                for order in snapshot["other_open_orders"]:
-                    symbol=order.get("symbol")
-                    if order.get("side")!="sell" or symbol not in stock_positions:
-                        return "crypto_shared_account_stock_orders_pending"
-                    position=stock_positions[symbol]
-                    if (position.get("side")!="long"
-                            or position.get("asset_class")!="us_equity"
-                            or not order.get("id") or not order.get("status")):
-                        return "crypto_shared_account_stock_orders_unverified"
-                    try:
-                        outstanding=money(order.get("qty"))-money(order.get("filled_qty"))
-                        held=money(position.get("qty"))
-                    except CryptoPaperError:
-                        return "crypto_shared_account_stock_orders_unverified"
-                    if outstanding<=0 or held<=0:
-                        return "crypto_shared_account_stock_orders_unverified"
-                    sell_qty[symbol]=sell_qty.get(symbol,Decimal(0))+outstanding
-                    if sell_qty[symbol]>held:
-                        return "crypto_shared_account_stock_sells_exceed_holdings"
+                # A stock limit BUY reserves its unfilled notional; an OCO
+                # stock SELL is not a second BUY and grants no crypto cash.
+                # Unknown/uncapped orders fail closed instead of globally
+                # refusing *every* otherwise safe crypto candidate.
+                from .crypto_shared_orders import reserve, StockReservationError
+                try:
+                    stock_reservation=reserve(
+                        snapshot["other_open_orders"],snapshot["other_positions"],
+                        snapshot["account"].get("cash"),
+                        snapshot["account"].get("non_marginable_buying_power"))
+                except StockReservationError as exc:
+                    return str(exc)
+                free_cash=stock_reservation["available_cash_usd"]
                 equity,buying=_limits(snapshot,now)
                 if any(p.get("side")!="long" for p in snapshot["positions"]):
                     raise CryptoPaperError("crypto_unrecognized_position_side")
@@ -511,10 +499,15 @@ def _run_paper_cycle_once(data,now=None):
                         ac.record_admission(s["symbol"],s["bar_at"],last_blocked,quote_stats,now)
                         continue
                     stop_fraction=loss_per_unit/money(ask)
-                    budget=min(equity*CAP_PER_SYMBOL,
+                    budget=min(equity*(CAP_PER_SYMBOL/Decimal("2")
+                                       if s["reason"]=="post_selloff_recovery_confirmed"
+                                       else CAP_PER_SYMBOL),
                                equity*CAP_CRYPTO_TOTAL-crypto_exposure,
                                buying*Decimal(".75"),
-                               equity*RISK_PER_TRADE/stop_fraction)
+                               free_cash*Decimal(".75"),
+                               equity*(RISK_PER_TRADE/Decimal("2")
+                                       if s["reason"]=="post_selloff_recovery_confirmed"
+                                       else RISK_PER_TRADE)/stop_fraction)
                     budget=budget.quantize(Decimal(".01"),rounding=ROUND_DOWN)
                     if budget<MIN_TRADE_USD:
                         last_blocked="crypto_entry_portfolio_budget_below_minimum"
@@ -531,6 +524,37 @@ def _run_paper_cycle_once(data,now=None):
                         continue
                     quote_stats["approved_notional_usd"]=str(budget)
                     quote_stats["depth_decision"]=depth_status
+                    quote_stats["reserved_stock_buy_usd"]=str(
+                        stock_reservation["reserved_stock_buys_usd"])
+                    # Broker account and both asset-class order books can
+                    # change between research and POST. Verify again using GET
+                    # only: never place an order from stale shared cash state.
+                    fresh=client.snapshot()
+                    from .broker_shared_state import shared_state_matches
+                    if (fresh["account"].get("id")!=snapshot["account"].get("id")
+                        or not shared_state_matches(
+                            {"positions":snapshot["positions"],
+                             "other_positions":snapshot["other_positions"],
+                             "open_orders":snapshot["orders"],
+                             "other_open_orders":snapshot["other_open_orders"]},
+                            fresh["positions"]+fresh["other_positions"],
+                            fresh["orders"]+fresh["other_open_orders"])
+                        or fresh["account"].get("cash")!=snapshot["account"].get("cash")):
+                        ac.record_admission(s["symbol"],s["bar_at"],
+                                            "crypto_shared_account_state_changed",{},now)
+                        return "crypto_shared_account_state_changed_recheck_next_cycle"
+                    try:
+                        revised=reserve(
+                            fresh["other_open_orders"],fresh["other_positions"],
+                            fresh["account"].get("cash"),
+                            fresh["account"].get("non_marginable_buying_power"))
+                    except StockReservationError as exc:
+                        ac.record_admission(s["symbol"],s["bar_at"],str(exc),{},now)
+                        return str(exc)
+                    if budget > revised["available_cash_usd"]*Decimal(".75"):
+                        ac.record_admission(s["symbol"],s["bar_at"],
+                                            "crypto_shared_cash_budget_changed",{},now)
+                        return "crypto_shared_cash_budget_changed_recheck_next_cycle"
                     ac.record_admission(s["symbol"],s["bar_at"],
                                         "crypto_entry_admitted",quote_stats,now)
                     outcome=_submit_intent(client,account,s["symbol"],"buy",s["bar_at"],
