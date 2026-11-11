@@ -88,6 +88,7 @@ class OCOExitRegressions(unittest.TestCase):
         return _function(OCO,"_verify_strategy_exit",{
             "profit_lock":Lock,"connect":lambda:None,"utc":lambda:"now",
             "_STATES":{"new","accepted","pending_new","partially_filled"},
+            "_STOP_STATES":{"new","accepted","pending_new","partially_filled","held"},
         })
 
     def _data(self):
