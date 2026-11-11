@@ -53,16 +53,26 @@ def snapshot(day, *, offset=0, limit=100):
           WHERE created_at>=? AND created_at<? ORDER BY created_at""", (a,b)) if "sw_alpaca_intents" in tables else []
         intraday_count = db.execute("""SELECT COUNT(*) FROM sw_intraday_cycles
           WHERE at>=? AND at<?""", (a,b)).fetchone()[0] if "sw_intraday_cycles" in tables else 0
-        intraday_cycles = query("""SELECT at,report_json FROM sw_intraday_cycles
+        intraday_cycles = query("""SELECT id,at,report_json FROM sw_intraday_cycles
           WHERE at>=? AND at<? ORDER BY at LIMIT ? OFFSET ?""", (a,b,limit,offset)) if "sw_intraday_cycles" in tables else []
         for row in intraday_cycles:
             report = json.loads(row.pop("report_json"))
+            observations = query("""SELECT symbol,action,evidence_json
+              FROM sw_intraday_observations WHERE cycle_id=?
+              ORDER BY symbol LIMIT 200""", (row.pop("id"),)) if "sw_intraday_observations" in tables else []
+            per_symbol = []
+            for observation in observations:
+                detail = json.loads(observation.pop("evidence_json"))
+                per_symbol.append({
+                    "symbol": observation["symbol"], "action": observation["action"],
+                    "reason": detail.get("reason"), "score": detail.get("score"),
+                    "candidate": detail.get("candidate"), "valid": detail.get("valid"),
+                    "feed": detail.get("feed"), "quote_at": detail.get("quote_at"),
+                })
             row.update(status=report.get("status"), execution=report.get("execution"),
                        order_gate=report.get("order_gate"), phase=report.get("phase"),
-                       market_risk=report.get("market_risk"),
-                       rows=[{"symbol":x.get("symbol"),"reason":x.get("reason"),
-                              "score":x.get("score"),"candidate":x.get("candidate")}
-                             for x in report.get("rows", [])][:150])
+                       market_risk=report.get("market_risk"), rows=per_symbol,
+                       observations_exported=len(per_symbol))
         if "sw_intraday_observations" in tables:
             observed = query("""SELECT action,COUNT(*) AS count
               FROM sw_intraday_observations WHERE at>=? AND at<?
