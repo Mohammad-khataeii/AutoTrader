@@ -420,15 +420,19 @@ def _verify_strategy_exit(nested,record,request):
     legs=root.get("legs")
     if not isinstance(legs,list):
         return "oco_exit_stop_leg_unavailable"
+    # A verified contingent Alpaca OCO stop leg normally reports 'held'.
     stops=[x for x in legs if isinstance(x,dict)
            and x.get("side")=="sell" and x.get("type")=="stop"
-           and x.get("status") in _STATES]
+           and x.get("status") in (_STATES | {"held"})]
     if len(stops)!=1 or stops[0].get("id")!=record["stop_leg_id"]:
         return "oco_exit_stop_leg_changed"
     try:
         stop=profit_lock.decimal(stops[0]["stop_price"])
         target=profit_lock.decimal(root["limit_price"])
         qty=profit_lock.decimal(root["qty"])
+        child_qty=profit_lock.decimal(stops[0]["qty"])
+        if stops[0].get("symbol")!=record["symbol"] or child_qty!=qty:
+            return "oco_exit_stop_quantity_or_symbol_mismatch"
         requested=profit_lock.decimal(request["requested_limit"])
         original=profit_lock.decimal(record["target"])
         if (stop<profit_lock.decimal(record["current_stop"])

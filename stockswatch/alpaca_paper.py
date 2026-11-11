@@ -1345,6 +1345,14 @@ def _preview_and_submit(client, snapshot, signals, day, now, *, protection=None)
                 "status": "BROKER_REJECTED" if status == "rejected" else "BROKER_ACKNOWLEDGED",
                 "broker_orders_submitted": 1,
             }
+    # A wall-clock WAITING display hid thousands of substantive safety
+    # rejections. Preserve the exact per-symbol reasons and report the
+    # protection interlock explicitly whenever new BUYs are suppressed.
+    blocking={"stock_protection_not_armed_blocks_new_entry",
+              "existing_eod_long_unprotected_blocks_new_entry"}
+    if any(item.get("reason") in blocking for item in result["why_no_trade"]):
+        result["status"]="BLOCKED_BY_PROTECTION"
+        result["reason"]="existing_oco_protection_needs_broker_verification"
     return result
 
 
