@@ -64,7 +64,7 @@ def rank(observations):
             ]
             changes = [b / a - 1 for a, b in itertools.pairwise(last)]
             if len(set(changes)) > 1 and len(set(market)) > 1:
-                corr = correlation(changes, market)
+                corr = correlation([float(v) for v in changes], [float(v) for v in market])
         r.update(
             short_score=str(strength),
             short_relative=str(relative) if relative is not None else None,

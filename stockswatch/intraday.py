@@ -760,6 +760,11 @@ class IntradayEngine:
                 "delayed_sip": "SIP_15_MINUTE_DELAY",
             }.get(feed, "UNSUPPORTED"),
         }
+        overnight = phase.name == "OVERNIGHT"
+        snapshot_only = overnight and feed == "overnight"
+        if overnight:
+            report["execution"] = "overnight_monitor_only"
+        data_sources = report["data_sources"] = {}
         snapshots, bars, reference = {}, {}, {}
         if phase.start:
             try:
@@ -778,7 +783,11 @@ class IntradayEngine:
                     ("reference", lambda: self.data.regular_closes(symbols, feed, reference_day)),
                     ("snapshots", lambda: self.data.snapshots(symbols, feed)),
                 ]
-                if end > phase.start:
+                if snapshot_only:
+                    data_sources["bars"] = {
+                        "status": "NOT_REQUESTED", "reason": "optional_overnight_history",
+                    }
+                elif end > phase.start:
                     fetches.insert(
                         0,
                         (
@@ -788,18 +797,33 @@ class IntradayEngine:
                             ),
                         ),
                     )
+                if overnight:
+                    fetches.sort(key=lambda item: item[0] != "snapshots")
                 fetched = {}
                 for kind, fetch in fetches:
                     try:
                         fetched[kind] = fetch()
+                        data_sources[kind] = {
+                            "status": "AVAILABLE" if any(fetched[kind].values()) else "EMPTY",
+                        }
                     except ObservationError as exc:
-                        report.update(status="DATA_UNAVAILABLE", reason=str(exc))
+                        data_sources[kind] = {"status": "UNAVAILABLE", "reason": str(exc)}
+                        if not overnight or kind == "snapshots":
+                            report.update(status="DATA_UNAVAILABLE", reason=str(exc))
                         if "rate_limited" in str(exc):
                             break
                 snapshots, bars, reference = (
                     fetched.get(k, {}) for k in ("snapshots", "bars", "reference")
                 )
                 report["snapshot_symbols"] = len(snapshots)
+                if overnight and report["status"] != "DATA_UNAVAILABLE":
+                    if data_sources.get("snapshots", {}).get("status") != "AVAILABLE":
+                        reason = data_sources.get("snapshots", {}).get("reason")
+                        report.update(status="DATA_UNAVAILABLE",
+                                      reason=reason or "overnight_snapshots_unavailable")
+                    elif snapshot_only or not any(bars.values()) or not reference:
+                        report.update(status="SNAPSHOT_ONLY",
+                                      reason="overnight_indicative_snapshots")
             except ObservationError as exc:
                 report.update(status="DATA_UNAVAILABLE", reason=str(exc))
             observed_at = clock()
@@ -841,13 +865,16 @@ class IntradayEngine:
                     observed_at,
                 )
                 if report.get("reason") and not row["valid"]:
-                    row["reason"] = report["reason"]
+                    if report["status"] == "DATA_UNAVAILABLE":
+                        row["reason"] = report["reason"]
+                    elif snapshot_only and row.get("quote_ready"):
+                        row["reason"] = "optional_overnight_history"
                 row.update(catalyst=catalysts.get(symbol), enabled=symbol in enabled)
                 report["rows"].append(row)
             report["valid"] = sum(r["valid"] for r in report["rows"])
             report["market_risk"], candidates = decide(report["rows"])
             report["short_candidates"] = len(shorts.rank(report["rows"]))
-            if report["status"] != "DATA_UNAVAILABLE":
+            if report["status"] not in {"DATA_UNAVAILABLE", "SNAPSHOT_ONLY"}:
                 report["status"] = "OBSERVING"
                 if paper.broker_mode() and phase.name in TRADABLE_PHASES and feed == "sip":
                     try:

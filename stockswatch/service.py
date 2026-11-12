@@ -74,14 +74,19 @@ def daily_refresh_boundary(now, day, broker):
             if broker and local_day.isoformat()==next_day(day) else "")
 
 
+PRICE_REFRESH_DUE = """(q.day IS NULL OR q.day!=:day OR q.checked_at<:refresh_since
+    OR (q.status!='OK' AND q.checked_at<:cutoff)
+    OR (q.status='OK' AND NOT EXISTS (
+        SELECT 1 FROM sw_eod_observations o WHERE o.symbol=a.symbol AND o.day=:day)))"""
+
+
 def daily_refresh_due(now):
     day = completed_day(now)
     broker = broker_mode()
-    return one("""SELECT COUNT(*) AS n FROM assets a LEFT JOIN sw_price_checks q ON q.symbol=a.symbol
+    return one(f"""SELECT COUNT(*) AS n FROM assets a LEFT JOIN sw_price_checks q ON q.symbol=a.symbol
         LEFT JOIN positions p ON NOT :broker AND p.symbol=a.symbol
         WHERE (a.enabled=1 OR p.symbol IS NOT NULL)
-          AND (q.day IS NULL OR q.day!=:day OR q.checked_at<:refresh_since
-               OR (q.status!='OK' AND q.checked_at<:cutoff))""",
+          AND {PRICE_REFRESH_DUE}""",
         {"day":day,"broker":broker,"refresh_since":daily_refresh_boundary(now,day,broker),
          "cutoff":(now-timedelta(hours=1)).isoformat()})["n"]
 
@@ -233,7 +238,7 @@ class Service:
             delay = 25
             try:
                 result = await asyncio.to_thread(self.intraday.cycle)
-                if result["status"] in {"SESSION_CLOSED","DATA_UNAVAILABLE"}:
+                if result["status"] in {"SESSION_CLOSED","DATA_UNAVAILABLE","SNAPSHOT_ONLY"}:
                     delay = 60
             except Exception as exc:
                 log.error("StocksWatch intraday cycle failed: %s", type(exc).__name__)
@@ -261,14 +266,20 @@ class Service:
     async def loop(self):
         await asyncio.sleep(3)
         while True:
+            delay = max(120, min(86400, int(os.getenv("STOCKSWATCH_TICK_SECONDS", "900"))))
             try:
                 async with self.lock:
                     self.last_result=await self.cycle()
+                now = datetime.now(timezone.utc)
+                if broker_mode() and os.getenv("STOCKSWATCH_PRICE_PROVIDER", "").lower() == "alpaca":
+                    cooldown = setting("price_cooldown_until")
+                    if (not cooldown or instant(cooldown) <= now) and daily_refresh_due(now):
+                        delay = 120
             except asyncio.CancelledError:raise
             except Exception as e:
                 log.error('StocksWatch tick failed: %s',safe_error(e))
                 self.last_result={'state':'ERROR','reason':safe_error(e),'at':utc()}
-            await asyncio.sleep(max(120,min(86400,int(os.getenv('STOCKSWATCH_TICK_SECONDS','900')))))
+            await asyncio.sleep(delay)
 
     async def cycle(self):
         observer = Observer()
@@ -415,7 +426,7 @@ class Service:
                         "RUNNING",
                         "Replaying historical strategies with real observations",
                     )
-                    out["research"] = research_report()["status"]
+                    out["research"] = (await asyncio.to_thread(research_report))["status"]
                     observer.event(
                         "RESEARCH_STORED",
                         "OK",
@@ -425,7 +436,7 @@ class Service:
                     observer.event(
                         "MODEL_SHADOW", "RUNNING", "Evaluating shadow-only statistical model"
                     )
-                    out["ml"] = train_and_evaluate()["status"]
+                    out["ml"] = (await asyncio.to_thread(train_and_evaluate))["status"]
                     observer.event(
                         "MODEL_STORED", "OK", "Shadow model result persisted", status=out["ml"]
                     )
@@ -500,7 +511,7 @@ class Service:
         from .universe import NEW
         new_symbols = json.dumps(sorted(NEW))
         due = rows(
-            """SELECT a.symbol,p.entry_day,s.last_success,
+            f"""SELECT a.symbol,p.entry_day,s.last_success,
                            (SELECT MIN(signal_day) FROM pending_orders o WHERE o.symbol=a.symbol
                                 AND NOT :broker AND o.state='PENDING') AS signal_day,
                            (SELECT COUNT(*) FROM bars b WHERE b.symbol=a.symbol
@@ -509,15 +520,16 @@ class Service:
                     LEFT JOIN positions p ON NOT :broker AND p.symbol=a.symbol
                     LEFT JOIN sources s ON s.symbol=a.symbol
                     WHERE (a.enabled=1 OR p.symbol IS NOT NULL)
-                        AND (q.day IS NULL OR q.day!=:day OR q.checked_at<:refresh_since
-                             OR (q.status!='OK' AND q.checked_at<:cutoff))
+                        AND {PRICE_REFRESH_DUE}
                     ORDER BY CASE WHEN q.day=:day AND q.checked_at>=:refresh_since THEN 1 ELSE 0 END,
                         CASE WHEN a.symbol='SPY' THEN 0
                             WHEN p.symbol IS NOT NULL OR a.symbol IN (SELECT value FROM json_each(:held)) THEN 1
                             WHEN signal_day IS NOT NULL THEN 2
                             WHEN a.symbol NOT IN (SELECT value FROM json_each(:new_symbols)) THEN 3 ELSE 4 END,
-                        COALESCE(q.checked_at,''),a.symbol LIMIT 6""",
-            {"day": day, "cutoff": cutoff, "refresh_since": refresh_since, "broker": broker, "held": held, "new_symbols":new_symbols},
+                        COALESCE(q.checked_at,''),a.symbol LIMIT :batch""",
+            {"day": day, "cutoff": cutoff, "refresh_since": refresh_since, "broker": broker,
+             "held": held, "new_symbols": new_symbols,
+             "batch": 12 if broker and provider == "alpaca" else 6},
         )
         out["source_state"] = "CACHED_OR_AWAITING_PUBLICATION"
         observer.event(
@@ -555,7 +567,7 @@ class Service:
                 observed = datetime.now(timezone.utc)
                 if (source, adjustment) != TRUSTED:
                     status = "research_only_source"
-                elif bars[-1]["day"] != day:
+                elif bars[-1]["day"] != day or observed < published_after(day):
                     status = "current_daily_bar_missing"
                 else:
                     events = await alpaca_execution_checks(client, symbol, day, actions_since, through=local_day.isoformat())
@@ -660,7 +672,7 @@ class Service:
                     "alpaca_rate_limited",
                     "alpaca_credentials_or_feed_denied",
                     "alpaca_credentials_not_configured",
-                } or status.startswith("provider_http_"):
+                }:
                     set_setting("price_cooldown_until", (now + timedelta(hours=1)).isoformat())
                     break
             if index < len(due)-1:

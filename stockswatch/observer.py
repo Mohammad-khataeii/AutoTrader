@@ -8,12 +8,10 @@ from __future__ import annotations
 import json
 import math
 import os
-import sqlite3
 import time
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
-from . import storage
-from .storage import connect, one, rows, utc
+from .storage import connect, connect_readonly, one, rows, utc
 
 SCHEMA = '''
 CREATE TABLE IF NOT EXISTS sw_scan_runs (
@@ -175,11 +173,7 @@ def export_jsonl(kind):
         raise ValueError('unsupported_export_kind')
     # Database snapshot is read on the same WAL transaction for consistency.
     # Stream bounded row batches; never buffer a large dataset in service memory.
-    c=sqlite3.connect('file:'+storage.DB_PATH+'?mode=ro',uri=True,timeout=15)
-    c.row_factory=sqlite3.Row
-    try:
-        c.execute('PRAGMA query_only=ON')
-        c.execute('BEGIN')
+    with connect_readonly(check_same_thread=False) as c:
         datasets=list(EXPORT_TABLES.items()) if kind=='all' else [(kind,EXPORT_TABLES[kind])]
         for label,table in datasets:
             if label.startswith('intraday_') and not c.execute(
@@ -194,6 +188,3 @@ def export_jsonl(kind):
                     yield ''.join(json.dumps({'dataset':label,'row':dict(r)},separators=(',',':'),allow_nan=False,default=str)+'\n' for r in batch).encode()
                 else:
                     yield ''.join(json.dumps(dict(r),separators=(',',':'),allow_nan=False,default=str)+'\n' for r in batch).encode()
-        c.execute('COMMIT')
-    finally:
-        c.close()

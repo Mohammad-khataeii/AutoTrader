@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import sqlite3
 from collections import Counter
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -18,7 +17,7 @@ from .crypto_data_quality import quarantine_untraded_spikes
 from .crypto_rebound_watch import assess
 from .crypto_recovery import benchmark_stabilized
 from .crypto_strategy_replay import _fmt, _trade
-from .storage import DB_PATH
+from .storage import DB_PATH, connect_readonly
 
 
 def _hourly(conn, symbol):
@@ -45,8 +44,7 @@ def replay(path=DB_PATH, *, fee=0.0015, slip=0.001, holdout_days=7):
     if not db.is_file():
         raise RuntimeError("rebound_replay_database_missing")
     # mode=ro is important: this never mutates stock or crypto financial state.
-    with sqlite3.connect(db.as_uri() + "?mode=ro", uri=True) as conn:
-        conn.row_factory = sqlite3.Row
+    with connect_readonly(db) as conn:
         btc = _hourly(conn, "BTC/USD")
         btc_index = {b["ts"]: i for i, b in enumerate(btc)}
         trades = []

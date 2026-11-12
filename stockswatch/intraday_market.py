@@ -67,7 +67,9 @@ class IntradayData:
                     raise ObservationError("intraday_data_transport_unavailable") from None
             else:
                 status = response.status_code
-                if status in (401, 403, 422):
+                if status == 401:
+                    raise ObservationError("intraday_data_authentication_failed")
+                if status == 403:
                     raise ObservationError("intraday_feed_or_entitlement_denied")
                 if status == 429:
                     try:
@@ -121,7 +123,7 @@ class IntradayData:
             raise ObservationError("intraday_bar_batch_too_large")
         params = {
             "symbols": ",".join(symbols),
-            "feed": feed,
+            "feed": "boats" if feed == "overnight" else feed,
             "timeframe": timeframe,
             "adjustment": adjustment,
             "start": start.isoformat(),

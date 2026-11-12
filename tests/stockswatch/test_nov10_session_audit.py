@@ -38,9 +38,8 @@ def test_nov10_session_audit_joins_per_symbol_and_filters_before_pagination(tmp_
         c.execute("INSERT INTO sw_broker_decision_cycles VALUES(?,?,?,?,?)",
             (at,"2026-11-10","NO_APPROVED_BROKER_SIGNAL",None,
              json.dumps({"why_no_trade":[{"symbol":"ABBV","reason":"adaptive_stock_still_declining"}]})))
-    def isolated():
-        return sqlite3.connect(db_path)
-    monkeypatch.setattr(session_audit,"connect",isolated)
+    from stockswatch import storage
+    monkeypatch.setattr(storage, "DB_PATH", str(db_path))
     result=session_audit.snapshot("2026-11-10",limit=1)
     assert result["broker_decision_cycle_count"]==1
     assert result["broker_cycles"][0]["why_no_trade"][0]["reason"]=="adaptive_stock_still_declining"

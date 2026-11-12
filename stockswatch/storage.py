@@ -58,6 +58,23 @@ def connect():
     finally:
         c.close()
 
+
+@contextmanager
+def connect_readonly(path=None, *, check_same_thread=True):
+    """Read a WAL-aware snapshot with only in-memory temporary structures."""
+    uri = Path(path if path is not None else DB_PATH).resolve().as_uri()
+    db = sqlite3.connect(uri + "?mode=ro", uri=True, timeout=15,
+                         check_same_thread=check_same_thread)
+    try:
+        db.row_factory = sqlite3.Row
+        db.execute("PRAGMA busy_timeout=10000")
+        db.execute("PRAGMA temp_store=MEMORY")
+        db.execute("PRAGMA query_only=ON")
+        db.execute("BEGIN")
+        yield db
+    finally:
+        db.close()
+
 def init():
     with connect() as c:
         c.execute('PRAGMA journal_mode=WAL')

@@ -5,12 +5,13 @@ does not pretend that account P&L is realized stock P&L, or that IEX is SIP.
 """
 from __future__ import annotations
 
+from collections import Counter
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 import json
 import re
 
-from .storage import connect
+from .storage import connect_readonly
 
 NY = ZoneInfo("America/New_York")
 
@@ -30,9 +31,7 @@ def snapshot(day, *, offset=0, limit=100):
     a, b = session_bounds(day)
     if not (0 <= offset <= 100000 and 1 <= limit <= 250):
         raise ValueError("audit_invalid_page")
-    with connect() as db:
-        db.execute("PRAGMA query_only=ON")
-        db.row_factory = __import__("sqlite3").Row
+    with connect_readonly() as db:
         tables = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
         def query(sql, args=()):
             return [dict(x) for x in db.execute(sql, args).fetchall()]
@@ -44,8 +43,15 @@ def snapshot(day, *, offset=0, limit=100):
             for cycle in cycles:
                 report = json.loads(cycle.pop("result_json"))
                 cycle["why_no_trade"] = report.get("why_no_trade", [])
+                categories = Counter()
+                for item in cycle["why_no_trade"]:
+                    if item.get("action") == "WATCH":
+                        categories.update(tuple(item.get("blockers", {})) or
+                                          ([item["category"]] if item.get("category") else []))
+                cycle["rejection_counts_by_category"] = dict(categories)
                 cycle["broker_orders_submitted"] = report.get("broker_orders_submitted", 0)
                 cycle["signals"] = report.get("signals", [])
+                cycle["protection"] = report.get("protection", [])
         else:
             n, cycles = 0, []
         intents = query("""SELECT symbol,side,qty,signal_day,reason,state,broker_status,
@@ -71,6 +77,7 @@ def snapshot(day, *, offset=0, limit=100):
                 })
             row.update(status=report.get("status"), execution=report.get("execution"),
                        order_gate=report.get("order_gate"), phase=report.get("phase"),
+                       reason=report.get("reason"), data_sources=report.get("data_sources"),
                        market_risk=report.get("market_risk"), rows=per_symbol,
                        observations_exported=len(per_symbol))
         if "sw_intraday_observations" in tables:
@@ -93,3 +100,14 @@ def snapshot(day, *, offset=0, limit=100):
         "financial_scope":"No account-level realized P&L attributed to stock strategy",
         "market_price_scope":"IEX-only local evidence; independent SIP needed for execution benchmark",
     }
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("day", help="New York date, YYYY-MM-DD")
+    parser.add_argument("--offset", type=int, default=0)
+    parser.add_argument("--limit", type=int, default=100)
+    args = parser.parse_args()
+    print(json.dumps(snapshot(args.day, offset=args.offset, limit=args.limit), indent=2))

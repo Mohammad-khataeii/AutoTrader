@@ -104,7 +104,7 @@ async def stockswatch_uncaught_error(request: Request, exc: Exception):
 
 
 @app.get("/healthz")
-def health():
+async def health():
     return {"status": "ok", "mode": "alpaca_paper" if broker_mode() else "paper",
             "system": "stockswatch", "schema": "stocks-v1"}
 
@@ -464,7 +464,8 @@ def decision_audit():
     from .sessions import NY, completed_day, instant, next_day, market_session_state, published_after
     from .gap_audit import gap_snapshot
     from .universe import NEW
-    from .alpaca_paper import MIN_IEX_DOLLAR_VOLUME, broker_mode, orders_enabled
+    from .alpaca_paper import (MIN_IEX_DOLLAR_VOLUME, broker_mode, orders_enabled,
+                              technical_entry_blockers)
 
     now = datetime.now(timezone.utc)
     day = completed_day(now)
@@ -474,7 +475,7 @@ def decision_audit():
         if isinstance(s, dict) and isinstance(s.get('symbol'), str)
     }
     actual_gates = {
-        s['symbol']: s.get('reason') for s in last.get('why_no_trade', [])
+        s['symbol']: s for s in last.get('why_no_trade', [])
         if isinstance(s, dict) and isinstance(s.get('symbol'), str)
     }
     output = []
@@ -518,6 +519,10 @@ def decision_audit():
             regime = score_result.get('regime') if score_result else None
             features = score_result.get('features', {}) if score_result else {}
             liquidity = sum(x['c'] * x['v'] for x in bars[-20:]) / 20 if len(bars) >= 20 else None
+            technical = technical_entry_blockers(
+                score, regime, features['volatility_annual'], liquidity,
+            ) if score_result else {}
+            live_gate = actual_gates.get(symbol, {})
 
             # Match the current broker's actual admission prerequisites.
             # A successful local calculation alone does not authorize a BUY.
@@ -548,12 +553,8 @@ def decision_audit():
                 state, reason = 'NOT_SCORED', 'technical_signal_unavailable'
             elif admission:
                 state, reason = 'BROKER_VERIFICATION_BLOCKED', admission
-            elif score < SCORE_MIN or regime != 'RISK_ON':
-                state, reason = 'WATCH', 'score_or_regime_below_entry_gate'
-            elif features.get('volatility_annual', float('inf')) >= MAX_VOLATILITY:
-                state, reason = 'WATCH', 'volatility_cap'
-            elif liquidity is None or liquidity < MIN_IEX_DOLLAR_VOLUME:
-                state, reason = 'WATCH', 'iex_liquidity_gate'
+            elif technical:
+                state, reason = 'WATCH', next(iter(technical.values()))
             else:
                 state, reason = 'TECHNICAL_CANDIDATE', 'broker_admission_pending'
             if not is_benchmark:
@@ -564,7 +565,11 @@ def decision_audit():
                 'symbol': symbol, 'name': a['name'], 'sector': sector,
                 'state': state, 'reason': reason,
                 'evaluated_by_live_broker': symbol in actual_signals,
-                'live_broker_gate': actual_gates.get(symbol),
+                'live_broker_gate': live_gate.get('reason'),
+                'live_broker_gate_category': live_gate.get('category'),
+                'live_broker_blockers': live_gate.get('blockers', {}),
+                'live_broker_gates_not_evaluated': live_gate.get('not_evaluated', []),
+                'technical_entry_blockers': technical,
                 'score': round(float(score), 4) if score is not None else None,
                 'regime': regime,
                 'signal_day': day if score_result else None,

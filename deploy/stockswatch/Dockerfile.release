@@ -1,0 +1,22 @@
+FROM python:3.12-slim@sha256:05a994d2344eb364cc186910f4fc8786a38215f39f00d0acc25bff33a08f4177
+ARG RELEASE_COMMIT
+LABEL org.opencontainers.image.revision=${RELEASE_COMMIT}
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/opt/stockswatch \
+    STOCKSWATCH_BUILD_COMMIT=${RELEASE_COMMIT}
+WORKDIR /opt/stockswatch
+COPY requirements.lock deploy/stockswatch/requirements.txt /tmp/release/
+RUN python -m venv /opt/stockswatch/venv \
+    && /opt/stockswatch/venv/bin/pip install --no-cache-dir \
+        -c /tmp/release/requirements.lock -r /tmp/release/requirements.txt \
+        fastapi httpx uvicorn redis sqlalchemy \
+        pandas==3.1.1 numpy==2.5.4 pyluach==2.3.0 korean-lunar-calendar==0.4.0 \
+        toolz==1.2.0 python-dateutil==4.0.0 \
+    && groupadd -g 10001 paper && useradd -u 10001 -g 10001 -M paper \
+    && rm -rf /tmp/release
+COPY --chmod=0644 stockswatch/*.py stockswatch/research_evidence.json ./stockswatch/
+COPY --chmod=0644 src/autotrader/__init__.py ./autotrader/
+COPY --chmod=0644 src/autotrader/persistence/models.py ./autotrader/persistence/
+COPY --chmod=0644 deploy/stockswatch/gemini/gemini_advisory.py ./autotrader/api/
+RUN find stockswatch autotrader -type d -exec chmod 0755 {} +
+USER paper
+CMD ["/opt/stockswatch/venv/bin/python", "-m", "stockswatch"]

@@ -74,7 +74,7 @@ def test_undercovering_stop_quantity_refused():
 def test_unverified_recovers_via_get_without_post_then_arms_next_cycle(monkeypatch,tmp_path):
     monkeypatch.setattr(storage,"DB_PATH",str(tmp_path/"stockswatch.sqlite3"))
     storage.init()
-    po.initialize()
+    paper.broker_init()
     # Simulate a persisted OCO that went UNVERIFIED solely because Alpaca
     # reported the stop child as HELD during Nov 10's broker check.
     base=fixture(*CASES[0])
@@ -97,7 +97,7 @@ def test_unverified_recovers_via_get_without_post_then_arms_next_cycle(monkeypat
          patch.object(po,"_nested",return_value=[root(base)]) as nested, \
          patch.object(po,"_entry_id",return_value=base["entry_client_id"]), \
          patch.object(po,"_ratchet",return_value="no_change") as ratchet, \
-         patch.object(po,"_find_live_quote",return_value=(Decimal("351.08"),NOW.isoformat())), \
+         patch.object(po,"_find_live_quote",return_value=(Decimal("351.08"),NOW.isoformat())) as quote, \
          patch.object(paper,"_position_owned",return_value=True):
         first=po.cycle(client,snap,NOW,data=object())
         # The first cycle is GET-only even though it restores ACTIVE in DB.
@@ -112,11 +112,25 @@ def test_unverified_recovers_via_get_without_post_then_arms_next_cycle(monkeypat
         assert second["paper_orders_enabled"] is True
         assert second["positions"][0]["verified_broker_stop"]=="329.12"
         ratchet.assert_called_once()
+        quote.side_effect=po.ProtectionError("protection_quote_timestamp_stale")
+        third=po.cycle(client,snap,NOW,data=object())
+        assert third["positions"][0]["verified_broker_stop"]=="329.12"
+        assert third["positions"][0]["reason"]=="protection_quote_timestamp_stale"
+        ratchet.assert_called_once()
+        quote.side_effect=None
+        def uncertain(client, record, *args):
+            po._set_state(record, "REPLACE_UNCERTAIN", requested=Decimal("330"))
+            return "replace_uncertain_blocked"
+        ratchet.side_effect=uncertain
+        fourth=po.cycle(client,snap,NOW,data=object())
+        assert fourth["changed"]
+        assert fourth["positions"][0]["broker_state"]=="REPLACE_UNCERTAIN"
+        assert fourth["positions"][0]["verified_broker_stop"] is None
 
 def test_unverified_missing_root_stays_blocked(monkeypatch,tmp_path):
     monkeypatch.setattr(storage,"DB_PATH",str(tmp_path/"stockswatch.sqlite3"))
     storage.init()
-    po.initialize()
+    paper.broker_init()
     rec=fixture(*CASES[0])
     with storage.connect() as db:
         db.execute("""INSERT INTO sw_protection

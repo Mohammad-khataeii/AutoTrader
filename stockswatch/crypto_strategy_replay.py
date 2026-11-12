@@ -9,14 +9,11 @@ import argparse
 import bisect
 import json
 import math
-import os
-import sqlite3
-from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from . import alpaca_crypto as ac
-from .storage import DB_PATH
+from .storage import DB_PATH, connect_readonly
 
 FEE_PER_SIDE = 0.0015
 SLIPPAGE_PER_SIDE = 0.001
@@ -69,7 +66,7 @@ def _trade(symbol, signal, future, *, fee=FEE_PER_SIDE, slip=SLIPPAGE_PER_SIDE):
             return None, 0  # Missing data: refuse invented exit.
         low, high = float(bar["l"]), float(bar["h"])
         if low <= stop:
-            exit_raw, reason = stop, "stop_first"
+            exit_raw, reason = min(stop, float(bar["o"])), "stop_first"
         elif high >= target:
             exit_raw, reason = target, "target"
         elif j == MAX_HOLD_HOURS - 1:
@@ -81,7 +78,7 @@ def _trade(symbol, signal, future, *, fee=FEE_PER_SIDE, slip=SLIPPAGE_PER_SIDE):
         return {
             "symbol": symbol, "at": signal["bar_at"],
             "entry_strategy": signal["gates"]["entry_strategy"],
-            "r": net / risk, "exit": reason,
+            "r": net / risk, "exit": reason, "exit_bar_at": bar["ts"],
         }, j + 1
     return None, 0
 
@@ -93,9 +90,7 @@ def replay(path=DB_PATH, *, fee=FEE_PER_SIDE, slip=SLIPPAGE_PER_SIDE,
         raise RuntimeError("crypto_replay_database_missing")
     if not (0 <= fee <= 0.01 and 0 <= slip <= 0.01):
         raise ValueError("crypto_replay_costs_invalid")
-    conn = sqlite3.connect(db_path.as_uri() + "?mode=ro", uri=True, timeout=10)
-    conn.row_factory = sqlite3.Row
-    try:
+    with connect_readonly(db_path) as conn:
         outcome = {"baseline": [], "candidate": []}
         covered = 0
         latest_by_symbol = {}
@@ -135,7 +130,7 @@ def replay(path=DB_PATH, *, fee=FEE_PER_SIDE, slip=SLIPPAGE_PER_SIDE,
                     if i < blocked_to[strategy]:
                         continue
                     trade, held = _trade(symbol, observation, hour[i+1:],fee=fee,slip=slip)
-                    if trade is None:
+                    if trade is None or any(bar["v"] <= 0 for bar in hour[i+1:i+1+held]):
                         continue
                     outcome[strategy].append(trade)
                     blocked_to[strategy] = i + 1 + held
@@ -153,7 +148,7 @@ def replay(path=DB_PATH, *, fee=FEE_PER_SIDE, slip=SLIPPAGE_PER_SIDE,
             "holdout_start": cutoff,
             "fees_per_side": fee,
             "slippage_per_side": slip,
-            "fills": "modeled_next_hour_open; stop_first_if_ambiguous; 36h_max",
+            "fills": "modeled_next_hour_open; gap_aware_stop_first; traded_bars_only; 36h_max",
             "broker_orders_sent": 0,
             "baseline": {},
             "candidate": {},
@@ -184,8 +179,6 @@ def replay(path=DB_PATH, *, fee=FEE_PER_SIDE, slip=SLIPPAGE_PER_SIDE,
             "Candidate stays disabled; insufficient or unconvincing out-of-sample performance"
         )
         return result
-    finally:
-        conn.close()
 
 
 def main():

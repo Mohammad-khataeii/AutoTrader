@@ -577,7 +577,7 @@ def cycle(client,snapshot,now=None,data=None):
     Called exclusively while the shared broker_cycle_lock is held.
     """
     from . import alpaca_paper as paper
-    from .intraday_market import IntradayData
+    from .intraday_market import IntradayData, ObservationError
     from .intraday_policy import phase_at
 
     global _last
@@ -685,17 +685,25 @@ def cycle(client,snapshot,now=None,data=None):
                 if saved and (profit_lock.decimal(p["qty"])>plan.qty or
                               profit_lock.decimal(p["avg_entry_price"])!=plan.entry):
                     raise ProtectionError("protection_position_reconciled_qty_or_basis_changed")
-                reason="observe_only_disabled_or_paused"
+                reason = ("protection_waiting_for_core_session" if enabled and not core
+                          else "observe_only_disabled_or_paused")
                 if enabled and core:
                     if saved:
                         if saved["state"]=="ACTIVE":
-                            bid,qt=_find_live_quote(data,sym,now)
-                            root=next(x for x in nested if x.get("client_order_id")==saved["client_id"])
-                            outcome=_ratchet(client,saved,root,saved["stop_leg_id"],
-                                             profit_lock.decimal(saved["broker_stop"]),bid,qt)
-                            if outcome.startswith("stop_replace_requested"):
-                                changed=True
-                            reason=outcome
+                            try:
+                                bid,qt=_find_live_quote(data,sym,now)
+                            except (ProtectionError, ObservationError) as exc:
+                                # Broker proof already succeeded. A missing quote
+                                # prevents ratcheting but cannot erase that proof.
+                                reason = str(exc)
+                            else:
+                                root=next(x for x in nested if x.get("client_order_id")==saved["client_id"])
+                                reason=_ratchet(client,saved,root,saved["stop_leg_id"],
+                                                profit_lock.decimal(saved["broker_stop"]),bid,qt)
+                                if (reason.startswith("stop_replace_requested")
+                                        or reason == "replace_uncertain_blocked"):
+                                    changed=True
+                                    saved=_saved(account,sym)
                     else:
                         # A stock entry pause must not strand an already-filled,
                         # broker-owned long without its protective exit. OCOs are
@@ -705,7 +713,7 @@ def cycle(client,snapshot,now=None,data=None):
                             raise ProtectionError("protection_competing_open_order")
                         bid,qt=_find_live_quote(data,sym,now)
                         reason=_create(client,account,p,plan,entry_cid,now,bid)
-                        if reason.startswith("oco_submitted"):
+                        if reason.startswith("oco_submitted") or reason == "create_uncertain_blocked":
                             changed=True
                         saved=_saved(account,sym)
                 outcomes.append(_snapshot_position(report,saved,p,plan,reason))

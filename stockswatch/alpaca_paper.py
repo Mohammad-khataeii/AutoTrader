@@ -32,9 +32,10 @@ from .ledger import (
     SCORE_MIN,
     eligible_signals,
     execution_configuration_gate,
+    series,
 )
 from .sessions import NY, completed_day, instant, next_day, session
-from .storage import connect, one, rows, utc
+from .storage import connect, connect_readonly, one, rows, utc
 
 PAPER_ORIGIN = "https://paper-api.alpaca.markets"
 PREFIX = "swp2-"
@@ -994,6 +995,40 @@ def _entry_budget(snapshot, sectors, sector, active, known):
     )
 
 
+ENTRY_CAPITAL_BLOCKERS = {
+    "alpaca_shared_daily_loss_pause",
+    "alpaca_paper_invalid_account_balance",
+    "alpaca_paper_risk_history_missing_or_stale",
+    "alpaca_paper_risk_history_never_verified",
+    "alpaca_paper_drawdown_or_daily_loss_pause",
+    "alpaca_paper_external_position_unclassified",
+    "alpaca_paper_invalid_position_value",
+    "alpaca_shared_account_crypto_inventory_invalid",
+    "alpaca_paper_external_or_unclassified_open_order",
+    "alpaca_paper_unknown_order_direction",
+    "alpaca_paper_open_buy_reserve_unverifiable",
+    "alpaca_paper_position_cap",
+    "alpaca_paper_cash_or_exposure_cap",
+}
+
+
+def technical_entry_blockers(score, regime, volatility, dollar_volume):
+    checks = {
+        "score": (score < SCORE_MIN, "alpaca_paper_score_below_gate"),
+        "regime": (regime != "RISK_ON", "alpaca_paper_regime_blocks_entry"),
+        "volatility": (volatility >= MAX_VOLATILITY, "alpaca_paper_volatility_cap"),
+        "liquidity": (dollar_volume < MIN_IEX_DOLLAR_VOLUME, "alpaca_paper_liquidity_gate"),
+    }
+    return {category: reason for category, (blocked, reason) in checks.items() if blocked}
+
+
+def _signal_blockers(signal):
+    return technical_entry_blockers(
+        signal["score"], signal["regime"], signal["features"]["volatility_annual"],
+        signal["iex_dollar_volume_20d"],
+    )
+
+
 def _payload_for(client, snapshot, signal, target, active, known, sectors, account_id, *, entry_limit=None):
     symbol = signal["symbol"]
     if any(o.get("symbol") == symbol for o in active):
@@ -1001,12 +1036,9 @@ def _payload_for(client, snapshot, signal, target, active, known, sectors, accou
     if not re.fullmatch(r"[A-Z][A-Z0-9.]{0,9}", symbol):
         raise PaperError("alpaca_paper_symbol_invalid")
     if symbol not in known:
-        if signal["score"] < SCORE_MIN or signal["regime"] != "RISK_ON":
-            raise PaperError("alpaca_paper_score_or_regime_gate")
-        if signal["features"]["volatility_annual"] >= MAX_VOLATILITY:
-            raise PaperError("alpaca_paper_volatility_cap")
-        if signal["iex_dollar_volume_20d"] < MIN_IEX_DOLLAR_VOLUME:
-            raise PaperError("alpaca_paper_liquidity_gate")
+        blockers = _signal_blockers(signal)
+        if blockers:
+            raise PaperError(next(iter(blockers.values())))
     asset = client.asset(symbol)
     if (
         not isinstance(asset, dict)
@@ -1094,18 +1126,15 @@ def _preview_and_submit(client, snapshot, signals, day, now, *, protection=None)
         # The regular session or limited opening admission window is closed.
         # Preserve ticker-level technical reasons without pretending the
         # broker's remaining order gates ran (no order calls happen here).
-        def closing_reason(signal):
-            if signal["score"] < SCORE_MIN or signal["regime"] != "RISK_ON":
-                return "technical_score_or_regime_below_gate"
-            if signal["features"]["volatility_annual"] >= MAX_VOLATILITY:
-                return "technical_volatility_cap"
-            if signal["iex_dollar_volume_20d"] < MIN_IEX_DOLLAR_VOLUME:
-                return "technical_iex_liquidity_cap"
-            return "entry_window_closed_remaining_broker_gates_not_evaluated"
-        result["why_no_trade"] = [
-            {"symbol": signal["symbol"], "action": "WATCH",
-             "reason": closing_reason(signal)} for signal in signals
-        ]
+        held = {p["symbol"] for p in snapshot["positions"]}
+        for signal in signals:
+            blockers = _signal_blockers(signal) if signal["symbol"] not in held else {}
+            blockers["timing"] = "entry_window_closed_remaining_broker_gates_not_evaluated"
+            category, reason = next(iter(blockers.items()))
+            result["why_no_trade"].append(
+                {"symbol": signal["symbol"], "action": "WATCH", "category": category,
+                 "reason": reason, "blockers": blockers,
+                 "not_evaluated": ["capital", "protection"]})
         return {**result, "status": "WAITING_FOR_NEXT_CORE_OPEN_WINDOW"}
     account = snapshot["account"]
     if (
@@ -1175,27 +1204,38 @@ def _preview_and_submit(client, snapshot, signals, day, now, *, protection=None)
         symbol = signal["symbol"]
         item = {"symbol": symbol, "action": "WATCH"}
         result["why_no_trade"].append(item)
+        if symbol not in known:
+            blockers = _signal_blockers(signal)
+            if blockers:
+                category, reason = next(iter(blockers.items()))
+                item.update(category=category, reason=reason, blockers=blockers,
+                            not_evaluated=["capital", "protection", "timing"])
+                continue
         if one(
             "SELECT 1 FROM sw_alpaca_intents WHERE account_id=? AND symbol=? AND signal_day=? AND (client_id LIKE ? OR client_id LIKE ?)",
             (account_id, symbol, target, INTRADAY_PREFIX+"%",SHORT_PREFIX+"%"),
         ):
-            item["reason"] = "intraday_same_symbol_same_session_interlock"
+            item.update(category="timing", reason="intraday_same_symbol_same_session_interlock")
             continue
-        if symbol in today or (symbol not in known and buys_today >= 2):
-            item["reason"] = "already_ordered_or_daily_buy_cap"
+        if symbol in today:
+            item.update(category="timing", reason="already_ordered_for_signal_day")
+            continue
+        if symbol not in known and buys_today >= 2:
+            item.update(category="capital", reason="daily_buy_cap")
             continue
         if symbol not in known and not signal.get("ranking_complete", False):
-            item["reason"] = "awaiting_completed_universe_scan"
+            item.update(category="data", reason="awaiting_completed_universe_scan")
             continue
         if symbol not in known and (one("SELECT paused FROM sw_alpaca_state WHERE id=1") or {}).get("paused",1):
             item["reason"]="new_stock_entry_paused_exit_protection_continues"
             continue
         if symbol not in known and snapshot.get("other_open_orders"):
-            item["reason"] = "new_stock_buy_blocked_by_shared_crypto_orders"
+            item.update(category="capital", reason="new_stock_buy_blocked_by_shared_crypto_orders")
             continue
         if symbol not in known and protection is not None and (protection_missing or uncovered):
             item["reason"] = ("stock_protection_not_armed_blocks_new_entry"
                               if protection_missing else "existing_eod_long_unprotected_blocks_new_entry")
+            item["category"] = "protection"
             item["unprotected_owned_symbols"] = uncovered
             continue
         # A long with an active, verified broker-native OCO must not receive
@@ -1209,7 +1249,7 @@ def _preview_and_submit(client, snapshot, signals, day, now, *, protection=None)
                 log.warning("StocksWatch OCO exit handoff failed for %s: %s",
                             symbol,type(exc).__name__)
                 handoff="oco_exit_handoff_unavailable_do_not_double_sell"
-            item["reason"]=handoff
+            item.update(category="protection", reason=handoff)
             if handoff=="oco_exit_replace_requested_keep_existing_stop":
                 return {**result, "status": "OCO_EXIT_REPLACE_REQUESTED",
                         "broker_orders_submitted": 0}
@@ -1220,7 +1260,7 @@ def _preview_and_submit(client, snapshot, signals, day, now, *, protection=None)
               account_id=? AND symbol=? AND state IN
               ('ACTIVE','REPLACE_PENDING','REPLACE_UNCERTAIN','UNVERIFIED')""",
               (account_id,symbol)):
-            item["reason"]="oco_exit_open_order_missing_requires_reconciliation"
+            item.update(category="protection", reason="oco_exit_open_order_missing_requires_reconciliation")
             continue
         entry_limit = None
         if symbol not in known and signal["score"] >= SCORE_MIN and signal["regime"] == "RISK_ON":
@@ -1230,11 +1270,13 @@ def _preview_and_submit(client, snapshot, signals, day, now, *, protection=None)
                     timing = observe_entry(signal, now)
                     item["entry_timing"] = timing
                     if timing["status"] != "READY":
-                        item["reason"] = timing["reason"]
+                        category = ("liquidity" if timing["reason"] == "adaptive_quote_spread_or_crossed"
+                                    else "timing")
+                        item.update(category=category, reason=timing["reason"])
                         continue
                     entry_limit = timing["limit_price"]
             except ValueError:
-                item["reason"] = "adaptive_entry_configuration_invalid"
+                item.update(category="timing", reason="adaptive_entry_configuration_invalid")
                 continue
         try:
             payload, reason = _payload_for(
@@ -1243,6 +1285,10 @@ def _preview_and_submit(client, snapshot, signals, day, now, *, protection=None)
             )
         except PaperError as exc:
             item["reason"] = str(exc)
+            if symbol not in known:
+                item["category"] = (
+                    "timing" if str(exc) == "adaptive_limit_outside_certified_price_cap"
+                    else "capital" if str(exc) in ENTRY_CAPITAL_BLOCKERS else "broker")
             continue
         action = payload["side"].upper()
         cid = cid_for(account_id, symbol, day, action)
@@ -1296,6 +1342,7 @@ def _preview_and_submit(client, snapshot, signals, day, now, *, protection=None)
                     money(payload["qty"]) * money(payload["limit_price"]) * Decimal("1.01")
                     > fresh_budget
                 ):
+                    item.update(category="capital", reason="broker_budget_changed_recheck_next_cycle")
                     return {**result, "status": "BROKER_BUDGET_CHANGED_RECHECK_NEXT_CYCLE"}
             if action == "SELL":
                 fills = client.get(
@@ -1310,6 +1357,7 @@ def _preview_and_submit(client, snapshot, signals, day, now, *, protection=None)
                 ):
                     return {**result, "status": "BROKER_OWNERSHIP_CHANGED_RECHECK_NEXT_CYCLE"}
             if not _open_window(client, day, datetime.now(UTC)):
+                item.update(category="timing", reason="execution_window_closed")
                 return {**result, "status": "EXECUTION_WINDOW_CLOSED"}
             with connect() as c:
                 c.execute("PRAGMA synchronous=FULL")
@@ -1425,6 +1473,10 @@ def _paper_cycle(now=None):
                 # Never dispatch EOD orders against the stale snapshot.
                 snapshot=client.snapshot()
                 _publish_snapshot(snapshot)
+            result["protection"] = [
+                {k: item.get(k) for k in ("symbol", "broker_state", "reason")}
+                for item in protected.get("positions", [])
+            ]
             if real_clock:
                 now = datetime.now(UTC)
             configuration = execution_configuration_gate()
@@ -1453,8 +1505,14 @@ def _paper_cycle(now=None):
             # The stock pause controls NEW entries, not independently verified
             # exits for owned shares or existing broker-native OCO protection.
             if configuration or day is None:
-                return {**result, "status": "NO_CERTIFIED_BENCHMARK", "reason": configuration}
-            return _preview_and_submit(client, snapshot, signals, day, now, protection=protected)
+                reason = configuration
+                if not reason:
+                    with connect_readonly() as db:
+                        _, _, reason = series(db, "SPY", completed_day(now), now)
+                return {**result, "status": "NO_CERTIFIED_BENCHMARK", "reason": reason}
+            return {**result, **_preview_and_submit(
+                client, snapshot, signals, day, now, protection=protected,
+            )}
     except PaperError as exc:
         if str(exc).startswith("alpaca_paper_http_") or str(exc) in {
             "alpaca_paper_credentials_missing",

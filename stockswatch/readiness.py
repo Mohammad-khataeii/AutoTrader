@@ -10,7 +10,8 @@ from datetime import UTC, datetime, timedelta
 from .alpaca_paper import broker_mode, orders_enabled
 from .intraday_policy import order_gate, phase_at
 from .sessions import completed_day, next_day, session
-from .storage import connect
+from .ledger import evidence
+from .storage import connect_readonly
 
 
 def _fresh(value,now,seconds):
@@ -40,12 +41,15 @@ def snapshot(service,now=None):
         next_open=session(next_day(target))[0]
     phase=phase_at(now)
     # Read-only means not even refreshing the account through Alpaca here.
-    with connect() as c:
-        c.execute("PRAGMA query_only=ON")
-        checks=c.execute("""SELECT COUNT(*) FROM assets a JOIN sw_price_checks q
-           ON a.symbol=q.symbol WHERE a.enabled=1 AND q.day=?
-           AND q.status='OK'""",(day,)).fetchone()[0]
-        enabled=c.execute("SELECT COUNT(*) FROM assets WHERE enabled=1").fetchone()[0]
+    with connect_readonly() as c:
+        symbols = [r[0] for r in c.execute("SELECT symbol FROM assets WHERE enabled=1 ORDER BY symbol")]
+        pending = {}
+        for symbol in symbols:
+            _, reason = evidence(c, symbol, day, now)
+            if reason:
+                pending[symbol] = reason
+        enabled = len(symbols)
+        checks = enabled - len(pending)
         uncertain=c.execute("""SELECT COUNT(*) FROM sw_alpaca_intents
            WHERE state IN ('PREPARED','UNKNOWN')""").fetchone()[0]
         oco=c.execute("""SELECT state,COUNT(*) FROM sw_protection
@@ -84,7 +88,7 @@ def snapshot(service,now=None):
                   "last_cycle_at":broker.get("at"),"fresh":recent_broker,
                   "unresolved_intents":uncertain},
         "daily_data":{"completed_session":day,"certified_assets":checks,
-                      "enabled_assets":enabled},
+                      "enabled_assets":enabled,"unconfirmed_assets":pending},
         "protection":{"states":{k:n for k,n in oco},
                       "exit_handoffs":{k:n for k,n in handoff}},
         "portfolio_risk":{"last_verified_broker_peak_at":risk,
