@@ -20,6 +20,25 @@ Read-only audit at 2026-11-12 05:18 UTC:
   positions and protective orders exist, and must not be altered by
   crypto research.
 
+## Independent historical market cross-check
+
+Alpaca US crypto 1-hour bars fetched for the fixed UTC interval 2026-11-08
+00:00 through 2026-11-12 06:00 (quote-midpoint observations):
+
+| Pair | First close | Last completed close | Change |
+| --- | ---: | ---: | ---: |
+| BTC/USD | 75,699.7925 | 73,522.2705 | -2.88% |
+| ETH/USD | 2,233.43 | 2,041.85 | -8.58% |
+| SOL/USD | 89.33 | 82.833 | -7.27% |
+| AVAX/USD | 8.20315 | 8.579855 | +4.59% |
+
+AVAX showed relative strength against BTC over this window, but in the
+production log its daily-EMA200 test was false and its breakout test was false.
+The positive return alone is NOT proof that the model missed an executable
+profitable entry. This argues for comparing a relative-strength challenger
+against the strict trend baseline with a true cost-aware walk-forward replay.
+These numbers are historical interval observations, not an entry forecast.
+
 ## Diagnosis
 
 The strict breakout strategy is designed to avoid opening longs in falling
