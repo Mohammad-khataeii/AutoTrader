@@ -677,6 +677,14 @@ def evaluate_completed_bars(symbol, hourly, daily, now, *,
     gates["continuation_candidate"] = bool(continuation["passed"])
     gates.update({"continuation_" + key: value
                   for key, value in continuation["checks"].items()})
+    # Observe an earlier possible rebound without creating a BUY signal.
+    # This research path is deliberately not connected to broker admission.
+    from .crypto_rebound_watch import assess as assess_shadow_rebound
+    shadow = assess_shadow_rebound(hourly, atr, rsi)
+    gates["shadow_rebound_watch"] = bool(shadow["passed"])
+    gates["shadow_rebound_score"] = shadow["score"]
+    gates.update({"shadow_rebound_" + key: value
+                  for key, value in shadow["checks"].items()})
     # Cross-quoted BTC/USDT, ETH/BTC, etc. are strictly research-only.
     if symbol in RESEARCH_ONLY_PAIRS:
         return observation("HOLD","non_usd_quote_research_only",score,gates=gates)
@@ -817,6 +825,8 @@ def dashboard():
     usd_signals=[x for x in signals if x["symbol"] in EXECUTION_PAIRS]
     nonusd_signals=[x for x in signals if x["symbol"] in RESEARCH_ONLY_PAIRS]
     gate_map={x["symbol"]:json.loads(x["gates_json"]) for x in gates}
+    from .crypto_rebound_watch import market_breadth
+    market_breadth_research = market_breadth(usd_signals, gate_map)
     gate_keys=("hourly_uptrend","daily_above_ema200",
                "20_hour_breakout","rsi_volatility_healthy",
                "continuation_candidate")
@@ -844,6 +854,7 @@ def dashboard():
                              for name in ("BUY","HOLD","WAIT")},
       "research_only_wait_count":sum(x["action"]=="WAIT" for x in nonusd_signals),
       "usd_gate_passes":usd_gate_passes,
+      "market_breadth_research":market_breadth_research,
       "quote_currencies":sorted({p.split("/")[1] for p in PAIRS}),
       "signal_gate_evidence":[{"symbol":r["symbol"],"evaluated_at":r["evaluated_at"],
         "gates":json.loads(r["gates_json"])} for r in gates],
