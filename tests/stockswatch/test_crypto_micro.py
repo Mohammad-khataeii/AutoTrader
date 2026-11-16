@@ -14,7 +14,7 @@ def synthetic(symbol="BTC/USD", drop_btc=False):
     close = 100.0
     candles = []
     for i in range(36):
-        change = -0.09 if i % 3 == 0 and i < 33 else 0.10
+        change = -0.13 if i % 3 == 0 and i < 33 else 0.10
         close += change
         candles.append({
             "ts": (start + timedelta(minutes=5*i)).isoformat(),
@@ -56,6 +56,7 @@ def test_reject_zero_traded_volume_and_quote_spike():
     candles=synthetic()
     candles[-3]["v"]=0
     candles[-3]["c"]=candles[-3]["o"]*1.08
+    candles[-3]["h"]=candles[-3]["c"]*1.001
     assert micro.evaluate("BTC/USD",candles,at)["reason"]=="micro_untraded_quote_spike"
 
 
