@@ -64,7 +64,7 @@ tar -C "$WORK" -cf - . | ssh -o BatchMode=yes -o ServerAliveInterval=30 "$HOST" 
 
 echo "3/4 Read-only paper broker / ledger / source / stock session preflight"
 ssh -o BatchMode=yes -o ServerAliveInterval=30 "$HOST" \
-  "python3 '$STAGE/deploy/stockswatch/crypto_micro_cutover.py' --preflight '$STAGE' '$SHA'"
+  "python3 '$STAGE/deploy/stockswatch/crypto_micro_cutover.py' preflight '$STAGE' '$SHA'"
 if [[ "$MODE" == preflight ]]; then
   echo "Preflight passed. No container or orders changed."
   exit 0
@@ -72,5 +72,5 @@ fi
 
 echo "4/4 Building from EXISTING image and cutover ONLY StocksWatch, with rollback"
 ssh -o BatchMode=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=20 "$HOST" \
-  "python3 '$STAGE/deploy/stockswatch/crypto_micro_cutover.py' --deploy '$STAGE' '$SHA'"
+  "python3 '$STAGE/deploy/stockswatch/crypto_micro_cutover.py' deploy '$STAGE' '$SHA'"
 echo "Release evidence and backups kept on Aruba at $STAGE"
