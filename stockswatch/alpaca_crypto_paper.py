@@ -566,6 +566,14 @@ def _run_paper_cycle_once(data,now=None):
                                free_cash*Decimal(".75"),
                                equity*(RISK_PER_TRADE/Decimal("2")
                                        if experimental else RISK_PER_TRADE)/stop_fraction)
+                    # A deliberately small paper-only exploratory sample.
+                    # At $100k equity the candidate maximum is $200, not the
+                    # ordinary 2%-4% position. Retain broker cash/depth caps.
+                    if s["reason"]=="paper_active_hourly_reclaim":
+                        exploratory_cap=max(
+                            MIN_TRADE_USD,
+                            min(equity*Decimal("0.002"),Decimal("200")))
+                        budget=min(budget,exploratory_cap)
                     budget=budget.quantize(Decimal(".01"),rounding=ROUND_DOWN)
                     if budget<MIN_TRADE_USD:
                         last_blocked="crypto_entry_portfolio_budget_below_minimum"
