@@ -514,6 +514,27 @@ def _run_paper_cycle_once(data,now=None):
                             ac.record_admission(s["symbol"],s["bar_at"],last_blocked,
                                                 {"benchmark":"BTC/USD"},now)
                             continue
+                    if s["reason"]=="paper_active_hourly_reclaim":
+                        from .crypto_active_paper import benchmark_ok
+                        if s["symbol"]!="BTC/USD":
+                            anchor=ac._floor(now,"1Hour").isoformat()
+                            btc=rows("""SELECT ts,c,v FROM ac_bars WHERE symbol='BTC/USD'
+                                  AND timeframe='1Hour' AND ts<?
+                                  ORDER BY ts DESC LIMIT 4""",(anchor,))[::-1]
+                            if not benchmark_ok(btc,s["bar_at"]):
+                                last_blocked="crypto_active_paper_btc_liquidation"
+                                ac.record_admission(s["symbol"],s["bar_at"],last_blocked,
+                                                    {"benchmark":"BTC/USD"},now)
+                                continue
+                        # Experimental entries: no more than one new crypto
+                        # BUY intent per rolling hour across this paper account.
+                        recent=one("""SELECT 1 FROM ac_intents WHERE side='buy'
+                              AND created_at>=? LIMIT 1""",
+                              ((now-timedelta(hours=1)).isoformat(),))
+                        if recent:
+                            last_blocked="crypto_active_paper_hourly_cooldown"
+                            ac.record_admission(s["symbol"],s["bar_at"],last_blocked,{},now)
+                            continue
                     asset=_fresh_asset(s["symbol"],now)
                     try:
                         quote=data.latest_entry_quote(s["symbol"])
@@ -536,15 +557,15 @@ def _run_paper_cycle_once(data,now=None):
                         ac.record_admission(s["symbol"],s["bar_at"],last_blocked,quote_stats,now)
                         continue
                     stop_fraction=loss_per_unit/money(ask)
+                    experimental=(s["reason"] in (
+                        "post_selloff_recovery_confirmed", "paper_active_hourly_reclaim"))
                     budget=min(equity*(CAP_PER_SYMBOL/Decimal("2")
-                                       if s["reason"]=="post_selloff_recovery_confirmed"
-                                       else CAP_PER_SYMBOL),
+                                       if experimental else CAP_PER_SYMBOL),
                                equity*CAP_CRYPTO_TOTAL-crypto_exposure,
                                buying*Decimal(".75"),
                                free_cash*Decimal(".75"),
                                equity*(RISK_PER_TRADE/Decimal("2")
-                                       if s["reason"]=="post_selloff_recovery_confirmed"
-                                       else RISK_PER_TRADE)/stop_fraction)
+                                       if experimental else RISK_PER_TRADE)/stop_fraction)
                     budget=budget.quantize(Decimal(".01"),rounding=ROUND_DOWN)
                     if budget<MIN_TRADE_USD:
                         last_blocked="crypto_entry_portfolio_budget_below_minimum"
