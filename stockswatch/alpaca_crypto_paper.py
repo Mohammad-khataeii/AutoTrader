@@ -434,18 +434,25 @@ def _run_paper_cycle_once(data,now=None):
                 if not reconcile(client):
                     return "unresolved_order_intents_block_trading"
                 pos=_owned(snapshot)
-                # Never duplicate paper submissions while any broker order is open.
-                if snapshot["orders"]:
-                    return "broker_open_order_book_not_empty"
+                # Existing protective exits must be checked even if a DIFFERENT
+                # crypto symbol has an open broker order. Entry stays blocked.
                 managed=rows("SELECT * FROM ac_managed WHERE account_id=?",(account,))
                 # Never risk exit or sell an unowned position.
                 for m in managed:
                     symbol=m["symbol"]
                     position=pos.get(symbol)
                     if not position:continue
+                    if any(_canonical(o["symbol"])==symbol for o in snapshot["orders"]):
+                        continue
                     asset=_fresh_asset(symbol,now)
                     bid,ask,stamp=data.latest_bid(symbol)
-                    side="sell" if bid<=float(m["stop"]) or bid>=float(m["target"]) else None
+                    is_micro=bool(one("""SELECT 1 FROM ac_intents
+                        WHERE client_id=? AND reason='micro_5m_momentum_paper'
+                        LIMIT 1""",(m["entry_client_id"],)))
+                    elapsed=now-datetime.fromisoformat(m["entered_at"])
+                    timed_exit=is_micro and elapsed>=timedelta(minutes=90)
+                    side="sell" if (bid<=float(m["stop"]) or
+                        bid>=float(m["target"]) or timed_exit) else None
                     if not side:continue
                     # Prevent repeated exit submissions when the broker position lags.
                     prior=one("""SELECT 1 FROM ac_intents WHERE symbol=? AND side='sell'
@@ -456,12 +463,16 @@ def _run_paper_cycle_once(data,now=None):
                     qty=(money(position["qty"])//increment)*increment
                     if qty < money(asset["min_order_size"]):
                         continue
-                    reason="software_stop_at_fresh_bid" if bid<=float(m["stop"]) else "software_target_at_fresh_bid"
+                    reason=("software_stop_at_fresh_bid" if bid<=float(m["stop"]) else
+                        "software_target_at_fresh_bid" if bid>=float(m["target"]) else
+                        "micro_5m_time_exit_at_fresh_bid")
                     return _submit_intent(client,account,symbol,side,stamp,reason,qty=format(qty,"f"))
                 # Pausing blocks entries but does not disable protection on
                 # existing AlpacaCrypto-owned LONG positions.
                 if bool((one("SELECT paused FROM ac_state WHERE id=1") or {}).get("paused",1)):
                     return "crypto_new_entries_paused"
+                if snapshot["orders"]:
+                    return "broker_open_order_book_not_empty"
                 # A stock limit BUY reserves its unfilled notional; an OCO
                 # stock SELL is not a second BUY and grants no crypto cash.
                 # Unknown/uncapped orders fail closed instead of globally
@@ -499,10 +510,32 @@ def _run_paper_cycle_once(data,now=None):
                         "crypto_latest_hourly_retry_cooldown"):
                     return refresh
                 signals=ac.scan(now)
+                # Fast, tiny paper entries are a separate opt-in strategy; no
+                # hourly/daily crypto history or stock order rules are relaxed.
+                from . import crypto_micro
+                try:
+                    signals.extend(crypto_micro.scan(data,now))
+                except (ac.CryptoDataError,ValueError) as exc:
+                    log.warning("Crypto five-minute scanner deferred: %s",str(exc))
                 from .crypto_trade_safety import depth_limited_notional
                 last_blocked = None
-                for s in sorted(signals,key=lambda x:x["symbol"]):
+                for s in sorted(signals,key=lambda x:(-x["score"],x["symbol"])):
                     if s["action"]!="BUY" or s["symbol"] in pos:continue
+                    if s["reason"]=="micro_5m_momentum_paper":
+                        # An active experimental scalp is never duplicated.
+                        if one("""SELECT 1 FROM ac_managed m JOIN ac_intents i
+                               ON m.entry_client_id=i.client_id
+                               WHERE i.reason='micro_5m_momentum_paper' LIMIT 1"""):
+                            last_blocked="crypto_micro_position_limit"
+                            ac.record_admission(s["symbol"],s["bar_at"],last_blocked,{},now)
+                            continue
+                        if one("""SELECT 1 FROM ac_intents
+                              WHERE reason='micro_5m_momentum_paper' AND side='buy'
+                              AND created_at>=? LIMIT 1""",
+                              ((now-timedelta(minutes=45)).isoformat(),)):
+                            last_blocked="crypto_micro_buy_cooldown"
+                            ac.record_admission(s["symbol"],s["bar_at"],last_blocked,{},now)
+                            continue
                     if s["reason"]=="post_selloff_recovery_confirmed" and s["symbol"]!="BTC/USD":
                         from .crypto_recovery import benchmark_stabilized
                         anchor=ac._floor(now,"1Hour").isoformat()
@@ -544,10 +577,19 @@ def _run_paper_cycle_once(data,now=None):
                                             {"quote_status":str(exc)},now)
                         continue
                     bid,ask,stamp=quote["bid"],quote["ask"],quote["observed_at"]
+                    if s["reason"]=="micro_5m_momentum_paper" and (
+                        now-ac._stamp(stamp)>timedelta(seconds=75)):
+                        last_blocked="crypto_micro_quote_stale"
+                        ac.record_admission(s["symbol"],s["bar_at"],last_blocked,
+                                            {"quote_time":stamp},now)
+                        continue
                     quote_stats={"bid":bid,"ask":ask,
                                  "bid_size":quote["bid_size"],"ask_size":quote["ask_size"],
                                  "spread_pct":round(100*(ask-bid)/ask,4)}
-                    if ask > float(s["price"])*1.02 or (ask-bid)/ask>0.015:
+                    is_micro=s["reason"]=="micro_5m_momentum_paper"
+                    max_premium=0.006 if is_micro else 0.02
+                    max_spread=0.0035 if is_micro else 0.015
+                    if ask > float(s["price"])*(1+max_premium) or (ask-bid)/ask>max_spread:
                         last_blocked="crypto_entry_spread_or_stale_signal"
                         ac.record_admission(s["symbol"],s["bar_at"],last_blocked,quote_stats,now)
                         continue
@@ -570,10 +612,13 @@ def _run_paper_cycle_once(data,now=None):
                     # At $100k equity the candidate maximum is $200, not the
                     # ordinary 2%-4% position. Retain broker cash/depth caps.
                     if s["reason"]=="paper_active_hourly_reclaim":
-                        exploratory_cap=max(
-                            MIN_TRADE_USD,
-                            min(equity*Decimal("0.002"),Decimal("200")))
+                        exploratory_cap=min(equity*Decimal("0.002"),Decimal("200"))
                         budget=min(budget,exploratory_cap)
+                    if is_micro:
+                        # Small fixed-risk experiments: $25 minimum, $150
+                        # maximum, additionally 0.15% of equity and broker
+                        # cash / top-of-book limits.
+                        budget=min(budget,equity*Decimal("0.0015"),Decimal("150"))
                     budget=budget.quantize(Decimal(".01"),rounding=ROUND_DOWN)
                     if budget<MIN_TRADE_USD:
                         last_blocked="crypto_entry_portfolio_budget_below_minimum"
