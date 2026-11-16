@@ -300,12 +300,22 @@ def deploy(state,revision):
                   file=sys.stderr,flush=True)
             if stopped:
                 try:
-                    current=scoped("stockswatch")
-                    nowbook=snapshot(current)
-                    can_rollback=(nowbook["crypto_positions"]==0 and
-                                  nowbook["crypto_open_orders"]==0 and
-                                  nowbook["managed"]==0 and
-                                  nowbook["uncertain_intents"]==0)
+                    running=run("docker","ps","-q","--no-trunc",
+                        "--filter",f"label=com.docker.compose.project={PROJECT}",
+                        "--filter","label=com.docker.compose.service=stockswatch").splitlines()
+                    # A stopped original container is safe to restart; a
+                    # running candidate must prove its crypto positions are
+                    # flat before returning to the old software-stop worker.
+                    can_rollback=True
+                    if len(running)==1:
+                        current=inspect(running[0])
+                        nowbook=snapshot(current)
+                        can_rollback=(nowbook["crypto_positions"]==0 and
+                                      nowbook["crypto_open_orders"]==0 and
+                                      nowbook["managed"]==0 and
+                                      nowbook["uncertain_intents"]==0)
+                    elif running:
+                        can_rollback=False
                     if can_rollback:
                         run(*base,"up","-d","--no-deps","--no-build",
                             "--pull","never","stockswatch",timeout=180)
