@@ -1,0 +1,10 @@
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+ARG RELEASE_SHA=unknown
+LABEL org.opencontainers.image.revision=${RELEASE_SHA}
+ENV STOCKSWATCH_CRYPTO_MICRO_RELEASE=${RELEASE_SHA}
+USER root
+COPY --chown=10001:10001 stockswatch/alpaca_crypto.py stockswatch/alpaca_crypto_paper.py stockswatch/crypto_active_paper.py stockswatch/crypto_micro.py /opt/stockswatch/stockswatch/
+RUN /opt/stockswatch/venv/bin/python -m compileall -q /opt/stockswatch/stockswatch/alpaca_crypto.py /opt/stockswatch/stockswatch/alpaca_crypto_paper.py /opt/stockswatch/stockswatch/crypto_micro.py
+WORKDIR /opt/stockswatch
+USER paper

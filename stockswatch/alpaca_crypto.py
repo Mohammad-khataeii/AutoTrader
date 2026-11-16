@@ -599,8 +599,16 @@ def recovery_mode():
     return mode if mode in ("research","paper") else "research"
 
 
+def active_paper_enabled():
+    """Experimental and intentionally disabled unless PAPER execution is authorized."""
+    return (os.getenv("ALPACA_CRYPTO_ACTIVE_PAPER", "0") == "1"
+            and os.getenv("ALPACA_CRYPTO_ALLOW_PAPER_ORDERS", "0") == "1"
+            and os.getenv("LIVE_TRADING_ENABLED", "false").lower() not in ("1", "true", "yes"))
+
+
 def evaluate_completed_bars(symbol, hourly, daily, now, *,
-                            allow_continuation=False, allow_recovery=False):
+                            allow_continuation=False, allow_recovery=False,
+                            allow_active_paper=False):
     """Pure candle evaluation shared by live signals and offline replay."""
     if symbol not in PAIRS:
         raise CryptoDataError("crypto_pair_not_allowed")
@@ -685,6 +693,11 @@ def evaluate_completed_bars(symbol, hourly, daily, now, *,
     gates["shadow_rebound_score"] = shadow["score"]
     gates.update({"shadow_rebound_" + key: value
                   for key, value in shadow["checks"].items()})
+    from .crypto_active_paper import assess as assess_active_paper
+    active = assess_active_paper(hourly, e20, e50, atr, rsi)
+    gates["active_paper_candidate"] = bool(active["passed"])
+    gates["active_paper_enabled"] = bool(allow_active_paper)
+    gates.update({"active_paper_" + key: value for key, value in active["checks"].items()})
     # Cross-quoted BTC/USDT, ETH/BTC, etc. are strictly research-only.
     if symbol in RESEARCH_ONLY_PAIRS:
         return observation("HOLD","non_usd_quote_research_only",score,gates=gates)
@@ -698,6 +711,14 @@ def evaluate_completed_bars(symbol, hourly, daily, now, *,
             gates["entry_strategy"]="recovery_paper"
             return observation("BUY","post_selloff_recovery_confirmed",score,
                                round(stop,8),round(target,8),gates=gates)
+    # This experimental path is paper-only, opt-in, and does not supplant a
+    # valid normal entry. Quote, broker, ownership and risk checks are unchanged.
+    standard_entry = (trend and macro and healthy and hourly[-1]["v"] > 0 and
+                      (breakout or (allow_continuation and continuation["passed"])))
+    if allow_active_paper and active["passed"] and not standard_entry:
+        gates["entry_strategy"] = "paper_active"
+        return observation("BUY", "paper_active_hourly_reclaim", score,
+                           active["stop"], active["target"], gates=gates)
     if not (trend and macro and healthy):
         return observation("HOLD","no_confirmed_spot_long_setup",score,gates=gates)
     breakout_entry = bool(breakout)
@@ -729,7 +750,8 @@ def signal(symbol, now=None):
        AND ts<? ORDER BY ts DESC LIMIT 260""",(symbol,day_end))[::-1]
     return evaluate_completed_bars(symbol, hourly, daily, now,
                                    allow_continuation=continuation_enabled(),
-                                   allow_recovery=recovery_mode()=="paper")
+                                   allow_recovery=recovery_mode()=="paper",
+                                   allow_active_paper=active_paper_enabled())
 
 def scan(now):
     """Refresh-only research. Writes signal evidence, never broker orders."""
@@ -822,6 +844,11 @@ def dashboard():
     admission_audit=rows("""SELECT symbol,bar_at,first_checked_at,outcome,details_json
          FROM ac_admission_audit ORDER BY first_checked_at DESC LIMIT 80""")
     broker=one("SELECT * FROM ac_broker_snapshot WHERE id=1")
+    from .crypto_micro import mode as micro_mode, PAIRS as micro_pairs
+    micro_audit=(rows("""SELECT symbol,bar_at,evaluated_at,action,reason,price,details_json
+                        FROM ac_micro_audit ORDER BY evaluated_at DESC LIMIT 60""")
+                 if one("SELECT name FROM sqlite_master WHERE type='table' AND name='ac_micro_audit'")
+                 else [])
     usd_signals=[x for x in signals if x["symbol"] in EXECUTION_PAIRS]
     nonusd_signals=[x for x in signals if x["symbol"] in RESEARCH_ONLY_PAIRS]
     gate_map={x["symbol"]:json.loads(x["gates_json"]) for x in gates}
@@ -859,6 +886,10 @@ def dashboard():
       "signal_gate_evidence":[{"symbol":r["symbol"],"evaluated_at":r["evaluated_at"],
         "gates":json.loads(r["gates_json"])} for r in gates],
       "crypto_execution_outcomes":outcomes,
+      "micro_5m_paper": {
+        "mode":micro_mode(),"pairs":list(micro_pairs),
+        "recent_decisions":micro_audit,
+        "caution":"Experimental midpoint-candle pattern, never an executable fill prediction."},
       "immutable_signal_audit":signal_audit,
       "immutable_admission_audit":admission_audit,
       "legacy_crypto_source_preserved":True,
