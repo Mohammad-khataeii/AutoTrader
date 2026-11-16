@@ -1,0 +1,31 @@
+name: Crypto Micro Paper Targeted Regression
+
+on:
+  push:
+    branches:
+      - feature/crypto-active-paper-forensics-20261116
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  crypto-micro:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated test dependencies
+        run: |
+          python -m pip install -e '.[dev]' exchange-calendars==4.13.2
+      - name: Compile crypto and release modules
+        run: |
+          python -m compileall -q stockswatch
+          python -m py_compile deploy/stockswatch/crypto_micro_cutover.py
+      - name: Causal crypto micro policy regression
+        env:
+          PYTHONPATH: .
+        run: |
+          python -m pytest -q tests/stockswatch/test_crypto_micro.py
