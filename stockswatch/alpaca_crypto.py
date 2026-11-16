@@ -844,7 +844,7 @@ def dashboard():
     admission_audit=rows("""SELECT symbol,bar_at,first_checked_at,outcome,details_json
          FROM ac_admission_audit ORDER BY first_checked_at DESC LIMIT 80""")
     broker=one("SELECT * FROM ac_broker_snapshot WHERE id=1")
-    from .crypto_micro import mode as micro_mode
+    from .crypto_micro import mode as micro_mode, PAIRS as micro_pairs
     micro_audit=(rows("""SELECT symbol,bar_at,evaluated_at,action,reason,price,details_json
                         FROM ac_micro_audit ORDER BY evaluated_at DESC LIMIT 60""")
                  if one("SELECT name FROM sqlite_master WHERE type='table' AND name='ac_micro_audit'")
@@ -887,8 +887,7 @@ def dashboard():
         "gates":json.loads(r["gates_json"])} for r in gates],
       "crypto_execution_outcomes":outcomes,
       "micro_5m_paper": {
-        "mode":micro_mode(),"pairs":list(__import__("stockswatch.crypto_micro",
-              fromlist=["PAIRS"]).PAIRS),
+        "mode":micro_mode(),"pairs":list(micro_pairs),
         "recent_decisions":micro_audit,
         "caution":"Experimental midpoint-candle pattern, never an executable fill prediction."},
       "immutable_signal_audit":signal_audit,
