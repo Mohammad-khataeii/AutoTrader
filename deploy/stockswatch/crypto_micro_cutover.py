@@ -353,13 +353,13 @@ def deploy(state,revision):
 
 def main():
     p=argparse.ArgumentParser()
-    p.add_argument("mode",choices=("--preflight","--deploy"))
+    p.add_argument("mode",choices=("preflight","deploy"))
     p.add_argument("state")
     p.add_argument("revision")
     args=p.parse_args()
     os.umask(0o077)
     try:
-        if args.mode=="--preflight":
+        if args.mode=="preflight":
             preflight(Path(args.state),args.revision)
         else:
             deploy(Path(args.state),args.revision)
