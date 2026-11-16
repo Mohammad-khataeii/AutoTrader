@@ -234,16 +234,28 @@ def deploy(state,revision):
             "-c","from stockswatch.crypto_micro import evaluate,mode; "
                  "from stockswatch.alpaca_crypto_paper import CryptoPaperClient; "
                  "assert mode() in ('off','research','paper')",timeout=60)
+        # Preserve ALL existing stock and runtime source binds. Remove only
+        # the two crypto module binds now supplied by the new image; removing
+        # other mounts could unintentionally roll stock patches backwards.
+        patched_targets={MODULE_ROOT+"/"+n for n in
+                         ("alpaca_crypto.py","alpaca_crypto_paper.py",
+                          "crypto_active_paper.py","crypto_micro.py")}
+        keep_mounts=[m for m in stock["Mounts"] if m["Destination"] not in patched_targets]
+        need(all(m["Type"]=="bind" for m in keep_mounts),
+             "unsupported_existing_mount_type")
+        need(any(m["Destination"]==DATA_TARGET for m in keep_mounts),
+             "missing_database_mount_in_override")
+        lines=["services:","  stockswatch:","    image: "+json.dumps(tag),
+               "    environment:","      ALPACA_CRYPTO_MICRO_MODE: paper",
+               "    volumes: !override"]
+        for m in keep_mounts:
+            lines.extend(("      - type: bind",
+                "        source: "+json.dumps(m["Source"]),
+                "        target: "+json.dumps(m["Destination"]),
+                "        read_only: "+("false" if m["RW"] else "true"),
+                "        bind:","          create_host_path: false"))
         override=state/"crypto-micro.override.yml"
-        override.write_text(
-            'services:\n  stockswatch:\n'
-            '    image: "'+tag+'"\n'
-            '    environment:\n      ALPACA_CRYPTO_MICRO_MODE: paper\n'
-            '    volumes: !override\n'
-            '      - type: bind\n'
-            '        source: "'+str(data)+'"\n'
-            '        target: /stockswatch-data\n'
-            '        bind:\n          create_host_path: false\n')
+        override.write_text("\n".join(lines)+"\n")
         alt=[*base,"-f",str(override)]
         cfg=json.loads(run(*alt,"config","--format","json"))
         prior=model["services"]["stockswatch"]
@@ -258,10 +270,16 @@ def deploy(state,revision):
         need({k:v for k,v in newenv.items() if k!="ALPACA_CRYPTO_MICRO_MODE"}==
              {k:v for k,v in oldenv.items() if k!="ALPACA_CRYPTO_MICRO_MODE"} and
              newenv["ALPACA_CRYPTO_MICRO_MODE"]=="paper","candidate_environment_drift")
-        need(len(after["volumes"])==1 and
-             after["volumes"][0]["source"]==str(data) and
-             after["volumes"][0]["target"]==DATA_TARGET,
-             "candidate_financial_ledger_mount_drift")
+        def mount_key(v):
+            return (v.get("type"),v.get("source"),v.get("target"),
+                    bool(v.get("read_only",False)))
+        original_kept={mount_key(v) for v in prior.get("volumes",[])
+                       if v.get("target") not in patched_targets}
+        candidate_kept={mount_key(v) for v in after.get("volumes",[])}
+        need(candidate_kept==original_kept and
+             any(v.get("source")==str(data) and v.get("target")==DATA_TARGET
+                 for v in after.get("volumes",[])),
+             "candidate_mounts_differ_outside_patched_crypto_modules")
         backup=state/"before-crypto-micro.sqlite3"
         online_backup(data/DB_FILE,backup)
         (state/"release-receipt.json").write_text(json.dumps({
