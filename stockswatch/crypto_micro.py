@@ -211,3 +211,21 @@ def scan(data, now):
         _CACHE_SLOT=slot
         _CACHE_SIGNALS=[x for x in outcomes if x["action"]=="BUY"]
         return list(_CACHE_SIGNALS) if current=="paper" else []
+
+
+def read_only_status():
+    """Summarize observed completed 5m decisions; never contacts a broker."""
+    from .storage import one, rows
+    if not one("SELECT name FROM sqlite_master WHERE type='table' AND name='ac_micro_audit'"):
+        return {"mode":mode(),"state":"AWAITING_FIRST_SCANNER_PASS","observations":0}
+    decisions=rows("""SELECT action,COUNT(*) n FROM ac_micro_audit
+        WHERE evaluated_at>=? GROUP BY action""",
+        ((datetime.now(UTC)-timedelta(days=7)).isoformat(),))
+    recent=rows("""SELECT symbol,bar_at,evaluated_at,action,reason,price
+        FROM ac_micro_audit ORDER BY evaluated_at DESC LIMIT 12""")
+    return {"mode":mode(),"state":"AUDIT_AVAILABLE","observations":sum(x["n"] for x in decisions),
+            "counts":{x["action"]:x["n"] for x in decisions},"recent":recent}
+
+
+if __name__ == "__main__":
+    print(json.dumps(read_only_status(),indent=2,sort_keys=True))
