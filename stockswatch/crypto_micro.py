@@ -208,6 +208,9 @@ def scan(data, now):
                     VALUES(?,?,?,?,?,?,?)""",(outcome["symbol"],outcome["bar_at"],
                       now.isoformat(),outcome["action"],outcome["reason"],
                       outcome["price"],json.dumps(outcome["gates"],sort_keys=True)))
+        with connect() as c:
+            c.execute("DELETE FROM ac_micro_audit WHERE evaluated_at<?",
+                      ((now-timedelta(days=30)).isoformat(),))
         _CACHE_SLOT=slot
         _CACHE_SIGNALS=[x for x in outcomes if x["action"]=="BUY"]
         return list(_CACHE_SIGNALS) if current=="paper" else []
