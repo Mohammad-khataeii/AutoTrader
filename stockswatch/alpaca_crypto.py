@@ -599,8 +599,16 @@ def recovery_mode():
     return mode if mode in ("research","paper") else "research"
 
 
+def active_paper_enabled():
+    """Experimental and intentionally disabled unless PAPER execution is authorized."""
+    return (os.getenv("ALPACA_CRYPTO_ACTIVE_PAPER", "0") == "1"
+            and os.getenv("ALPACA_CRYPTO_ALLOW_PAPER_ORDERS", "0") == "1"
+            and os.getenv("LIVE_TRADING_ENABLED", "false").lower() not in ("1", "true", "yes"))
+
+
 def evaluate_completed_bars(symbol, hourly, daily, now, *,
-                            allow_continuation=False, allow_recovery=False):
+                            allow_continuation=False, allow_recovery=False,
+                            allow_active_paper=False):
     """Pure candle evaluation shared by live signals and offline replay."""
     if symbol not in PAIRS:
         raise CryptoDataError("crypto_pair_not_allowed")
@@ -685,6 +693,11 @@ def evaluate_completed_bars(symbol, hourly, daily, now, *,
     gates["shadow_rebound_score"] = shadow["score"]
     gates.update({"shadow_rebound_" + key: value
                   for key, value in shadow["checks"].items()})
+    from .crypto_active_paper import assess as assess_active_paper
+    active = assess_active_paper(hourly, e20, e50, atr, rsi)
+    gates["active_paper_candidate"] = bool(active["passed"])
+    gates["active_paper_enabled"] = bool(allow_active_paper)
+    gates.update({"active_paper_" + key: value for key, value in active["checks"].items()})
     # Cross-quoted BTC/USDT, ETH/BTC, etc. are strictly research-only.
     if symbol in RESEARCH_ONLY_PAIRS:
         return observation("HOLD","non_usd_quote_research_only",score,gates=gates)
@@ -698,6 +711,14 @@ def evaluate_completed_bars(symbol, hourly, daily, now, *,
             gates["entry_strategy"]="recovery_paper"
             return observation("BUY","post_selloff_recovery_confirmed",score,
                                round(stop,8),round(target,8),gates=gates)
+    # This experimental path is paper-only, opt-in, and does not supplant a
+    # valid normal entry. Quote, broker, ownership and risk checks are unchanged.
+    standard_entry = (trend and macro and healthy and hourly[-1]["v"] > 0 and
+                      (breakout or (allow_continuation and continuation["passed"])))
+    if allow_active_paper and active["passed"] and not standard_entry:
+        gates["entry_strategy"] = "paper_active"
+        return observation("BUY", "paper_active_hourly_reclaim", score,
+                           active["stop"], active["target"], gates=gates)
     if not (trend and macro and healthy):
         return observation("HOLD","no_confirmed_spot_long_setup",score,gates=gates)
     breakout_entry = bool(breakout)
@@ -729,7 +750,8 @@ def signal(symbol, now=None):
        AND ts<? ORDER BY ts DESC LIMIT 260""",(symbol,day_end))[::-1]
     return evaluate_completed_bars(symbol, hourly, daily, now,
                                    allow_continuation=continuation_enabled(),
-                                   allow_recovery=recovery_mode()=="paper")
+                                   allow_recovery=recovery_mode()=="paper",
+                                   allow_active_paper=active_paper_enabled())
 
 def scan(now):
     """Refresh-only research. Writes signal evidence, never broker orders."""
